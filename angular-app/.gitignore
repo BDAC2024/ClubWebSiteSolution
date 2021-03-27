@@ -55,3 +55,6 @@ tools/gulp-tasks/cldr/cldr-data/
 
 # Husky
 .husky/_
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/AnglingClubWebsiteAng/v16/.suo
