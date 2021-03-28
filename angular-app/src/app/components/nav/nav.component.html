@@ -14,7 +14,7 @@
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-      <mat-toolbar style="height:100px;" color="primary">
+      <mat-toolbar class="toolbar">
         <button
           type="button"
           aria-label="Toggle sidenav"
@@ -24,14 +24,14 @@
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
         <img
-            width="60"
+            width="70"
             alt="Club Logo"
             src="assets/FishingClubLogo3.png"
             *ngIf="isHandset$ | async"
-            style="padding: 0 10px 0 10px"
+            
         />
-        <span>Boroughbridge & District<br/>Angling Club</span>
-        <span class="example-fill-remaining-space"></span>
+        <span id="title">Boroughbridge & District<br/>Angling Club</span>
+        <div class="spacer"></div>
         <!-- <div [hidden]="!this.loggedIn" ngClass.xs="name-mobile">{{userName}}</div>
         <mat-chip-list [hidden]="!this.loggedIn" style="margin-left: 16px">
           <mat-chip class="logout-button" (click)="logout()">Logout</mat-chip>
@@ -39,7 +39,7 @@
         <div>
             <a aria-label="Club on Facebook" target="_blank" rel="noopener" href="https://www.facebook.com/groups/309517003231207" title="Facebook Group">
             <img
-                width="30"
+                id="facebook-logo"
                 alt="Facebook Logo"
                 src="assets/FacebookLogo.png"
             />

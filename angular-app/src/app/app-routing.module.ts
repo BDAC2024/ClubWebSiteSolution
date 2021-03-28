@@ -8,6 +8,7 @@ import { PhotosComponent } from './components/photos/photos.component';
 import { RulesComponent } from './components/rules/rules.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/welcome', pathMatch: 'full'},
   { path: 'welcome', component: WelcomeComponent },
   { path: 'news', component: NewsComponent },
   { path: 'waters', component: WatersComponent },
