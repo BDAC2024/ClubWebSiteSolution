@@ -13,7 +13,8 @@
   }
 
   .toolbar #title {
-    font-size: 0.8em;
+    font-size: 0.9em;
+    font-weight: normal;
     line-height: 150%;
   }
 
