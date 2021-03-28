@@ -3,11 +3,11 @@
         [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'"
         [opened]="(isHandset$ | async) === false">
-      <mat-toolbar ><img src="assets/FishingClubLogo3.png" style="height:95%; margin-right: 10px;"></mat-toolbar>
+      <mat-toolbar class="toolbar" ><img src="assets/FishingClubLogo3.png" class="club-logo"></mat-toolbar>
       <mat-nav-list>
           <a mat-list-item routerLink="/welcome">Welcome</a>
           <a mat-list-item routerLink="/news">News</a>
-          <a mat-list-item routerLink="/waters">Club Waters</a>
+          <a mat-list-item routerLink="/waters">Club Waters - Members Only</a>
           <a mat-list-item routerLink="/photos">Photos</a>
           <a mat-list-item routerLink="/matches">Matches</a>
           <a mat-list-item routerLink="/rules">Rules</a>
@@ -16,6 +16,7 @@
     <mat-sidenav-content>
       <mat-toolbar class="toolbar">
         <button
+          class="hamburger"
           type="button"
           aria-label="Toggle sidenav"
           mat-icon-button
@@ -23,15 +24,9 @@
           *ngIf="isHandset$ | async">
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
-        <img
-            width="70"
-            alt="Club Logo"
-            src="assets/FishingClubLogo3.png"
-            *ngIf="isHandset$ | async"
-            
-        />
         <span id="title">Boroughbridge & District<br/>Angling Club</span>
-        <div class="spacer"></div>
+        <span class="example-fill-remaining-space"></span>
+
         <!-- <div [hidden]="!this.loggedIn" ngClass.xs="name-mobile">{{userName}}</div>
         <mat-chip-list [hidden]="!this.loggedIn" style="margin-left: 16px">
           <mat-chip class="logout-button" (click)="logout()">Logout</mat-chip>
@@ -46,7 +41,7 @@
             </a>
         </div>
     </mat-toolbar>
-      <div class="nav-content" ngClass.xs="nav-content-mobile"  style="margin: 6px;">
+      <div class="nav-content" ngClass.xs="nav-content-mobile">
         <router-outlet></router-outlet>
       </div>
     </mat-sidenav-content>

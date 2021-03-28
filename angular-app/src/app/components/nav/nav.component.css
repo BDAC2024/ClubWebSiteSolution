@@ -1,7 +1,4 @@
 .toolbar {
-    position: absolute;
-    top: 0;
-    left: 0;
     right: 0;
     height: 100px;
     display: flex;
@@ -11,13 +8,17 @@
     font-weight: 600;
   }
 
-  .toolbar img {
-    margin: 0 16px;
+  .toolbar .club-logo {
+    height: 80%;
   }
 
   .toolbar #title {
-    font-size: smaller;
-    line-height: 130%;
+    font-size: 0.8em;
+    line-height: 150%;
+  }
+
+  .toolbar .hamburger {
+    margin: 0 16px 0 0;
   }
 
   .toolbar #facebook-logo {
@@ -29,6 +30,46 @@
     opacity: 0.8;
   }
 
-  .spacer {
-    flex: 1;
+  .sidenav-container {
+    height: 100%;
   }
+  
+  .sidenav {
+    box-shadow: 3px 0 6px rgba(0,0,0,0.24);
+  }
+  
+  
+  .mat-toolbar.mat-primary {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  .nav-content {
+    margin-left: 16px;
+    margin-right: 10px;
+    padding-top: 20px;
+  }
+  
+  .nav-content-mobile {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 10px;
+  }
+  
+  .example-fill-remaining-space {
+    /* This fills the remaining space, by using flexbox.
+       Every toolbar row uses a flexbox row layout. */
+    flex: 1 1 auto;
+  }
+  
+  .logout-button {
+    background-color: rgb(230, 230, 240); 
+    color: rgb(119, 81, 179);
+  }
+  
+  .name-mobile {
+    display: none;
+  }
+  
+  

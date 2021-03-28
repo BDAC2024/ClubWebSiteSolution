@@ -17,6 +17,9 @@ import {
 import { 
   MatListModule 
 } from '@angular/material/list';
+import { 
+  MatButtonModule 
+} from '@angular/material/button';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { WelcomeComponent } from './components/welcome/welcome.component';
@@ -45,7 +48,8 @@ import { RulesComponent } from './components/rules/rules.component';
     MatToolbarModule,
     MatIconModule,
     MatChipsModule,
-    MatListModule
+    MatListModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
