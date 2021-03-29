@@ -12,6 +12,7 @@ import { Router, NavigationEnd } from '@angular/router';
 })
 export class NavComponent implements OnInit {
 
+
   @ViewChild('drawer', { static: false })
   drawer!: MatSidenav;
 
@@ -35,6 +36,7 @@ export class NavComponent implements OnInit {
       this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
   
       this.previewCodeValid = false;
+      // this.previewCode = "Test";
     }
   
       // Properties
@@ -50,6 +52,8 @@ export class NavComponent implements OnInit {
   }
 
   public previewCodeValid: boolean;
+  public previewCode!: string;
+  public codeResult!: string;
 
   public userName!: string;
 
@@ -65,4 +69,14 @@ export class NavComponent implements OnInit {
    public logout(): void {
   }
 
+  onSubmit(): void {
+    if (this.previewCode.toUpperCase() == "5A12")
+    {
+      this.codeResult = "Woohoo, you are in!";
+    }
+    else
+    {
+      this.codeResult = "Sorry, that code was invalid!";
+    }
+  }
 }

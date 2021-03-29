@@ -58,5 +58,23 @@
   <span class="center">
     Please come back soon!
   </span>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <span class="center">
+    If you have a preview code, please enter it here: -
+  </span>
+  <br/>
+  <br/>
+  <div class="center">
+    <mat-form-field [style.width.px]=100  appearance="fill">
+      <mat-label>Code</mat-label>
+      <input matInput [(ngModel)]="previewCode">
+    </mat-form-field>
+    <button mat-raised-button color="primary" style="margin-left: 16px;" (click)="onSubmit()" >Submit</button>
+  </div>
+  <div class="center" style="color: red;">
+    {{codeResult}}
+  </div>
 </div>
-  
