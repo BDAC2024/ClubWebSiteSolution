@@ -4,6 +4,7 @@ import { filter, map, withLatestFrom } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
+import { Md5} from 'ts-md5/dist/md5';
 
 @Component({
   selector: 'app-nav',
@@ -36,7 +37,8 @@ export class NavComponent implements OnInit {
       this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
   
       this.previewCodeValid = false;
-      // this.previewCode = "Test";
+      //this.previewCode = Md5.hashStr("5A12");
+
     }
   
       // Properties
@@ -70,9 +72,10 @@ export class NavComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.previewCode.toUpperCase() == "5A12")
+
+    if (Md5.hashStr(this.previewCode.toUpperCase()).toString() == "c8a5a445cd4cdaf92c29939458fd7c22")
     {
-      this.codeResult = "Woohoo, you are in!";
+      this.previewCodeValid = true;
     }
     else
     {
