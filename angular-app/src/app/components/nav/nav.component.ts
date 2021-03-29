@@ -34,7 +34,7 @@ export class NavComponent implements OnInit {
       ).subscribe(_ => this.drawer.close());
       this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
   
-      this.previewCodeValid = false;
+      this.previewCodeValid = true;
     }
   
       // Properties
