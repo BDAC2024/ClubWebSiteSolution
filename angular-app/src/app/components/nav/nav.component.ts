@@ -34,6 +34,7 @@ export class NavComponent implements OnInit {
       ).subscribe(_ => this.drawer.close());
       this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
   
+      this.previewCodeValid = false;
     }
   
       // Properties
@@ -47,6 +48,8 @@ export class NavComponent implements OnInit {
   public get loggedIn(): boolean {
     return false;
   }
+
+  public previewCodeValid: boolean;
 
   public userName!: string;
 
