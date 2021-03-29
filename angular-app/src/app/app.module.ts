@@ -23,6 +23,7 @@ import { WatersComponent } from './components/waters/waters.component';
 import { MatchesComponent } from './components/matches/matches.component';
 import { PhotosComponent } from './components/photos/photos.component';
 import { RulesComponent } from './components/rules/rules.component';
+import { PreviewComponent } from './components/preview/preview.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { RulesComponent } from './components/rules/rules.component';
     WatersComponent,
     MatchesComponent,
     PhotosComponent,
-    RulesComponent
+    RulesComponent,
+    PreviewComponent
   ],
   imports: [
     BrowserModule,

@@ -4,7 +4,7 @@ import { filter, map, withLatestFrom } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { Md5} from 'ts-md5/dist/md5';
+import { PreviewService } from 'src/app/services/preview.service';
 
 @Component({
   selector: 'app-nav',
@@ -27,7 +27,7 @@ export class NavComponent implements OnInit {
       //private titleService: Title, 
       //private msalService: MsalService,
       //private logger: LogService,
-      //private authService: AuthService,
+      public previewService: PreviewService,
       router: Router) {
   
       router.events.pipe(
@@ -36,9 +36,6 @@ export class NavComponent implements OnInit {
       ).subscribe(_ => this.drawer.close());
       this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
   
-      this.previewCodeValid = false;
-      //this.previewCode = Md5.hashStr("5A12");
-
     }
   
       // Properties
@@ -52,10 +49,6 @@ export class NavComponent implements OnInit {
   public get loggedIn(): boolean {
     return false;
   }
-
-  public previewCodeValid: boolean;
-  public previewCode!: string;
-  public codeResult!: string;
 
   public userName!: string;
 
@@ -71,15 +64,4 @@ export class NavComponent implements OnInit {
    public logout(): void {
   }
 
-  onSubmit(): void {
-
-    if (Md5.hashStr(this.previewCode.toUpperCase()).toString() == "c8a5a445cd4cdaf92c29939458fd7c22")
-    {
-      this.previewCodeValid = true;
-    }
-    else
-    {
-      this.codeResult = "Sorry, that code was invalid!";
-    }
-  }
 }
