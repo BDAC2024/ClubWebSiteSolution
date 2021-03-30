@@ -1,0 +1,15 @@
+.mat-cell {
+    padding: 0 16px 0 0;
+}
+
+.first-col {
+    padding: 0 10px 0 4px !important;
+}
+
+.last-col {
+    padding: 0 2px 0 0 !important;
+}
+
+.cell-date {
+    white-space: nowrap;
+}

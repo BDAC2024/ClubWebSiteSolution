@@ -25,6 +25,7 @@ import { MatchesComponent } from './components/matches/matches.component';
 import { PhotosComponent } from './components/photos/photos.component';
 import { RulesComponent } from './components/rules/rules.component';
 import { PreviewComponent } from './components/preview/preview.component';
+import { MatchInfoComponent } from './components/match-info/match-info.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { PreviewComponent } from './components/preview/preview.component';
     MatchesComponent,
     PhotosComponent,
     RulesComponent,
-    PreviewComponent
+    PreviewComponent,
+    MatchInfoComponent
   ],
   imports: [
     BrowserModule,
