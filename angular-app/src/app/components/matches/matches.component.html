@@ -1,4 +1,4 @@
-<div *ngIf="selectedMatch == 0">
+<div>
     <h1>Matches</h1>
     <p>You can see more details of each match and the results by selecting<button mat-icon-button color="link" style="color: #1976d2;"><mat-icon>info</mat-icon></button>next to each match.</p>
 
@@ -49,4 +49,3 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 </div>
-<app-match-info *ngIf="selectedMatch != 0"></app-match-info>

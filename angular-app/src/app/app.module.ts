@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { NewsComponent } from './components/news/news.component';
@@ -25,7 +26,7 @@ import { MatchesComponent } from './components/matches/matches.component';
 import { PhotosComponent } from './components/photos/photos.component';
 import { RulesComponent } from './components/rules/rules.component';
 import { PreviewComponent } from './components/preview/preview.component';
-import { MatchInfoComponent } from './components/match-info/match-info.component';
+import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { MatchInfoComponent } from './components/match-info/match-info.component
     PhotosComponent,
     RulesComponent,
     PreviewComponent,
-    MatchInfoComponent
+    MatchInfoComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,7 +57,8 @@ import { MatchInfoComponent } from './components/match-info/match-info.component
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTableModule
+    MatTableModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
