@@ -1,10 +1,10 @@
-<mat-sidenav-container *ngIf="previewService.previewCodeValid" class="sidenav-container">
+<mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer class="sidenav" fixedInViewport
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
     <mat-toolbar class="toolbar" ><img src="assets/FishingClubLogo3.png" class="club-logo"></mat-toolbar>
-    <mat-nav-list>
+    <mat-nav-list *ngIf="previewService.previewCodeValid">
         <a mat-list-item routerLink="/welcome">Welcome</a>
         <a mat-list-item routerLink="/news">News</a>
         <a mat-list-item routerLink="/waters">Club Waters - Members Only</a>
@@ -42,11 +42,9 @@
       </div>
   </mat-toolbar>
     <div class="nav-content" ngClass.xs="nav-content-mobile">
-      <router-outlet></router-outlet>
+      <router-outlet *ngIf="previewService.previewCodeValid"></router-outlet>
+      <app-preview *ngIf="!previewService.previewCodeValid"></app-preview>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<div *ngIf="!previewService.previewCodeValid">
-  <app-preview></app-preview>
-</div>
