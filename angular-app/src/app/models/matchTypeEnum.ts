@@ -1,5 +1,5 @@
 export enum MatchType {
-    Spring = 1,
+    Spring = 0,
     Club,
     Junior,
     OSU,

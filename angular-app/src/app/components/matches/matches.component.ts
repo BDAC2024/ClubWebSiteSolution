@@ -9,6 +9,9 @@ import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.compon
 import { Match } from 'src/app/models/match';
 import { MatchService } from 'src/app/services/match.service';
 import { MatchType } from 'src/app/models/matchTypeEnum';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+
+const datepipe: DatePipe = new DatePipe('en-GB');
 
 @Component({
   selector: 'app-matches',
@@ -29,10 +32,8 @@ export class MatchesComponent implements OnInit {
   });
 
   public displayedColumns: string[];
-  springMatches: Match[];
-  clubMatches: Match[];
-  jrMatches: Match[];
-  osuMatches: Match[];
+  matches!: Match[];
+  private isHandsetPortrait: boolean = false;
 
   constructor(
     private matchService: MatchService,
@@ -40,31 +41,7 @@ export class MatchesComponent implements OnInit {
     public dialog: MatDialog,
     router: Router) {
 
-    const datepipe: DatePipe = new DatePipe('en-GB');
-
-    this.springMatches = matchService.GetMatches(MatchType.Spring);
-    this.springMatches.forEach(element => {
-      var formatted = datepipe.transform(element.date, 'E');
-      element.day = formatted == undefined ? '' : formatted;
-    });
-
-    this.clubMatches = matchService.GetMatches(MatchType.Club);
-    this.clubMatches.forEach(element => {
-      var formatted = datepipe.transform(element.date, 'E');
-      element.day = formatted == undefined ? '' : formatted;
-    });
-
-    this.jrMatches = matchService.GetMatches(MatchType.Junior);
-    this.jrMatches.forEach(element => {
-      var formatted = datepipe.transform(element.date, 'E');
-      element.day = formatted == undefined ? '' : formatted;
-    });
-
-    this.osuMatches = matchService.GetMatches(MatchType.OSU);
-    this.osuMatches.forEach(element => {
-      var formatted = datepipe.transform(element.date, 'E');
-      element.day = formatted == undefined ? '' : formatted;
-    });
+    this.loadMatches(0 as MatchType);
 
     this.displayedColumns = [];
 
@@ -88,13 +65,40 @@ export class MatchesComponent implements OnInit {
     });
   }
 
+  public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+    this.loadMatches(tabChangeEvent.index as MatchType);
+  }
+
+  private loadMatches(type: MatchType): void
+  {
+    var typeMatches = this.matchService.GetMatches(type);
+    typeMatches.forEach(element => {
+      var formatted = datepipe.transform(element.date, 'E');
+      element.day = formatted == undefined ? '' : formatted;
+    });
+
+    this.matches = typeMatches;
+
+    this.setDisplayedColumns(this.isHandsetPortrait);
+  }
+
   private setDisplayedColumns(handsetPortrait: boolean): void {
+    this.isHandsetPortrait = handsetPortrait;
+
     if (handsetPortrait) {
       this.displayedColumns = ['date', 'venue', 'number', 'more'];
     } else {
-      this.displayedColumns = ['date', 'day', 'venue', 'cup', 'number', 'more'];
+      // If no club given then hide that column
+      if (this.matches.filter(m => m.cup === "").length == this.matches.length)
+      {
+        this.displayedColumns = ['date', 'day', 'venue', 'number', 'more'];
+      }
+      else 
+      {
+        this.displayedColumns = ['date', 'day', 'venue', 'cup', 'number', 'more'];
+      }
+
     }
   }
-
 
 }
