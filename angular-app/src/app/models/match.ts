@@ -1,10 +1,13 @@
+import { MatchType } from 'src/app/models/matchTypeEnum';
+
 export interface Match {
-    id: number;
-    number: number;
-    date: Date;
-    day: string;
-    venue: string;
-    cup: string;
+  type: MatchType;  
+  id: number;
+  number: number;
+  date: Date;
+  day: string;
+  venue: string;
+  cup: string;
 }
 
 export interface MatchParam {

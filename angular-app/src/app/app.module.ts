@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { NewsComponent } from './components/news/news.component';
@@ -58,7 +59,8 @@ import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

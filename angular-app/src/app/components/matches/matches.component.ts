@@ -7,14 +7,8 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
 import { Match } from 'src/app/models/match';
-
-
-const ELEMENT_DATA: Match[] = [
-  {id: 100, number: 1, date: new  Date('2021-04-21'), day: '', venue: 'Cricket Field', cup: 'R. Potter'},
-  {id: 102, number: 2, date: new  Date('2021-05-02'), day: '', venue: 'Ellenthorpe Middle Lane', cup: 'Lawson Tancred'},
-  {id: 104, number: 3, date: new  Date('2021-05-16'), day: '', venue: 'Ings Lane Bottom', cup: 'Bradley'},
-  {id: 108, number: 4, date: new  Date('2021-06-30'), day: '', venue: 'Roecliffe Lake', cup: 'Whitbread'},
-];
+import { MatchService } from 'src/app/services/match.service';
+import { MatchType } from 'src/app/models/matchTypeEnum';
 
 @Component({
   selector: 'app-matches',
@@ -34,14 +28,40 @@ export class MatchesComponent implements OnInit {
     this.setDisplayedColumns(result.matches);
   });
 
+  public displayedColumns: string[];
+  springMatches: Match[];
+  clubMatches: Match[];
+  jrMatches: Match[];
+  osuMatches: Match[];
+
   constructor(
+    private matchService: MatchService,
     private breakpointObserver: BreakpointObserver,
     public dialog: MatDialog,
     router: Router) {
 
     const datepipe: DatePipe = new DatePipe('en-GB');
 
-    this.matches.forEach(element => {
+    this.springMatches = matchService.GetMatches(MatchType.Spring);
+    this.springMatches.forEach(element => {
+      var formatted = datepipe.transform(element.date, 'E');
+      element.day = formatted == undefined ? '' : formatted;
+    });
+
+    this.clubMatches = matchService.GetMatches(MatchType.Club);
+    this.clubMatches.forEach(element => {
+      var formatted = datepipe.transform(element.date, 'E');
+      element.day = formatted == undefined ? '' : formatted;
+    });
+
+    this.jrMatches = matchService.GetMatches(MatchType.Junior);
+    this.jrMatches.forEach(element => {
+      var formatted = datepipe.transform(element.date, 'E');
+      element.day = formatted == undefined ? '' : formatted;
+    });
+
+    this.osuMatches = matchService.GetMatches(MatchType.OSU);
+    this.osuMatches.forEach(element => {
       var formatted = datepipe.transform(element.date, 'E');
       element.day = formatted == undefined ? '' : formatted;
     });
@@ -60,16 +80,11 @@ export class MatchesComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public displayedColumns: string[];
-  matches = ELEMENT_DATA;
-
   public showMore(match: Match)
   {
-    console.log("You chose match: " + match.id);
     const dialogRef = this.dialog.open(MatchInfoComponent, {maxHeight: "100vh", data: {match: match}});
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
     });
   }
 

@@ -2,50 +2,205 @@
     <h1>Matches</h1>
     <p>You can see more details of each match and the results by selecting<button mat-icon-button color="link" style="color: #1976d2;"><mat-icon>info</mat-icon></button>next to each match.</p>
 
-    <table mat-table [dataSource]="matches" class="mat-elevation-z8">
+    <mat-tab-group mat-align-tabs="start">
+        <mat-tab label="Spring">
+            <br/>
+            <table mat-table [dataSource]="springMatches" class="mat-elevation-z8">
 
-        <!--- Note that these columns can be defined in any order.
-            The actual rendered columns are set as a property on the row definition" -->
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+        
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef class="first-col"> Date </th>
+                    <td mat-cell *matCellDef="let element" class="cell-date first-col"> {{element.date | date:'dd-MMM-YY'}} </td>
+                </ng-container>
+        
+                <!-- Day Column -->
+                <ng-container matColumnDef="day">
+                    <th mat-header-cell *matHeaderCellDef> Day </th>
+                    <td mat-cell *matCellDef="let element"> {{element.day}} </td>
+                </ng-container>
+        
+                <!-- Venue Column -->
+                <ng-container matColumnDef="venue">
+                    <th mat-header-cell *matHeaderCellDef> Venue </th>
+                    <td mat-cell *matCellDef="let element"> {{element.venue}} </td>
+                </ng-container>
+        
+                <!-- Cup Column -->
+                <ng-container matColumnDef="cup">
+                    <th mat-header-cell *matHeaderCellDef> Cup </th>
+                    <td mat-cell *matCellDef="let element"> {{element.cup}} </td>
+                </ng-container>
+        
+                <!-- Number Column -->
+                <ng-container matColumnDef="number">
+                    <th mat-header-cell *matHeaderCellDef> Match </th>
+                    <td mat-cell align="center" *matCellDef="let element"> {{element.number}} </td>
+                </ng-container>
+        
+                <!-- More Column -->
+                <ng-container matColumnDef="more">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="last-col">
+                    <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="showMore(element)"><mat-icon>info</mat-icon></button>
+                </td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+    
+        </mat-tab>
+        <mat-tab label="Club">
+            <br/>
+            <table mat-table [dataSource]="clubMatches" class="mat-elevation-z8">
 
-        <!-- Date Column -->
-        <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef class="first-col"> Date </th>
-            <td mat-cell *matCellDef="let element" class="cell-date first-col"> {{element.date | date:'dd-MMM-YY'}} </td>
-        </ng-container>
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+        
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef class="first-col"> Date </th>
+                    <td mat-cell *matCellDef="let element" class="cell-date first-col"> {{element.date | date:'dd-MMM-YY'}} </td>
+                </ng-container>
+        
+                <!-- Day Column -->
+                <ng-container matColumnDef="day">
+                    <th mat-header-cell *matHeaderCellDef> Day </th>
+                    <td mat-cell *matCellDef="let element"> {{element.day}} </td>
+                </ng-container>
+        
+                <!-- Venue Column -->
+                <ng-container matColumnDef="venue">
+                    <th mat-header-cell *matHeaderCellDef> Venue </th>
+                    <td mat-cell *matCellDef="let element"> {{element.venue}} </td>
+                </ng-container>
+        
+                <!-- Cup Column -->
+                <ng-container matColumnDef="cup">
+                    <th mat-header-cell *matHeaderCellDef> Cup </th>
+                    <td mat-cell *matCellDef="let element"> {{element.cup}} </td>
+                </ng-container>
+        
+                <!-- Number Column -->
+                <ng-container matColumnDef="number">
+                    <th mat-header-cell *matHeaderCellDef> Match </th>
+                    <td mat-cell align="center" *matCellDef="let element"> {{element.number}} </td>
+                </ng-container>
+        
+                <!-- More Column -->
+                <ng-container matColumnDef="more">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="last-col">
+                    <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="showMore(element)"><mat-icon>info</mat-icon></button>
+                </td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        
+        </mat-tab>
+        <mat-tab label="Jr">
+            <br/>
+            <table mat-table [dataSource]="jrMatches" class="mat-elevation-z8">
 
-        <!-- Day Column -->
-        <ng-container matColumnDef="day">
-            <th mat-header-cell *matHeaderCellDef> Day </th>
-            <td mat-cell *matCellDef="let element"> {{element.day}} </td>
-        </ng-container>
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+        
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef class="first-col"> Date </th>
+                    <td mat-cell *matCellDef="let element" class="cell-date first-col"> {{element.date | date:'dd-MMM-YY'}} </td>
+                </ng-container>
+        
+                <!-- Day Column -->
+                <ng-container matColumnDef="day">
+                    <th mat-header-cell *matHeaderCellDef> Day </th>
+                    <td mat-cell *matCellDef="let element"> {{element.day}} </td>
+                </ng-container>
+        
+                <!-- Venue Column -->
+                <ng-container matColumnDef="venue">
+                    <th mat-header-cell *matHeaderCellDef> Venue </th>
+                    <td mat-cell *matCellDef="let element"> {{element.venue}} </td>
+                </ng-container>
+        
+                <!-- Cup Column -->
+                <ng-container matColumnDef="cup">
+                    <th mat-header-cell *matHeaderCellDef> Cup </th>
+                    <td mat-cell *matCellDef="let element"> {{element.cup}} </td>
+                </ng-container>
+        
+                <!-- Number Column -->
+                <ng-container matColumnDef="number">
+                    <th mat-header-cell *matHeaderCellDef> Match </th>
+                    <td mat-cell align="center" *matCellDef="let element"> {{element.number}} </td>
+                </ng-container>
+        
+                <!-- More Column -->
+                <ng-container matColumnDef="more">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="last-col">
+                    <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="showMore(element)"><mat-icon>info</mat-icon></button>
+                </td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-tab>
+        <mat-tab label="O.S.U">
+            <br/>
+            <table mat-table [dataSource]="osuMatches" class="mat-elevation-z8">
 
-        <!-- Venue Column -->
-        <ng-container matColumnDef="venue">
-            <th mat-header-cell *matHeaderCellDef> Venue </th>
-            <td mat-cell *matCellDef="let element"> {{element.venue}} </td>
-        </ng-container>
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+        
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef class="first-col"> Date </th>
+                    <td mat-cell *matCellDef="let element" class="cell-date first-col"> {{element.date | date:'dd-MMM-YY'}} </td>
+                </ng-container>
+        
+                <!-- Day Column -->
+                <ng-container matColumnDef="day">
+                    <th mat-header-cell *matHeaderCellDef> Day </th>
+                    <td mat-cell *matCellDef="let element"> {{element.day}} </td>
+                </ng-container>
+        
+                <!-- Venue Column -->
+                <ng-container matColumnDef="venue">
+                    <th mat-header-cell *matHeaderCellDef> Venue </th>
+                    <td mat-cell *matCellDef="let element"> {{element.venue}} </td>
+                </ng-container>
+        
+                <!-- Cup Column -->
+                <ng-container matColumnDef="cup">
+                    <th mat-header-cell *matHeaderCellDef> Cup </th>
+                    <td mat-cell *matCellDef="let element"> {{element.cup}} </td>
+                </ng-container>
+        
+                <!-- Number Column -->
+                <ng-container matColumnDef="number">
+                    <th mat-header-cell *matHeaderCellDef> Match </th>
+                    <td mat-cell align="center" *matCellDef="let element"> {{element.number}} </td>
+                </ng-container>
+        
+                <!-- More Column -->
+                <ng-container matColumnDef="more">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="last-col">
+                    <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="showMore(element)"><mat-icon>info</mat-icon></button>
+                </td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-tab>
+    </mat-tab-group>
 
-        <!-- Cup Column -->
-        <ng-container matColumnDef="cup">
-            <th mat-header-cell *matHeaderCellDef> Cup </th>
-            <td mat-cell *matCellDef="let element"> {{element.cup}} </td>
-        </ng-container>
-
-        <!-- Number Column -->
-        <ng-container matColumnDef="number">
-            <th mat-header-cell *matHeaderCellDef> Match </th>
-            <td mat-cell align="center" *matCellDef="let element"> {{element.number}} </td>
-        </ng-container>
-
-        <!-- More Column -->
-        <ng-container matColumnDef="more">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element" class="last-col">
-            <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="showMore(element)"><mat-icon>info</mat-icon></button>
-        </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
 </div>
