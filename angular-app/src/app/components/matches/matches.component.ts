@@ -66,7 +66,7 @@ export class MatchesComponent implements OnInit {
   public showMore(match: Match)
   {
     console.log("You chose match: " + match.id);
-    const dialogRef = this.dialog.open(MatchInfoComponent, {data: {match: match}});
+    const dialogRef = this.dialog.open(MatchInfoComponent, {maxHeight: "100vh", data: {match: match}});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
