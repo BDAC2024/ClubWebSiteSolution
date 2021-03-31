@@ -15,5 +15,5 @@ export interface MatchResult {
   matchId: number;
   name: string;
   weight: string;
-  points: number;
+  points?: number;
 }

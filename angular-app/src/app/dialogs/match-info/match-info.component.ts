@@ -11,9 +11,9 @@ const ELEMENT_DATA: MatchResult[] = [
   {matchId: 100, name: "L.Caygill", weight: "1lb 1oz", points: 2},
   {matchId: 100, name: "A.Scaife", weight: "6oz", points: 1},
 
-  {matchId: 102, name: "K.Adcock", weight: "4lb 0oz", points: 12},
-  {matchId: 102, name: "S.Townend", weight: "2lb 2oz", points: 10},
-  {matchId: 102, name: "G.Tilburn", weight: "7oz", points: 8},
+  {matchId: 102, name: "K.Adcock", weight: "4lb 0oz"},
+  {matchId: 102, name: "S.Townend", weight: "2lb 2oz"},
+  {matchId: 102, name: "G.Tilburn", weight: "7oz"},
 
   {matchId: 104, name: "G.Lumsden", weight: "7lb 7oz", points: 12},
   {matchId: 104, name: "G.Tilburn", weight: "2lb 2oz", points: 10},
@@ -36,10 +36,14 @@ export class MatchInfoComponent implements OnInit {
   ngOnInit(): void {
     this.match = this.data.match;
 
-    this.results = this.results.filter(
-      m => m.matchId === this.match.id);
+    this.results = this.results.filter(m => m.matchId === this.match.id);
 
-    console.log(this.match.venue);
+    // If no points are used then hide that column
+    if (this.results.filter(m => m.points === undefined).length == this.results.length)
+    {
+      this.displayedColumns = ["name", "weight"];
+    }
+      
   }
 
 }
