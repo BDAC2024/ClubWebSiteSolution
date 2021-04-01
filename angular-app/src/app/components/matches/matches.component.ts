@@ -52,7 +52,7 @@ export class MatchesComponent implements OnInit {
       this.setDisplayedColumns(result[1]);
     });
 
-    console.log("constructor running");
+    console.log("1.1 constructor running");
 
   }
 
