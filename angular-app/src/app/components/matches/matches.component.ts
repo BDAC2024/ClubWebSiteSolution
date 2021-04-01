@@ -47,7 +47,8 @@ export class MatchesComponent implements OnInit {
     router.events.pipe(
       withLatestFrom(this.isHandsetPortrait$)
     ).subscribe(result => {
-      console.log("Orientation done");
+      this.isHandsetPortrait = result[1];
+      console.log("Orientation done: " + this.isHandsetPortrait);
       this.setDisplayedColumns(result[1]);
     });
 
@@ -83,7 +84,7 @@ export class MatchesComponent implements OnInit {
 
     this.matches = typeMatches;
 
-    console.log("Matches loaded");
+    console.log("Matches loaded, portrait: " + this.isHandsetPortrait);
 
     this.setDisplayedColumns(this.isHandsetPortrait);
 
