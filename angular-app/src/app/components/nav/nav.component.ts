@@ -5,6 +5,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { PreviewService } from 'src/app/services/preview.service';
+import { ScreenService } from 'src/app/services/screen.service';
 
 @Component({
   selector: 'app-nav',
@@ -22,20 +23,35 @@ export class NavComponent implements OnInit {
       map(result => result.matches)
     );
 
+  isHandsetPortrait$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
+    .pipe(
+      map(result => result.matches)
+    );
+  
     constructor(
       private breakpointObserver: BreakpointObserver, 
       //private titleService: Title, 
       //private msalService: MsalService,
       //private logger: LogService,
       public previewService: PreviewService,
+      private screenService: ScreenService,
       router: Router) {
+
+        this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
+
+        // Initial screen settings
+        router.events.pipe(
+          withLatestFrom(this.isHandset$),
+          filter(([a, b]) => b && a instanceof NavigationEnd)
+        ).subscribe(_ => this.drawer.close());
   
-      router.events.pipe(
-        withLatestFrom(this.isHandset$),
-        filter(([a, b]) => b && a instanceof NavigationEnd)
-      ).subscribe(_ => this.drawer.close());
-      this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
-  
+        router.events.pipe(
+          withLatestFrom(this.isHandsetPortrait$)
+        ).subscribe(result => {
+          screenService.IsHandsetPortrait = result[1];
+          console.log("Nav - Orientation done: " + screenService.IsHandsetPortrait );
+        });
+
     }
   
       // Properties

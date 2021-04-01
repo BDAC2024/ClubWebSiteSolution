@@ -10,6 +10,7 @@ import { ClubEvent } from 'src/app/models/club-event';
 import { MatchService } from 'src/app/services/match.service';
 import { MatchType } from 'src/app/models/enums';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { ScreenService } from 'src/app/services/screen.service';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
 
@@ -20,11 +21,6 @@ const datepipe: DatePipe = new DatePipe('en-GB');
 })
 export class MatchesComponent implements OnInit {
 
-  isHandsetPortrait$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
-  .pipe(
-    map(result => result.matches)
-  );
-
   // Change column settings if now portrait handset
   layoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
   .subscribe(result => {
@@ -33,27 +29,17 @@ export class MatchesComponent implements OnInit {
 
   public displayedColumns: string[];
   matches!: ClubEvent[];
-  private isHandsetPortrait: boolean = false;
-
+  
   constructor(
     private matchService: MatchService,
+    private screenService: ScreenService,
     private breakpointObserver: BreakpointObserver,
     public dialog: MatDialog,
     router: Router) {
 
     this.displayedColumns = [];
 
-    // Initial column settings
-    router.events.pipe(
-      withLatestFrom(this.isHandsetPortrait$)
-    ).subscribe(result => {
-      this.isHandsetPortrait = result[1];
-      console.log("Orientation done: " + this.isHandsetPortrait);
-      this.setDisplayedColumns(result[1]);
-    });
-
     console.log("1.1 constructor running");
-
   }
 
   ngOnInit(): void {
@@ -84,16 +70,16 @@ export class MatchesComponent implements OnInit {
 
     this.matches = typeMatches;
 
-    console.log("Matches loaded, portrait: " + this.isHandsetPortrait);
+    console.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
-    this.setDisplayedColumns(this.isHandsetPortrait);
+    this.setDisplayedColumns(this.screenService.IsHandsetPortrait);
 
   }
 
   private setDisplayedColumns(handsetPortrait: boolean): void {
     console.log("Columns set, portrait: " + handsetPortrait);
 
-    this.isHandsetPortrait = handsetPortrait;
+    this.screenService.IsHandsetPortrait;
 
     if (handsetPortrait) {
       this.displayedColumns = ['date', 'description', 'number', 'more'];
