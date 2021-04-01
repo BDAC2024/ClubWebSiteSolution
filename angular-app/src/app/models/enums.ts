@@ -1,8 +1,8 @@
 export enum EventType {
-  Work = 0,
-  Meeting,
+  All = 0,
   Match,
-  OSU,
+  Work,
+  Meeting,
 }
 
 export enum MatchType {

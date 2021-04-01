@@ -1,25 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
 import { ClubEvent } from 'src/app/models/club-event';
-import { MatchService } from 'src/app/services/match.service';
-import { MatchType } from 'src/app/models/enums';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { EventType, MatchType } from 'src/app/models/enums';
+import { ClubEventService } from 'src/app/services/club-event.service';
 import { ScreenService } from 'src/app/services/screen.service';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
 
 @Component({
-  selector: 'app-matches',
-  templateUrl: './matches.component.html',
-  styleUrls: ['./matches.component.css']
+  selector: 'app-diary',
+  templateUrl: './diary.component.html',
+  styleUrls: ['./diary.component.css']
 })
-export class MatchesComponent implements OnInit {
+export class DiaryComponent implements OnInit {
 
   // Change column settings if portrait occurs
   portraitLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
@@ -33,25 +30,25 @@ export class MatchesComponent implements OnInit {
     this.screenService.IsHandsetLandscape = result.matches;
   });
 
+  public events!: ClubEvent[];
   public displayedColumns: string[];
-  public matches!: ClubEvent[];
-  
-  constructor(
-    private matchService: MatchService,
-    public screenService: ScreenService,
-    private breakpointObserver: BreakpointObserver,
-    public dialog: MatDialog,
-    router: Router) {
 
+  constructor(
+    public screenService: ScreenService,
+    public clubEventService: ClubEventService,
+    private breakpointObserver: BreakpointObserver,
+    public dialog: MatDialog
+  ) { 
     this.displayedColumns = [];
 
-    console.log("1.1 constructor running");
   }
 
   ngOnInit(): void {
-    console.log("ngOnInit running");
+    this.loadEvents(0 as EventType);
+  }
 
-    this.loadMatches(0 as MatchType);
+  public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+     this.loadEvents(tabChangeEvent.index as EventType);
   }
 
   public showMore(match: ClubEvent)
@@ -62,19 +59,50 @@ export class MatchesComponent implements OnInit {
     });
   }
 
-  public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.loadMatches(tabChangeEvent.index as MatchType);
-  }
-
-  private loadMatches(type: MatchType): void
+  private loadEvents(type: EventType): void
   {
-    var typeMatches = this.matchService.GetMatches(type);
-    typeMatches.forEach(element => {
+    var typeEvents: ClubEvent[] = [];
+
+    this.clubEventService.GetEvents(type).forEach(val => typeEvents.push(Object.assign({}, val)));
+
+    typeEvents.forEach(element => {
       var formatted = datepipe.transform(element.date, 'E');
       element.day = formatted == undefined ? '' : formatted;
+
+      if (type == EventType.All || type == EventType.Match) {
+
+        if (element.eventType == EventType.Work) {
+          element.description = "Work Party - " + element.description;
+        }
+
+        if (element.eventType == EventType.Match) {
+          var matchType: string = "";
+
+          switch(element.matchType)
+          {
+            case MatchType.Spring:
+              matchType = "Spring";
+              break;
+            case MatchType.Officials:
+              matchType = "Officials";
+              break;
+            case MatchType.OSU:
+              matchType = "O.S.U";
+              break;
+            case MatchType.Junior:
+              matchType = "Junior";
+              break;
+            case MatchType.Club:
+              matchType = "Club";
+              break;
+          }
+
+          element.description = matchType + " - " + element.description;
+        }
+      }
     });
 
-    this.matches = typeMatches;
+    this.events = typeEvents;
 
     console.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
@@ -91,7 +119,7 @@ export class MatchesComponent implements OnInit {
       this.displayedColumns = ['date', 'description', 'number', 'more'];
     } else {
       // If no club given then hide that column
-      if (this.matches && this.matches.filter(m => m.cup === undefined).length == this.matches.length)
+      if (this.events && this.events.filter(m => m.cup === undefined).length == this.events.length)
       {
         this.displayedColumns = ['date', 'day', 'description', 'number', 'more'];
       }

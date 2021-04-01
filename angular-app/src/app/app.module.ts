@@ -28,6 +28,7 @@ import { PhotosComponent } from './components/photos/photos.component';
 import { RulesComponent } from './components/rules/rules.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
+import { DiaryComponent } from './components/diary/diary.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
     RulesComponent,
     PreviewComponent,
     MatchInfoComponent,
+    DiaryComponent,
   ],
   imports: [
     BrowserModule,
