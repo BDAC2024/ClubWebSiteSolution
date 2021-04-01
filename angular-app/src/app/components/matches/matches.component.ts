@@ -99,7 +99,7 @@ export class MatchesComponent implements OnInit {
       this.displayedColumns = ['date', 'description', 'number', 'more'];
     } else {
       // If no club given then hide that column
-      if (this.matches.length > 0 && this.matches.filter(m => m.cup === undefined).length == this.matches.length)
+      if (this.matches && this.matches.filter(m => m.cup === undefined).length == this.matches.length)
       {
         this.displayedColumns = ['date', 'day', 'description', 'number', 'more'];
       }
