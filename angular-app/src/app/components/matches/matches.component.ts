@@ -47,13 +47,14 @@ export class MatchesComponent implements OnInit {
     router.events.pipe(
       withLatestFrom(this.isHandsetPortrait$)
     ).subscribe(result => {
+      this.loadMatches(0 as MatchType);
       this.setDisplayedColumns(result[1]);
     });
 
   }
 
   ngOnInit(): void {
-    this.loadMatches(0 as MatchType);
+    
   }
 
   public showMore(match: ClubEvent)
