@@ -21,10 +21,16 @@ const datepipe: DatePipe = new DatePipe('en-GB');
 })
 export class MatchesComponent implements OnInit {
 
-  // Change column settings if now portrait handset
-  layoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
+  // Change column settings if portrait occurs
+  portraitLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
   .subscribe(result => {
     this.setDisplayedColumns(result.matches);
+  });
+
+  // Change column settings if landscape occurs
+  landscapeLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetLandscape)
+  .subscribe(result => {
+    this.screenService.IsHandsetLandscape = result.matches;
   });
 
   public displayedColumns: string[];
@@ -32,7 +38,7 @@ export class MatchesComponent implements OnInit {
   
   constructor(
     private matchService: MatchService,
-    private screenService: ScreenService,
+    public screenService: ScreenService,
     private breakpointObserver: BreakpointObserver,
     public dialog: MatDialog,
     router: Router) {

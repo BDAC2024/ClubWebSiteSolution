@@ -8,5 +8,5 @@ export class ScreenService {
   constructor() { }
 
   public IsHandsetPortrait: boolean = false;
-
+  public IsHandsetLandscape: boolean = false;
 }

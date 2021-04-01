@@ -28,6 +28,11 @@ export class NavComponent implements OnInit {
       map(result => result.matches)
     );
   
+    isHandsetLandscape$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.HandsetLandscape)
+    .pipe(
+      map(result => result.matches)
+    );
+  
     constructor(
       private breakpointObserver: BreakpointObserver, 
       //private titleService: Title, 
@@ -49,7 +54,14 @@ export class NavComponent implements OnInit {
           withLatestFrom(this.isHandsetPortrait$)
         ).subscribe(result => {
           screenService.IsHandsetPortrait = result[1];
-          console.log("Nav - Orientation done: " + screenService.IsHandsetPortrait );
+          console.log("Nav - Orientation done - portrait: " + screenService.IsHandsetPortrait );
+        });
+
+        router.events.pipe(
+          withLatestFrom(this.isHandsetLandscape$)
+        ).subscribe(result => {
+          screenService.IsHandsetLandscape = result[1];
+          console.log("Nav - Orientation done - landscape: " + screenService.IsHandsetLandscape );
         });
 
     }

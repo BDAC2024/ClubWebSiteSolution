@@ -1,10 +1,10 @@
 <div>
     <h1>Matches</h1>
-    <p *ngIf="false">You can see more details of each match and the results by selecting<button mat-icon-button color="link" style="color: #1976d2;"><mat-icon>info</mat-icon></button>next to each match.</p>
+    <p *ngIf="!this.screenService.IsHandsetLandscape">You can see more details of each match and the results by selecting<button mat-icon-button color="link" style="color: #1976d2;"><mat-icon>info</mat-icon></button>next to each match.</p>
     <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
         <mat-tab label="Spring"></mat-tab>
         <mat-tab label="Club"></mat-tab>
-        <mat-tab label="Jr"></mat-tab>
+        <mat-tab label="Jnr"></mat-tab>
         <mat-tab label="O.S.U"></mat-tab>
     </mat-tab-group>
     <br/>
