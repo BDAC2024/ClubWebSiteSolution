@@ -1,17 +1,7 @@
-import { MatchType } from 'src/app/models/matchTypeEnum';
-
-export interface Match {
-  type: MatchType;  
-  id: number;
-  number: number;
-  date: Date;
-  day: string;
-  venue: string;
-  cup: string;
-}
+import { ClubEvent } from "./club-event";
 
 export interface MatchParam {
-    match: Match;
+    match: ClubEvent;
 }  
 
 export interface MatchResult {

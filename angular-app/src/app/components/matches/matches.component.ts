@@ -6,9 +6,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
-import { Match } from 'src/app/models/match';
+import { ClubEvent } from 'src/app/models/club-event';
 import { MatchService } from 'src/app/services/match.service';
-import { MatchType } from 'src/app/models/matchTypeEnum';
+import { MatchType } from 'src/app/models/enums';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
@@ -32,7 +32,7 @@ export class MatchesComponent implements OnInit {
   });
 
   public displayedColumns: string[];
-  matches!: Match[];
+  matches!: ClubEvent[];
   private isHandsetPortrait: boolean = false;
 
   constructor(
@@ -40,8 +40,6 @@ export class MatchesComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     public dialog: MatDialog,
     router: Router) {
-
-    this.loadMatches(0 as MatchType);
 
     this.displayedColumns = [];
 
@@ -55,9 +53,10 @@ export class MatchesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadMatches(0 as MatchType);
   }
 
-  public showMore(match: Match)
+  public showMore(match: ClubEvent)
   {
     const dialogRef = this.dialog.open(MatchInfoComponent, {maxHeight: "100vh", data: {match: match}});
 
@@ -86,16 +85,16 @@ export class MatchesComponent implements OnInit {
     this.isHandsetPortrait = handsetPortrait;
 
     if (handsetPortrait) {
-      this.displayedColumns = ['date', 'venue', 'number', 'more'];
+      this.displayedColumns = ['date', 'description', 'number', 'more'];
     } else {
       // If no club given then hide that column
-      if (this.matches.filter(m => m.cup === "").length == this.matches.length)
+      if (this.matches.filter(m => m.cup === undefined).length == this.matches.length)
       {
-        this.displayedColumns = ['date', 'day', 'venue', 'number', 'more'];
+        this.displayedColumns = ['date', 'day', 'description', 'number', 'more'];
       }
       else 
       {
-        this.displayedColumns = ['date', 'day', 'venue', 'cup', 'number', 'more'];
+        this.displayedColumns = ['date', 'day', 'description', 'cup', 'number', 'more'];
       }
 
     }
