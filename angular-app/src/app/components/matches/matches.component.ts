@@ -47,14 +47,14 @@ export class MatchesComponent implements OnInit {
     router.events.pipe(
       withLatestFrom(this.isHandsetPortrait$)
     ).subscribe(result => {
-      this.loadMatches(0 as MatchType);
+      console.log("Orientation done");
       this.setDisplayedColumns(result[1]);
     });
 
   }
 
   ngOnInit(): void {
-    
+    this.loadMatches(0 as MatchType);
   }
 
   public showMore(match: ClubEvent)
@@ -79,10 +79,15 @@ export class MatchesComponent implements OnInit {
 
     this.matches = typeMatches;
 
+    console.log("Matches loaded");
+
     this.setDisplayedColumns(this.isHandsetPortrait);
+
   }
 
   private setDisplayedColumns(handsetPortrait: boolean): void {
+    console.log("Columns set, portrait: " + handsetPortrait);
+
     this.isHandsetPortrait = handsetPortrait;
 
     if (handsetPortrait) {
