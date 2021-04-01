@@ -51,9 +51,13 @@ export class MatchesComponent implements OnInit {
       this.setDisplayedColumns(result[1]);
     });
 
+    console.log("constructor running");
+
   }
 
   ngOnInit(): void {
+    console.log("ngOnInit running");
+
     this.loadMatches(0 as MatchType);
   }
 
