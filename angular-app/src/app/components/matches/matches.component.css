@@ -2,13 +2,9 @@
     padding: 0 16px 0 0;
 }
 
-.first-col-header {
-    padding: 0 10px 0 4px !important;
-    text-align: center;
-}
-
 .first-col {
     padding: 0 10px 0 4px !important;
+    text-align: center;
 }
 
 .last-col {
