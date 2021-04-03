@@ -26,9 +26,9 @@ export namespace MatchType {
       case MatchType.Spring:
         return "Spring League";
       case MatchType.Club:
-        return "Club Matches";
+        return "Club Matche";
       case MatchType.Junior:
-        return "Junior Matches";
+        return "Junior Match";
       case MatchType.OSU:
         return "Ouse/Swale/Ure";
       default:

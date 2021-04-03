@@ -1,10 +1,15 @@
 <h2 mat-dialog-title>Match Details</h2>
 <mat-dialog-content class="mat-typography">
-    <table>
+    <table *ngIf="screenService.IsHandsetPortrait">
         <tr><td class="label">Match:</td><td>{{matchType}} No. {{match.number}}</td></tr>
         <tr><td class="label">Date:</td><td>{{match.day}} {{match.date | date:'dd MMM YY'}}</td></tr>
         <tr><td class="label">Venue:</td><td>{{match.description}}</td></tr>
-        <tr><td class="label">Cup:</td><td>{{match.cup}}</td></tr>
+        <tr *ngIf="match.matchDraw"><td class="label">Times:</td><td>Draw at {{match.matchDraw | date:'HH:mm'}}, Fish {{match.matchStart | date:'HH:mm'}} to {{match.matchEnd | date:'HH:mm'}}</td></tr>
+    </table>
+    <table *ngIf="!screenService.IsHandsetPortrait">
+        <tr><td class="label">Match:</td><td>{{matchType}} No. {{match.number}}</td><td class="label">Venue:</td><td>{{match.description}}</td></tr>
+        <tr><td class="label">Date:</td><td>{{match.day}} {{match.date | date:'dd MMM YY'}}</td><td class="label">Cup:</td><td>{{match.cup}}</td></tr>
+        <tr *ngIf="match.matchDraw"><td class="label">Times:</td><td colspan="3">Draw at {{match.matchDraw | date:'HH:mm'}}, Fish {{match.matchStart | date:'HH:mm'}} to {{match.matchEnd | date:'HH:mm'}}</td></tr>
     </table>
     <br/>
     <h2>Results</h2>

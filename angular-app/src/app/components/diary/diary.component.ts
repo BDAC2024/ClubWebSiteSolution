@@ -21,7 +21,8 @@ export class DiaryComponent implements OnInit {
 
   public events!: ClubEvent[];
   public displayedColumns: string[];
-
+  public matchType: number = EventType.Match;
+  
   constructor(
     public screenService: ScreenService,
     public clubEventService: ClubEventService,
@@ -56,48 +57,7 @@ export class DiaryComponent implements OnInit {
 
   private loadEvents(type: EventType): void
   {
-    var typeEvents: ClubEvent[] = [];
-
-    this.clubEventService.GetEvents(type).forEach(val => typeEvents.push(Object.assign({}, val)));
-
-    typeEvents.forEach(element => {
-      var formatted = datepipe.transform(element.date, 'E');
-      element.day = formatted == undefined ? '' : formatted;
-
-      if (type == EventType.All || type == EventType.Match) {
-
-        if (element.eventType == EventType.Work) {
-          element.description = "Work Party - " + element.description;
-        }
-
-        if (element.eventType == EventType.Match) {
-          var matchType: string = "";
-
-          switch(element.matchType)
-          {
-            case MatchType.Spring:
-              matchType = "Spring";
-              break;
-            case MatchType.Officials:
-              matchType = "Officials";
-              break;
-            case MatchType.OSU:
-              matchType = "O.S.U";
-              break;
-            case MatchType.Junior:
-              matchType = "Junior";
-              break;
-            case MatchType.Club:
-              matchType = "Club";
-              break;
-          }
-
-          element.description = matchType + " - " + element.description;
-        }
-      }
-    });
-
-    this.events = typeEvents;
+    this.events = this.clubEventService.GetEvents(type);
 
     this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
@@ -116,11 +76,11 @@ export class DiaryComponent implements OnInit {
       // If no club given then hide that column
       if (this.events && this.events.filter(m => m.cup === undefined).length == this.events.length)
       {
-        this.displayedColumns = ['date', 'time', 'day', 'description', 'number', 'more'];
+        this.displayedColumns = [ 'day', 'date', 'time','description', 'number', 'more'];
       }
       else 
       {
-        this.displayedColumns = ['date', 'time', 'day', 'description', 'cup', 'number', 'more'];
+        this.displayedColumns = ['day', 'date', 'time', 'description', 'cup', 'number', 'more'];
       }
 
     }

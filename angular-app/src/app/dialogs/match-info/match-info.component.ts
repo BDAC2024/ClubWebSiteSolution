@@ -3,6 +3,7 @@ import { MatchParam, MatchResult } from 'src/app/models/match';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ClubEvent } from 'src/app/models/club-event';
 import { MatchType } from 'src/app/models/match-enum';
+import { ScreenService } from 'src/app/services/screen.service';
 
 const ELEMENT_DATA: MatchResult[] = [
   {matchId: 2, name: "G.Tilburn", weight: "3lb 7oz", points: 12},
@@ -49,7 +50,12 @@ export class MatchInfoComponent implements OnInit {
   results = ELEMENT_DATA;
   public displayedColumns: string[] = ["name", "weight", "points"];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: MatchParam) { }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: MatchParam,
+    public screenService: ScreenService
+  ) {
+
+   }
 
   ngOnInit(): void {
     this.match = this.data.match;

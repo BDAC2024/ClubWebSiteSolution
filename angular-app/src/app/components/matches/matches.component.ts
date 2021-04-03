@@ -58,10 +58,6 @@ export class MatchesComponent implements OnInit {
   private loadMatches(type: MatchType): void
   {
     var typeMatches = this.matchService.GetMatches(type);
-    typeMatches.forEach(element => {
-      var formatted = datepipe.transform(element.date, 'E');
-      element.day = formatted == undefined ? '' : formatted;
-    });
 
     this.matches = typeMatches;
 

@@ -25,11 +25,11 @@ export namespace EventType {
             case EventType.All:
                 return "All";
             case EventType.Match:
-                return "Matches";
+                return "Match";
             case EventType.Work:
-                return "Working Parties";
+                return "Working Party";
             case EventType.Meeting:
-                return "Meetings";
+                return "Meeting";
             default:
                 return EventType[type];
         }
