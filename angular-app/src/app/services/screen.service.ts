@@ -1,12 +1,35 @@
 import { Injectable } from '@angular/core';
+import { LiteEvent } from 'src/app/models/lite-event';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScreenService {
 
+  private readonly onOrientationChange = new LiteEvent<void>();
+  public get OrientationChange() { return this.onOrientationChange.expose(); } 
+
+  private _isHandsetPortrait: boolean = false;
+  private _isHandsetLandscape: boolean = false;
+
   constructor() { }
 
-  public IsHandsetPortrait: boolean = false;
-  public IsHandsetLandscape: boolean = false;
+  public get IsHandsetPortrait(): boolean {
+    return this._isHandsetPortrait;
+  }
+
+  public set IsHandsetPortrait(isHandsetPortrait: boolean) {
+    this._isHandsetPortrait = isHandsetPortrait;
+    this.onOrientationChange.trigger();
+  }
+
+  public get IsHandsetLandscape(): boolean {
+    return this._isHandsetLandscape;
+  }
+
+  public set IsHandsetLandscape(isHandsetLandscape: boolean) {
+    this._isHandsetLandscape = isHandsetLandscape;
+    this.onOrientationChange.trigger();
+  }
+ 
 }

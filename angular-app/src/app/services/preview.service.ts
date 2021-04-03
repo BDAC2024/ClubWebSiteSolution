@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
+import { GlobalService } from './global.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PreviewService {
 
-  constructor() {
+  constructor(globalService: GlobalService) {
     this.previewCodeValid = false;
 
-    if (window.location.href.indexOf("localhost") > 0)
+    if (globalService.OnLocalhost)
     {
       this.previewCodeValid = true;
     }

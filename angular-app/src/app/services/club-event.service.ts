@@ -29,7 +29,7 @@ const ELEMENT_DATA: ClubEvent[] = [
   {id: 24, date: new Date('08 Aug 21'), eventType: EventType.Match, matchType: MatchType.Officials, description: 'Officials Match', cup: 'Officials'},
   {id: 25, date: new Date('14 Aug 21'), eventType: EventType.Match, matchType: MatchType.Junior, number: 6, description: 'Roecliffe Pond', cup: 'Hey Trophy'},
   {id: 26, date: new Date('22 Aug 21'), eventType: EventType.Match, matchType: MatchType.Club, number: 4, description: 'Cricket Field', cup: 'Nixon Waite'},
-  {id: 27, date: new Date('05 Sep 21'), eventType: EventType.Match, matchType: MatchType.OSU, number: 3, description: 'Netwon'},
+  {id: 27, date: new Date('05 Sep 21'), eventType: EventType.Match, matchType: MatchType.OSU, number: 3, description: 'Newton'},
   {id: 28, date: new Date('12 Sep 21'), eventType: EventType.Match, matchType: MatchType.Club, number: 5, description: 'Away Match Newton', cup: 'Whitbread'},
   {id: 29, date: new Date('14 Sep 21'), time: new Date('20:00'), eventType: EventType.Meeting, description: 'Committee Meeting'},
   {id: 30, date: new Date('19 Sep 21'), eventType: EventType.Match, matchType: MatchType.OSU, description: 'OSU Spare Date'},
@@ -53,7 +53,7 @@ const ELEMENT_DATA: ClubEvent[] = [
   {id: 48, date: new Date('27 Feb 22'), eventType: EventType.Match, matchType: MatchType.Club, number: 17, description: 'Cricket Field', cup: 'Season End'},
   {id: 49, date: new Date('08 Mar 22'), time: new Date('20:00'), eventType: EventType.Meeting, description: 'Committee Meeting'},
   {id: 50, date: new Date('31 May 22'), eventType: EventType.Meeting, description: 'Presentation Night - Date T.B.A'},
-  
+    
 ];
 
 @Injectable({

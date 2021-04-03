@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
 import { ClubEvent } from 'src/app/models/club-event';
@@ -11,6 +7,7 @@ import { MatchService } from 'src/app/services/match.service';
 import { MatchType } from 'src/app/models/enums';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ScreenService } from 'src/app/services/screen.service';
+import { GlobalService } from 'src/app/services/global.service';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
 
@@ -21,35 +18,27 @@ const datepipe: DatePipe = new DatePipe('en-GB');
 })
 export class MatchesComponent implements OnInit {
 
-  // Change column settings if portrait occurs
-  portraitLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
-  .subscribe(result => {
-    this.setDisplayedColumns(result.matches);
-  });
-
-  // Change column settings if landscape occurs
-  landscapeLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetLandscape)
-  .subscribe(result => {
-    this.screenService.IsHandsetLandscape = result.matches;
-  });
-
   public displayedColumns: string[];
   public matches!: ClubEvent[];
   
   constructor(
     private matchService: MatchService,
     public screenService: ScreenService,
-    private breakpointObserver: BreakpointObserver,
     public dialog: MatDialog,
-    router: Router) {
+    public globalService: GlobalService) {
 
     this.displayedColumns = [];
 
-    console.log("1.1 constructor running");
+    screenService.OrientationChange.on(() => {
+      this.globalService.log("matches - orientation has changed IsHandsetPortrait = " + screenService.IsHandsetPortrait);
+      this.setDisplayedColumns(screenService.IsHandsetPortrait);
+    });
+
+    this.globalService.log("1.1 constructor running");
   }
 
   ngOnInit(): void {
-    console.log("ngOnInit running");
+    this.globalService.log("ngOnInit running");
 
     this.loadMatches(0 as MatchType);
   }
@@ -76,14 +65,14 @@ export class MatchesComponent implements OnInit {
 
     this.matches = typeMatches;
 
-    console.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
+    this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
     this.setDisplayedColumns(this.screenService.IsHandsetPortrait);
 
   }
 
   private setDisplayedColumns(handsetPortrait: boolean): void {
-    console.log("Columns set, portrait: " + handsetPortrait);
+    this.globalService.log("Columns set, portrait: " + handsetPortrait);
 
     this.screenService.IsHandsetPortrait;
 

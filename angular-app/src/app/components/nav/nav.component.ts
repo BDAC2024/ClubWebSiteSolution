@@ -6,6 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { PreviewService } from 'src/app/services/preview.service';
 import { ScreenService } from 'src/app/services/screen.service';
+import { GlobalService } from 'src/app/services/global.service';
 
 @Component({
   selector: 'app-nav',
@@ -32,14 +33,24 @@ export class NavComponent implements OnInit {
     .pipe(
       map(result => result.matches)
     );
-  
+
+  // Change column settings if portrait occurs
+  portraitLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
+  .subscribe(result => {
+    this.screenService.IsHandsetPortrait = result.matches;
+  });
+
+  // Change column settings if landscape occurs
+  landscapeLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetLandscape)
+  .subscribe(result => {
+    this.screenService.IsHandsetLandscape = result.matches;
+  });
+    
     constructor(
       private breakpointObserver: BreakpointObserver, 
-      //private titleService: Title, 
-      //private msalService: MsalService,
-      //private logger: LogService,
       public previewService: PreviewService,
       private screenService: ScreenService,
+      private globalService: GlobalService,
       router: Router) {
 
         this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
@@ -54,14 +65,14 @@ export class NavComponent implements OnInit {
           withLatestFrom(this.isHandsetPortrait$)
         ).subscribe(result => {
           screenService.IsHandsetPortrait = result[1];
-          console.log("Nav - Orientation done - portrait: " + screenService.IsHandsetPortrait );
+          this.globalService.log("Nav - Orientation done - portrait: " + screenService.IsHandsetPortrait );
         });
 
         router.events.pipe(
           withLatestFrom(this.isHandsetLandscape$)
         ).subscribe(result => {
           screenService.IsHandsetLandscape = result[1];
-          console.log("Nav - Orientation done - landscape: " + screenService.IsHandsetLandscape );
+          this.globalService.log("Nav - Orientation done - landscape: " + screenService.IsHandsetLandscape );
         });
 
     }

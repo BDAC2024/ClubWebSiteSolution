@@ -1,4 +1,3 @@
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +6,7 @@ import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.compon
 import { ClubEvent } from 'src/app/models/club-event';
 import { EventType, MatchType } from 'src/app/models/enums';
 import { ClubEventService } from 'src/app/services/club-event.service';
+import { GlobalService } from 'src/app/services/global.service';
 import { ScreenService } from 'src/app/services/screen.service';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
@@ -18,28 +18,21 @@ const datepipe: DatePipe = new DatePipe('en-GB');
 })
 export class DiaryComponent implements OnInit {
 
-  // Change column settings if portrait occurs
-  portraitLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetPortrait)
-  .subscribe(result => {
-    this.setDisplayedColumns(result.matches);
-  });
-
-  // Change column settings if landscape occurs
-  landscapeLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetLandscape)
-  .subscribe(result => {
-    this.screenService.IsHandsetLandscape = result.matches;
-  });
-
   public events!: ClubEvent[];
   public displayedColumns: string[];
 
   constructor(
     public screenService: ScreenService,
     public clubEventService: ClubEventService,
-    private breakpointObserver: BreakpointObserver,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public globalService: GlobalService
   ) { 
     this.displayedColumns = [];
+
+    screenService.OrientationChange.on(() => {
+      globalService.log("diary - orientation has changed IsHandsetPortrait = " + screenService.IsHandsetPortrait);
+      this.setDisplayedColumns(screenService.IsHandsetPortrait);
+    });
 
   }
 
@@ -104,28 +97,28 @@ export class DiaryComponent implements OnInit {
 
     this.events = typeEvents;
 
-    console.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
+    this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
     this.setDisplayedColumns(this.screenService.IsHandsetPortrait);
 
   }
 
   private setDisplayedColumns(handsetPortrait: boolean): void {
-    console.log("Columns set, portrait: " + handsetPortrait);
+    this.globalService.log("Columns set, portrait: " + handsetPortrait);
 
     this.screenService.IsHandsetPortrait;
 
     if (handsetPortrait) {
-      this.displayedColumns = ['date', 'description', 'number', 'more'];
+      this.displayedColumns = ['date', 'time', 'description', 'number', 'more'];
     } else {
       // If no club given then hide that column
       if (this.events && this.events.filter(m => m.cup === undefined).length == this.events.length)
       {
-        this.displayedColumns = ['date', 'day', 'description', 'number', 'more'];
+        this.displayedColumns = ['date', 'time', 'day', 'description', 'number', 'more'];
       }
       else 
       {
-        this.displayedColumns = ['date', 'day', 'description', 'cup', 'number', 'more'];
+        this.displayedColumns = ['date', 'time', 'day', 'description', 'cup', 'number', 'more'];
       }
 
     }
