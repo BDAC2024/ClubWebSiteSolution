@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
 import { ClubEvent } from 'src/app/models/club-event';
 import { MatchService } from 'src/app/services/match.service';
-import { MatchType } from 'src/app/models/enums';
+import { MatchType } from 'src/app/models/match-enum';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ScreenService } from 'src/app/services/screen.service';
 import { GlobalService } from 'src/app/services/global.service';
@@ -22,7 +22,7 @@ export class MatchesComponent implements OnInit {
   public matches!: ClubEvent[];
   
   constructor(
-    private matchService: MatchService,
+    public matchService: MatchService,
     public screenService: ScreenService,
     public dialog: MatDialog,
     public globalService: GlobalService) {

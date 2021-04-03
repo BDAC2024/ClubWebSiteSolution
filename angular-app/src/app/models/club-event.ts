@@ -1,4 +1,5 @@
-import { EventType, MatchType } from 'src/app/models/enums';
+import { EventType } from 'src/app/models/event-enum';
+import { MatchType } from 'src/app/models/match-enum';
 
 export interface ClubEvent {
     id: number;

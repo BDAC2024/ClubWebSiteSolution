@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { MatchParam, MatchResult } from 'src/app/models/match';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ClubEvent } from 'src/app/models/club-event';
-import { MatchType } from 'src/app/models/enums';
+import { MatchType } from 'src/app/models/match-enum';
 
 const ELEMENT_DATA: MatchResult[] = [
   {matchId: 2, name: "G.Tilburn", weight: "3lb 7oz", points: 12},
@@ -53,25 +53,7 @@ export class MatchInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.match = this.data.match;
-    
-    switch (this.match.matchType) {
-      case MatchType.Spring:
-        this.matchType = "Spring";
-        break;
-
-      case MatchType.Club:
-        this.matchType = "Club";
-        break;
-
-      case MatchType.Junior:
-        this.matchType = "Junior";
-        break;
-
-      case MatchType.OSU:
-        this.matchType = "Ouse, Swale & Ure";
-        break;
-        
-     }
+    this.matchType = MatchType.FullName(this.match.matchType as MatchType);
 
     this.results = this.results.filter(m => m.matchId === this.match.id);
 

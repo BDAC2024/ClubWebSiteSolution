@@ -4,7 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
 import { ClubEvent } from 'src/app/models/club-event';
-import { EventType, MatchType } from 'src/app/models/enums';
+import { EventType } from 'src/app/models/event-enum';
+import { MatchType } from 'src/app/models/match-enum';
 import { ClubEventService } from 'src/app/services/club-event.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { ScreenService } from 'src/app/services/screen.service';
@@ -38,6 +39,7 @@ export class DiaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEvents(0 as EventType);
+
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ClubEvent } from '../models/club-event';
-import { EventType, MatchType } from '../models/enums';
+import { EventType } from '../models/event-enum';
+import { MatchType } from '../models/match-enum';
+import { ScreenService } from './screen.service';
 
 const ELEMENT_DATA: ClubEvent[] = [
   {id: 1, date: new Date('27 Mar 21'), time: new Date('13:00'), eventType: EventType.Work, description: 'Pond'},
@@ -61,7 +63,7 @@ const ELEMENT_DATA: ClubEvent[] = [
 })
 export class ClubEventService {
 
-  constructor() { }
+  constructor(private screenService: ScreenService) { }
 
   public GetMatches(): ClubEvent[]
   {
@@ -76,4 +78,14 @@ export class ClubEventService {
       return ELEMENT_DATA.filter(m => m.eventType === type);
     }
   }
+
+  public get AllTabName() : string { return this.getTabName(EventType.All); }
+  public get MatchTabName() : string { return this.getTabName(EventType.Match); }
+  public get WorkPartyTabName() : string { return this.getTabName(EventType.Work); }
+  public get MeetingTabName() : string { return this.getTabName(EventType.Meeting); }
+
+  private getTabName(type: EventType): string {
+    return this.screenService.IsHandsetPortrait? EventType.CompactName(type) : EventType.FullName(type)
+  }
+
 }

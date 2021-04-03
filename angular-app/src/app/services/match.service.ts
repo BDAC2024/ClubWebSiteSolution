@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ClubEvent } from 'src/app/models/club-event';
-import { EventType, MatchType } from 'src/app/models/enums';
+import { MatchType } from 'src/app/models/match-enum';
 import { ClubEventService } from './club-event.service';
+import { ScreenService } from './screen.service';
 
 
 @Injectable({
@@ -10,12 +11,22 @@ import { ClubEventService } from './club-event.service';
 export class MatchService {
 
   constructor(
-    private clubEventService: ClubEventService
+    private clubEventService: ClubEventService,
+    private screenService: ScreenService
   ) { }
 
   public GetMatches(type: MatchType): ClubEvent[]
   {
     return this.clubEventService.GetMatches().filter(m => m.matchType === type); ;
+  }
+
+  public get SpringTabName() : string { return this.getTabName(MatchType.Spring); }
+  public get ClubTabName() : string { return this.getTabName(MatchType.Club); }
+  public get JuniorTabName() : string { return this.getTabName(MatchType.Junior); }
+  public get OsuTabName() : string { return this.getTabName(MatchType.OSU); }
+
+  private getTabName(type: MatchType): string {
+    return this.screenService.IsHandsetPortrait? MatchType.CompactName(type) : MatchType.FullName(type)
   }
 
 }
