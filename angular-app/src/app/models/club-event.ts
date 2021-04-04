@@ -47,7 +47,7 @@ export class ClubEvent implements IClubEvent {
     if (this.eventType == EventType.Work) {
       return EventType.FullName(this.eventType) + " at " + this.description;
     } else if (this.eventType == EventType.Match) {
-      return MatchType.FullName(this.matchType as MatchType) + " at " + this.description;
+      return `${MatchType.FullName(this.matchType as MatchType)} ${this.number? ` no. ${this.number}` : ``} at ${this.description}`;
     } else {
       return this.description;
     }

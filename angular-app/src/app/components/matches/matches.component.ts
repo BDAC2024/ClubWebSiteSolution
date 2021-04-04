@@ -8,6 +8,7 @@ import { MatchType } from 'src/app/models/match-enum';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ScreenService } from 'src/app/services/screen.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { DisplayedColumnsForMatches } from 'src/app/models/displayed-columns-matches';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
 
@@ -71,18 +72,22 @@ export class MatchesComponent implements OnInit {
     this.globalService.log("Columns set, portrait: " + handsetPortrait);
 
     this.screenService.IsHandsetPortrait;
+    var dc = new DisplayedColumnsForMatches();
 
     if (handsetPortrait) {
-      this.displayedColumns = ['date', 'description', 'number', 'more'];
+      dc.day[0] = false;
+      dc.cup[0] = false;
+      this.displayedColumns = dc.displayedColumns;
     } else {
       // If no club given then hide that column
       if (this.matches && this.matches.filter(m => m.cup === undefined).length == this.matches.length)
       {
-        this.displayedColumns = ['date', 'day', 'description', 'number', 'more'];
+        dc.cup[0] = false;
+        this.displayedColumns = dc.displayedColumns;
       }
       else 
       {
-        this.displayedColumns = ['date', 'day', 'description', 'cup', 'number', 'more'];
+        this.displayedColumns = dc.displayedColumns;
       }
 
     }

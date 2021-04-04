@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
 import { ClubEvent } from 'src/app/models/club-event';
+import { DisplayedColumnsForEvents } from 'src/app/models/displayed-columns-events';
 import { EventType } from 'src/app/models/event-enum';
 import { MatchType } from 'src/app/models/match-enum';
 import { ClubEventService } from 'src/app/services/club-event.service';
@@ -70,17 +71,23 @@ export class DiaryComponent implements OnInit {
 
     this.screenService.IsHandsetPortrait;
 
+    var dc = new DisplayedColumnsForEvents();
+    dc.displayedColumns;
+
     if (handsetPortrait) {
-      this.displayedColumns = ['date', 'time', 'description', 'number', 'more'];
+      dc.day[0] = false;
+      dc.cup[0] = false;
+      this.displayedColumns = dc.displayedColumns;
     } else {
       // If no club given then hide that column
       if (this.events && this.events.filter(m => m.cup === undefined).length == this.events.length)
       {
-        this.displayedColumns = [ 'day', 'date', 'time','description', 'number', 'more'];
+        dc.cup[0] = false;
+        this.displayedColumns = dc.displayedColumns;
       }
       else 
       {
-        this.displayedColumns = ['day', 'date', 'time', 'description', 'cup', 'number', 'more'];
+        this.displayedColumns = dc.displayedColumns;
       }
 
     }
