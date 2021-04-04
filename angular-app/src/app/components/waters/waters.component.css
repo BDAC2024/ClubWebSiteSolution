@@ -23,3 +23,7 @@ ul {
 li {
     margin-bottom: 12px;
 }
+
+agm-map {
+    height: 300px;
+}

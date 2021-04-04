@@ -1,7 +1,5 @@
 <h1>Club Waters</h1>
 
-<div [innerHTML]="waters[0].location"></div>
-
 <ul>
     <li *ngFor="let item of waters">
         <mat-card class="news-card">
@@ -17,7 +15,18 @@
                 <h3>Directions</h3>
                 <div [innerHTML]="item.directions"></div>
                 <h3>Location</h3>
-                <div [innerHTML]="item.location"></div>
+                <agm-map [zoom]=12
+                    [latitude]='item.lat' 
+                    [longitude]='item.long'
+                    >
+                    
+                        <agm-marker 
+                            [latitude]="item.lat" 
+                            [longitude]="item.long">    
+                        </agm-marker>
+                    
+                    </agm-map>
+
             </mat-card-content>
         </mat-card>
     </li>
