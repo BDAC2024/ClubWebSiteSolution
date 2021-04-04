@@ -19,6 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
 
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { NewsComponent } from './components/news/news.component';
@@ -62,7 +63,8 @@ import { DiaryComponent } from './components/diary/diary.component';
     MatInputModule,
     MatTableModule,
     MatDialogModule,
-    MatTabsModule
+    MatTabsModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

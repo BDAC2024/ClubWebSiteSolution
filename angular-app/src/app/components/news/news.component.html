@@ -1,5 +1,13 @@
 <h1>Latest News</h1>
-<h2>27th March 2021 - Working Party</h2>
-<p>There will be a working party at Roecliffe Lake on Saturday 27th March 2021 at 1pm. Please come along and help keep the lake tidy and well equipped for fishing by all. </p>
-<h2>14th March 2021 - Another river season draws to a close</h2>
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt, sit natus ab ad soluta cum. Doloribus architecto eum labore quam? Porro perspiciatis inventore voluptate quos quibusdam repudiandae amet nihil animi.. </p>
+
+<ul>
+    <li *ngFor="let item of items">
+        <mat-card class="news-card">
+            <mat-card-header>
+                <mat-card-title>{{item.title}}</mat-card-title>
+                <mat-card-subtitle>{{item.date | date:'dd MMM YY'}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>{{item.body}}</mat-card-content>
+        </mat-card>
+    </li>
+</ul>
