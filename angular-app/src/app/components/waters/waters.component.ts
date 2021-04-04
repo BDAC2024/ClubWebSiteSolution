@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Water } from 'src/app/models/water';
+import { WaterType } from 'src/app/models/water-enum';
+import { WatersService } from 'src/app/services/waters.service';
 
 @Component({
   selector: 'app-waters',
@@ -7,9 +10,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WatersComponent implements OnInit {
 
-  constructor() { }
+  waters!: Water[];
+
+  constructor(public watersService: WatersService) { }
 
   ngOnInit(): void {
+    this.waters = this.watersService.Waters();
   }
+
 
 }

@@ -1,2 +1,24 @@
 <h1>Club Waters</h1>
-<p>This will contain all of our waters including a description of each (access, species etc) along with a Google map with a location that can be used for directions.</p>
+
+<div [innerHTML]="waters[0].location"></div>
+
+<ul>
+    <li *ngFor="let item of waters">
+        <mat-card class="news-card">
+            <mat-card-header>
+                <mat-card-title>{{item.name}}</mat-card-title>
+                <mat-card-subtitle>{{watersService.WaterType(item.type)}}</mat-card-subtitle>
+                <mat-card-subtitle>{{watersService.AccessType(item.access)}}</mat-card-subtitle>
+                <mat-card-subtitle>Species: {{item.species}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <h3>Description</h3>
+                <div [innerHTML]="item.description"></div>
+                <h3>Directions</h3>
+                <div [innerHTML]="item.directions"></div>
+                <h3>Location</h3>
+                <div [innerHTML]="item.location"></div>
+            </mat-card-content>
+        </mat-card>
+    </li>
+</ul>
