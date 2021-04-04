@@ -12,7 +12,6 @@ export class DisplayedColumnsForEvents {
         if (this.day[0] == true) { colsToDisplay[this.day[1]] = "day"}
         if (this.date[0] == true) { colsToDisplay[this.date[1]] = "date"}
         if (this.time[0]) { colsToDisplay[this.time[1]] = "time"}
-        if (this.date[0]) { colsToDisplay[this.date[1]] = "date"}
         if (this.description[0]) { colsToDisplay[this.description[1]] = "description"}
         if (this.cup[0]) { colsToDisplay[this.cup[1]] = "cup"}
         if (this.more[0]) { colsToDisplay[this.more[1]] = "more"}
@@ -25,4 +24,23 @@ export class DisplayedColumnsForEvents {
 
         return sortedColsToDisplay;
     }
+
+    public SetAll(): void {
+        this.day[0] = true;
+        this.date[0] = true;
+        this.time[0] = true;
+        this.description[0] = true;
+        this.cup[0] = true;
+        this.more[0] = true;
+    }
+
+    public ClearAll(): void {
+        this.day[0] = false;
+        this.date[0] = false;
+        this.time[0] = false;
+        this.description[0] = false;
+        this.cup[0] = false;
+        this.more[0] = false;
+    }
+   
 }

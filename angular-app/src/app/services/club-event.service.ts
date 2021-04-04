@@ -105,8 +105,6 @@ export class ClubEventService {
       events.push(clubEvent);
     });
 
-    console.log("day = " + events[0].day);
-
     return events;
   }
 }

@@ -24,4 +24,22 @@ export class DisplayedColumnsForMatches {
 
         return sortedColsToDisplay;
     }
+
+    public SetAll(): void {
+        this.date[0] = true;
+        this.day[0] = true;
+        this.description[0] = true;
+        this.cup[0] = true;
+        this.number[0] = true;
+        this.more[0] = true;
+    }
+
+    public ClearAll(): void {
+        this.date[0] = false;
+        this.day[0] = false;
+        this.description[0] = false;
+        this.cup[0] = false;
+        this.number[0] = false;
+        this.more[0] = false;
+    }
 }

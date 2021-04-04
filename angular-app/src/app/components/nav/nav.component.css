@@ -23,11 +23,17 @@
   }
 
   .toolbar #facebook-logo {
-    height: 40px;
-    margin: 0 8px;
+    height: 24px;
+    margin: 0 6px;
   }
 
-  .toolbar #facebook-logo:hover{
+  .toolbar #youtube-logo {
+    height: 40px;
+    margin: 0 6px;
+  }
+
+  .toolbar #facebook-logo:hover, 
+  .toolbar #youtube-logo:hover {
     opacity: 0.8;
   }
 
