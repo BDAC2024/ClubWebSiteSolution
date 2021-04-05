@@ -6,4 +6,5 @@ export enum WaterType {
 export enum WaterAccessType {
     MembersOnly = 0,
     DayTicketsAvailable,
+    MembersAndGuestTickets
 }

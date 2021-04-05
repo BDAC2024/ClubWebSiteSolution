@@ -1,5 +1,8 @@
 <h1>Club Waters</h1>
-
+<h3>PLEASE COMPLY WITH ALL NOTICE BOARDS</h3>
+<p>
+    Keep to all footpaths, do not wander from banks. All gates must be closed after being opened. Do not climb on walls. Do not cause a parking obstruction by blocking gateways etc.
+</p>
 <ul>
     <li *ngFor="let item of waters">
         <mat-card class="news-card">
@@ -14,16 +17,24 @@
                 <div [innerHTML]="item.description"></div>
                 <h3>Directions</h3>
                 <div [innerHTML]="item.directions"></div>
+                <br/>
+                <a target="_blank" [href]="watersService.Directions(item)">Map of directions</a>
                 <h3>Location</h3>
-                <agm-map [zoom]=12
+                <agm-map 
+                    [scrollwheel]="false"     
+                    [disableDefaultUI]="true"
+                    [zoom]=14
                     [latitude]='item.lat' 
                     [longitude]='item.long'
                     >
-                    
-                        <agm-marker 
-                            [latitude]="item.lat" 
-                            [longitude]="item.long">    
-                        </agm-marker>
+                    <agm-map-type-control></agm-map-type-control> 
+                    <agm-zoom-control></agm-zoom-control> 
+                    <agm-fullscreen-control></agm-fullscreen-control> 
+
+                    <agm-marker 
+                        [latitude]="item.lat" 
+                        [longitude]="item.long">    
+                    </agm-marker>
                     
                     </agm-map>
 

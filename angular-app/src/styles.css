@@ -2,8 +2,16 @@
 @import '~bootstrap/dist/css/bootstrap-grid.min.css';
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { background-color: red; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .past-event {
     font-weight:lighter;
+}
+
+.mat-drawer {
+    background-color: #f0f0f0;
+}
+
+.mat-drawer-container {
+    background-color:#f0f0f0  ;
 }
