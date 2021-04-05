@@ -32,8 +32,8 @@
                     <agm-fullscreen-control></agm-fullscreen-control> 
 
                     <agm-marker [latitude]="item.lat[0]" [longitude]="item.long[0]"></agm-marker>
-                    <agm-marker *ngIf="item.lat.length > 1" [latitude]="item.lat[1]" [longitude]="item.long[1]" title="Small apron"></agm-marker>
-                    <agm-marker *ngIf="item.lat.length > 2" [latitude]="item.lat[2]" [longitude]="item.long[2]" label="Fred" title="Astair"></agm-marker>
+                    <agm-marker *ngIf="item.lat.length > 1" [latitude]="item.lat[1]" [longitude]="item.long[1]"></agm-marker>
+                    <agm-marker *ngIf="item.lat.length > 2" [latitude]="item.lat[2]" [longitude]="item.long[2]"></agm-marker>
                 </agm-map>
 
             </mat-card-content>
