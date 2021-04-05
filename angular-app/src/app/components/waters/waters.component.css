@@ -28,7 +28,6 @@ agm-map {
     height: 300px;
 }
 
-.rule-list {
-    padding-left: 0px;
-    padding-inline-start: 6px !important;
+::ng-deep .rule-list {
+    padding-left: 19px !important;
 }

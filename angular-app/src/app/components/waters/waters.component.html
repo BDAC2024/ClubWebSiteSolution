@@ -10,33 +10,32 @@
                 <mat-card-title>{{item.name}}</mat-card-title>
                 <mat-card-subtitle>{{watersService.WaterType(item.type)}}</mat-card-subtitle>
                 <mat-card-subtitle>{{watersService.AccessType(item.access)}}</mat-card-subtitle>
-                <mat-card-subtitle>Species: {{item.species}}</mat-card-subtitle>
+                <mat-card-subtitle>Main Species: {{item.species}}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-                <h3>Description</h3>
+                <br/>
                 <div [innerHTML]="item.description"></div>
                 <h3>Directions</h3>
                 <div [innerHTML]="item.directions"></div>
                 <br/>
                 <a target="_blank" [href]="watersService.Directions(item)">Map of directions</a>
-                <h3>Location</h3>
+                <h3>Location of Car Parking</h3>
                 <agm-map 
                     [scrollwheel]="false"     
                     [disableDefaultUI]="true"
                     [zoom]=14
-                    [latitude]='item.lat' 
-                    [longitude]='item.long'
+                    [latitude]='watersService.Positions(item)[0].lat' 
+                    [longitude]='watersService.Positions(item)[0].long'
                     >
                     <agm-map-type-control></agm-map-type-control> 
                     <agm-zoom-control></agm-zoom-control> 
                     <agm-fullscreen-control></agm-fullscreen-control> 
 
-                    <agm-marker 
-                        [latitude]="item.lat" 
-                        [longitude]="item.long">    
+                    <agm-marker [latitude]="item.lat[0]" [longitude]="item.long[0]"></agm-marker>
+                    <agm-marker *ngIf="item.lat.length > 1" [latitude]="item.lat[1]" [longitude]="item.long[1]"></agm-marker>
+                    <agm-marker *ngIf="item.lat.length > 2" [latitude]="item.lat[2]" [longitude]="item.long[2]">
                     </agm-marker>
-                    
-                    </agm-map>
+                </agm-map>
 
             </mat-card-content>
         </mat-card>

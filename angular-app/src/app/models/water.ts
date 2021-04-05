@@ -8,6 +8,11 @@ export class Water {
     description!: string;
     species!: string;
     directions!: string;
+    lat!: number[];
+    long!: number[];
+}
+
+export class Position {
     lat!: number;
     long!: number;
 }
