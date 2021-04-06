@@ -10,6 +10,18 @@ export class Water {
     directions!: string;
     lat!: number[];
     long!: number[];
+    icon!: string[];
+    label!: string[];
+    pathLat!: number[];
+    pathLong!: number[];
+    markers!: Marker[];
+    path!: Position[];
+}
+
+export class Marker {
+    pos!: Position;
+    label!: string;
+    icon!: string;
 }
 
 export class Position {

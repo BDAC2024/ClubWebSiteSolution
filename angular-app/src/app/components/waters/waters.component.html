@@ -20,35 +20,37 @@
                 <br/>
                 <a target="_blank" [href]="watersService.Directions(item)">Map of directions</a>
                 <h3>Location</h3>
+                Key: -
+                <table border="0">
+                    <tr><td><img width="20px" src='assets\car.png'></td><td>Car parking</td></tr>
+                    <tr *ngIf="watersService.HasLimits(item)"><td><img width="20px" src='assets\limit.png'></td><td>Limit of stretch</td></tr>
+                    <tr *ngIf="item.path.length > 0"><td style="color: lightgreen;"><b>---</b></td><td>Route to parking</td></tr>
+                </table>
                 <agm-map 
+                    [mapTypeId]='$any(mapType)'
                     [scrollwheel]="false"     
                     [disableDefaultUI]="true"
                     [zoom]=14
-                    [latitude]='watersService.Positions(item)[0].lat' 
-                    [longitude]='watersService.Positions(item)[0].long'
+                    [latitude]='item.markers[0].pos.lat' 
+                    [longitude]='item.markers[0].pos.long'
                     >
                     <agm-map-type-control></agm-map-type-control> 
                     <agm-zoom-control></agm-zoom-control> 
                     <agm-fullscreen-control></agm-fullscreen-control> 
 
-                    <!-- Note: I cannot get ngFor working hence using ngIf -->
-                    <agm-marker [latitude]="item.lat[0]" [longitude]="item.long[0]">
-                        <agm-info-window>Car park</agm-info-window>
-                    </agm-marker>
-                    <agm-marker *ngIf="item.lat.length > 1" [latitude]="item.lat[1]" [longitude]="item.long[1]">
-                        <!-- <agm-info-window>Apron</agm-info-window> -->
-                    </agm-marker>
-                    <agm-marker *ngIf="item.lat.length > 2" [latitude]="item.lat[2]" [longitude]="item.long[2]">
-                        <agm-info-window>Limit</agm-info-window>
-                    </agm-marker>
-                    <agm-marker *ngIf="item.lat.length > 3" [latitude]="item.lat[3]" [longitude]="item.long[3]">
-                        <!-- <agm-info-window>Four</agm-info-window> -->
-                    </agm-marker>
-                    <agm-marker *ngIf="item.lat.length > 4" [latitude]="item.lat[4]" [longitude]="item.long[4]">
-                        <!-- <agm-info-window>Five</agm-info-window> -->
-                    </agm-marker>
-                </agm-map>
+                    <agm-marker *ngFor="let marker of item.markers" 
+                        [iconUrl]="marker.icon"    
+                        [latitude]="marker.pos.lat" 
+                        [longitude]="marker.pos.long">
+                        <agm-info-window>{{marker.label}}</agm-info-window>
+                    </agm-marker> -->
+                    
+                    <agm-polyline [strokeColor]="pathColour">
+                        <agm-polyline-point *ngFor="let p of item.path" [latitude]="p.lat" [longitude]="p.long"></agm-polyline-point>
+                    </agm-polyline>
 
+                </agm-map>
+                
             </mat-card-content>
         </mat-card>
     </li>
