@@ -20,11 +20,33 @@
                 <br/>
                 <a target="_blank" [href]="item.Directions">Map of directions</a>
                 <h3>Location</h3>
-                Key: -
                 <table border="0">
-                    <tr><td><img width="20px" src='assets\car.png'></td><td>Car parking</td></tr>
-                    <tr *ngIf="item.HasLimits"><td><img width="20px" src='assets\limit.png'></td><td>Limit of stretch</td></tr>
-                    <tr *ngIf="item.Path.length > 0"><td style="color: lightgreen;"><b>---</b></td><td>Route to parking</td></tr>
+                    <tr>
+                        <td align="center">
+                            <img width="20px" src='assets\car.png'>
+                        </td>
+                        <td style="width: 18px;"> </td>
+                        <td *ngIf="item.Path.length > 0" align="center">
+                            <div style="display: inline; color: lightgreen; font-weight:900;"><b>_____</b><br/><br/></div>
+                        </td>
+                        <td style="width: 18px;"> </td>
+                        <td *ngIf="item.HasLimits" align="center">
+                            <img width="20px" src='assets\limit.png'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            Car Parking
+                        </td>
+                        <td style="width: 18px;"> </td>
+                        <td *ngIf="item.Path.length > 0" align="center">
+                            Route
+                        </td>
+                        <td style="width: 18px;"> </td>
+                        <td *ngIf="item.HasLimits" align="center">
+                            Limit of stretch
+                        </td>
+                    </tr>
                 </table>
                 <agm-map 
                     [mapTypeId]='$any(mapType)'
