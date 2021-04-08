@@ -7,6 +7,7 @@ export interface MatchParam {
 export interface MatchResult {
   matchId: number;
   name: string;
+  peg: string;
   weight: string;
   points?: number;
 }
