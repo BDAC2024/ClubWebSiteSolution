@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ClubEvent, IClubEvent } from '../models/club-event';
+import { ClubEvent, ClubEventDto, } from '../models/club-event';
 import { EventType } from '../models/event-enum';
 import { MatchType } from '../models/match-enum';
 import { ScreenService } from './screen.service';
+import { plainToClass } from 'class-transformer';
 
-const ELEMENT_DATA: IClubEvent[] = [
+const ELEMENT_DATA: ClubEventDto[] = [
   {id: 1, date: new Date('2021-03-27:13:00'), eventType: EventType.Work, description: 'Pond'},
   {id: 2, date: new Date('2021-04-11'), eventType: EventType.Match, matchType: MatchType.Spring, matchDraw: new Date('2021-04-11:08:30'), matchStart: new Date('2021-04-11:09:30'), matchEnd: new Date('2021-04-11:15:30'), number: 1, description: 'Roecliffe Pond'},
   {id: 3, date: new Date('2021-04-13:20:00'), eventType: EventType.Meeting, description: 'Committee Meeting'},
@@ -64,11 +65,6 @@ export class ClubEventService {
 
   constructor(private screenService: ScreenService) { }
 
-  public GetMatches(): ClubEvent[]
-  {
-    return this.readEvents().filter(m => m.eventType === EventType.Match);
-  }
-
   public GetEvents(type: EventType): ClubEvent[]
   {
     if (type == EventType.All) {
@@ -88,23 +84,8 @@ export class ClubEventService {
   }
 
   private readEvents(): ClubEvent[] {
-    var events: ClubEvent[] = [];
+    var events = plainToClass(ClubEvent, ELEMENT_DATA);
     
-    ELEMENT_DATA.forEach((ev) => {
-      var clubEvent: ClubEvent = new ClubEvent();
-      clubEvent.cup = ev.cup;
-      clubEvent.date = ev.date;
-      clubEvent.description = ev.description;
-      clubEvent.eventType = ev.eventType;
-      clubEvent.id = ev.id;
-      clubEvent.matchType = ev.matchType;
-      clubEvent.matchDraw = ev.matchDraw;
-      clubEvent.matchStart = ev.matchStart;
-      clubEvent.matchEnd = ev.matchEnd;
-      clubEvent.number = ev.number;
-      events.push(clubEvent);
-    });
-
     return events;
   }
 }

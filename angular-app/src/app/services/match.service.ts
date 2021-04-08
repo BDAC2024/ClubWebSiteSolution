@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ClubEvent } from 'src/app/models/club-event';
 import { MatchType } from 'src/app/models/match-enum';
+import { EventType } from '../models/event-enum';
 import { ClubEventService } from './club-event.service';
 import { ScreenService } from './screen.service';
 
@@ -17,7 +18,7 @@ export class MatchService {
 
   public GetMatches(type: MatchType): ClubEvent[]
   {
-    return this.clubEventService.GetMatches().filter(m => m.matchType === type); ;
+    return this.clubEventService.GetEvents(EventType.Match).filter(m => m.matchType === type); ;
   }
 
   public get SpringTabName() : string { return this.getTabName(MatchType.Spring); }

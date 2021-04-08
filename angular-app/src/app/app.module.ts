@@ -23,6 +23,8 @@ import { MatCardModule } from '@angular/material/card';
 
 import { AgmCoreModule } from '@agm/core';
 
+import {  } from 'reflect-metadata';
+
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { NewsComponent } from './components/news/news.component';
 import { WatersComponent } from './components/waters/waters.component';

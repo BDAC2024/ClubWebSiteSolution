@@ -4,20 +4,7 @@ import { MatchType } from 'src/app/models/match-enum';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
 
-export interface IClubEvent {
-  id: number;
-  date: Date;
-  eventType: EventType;
-  matchType?: MatchType;
-  matchDraw?: Date;
-  matchStart?: Date;
-  matchEnd?: Date;
-  number?: number;
-  description: string;
-  cup?: string;
-}
-
-export class ClubEvent implements IClubEvent {
+class ClubEventBase {
   id!: number;
   date!: Date;
   eventType!: EventType;
@@ -28,6 +15,12 @@ export class ClubEvent implements IClubEvent {
   number?: number;
   description!: string;
   cup?: string;
+}
+
+export class ClubEventDto extends ClubEventBase {
+}
+
+export class ClubEvent extends ClubEventBase {
 
   public get day(): string {
     var formatted = datepipe.transform(this.date, 'E');
