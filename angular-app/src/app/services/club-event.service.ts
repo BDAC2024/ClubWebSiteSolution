@@ -7,7 +7,7 @@ import { plainToClass } from 'class-transformer';
 
 const ELEMENT_DATA: ClubEventDto[] = [
   {id: 1, date: new Date('2021-03-27:13:00'), eventType: EventType.Work, description: 'Pond'},
-  {id: 2, date: new Date('2021-04-11'), eventType: EventType.Match, matchType: MatchType.Spring, matchDraw: new Date('2021-04-11:08:30'), matchStart: new Date('2021-04-11:09:30'), matchEnd: new Date('2021-04-11:15:30'), number: 1, description: 'Roecliffe Pond'},
+  {id: 2, date: new Date('2021-04-11'), eventType: EventType.Match, matchType: MatchType.Spring, matchDraw: new Date('2021-04-11:08:30'), matchStart: new Date('2021-04-11:10:00'), matchEnd: new Date('2021-04-11:16:00'), number: 1, description: 'Roecliffe Pond'},
   {id: 3, date: new Date('2021-04-13:20:00'), eventType: EventType.Meeting, description: 'Committee Meeting'},
   {id: 4, date: new Date('2021-04-25'), eventType: EventType.Match, matchType: MatchType.Spring, matchDraw: new Date('2021-04-25:08:30'), matchStart: new Date('2021-04-25:09:30'), matchEnd: new Date('2021-04-25:15:30'), number: 2, description: 'Roecliffe Pond'},
   {id: 5, date: new Date('2021-05-01:13:00'), eventType: EventType.Work, description: 'Pond'},
@@ -56,7 +56,7 @@ const ELEMENT_DATA: ClubEventDto[] = [
   {id: 48, date: new Date('2022-02-27'), eventType: EventType.Match, matchType: MatchType.Club, number: 17, description: 'Cricket Field', cup: 'Season End'},
   {id: 49, date: new Date('2022-03-08:20:00'), eventType: EventType.Meeting, description: 'Committee Meeting'},
   {id: 50, date: new Date('2022-05-31:20:00'), eventType: EventType.Meeting, description: 'Presentation Night - Date T.B.A'},
-];
+  ];
 
 @Injectable({
   providedIn: 'root'

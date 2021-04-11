@@ -4,10 +4,29 @@ export interface MatchParam {
     match: ClubEvent;
 }  
 
-export interface MatchResult {
-  matchId: number;
-  name: string;
-  peg: string;
-  weight: string;
+class MatchResultBase {
+  matchId!: number;
+  name!: string;
+  peg!: string;
+  weightDecimal!: number;
   points?: number;
+}
+
+export class MatchResultDto extends MatchResultBase {
+
+}
+
+export class MatchResult extends MatchResultBase {
+  public get weight(): string {
+
+    var wt = "D.N.W";
+
+    if (this.weightDecimal > 0) {
+      var wtLb = Math.floor(this.weightDecimal);
+      var wtOz = Math.round((this.weightDecimal - wtLb) * 16);
+      wt = `${wtLb}lb ${wtOz}oz`;
+    } 
+
+    return wt;
+  }
 }
