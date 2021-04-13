@@ -5,14 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using BDAC.Common.Interfaces;
+using BDAC.Common.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BDAC.Repository
 {
-    public class WaterRepository : RepositoryBase
+    public class WaterRepository : RepositoryBase, IWaterRepository
     {
+        private readonly ILogger<WaterRepository> _logger;
 
-        public WaterRepository(): base()
+        public WaterRepository(
+            IOptions<RepositoryOptions> opts,
+            ILoggerFactory loggerFactory) : base(opts.Value.AWSAccessId, opts.Value.AWSSecret, opts.Value.SimpleDbDomain, loggerFactory)
         {
+            _logger = loggerFactory.CreateLogger<WaterRepository>();
         }
 
         public async Task AddOrUpdateWater()
@@ -20,7 +28,7 @@ namespace BDAC.Repository
             var client = GetClient();
 
             BatchPutAttributesRequest request = new BatchPutAttributesRequest();
-            request.DomainName = DOMAIN;
+            request.DomainName = Domain;
             request.Items.Add(
                 new ReplaceableItem
                 {
@@ -38,16 +46,16 @@ namespace BDAC.Repository
             try
             {
                 BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
-                Console.WriteLine($"Water updated");
+                _logger.LogDebug($"Water updated");
             }
             catch (AmazonSimpleDBException ex)
             {
-                Console.WriteLine($"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
                 throw;
             }
 
         }
 
-            
+
     }
 }

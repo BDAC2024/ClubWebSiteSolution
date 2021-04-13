@@ -1,5 +1,6 @@
 ﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,21 +9,30 @@ namespace BDAC.Repository
 {
     public abstract class RepositoryBase
     {
-        internal const string DOMAIN = "Tester";
-        //internal const string DOMAIN = "AnglingClub";
+        private readonly string _assessId;
+        private readonly string _secret;
+        private readonly string _domain;
+        private ILogger<RepositoryBase> _logger;
 
-        public RepositoryBase()
+        public RepositoryBase(string accessId, string secret, string domain, ILoggerFactory loggerFactory)
         {
-            if (!checkDomainExists(DOMAIN).Result)
+            _assessId = accessId;
+            _secret = secret;
+            _domain = domain;
+            _logger = loggerFactory.CreateLogger<RepositoryBase>();
+
+            if (!checkDomainExists(_domain).Result)
             {
-                createDomain(DOMAIN).Wait();
+                createDomain(_domain).Wait();
             }
 
         }
 
+        internal string Domain { get { return _domain; } }
+
         private async Task createDomain(string domainName)
         {
-            Console.WriteLine($"Creating domain {domainName}");
+            _logger.LogDebug($"Creating domain {domainName}");
 
             var client = GetClient();
 
@@ -30,14 +40,14 @@ namespace BDAC.Repository
 
             CreateDomainResponse response = await client.CreateDomainAsync(request);
 
-            Console.WriteLine("createDomain returned");
-            Console.WriteLine(response);
-            Console.ReadLine();
+            _logger.LogDebug("createDomain returned");
+            _logger.LogDebug(response.ToString());
+            
         }
 
         private async Task<bool> checkDomainExists(string domainName)
         {
-            Console.WriteLine($"Checking for domain   {domainName}");
+            _logger.LogDebug($"Checking for domain   {domainName}");
 
             var client = GetClient();
 
@@ -45,14 +55,14 @@ namespace BDAC.Repository
 
             ListDomainsResponse response = await client.ListDomainsAsync(request);
 
-            Console.WriteLine(response);
+            _logger.LogDebug(response.ToString());
 
             return response.DomainNames.Any(n => n == domainName);
         }
 
         internal AmazonSimpleDBClient GetClient()
         {
-            AmazonSimpleDBClient client = new AmazonSimpleDBClient("xxx", "yyy", Amazon.RegionEndpoint.EUWest1);
+            AmazonSimpleDBClient client = new AmazonSimpleDBClient(_assessId, _secret, Amazon.RegionEndpoint.EUWest1);
 
             return client;
         }

@@ -2,21 +2,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BDAC.Common.Interfaces;
 using BDAC.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace AnglingClubWebServices.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : ControllerBase
     {
+        private readonly IWaterRepository _waterRepository;
+        private readonly ILogger<ValuesController> _logger;
+
+        public ValuesController(IWaterRepository waterRepository, ILoggerFactory loggerFactory)
+        {
+            _waterRepository = waterRepository;
+            _logger = loggerFactory.CreateLogger<ValuesController>();
+        }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            var repo = new WaterRepository();
+            _waterRepository.AddOrUpdateWater().Wait();
 
-            repo.AddOrUpdateWater().Wait();
+            _logger.LogInformation("All done!");
 
             return new string[] { "value1", "value2" };
         }
