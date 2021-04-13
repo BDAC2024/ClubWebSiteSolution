@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -10,6 +10,7 @@
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BDAC.Common\BDAC.Common.csproj" />
     <ProjectReference Include="..\BDAC.Repository\BDAC.Repository.csproj" />
   </ItemGroup>
 </Project>
