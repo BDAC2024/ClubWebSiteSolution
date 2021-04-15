@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amazon.SimpleDB;
+﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
-using BDAC.Common.Interfaces;
-using BDAC.Common.Models;
+using AnglingClubWebServices.Interfaces;
+using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace BDAC.Repository
+namespace AnglingClubWebServices.Data
 {
     public class WaterRepository : RepositoryBase, IWaterRepository
     {
@@ -36,7 +33,7 @@ namespace BDAC.Repository
                     Attributes = new List<ReplaceableAttribute>
                     {
                         new ReplaceableAttribute { Name = "Type", Value = "Water", Replace = false },
-                        new ReplaceableAttribute { Name = "Id", Value = "1", Replace = false },
+                        new ReplaceableAttribute { Name = "Id", Value = "2", Replace = false },
                         new ReplaceableAttribute { Name = "AccessType", Value = "MembersAndGuests", Replace = false },
                         new ReplaceableAttribute { Name = "WaterType", Value = "Stillwater", Replace = false },
                     }

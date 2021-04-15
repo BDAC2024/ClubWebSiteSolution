@@ -1,4 +1,4 @@
-﻿namespace BDAC.Common.Models
+﻿namespace AnglingClubWebServices.Models
 {
     public class RepositoryOptions
     {

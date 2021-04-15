@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace BDAC.Common.Interfaces
+namespace AnglingClubWebServices.Interfaces
 {
     public interface IWaterRepository
     {

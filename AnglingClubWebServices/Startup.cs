@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BDAC.Common.Interfaces;
-using BDAC.Common.Models;
-using BDAC.Repository;
+using AnglingClubWebServices.Data;
+using AnglingClubWebServices.Interfaces;
+using AnglingClubWebServices.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,9 +14,7 @@ namespace AnglingClubWebServices
     public class Startup
     {
 
-        public const string AwsAccessKey = "AWSAccessId";
-        public const string AwsSecretKey = "AWSSecret";
-        public const string SimpleDbDomainKey = "SimpleDbDomain";
+
         public const string LogLevelKey = "LogLevel";
 
         public Startup(IConfiguration configuration)
@@ -68,13 +60,13 @@ namespace AnglingClubWebServices
                 }
                 builder.SetMinimumLevel(logLevel);
                 builder.AddFilter("AnglingClubWebServices", logLevel);
-                builder.AddFilter("BDAC.Repository", logLevel);
+                builder.AddFilter("Microsoft.Hosting", LogLevel.Information);
                 builder.AddFilter("Microsoft", LogLevel.Warning);
-                //builder.AddFilter("System", LogLevel.Error);``
-                //builder.AddFilter("Engine", LogLevel.Warning);
+                builder.AddFilter("System", LogLevel.Error);
+                builder.AddFilter("Engine", LogLevel.Warning);
             });
 
-            services.Configure<RepositoryOptions>(Configuration.GetSection("Repository"));
+            services.Configure<RepositoryOptions>(Configuration);
 
             services.AddTransient<IWaterRepository, WaterRepository>();
 
