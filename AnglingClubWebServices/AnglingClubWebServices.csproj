@@ -8,9 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BDAC.Common\BDAC.Common.csproj" />
-    <ProjectReference Include="..\BDAC.Repository\BDAC.Repository.csproj" />
+    <PackageReference Include="AWSSDK.SimpleDB" Version="3.7.0.9" />
   </ItemGroup>
 </Project>

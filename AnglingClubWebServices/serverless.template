@@ -2,7 +2,28 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Transform": "AWS::Serverless-2016-10-31",
   "Description": "An AWS Serverless Application that uses the ASP.NET Core framework running in Amazon Lambda.",
-  "Parameters": {},
+  "Parameters": {
+  		"AWSAccessId" : {
+			"Type" : "String",
+			"Description" : "AWS Access ID",
+			"MinLength" : "0"
+		},
+  		"AWSSecret" : {
+			"Type" : "String",
+			"Description" : "AWS Secret",
+			"MinLength" : "0"
+		},
+  		"SimpleDbDomain" : {
+			"Type" : "String",
+			"Description" : "Simple DB Domain",
+			"MinLength" : "0"
+		},
+		"LogLevel" : {
+			"Type" : "String",
+			"Description" : "One of Debug, Information, Warning, Error. Defaults to Information if not given",
+			"MinLength" : "0"
+		}
+  },
   "Conditions": {},
   "Resources": {
     "AspNetCoreFunction": {
@@ -17,6 +38,14 @@
         "Policies": [
           "AWSLambda_FullAccess"
         ],
+        "Environment" : {
+			"Variables" : {
+				"AWSAccessId" : { "Ref" : "AWSAccessId" } ,
+				"AWSSecret" : { "Ref" : "AWSSecret" } ,
+				"SimpleDbDomain" : { "Ref" : "SimpleDbDomain" } ,
+				"LogLevel" : { "Ref" : "LogLevel" } 
+			}
+		},
         "Events": {
           "ProxyResource": {
             "Type": "Api",

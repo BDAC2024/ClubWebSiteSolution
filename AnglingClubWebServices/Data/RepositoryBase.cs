@@ -1,11 +1,10 @@
 ﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BDAC.Repository
+namespace AnglingClubWebServices.Data
 {
     public abstract class RepositoryBase
     {
@@ -42,7 +41,7 @@ namespace BDAC.Repository
 
             _logger.LogDebug("createDomain returned");
             _logger.LogDebug(response.ToString());
-            
+
         }
 
         private async Task<bool> checkDomainExists(string domainName)
