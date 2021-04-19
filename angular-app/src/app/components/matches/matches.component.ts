@@ -9,6 +9,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ScreenService } from 'src/app/services/screen.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { DisplayedColumnsForMatches } from 'src/app/models/displayed-columns-matches';
+import { ClubEventService } from 'src/app/services/club-event.service';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
 
@@ -20,10 +21,12 @@ const datepipe: DatePipe = new DatePipe('en-GB');
 export class MatchesComponent implements OnInit {
 
   public displayedColumns: string[];
-  public matches!: ClubEvent[];
+  public matches: ClubEvent[] = [];
+  public allMatches!: ClubEvent[];
   
   constructor(
     public matchService: MatchService,
+    public clubEventService: ClubEventService,
     public screenService: ScreenService,
     public dialog: MatDialog,
     public globalService: GlobalService) {
@@ -41,7 +44,11 @@ export class MatchesComponent implements OnInit {
   ngOnInit(): void {
     this.globalService.log("ngOnInit running");
 
-    this.loadMatches(0 as MatchType);
+    this.clubEventService.readEvents()
+    .subscribe(data => {
+      this.allMatches = data;
+      this.loadMatches(0 as MatchType);
+    });
   }
 
   public showMore(match: ClubEvent)
@@ -58,14 +65,12 @@ export class MatchesComponent implements OnInit {
 
   private loadMatches(type: MatchType): void
   {
-    var typeMatches = this.matchService.GetMatches(type);
-
-    this.matches = typeMatches;
+      
+    this.matches = this.allMatches.filter(m => m.matchType === type);
 
     this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
     this.setDisplayedColumns(this.screenService.IsHandsetPortrait);
-
   }
 
   private setDisplayedColumns(handsetPortrait: boolean): void {

@@ -11,3 +11,6 @@ td.label {
     padding: 0 16px 0 0;
 }
 
+.no-table-margin {
+    margin-left: -20px;
+}

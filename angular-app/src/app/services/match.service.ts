@@ -16,10 +16,10 @@ export class MatchService {
     private screenService: ScreenService
   ) { }
 
-  public GetMatches(type: MatchType): ClubEvent[]
-  {
-    return this.clubEventService.GetEvents(EventType.Match).filter(m => m.matchType === type); ;
-  }
+  // public GetMatches(type: MatchType): ClubEvent[]
+  // {
+  //   return this.clubEventService.GetEvents(EventType.Match).filter(m => m.matchType === type); ;
+  // }
 
   public get SpringTabName() : string { return this.getTabName(MatchType.Spring); }
   public get ClubTabName() : string { return this.getTabName(MatchType.Club); }

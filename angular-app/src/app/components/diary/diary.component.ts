@@ -6,7 +6,6 @@ import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.compon
 import { ClubEvent } from 'src/app/models/club-event';
 import { DisplayedColumnsForEvents } from 'src/app/models/displayed-columns-events';
 import { EventType } from 'src/app/models/event-enum';
-import { MatchType } from 'src/app/models/match-enum';
 import { ClubEventService } from 'src/app/services/club-event.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { ScreenService } from 'src/app/services/screen.service';
@@ -20,7 +19,9 @@ const datepipe: DatePipe = new DatePipe('en-GB');
 })
 export class DiaryComponent implements OnInit {
 
-  public events!: ClubEvent[];
+  private allEvents!: ClubEvent[];
+
+  public events: ClubEvent[] = [];
   public displayedColumns: string[];
   public matchType: number = EventType.Match;
   
@@ -40,7 +41,12 @@ export class DiaryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadEvents(0 as EventType);
+
+    this.clubEventService.readEvents()
+    .subscribe(data => {
+      this.allEvents = data;
+      this.loadEvents(0 as EventType);
+    });
 
   }
 
@@ -58,7 +64,11 @@ export class DiaryComponent implements OnInit {
 
   private loadEvents(type: EventType): void
   {
-    this.events = this.clubEventService.GetEvents(type);
+    if (type == EventType.All) {
+      this.events = this.allEvents;
+    } else {
+      this.events = this.allEvents.filter(m => m.eventType === type);
+    }
 
     this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 

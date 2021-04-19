@@ -16,7 +16,7 @@ export class MatchInfoComponent implements OnInit {
 
   public matchType: string = "";
   public match!: ClubEvent;
-  public displayedColumns: string[] = ["name", "peg", "weight", "points"];
+  public displayedColumns: string[] = ["pos", "name", "peg", "weight", "pts"];
   public results: MatchResult[] = [];
 
   constructor(
@@ -31,13 +31,16 @@ export class MatchInfoComponent implements OnInit {
     this.match = this.data.match;
     this.matchType = MatchType.FullName(this.match.matchType as MatchType);
 
-    this.results = this.matchResultsService.Results().filter(m => m.matchId === this.match.id);
+    this.matchResultsService.readResults(this.match.id)
+    .subscribe(data => {
+      this.results = data;
 
-    // If no points are used then hide that column
-    if (this.results.filter(m => m.points === undefined).length == this.results.length)
-    {
-      this.displayedColumns = ["name", "peg", "weight"];
-    }
+      // If no points are used then hide that column
+      if (this.results.filter(m => m.points === undefined).length == this.results.length)
+      {
+        this.displayedColumns = ["pos", "name", "peg", "weight"];
+      }
+    });
 
   }
 
