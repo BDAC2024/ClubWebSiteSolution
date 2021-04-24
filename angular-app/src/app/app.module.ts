@@ -7,7 +7,9 @@ import { NavComponent } from './components/nav/nav.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorIntercept } from './services/error.interceptor';
 
 import { MatSidenavModule} from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -21,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 
 import { AgmCoreModule } from '@agm/core';
 
@@ -33,6 +36,7 @@ import { RulesComponent } from './components/rules/rules.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
 import { DiaryComponent } from './components/diary/diary.component';
+import { ErrorComponent } from './dialogs/error/error.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +51,7 @@ import { DiaryComponent } from './components/diary/diary.component';
     PreviewComponent,
     MatchInfoComponent,
     DiaryComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -74,7 +79,14 @@ import { DiaryComponent } from './components/diary/diary.component';
     MatTabsModule,
     MatCardModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorIntercept,
+      multi: true,
+      deps: [MatDialog]
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
