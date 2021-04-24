@@ -1,6 +1,7 @@
 using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using AnglingClubWebServices.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,7 @@ namespace AnglingClubWebServices
     {
 
 
+        private static string _corsPolicy = "AnglingClubWebsiteOrigins";
         public const string LogLevelKey = "LogLevel";
 
         public Startup(IConfiguration configuration)
@@ -66,11 +68,32 @@ namespace AnglingClubWebServices
                 builder.AddFilter("Engine", LogLevel.Warning);
             });
 
+            var origins = Configuration["CORSOrigins"].Split(",");
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(_corsPolicy, builder =>
+                {
+                    builder
+                     //.AllowAnyOrigin()
+                     .WithOrigins(origins)
+                     .AllowAnyHeader()
+                     .AllowAnyMethod();
+                });
+            });
+
+            services.AddAutoMapper(typeof(Startup));
+
             services.Configure<RepositoryOptions>(Configuration);
 
             services.AddTransient<IWaterRepository, WaterRepository>();
-
+            services.AddTransient<IEventRepository, EventRepository>();
+            services.AddTransient<IReferenceDataRepository, ReferenceDataRepository>();
+            services.AddTransient<IMatchResultRepository, MatchResultRepository>();
+            services.AddTransient<IMatchResultService, MatchResultService>();
             
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -84,6 +107,8 @@ namespace AnglingClubWebServices
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(_corsPolicy);
 
             app.UseAuthorization();
 

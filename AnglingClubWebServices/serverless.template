@@ -18,6 +18,11 @@
 			"Description" : "Simple DB Domain",
 			"MinLength" : "0"
 		},
+  		"CORSOrigins" : {
+			"Type" : "String",
+			"Description" : "Comma separated allowed domains",
+			"MinLength" : "0"
+		},
 		"LogLevel" : {
 			"Type" : "String",
 			"Description" : "One of Debug, Information, Warning, Error. Defaults to Information if not given",
@@ -43,6 +48,7 @@
 				"AWSAccessId" : { "Ref" : "AWSAccessId" } ,
 				"AWSSecret" : { "Ref" : "AWSSecret" } ,
 				"SimpleDbDomain" : { "Ref" : "SimpleDbDomain" } ,
+				"CORSOrigins" : { "Ref" : "CORSOrigins" } ,
 				"LogLevel" : { "Ref" : "LogLevel" } 
 			}
 		},
