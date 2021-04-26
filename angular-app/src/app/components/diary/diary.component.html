@@ -8,6 +8,7 @@
         <mat-tab label="{{clubEventService.MeetingTabName}}"></mat-tab>
     </mat-tab-group>
     <br/>
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
     <table mat-table [dataSource]="events" class="mat-elevation-z8" *ngIf="events.length > 0">
 
         <!--- Note that these columns can be defined in any order.

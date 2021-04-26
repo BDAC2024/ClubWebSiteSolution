@@ -24,6 +24,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AgmCoreModule } from '@agm/core';
 
@@ -77,7 +78,8 @@ import { ErrorComponent } from './dialogs/error/error.component';
     MatTableModule,
     MatDialogModule,
     MatTabsModule,
-    MatCardModule
+    MatCardModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     {

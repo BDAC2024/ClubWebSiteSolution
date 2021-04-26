@@ -18,6 +18,7 @@ export class MatchInfoComponent implements OnInit {
   public match!: ClubEvent;
   public displayedColumns: string[] = ["pos", "name", "peg", "weight", "pts"];
   public results: MatchResult[] = [];
+  public isLoading: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: MatchParam,
@@ -30,11 +31,12 @@ export class MatchInfoComponent implements OnInit {
   ngOnInit(): void {
     this.match = this.data.match;
     this.matchType = MatchType.FullName(this.match.matchType as MatchType);
+    this.isLoading = true;
 
     this.matchResultsService.readResults(this.match.id)
     .subscribe(data => {
       this.results = data;
-
+      this.isLoading = false;
       // If no points are used then hide that column
       if (this.results.filter(m => m.points === undefined).length == this.results.length)
       {

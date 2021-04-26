@@ -14,7 +14,8 @@
     </table>
     <br/>
     <h2>Results</h2>
-    <p *ngIf="results.length == 0">Not yet available</p>
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+    <p *ngIf="!isLoading && results.length == 0">Not yet available</p>
     <table mat-table [dataSource]="results" class="mat-elevation-z8" [ngClass]="{'no-table-margin': screenService.IsHandsetPortrait}" *ngIf="results.length > 0">
 
         <!--- Note that these columns can be defined in any order.

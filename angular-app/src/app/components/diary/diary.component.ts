@@ -24,7 +24,8 @@ export class DiaryComponent implements OnInit {
   public events: ClubEvent[] = [];
   public displayedColumns: string[];
   public matchType: number = EventType.Match;
-  
+  public isLoading: boolean = false;
+
   constructor(
     public screenService: ScreenService,
     public clubEventService: ClubEventService,
@@ -41,9 +42,11 @@ export class DiaryComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
 
     this.clubEventService.readEvents()
     .subscribe(data => {
+      this.isLoading = false;
       this.allEvents = data;
       this.loadEvents(0 as EventType);
     });

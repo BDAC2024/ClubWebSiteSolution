@@ -23,6 +23,7 @@ export class MatchesComponent implements OnInit {
   public displayedColumns: string[];
   public matches: ClubEvent[] = [];
   public allMatches!: ClubEvent[];
+  public isLoading: boolean = false;
   
   constructor(
     public matchService: MatchService,
@@ -43,9 +44,11 @@ export class MatchesComponent implements OnInit {
 
   ngOnInit(): void {
     this.globalService.log("ngOnInit running");
+    this.isLoading = true;
 
     this.clubEventService.readEvents()
     .subscribe(data => {
+      this.isLoading = false;
       this.allMatches = data;
       this.loadMatches(0 as MatchType);
     });
