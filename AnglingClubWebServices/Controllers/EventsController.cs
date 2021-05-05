@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace AnglingClubWebServices.Controllers
 {
     [Route("api/[controller]")]
-    public class EventsController : ControllerBase
+    public class EventsController : AnglingClubControllerBase
     {
         private readonly IEventRepository _eventRepository;
         private readonly ILogger<EventsController> _logger;
@@ -24,6 +24,7 @@ namespace AnglingClubWebServices.Controllers
             _eventRepository = eventRepository;
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<EventsController>();
+            base.Logger = _logger;
         }
 
         // GET api/values
@@ -32,7 +33,11 @@ namespace AnglingClubWebServices.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult Get()
         {
+            StartTimer();
+
             var events = _eventRepository.GetEvents().Result;
+
+            ReportTimer("Getting events");
 
             return Ok(events);
 
@@ -56,12 +61,16 @@ namespace AnglingClubWebServices.Controllers
         [HttpPost]
         public void Post([FromBody]List<ClubEventInputDto> events)
         {
+            StartTimer();
+
             var clubEvents = _mapper.Map<List<ClubEvent>>(events);
 
             foreach (var ev in clubEvents)
             {
                 _eventRepository.AddOrUpdateEvent(ev);
             }
+
+            ReportTimer("Posting events");
         }
 
         // PUT api/values/5

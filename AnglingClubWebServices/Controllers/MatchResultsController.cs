@@ -10,7 +10,7 @@ using System.Linq;
 namespace AnglingClubWebServices.Controllers
 {
     [Route("api/[controller]")]
-    public class MatchResultsController : ControllerBase
+    public class MatchResultsController : AnglingClubControllerBase
     {
         private readonly ILogger<MatchResultsController> _logger;
         private readonly IMatchResultRepository _matchResultRepository;
@@ -27,13 +27,18 @@ namespace AnglingClubWebServices.Controllers
             _matchResultService = matchResultService;
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<MatchResultsController>();
+            base.Logger = _logger;
         }
 
         // GET api/values
         [HttpGet("{matchId}")]
         public IEnumerable<MatchResult> Get(string matchId)
         {
+            StartTimer();
+
             var events = _matchResultService.GetResults(matchId);
+
+            ReportTimer("Getting match results");
 
             return events;
         }
@@ -42,6 +47,8 @@ namespace AnglingClubWebServices.Controllers
         [HttpPost]
         public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody]List<MatchResultInputDto> results)
         {
+            StartTimer();
+
             var errors = new List<string>();
 
             try
@@ -53,6 +60,9 @@ namespace AnglingClubWebServices.Controllers
                     try
                     {
                         await _matchResultRepository.AddOrUpdateMatchResult(result);
+
+                        ReportTimer("Posting match results");
+
                     }
                     catch (System.Exception ex)
                     {
