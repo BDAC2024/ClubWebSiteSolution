@@ -1,9 +1,11 @@
+using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -38,13 +40,40 @@ namespace AnglingClubWebServices.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]List<MatchResultInputDto> results)
+        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody]List<MatchResultInputDto> results)
         {
-            var matchResults = _mapper.Map<List<MatchResult>>(results);
+            var errors = new List<string>();
 
-            foreach (var result in matchResults)
+            try
             {
-                _matchResultRepository.AddOrUpdateMatchResult(result);
+                var matchResults = _mapper.Map<List<MatchResult>>(results);
+
+                foreach (var result in matchResults)
+                {
+                    try
+                    {
+                        await _matchResultRepository.AddOrUpdateMatchResult(result);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        errors.Add(ex.Message);
+                    }
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                errors.Add(ex.Message);
+                
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+            else
+            {
+                return Ok();
             }
         }
 

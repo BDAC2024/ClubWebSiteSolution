@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Models;
+﻿using AnglingClubWebServices.DTOs;
+using AnglingClubWebServices.Models;
 using AutoMapper;
 
 namespace AnglingClubWebServices

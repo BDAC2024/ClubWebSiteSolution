@@ -1,3 +1,4 @@
+using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -34,6 +35,14 @@ namespace AnglingClubWebServices.Controllers
             var events = _eventRepository.GetEvents().Result;
 
             return Ok(events);
+
+            //var errors = new List<string>();
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    errors.Add($"Can't find {i}");
+            //}
+
+            //return BadRequest(errors);
         }
 
         // GET api/values/5
