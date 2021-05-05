@@ -20,10 +20,7 @@ namespace AnglingClubWebServices.Models
         public string Cup { get; set; }
     }
 
-    public class ClubEventInputDto : ClubEventBase
-    {
 
-    }
 
     public class ClubEvent : ClubEventBase
     {

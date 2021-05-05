@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -13,19 +14,29 @@ namespace AnglingClubWebServices.Data
     public class MatchResultRepository : RepositoryBase, IMatchResultRepository
     {
         private const string IdPrefix = "MatchResult";
-
+        private readonly IEventRepository _eventRepository;
         private readonly ILogger<MatchResultRepository> _logger;
 
         public MatchResultRepository(
             IOptions<RepositoryOptions> opts,
+            IEventRepository eventRepository,
             ILoggerFactory loggerFactory) : base(opts.Value.AWSAccessId, opts.Value.AWSSecret, opts.Value.SimpleDbDomain, loggerFactory)
         {
+            _eventRepository = eventRepository;
             _logger = loggerFactory.CreateLogger<MatchResultRepository>();
         }
 
         public async Task AddOrUpdateMatchResult(MatchResult result)
         {
             var client = GetClient();
+
+            // Validate MatchId
+            {
+                if (! (await _eventRepository.GetEvents()).Any(x => x.Id == result.MatchId))
+                {
+                    throw new KeyNotFoundException($"Match '{result.MatchId}' does not exist");
+                }
+            }
 
             if (result.DbKey == null)
             {
