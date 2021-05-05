@@ -13,7 +13,7 @@ namespace AnglingClubWebServices.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WatersController : ControllerBase
+    public class WatersController : AnglingClubControllerBase
     {
         private readonly IWaterRepository _waterRepository;
         private readonly ILogger<WatersController> _logger;
@@ -24,6 +24,7 @@ namespace AnglingClubWebServices.Controllers
         {
             _waterRepository = waterRepository;
             _logger = loggerFactory.CreateLogger<WatersController>();
+            base.Logger = _logger;
         }
 
         // GET: api/<WatersController1>
@@ -44,6 +45,8 @@ namespace AnglingClubWebServices.Controllers
         [HttpPost]
         public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody] List<WaterInputDto> inputWaters)
         {
+            StartTimer();
+
             List<Water> waters = new List<Water>();
             var errors = new List<string>();
 
@@ -106,6 +109,8 @@ namespace AnglingClubWebServices.Controllers
                     try
                     {
                         await _waterRepository.AddOrUpdateWater(water);
+
+                        ReportTimer("Posting waters");
                     }
                     catch (Exception ex)
                     {
