@@ -1,4 +1,5 @@
 ﻿using AnglingClubWebServices.Interfaces;
+using System.Collections.Generic;
 
 namespace AnglingClubWebServices.Models
 {
@@ -15,9 +16,11 @@ namespace AnglingClubWebServices.Models
 
     public class Water : WaterBase
     {
-        public int Id { get; set; }
-        public string Icon { get; set; }
-        public string Label { get; set; }
+        public float Id { get; set; }
+        
+        public string Markers { get; set; }
+        public string MarkerIcons { get; set; }
+        public string MarkerLabels { get; set; }
 
         public string Destination { get; set; }
         public string Path { get; set; }

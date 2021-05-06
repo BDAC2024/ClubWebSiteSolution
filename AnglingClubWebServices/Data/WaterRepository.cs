@@ -4,7 +4,9 @@ using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -44,8 +46,9 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Species", Value = water.Species, Replace = true },
                 new ReplaceableAttribute { Name = "Directions", Value = water.Directions, Replace = true },
 
-                new ReplaceableAttribute { Name = "Icon", Value = water.Icon, Replace = true },
-                new ReplaceableAttribute { Name = "Label", Value = water.Label, Replace = true },
+                new ReplaceableAttribute { Name = "Markers", Value = water.Markers, Replace = true },
+                new ReplaceableAttribute { Name = "MarkerIcons", Value = water.MarkerIcons, Replace = true },
+                new ReplaceableAttribute { Name = "MarkerLabels", Value = water.MarkerLabels, Replace = true },
 
                 new ReplaceableAttribute { Name = "Destination", Value = water.Destination, Replace = true },
                 new ReplaceableAttribute { Name = "Path", Value = water.Path, Replace = true },
@@ -73,6 +76,88 @@ namespace AnglingClubWebServices.Data
 
         }
 
+        public async Task<List<Water>> GetWaters()
+        {
+            _logger.LogWarning($"Getting waters at : {DateTime.Now.ToString("HH:mm:ss.000")}");
+
+            var waters = new List<Water>();
+
+            var client = GetClient();
+
+            SelectRequest request = new SelectRequest();
+            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND Name > '' ORDER BY Name";
+
+            SelectResponse response = await client.SelectAsync(request);
+
+            foreach (var item in response.Items)
+            {
+                var water = new Water();
+
+                water.DbKey = item.Name;
+
+                foreach (var attribute in item.Attributes)
+                {
+                    switch (attribute.Name)
+                    {
+                        case "Id":
+                            water.Id = float.Parse(attribute.Value);
+                            break;
+
+                        case "Name":
+                            water.Name = attribute.Value;
+                            break;
+
+                        case "Type":
+                            water.Type = (WaterType)(Convert.ToInt32(attribute.Value));
+                            break;
+
+                        case "Access":
+                            water.Access = (WaterAccessType)(Convert.ToInt32(attribute.Value));
+                            break;
+
+                        case "Description":
+                            water.Description = attribute.Value;
+                            break;
+
+                        case "Species":
+                            water.Species = attribute.Value;
+                            break;
+
+                        case "Directions":
+                            water.Directions = attribute.Value;
+                            break;
+
+                        case "Markers":
+                            water.Markers = attribute.Value;
+                            break;
+
+                        case "MarkerIcons":
+                            water.MarkerIcons = attribute.Value;
+                            break;
+
+                        case "MarkerLabels":
+                            water.MarkerLabels = attribute.Value;
+                            break;
+
+                        case "Destination":
+                            water.Destination = attribute.Value;
+                            break;
+
+                        case "Path":
+                            water.Path = attribute.Value;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
+                waters.Add(water);
+            }
+
+            return waters.OrderBy(x => x.Id).ToList();
+
+        }
 
     }
 }
