@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Position, Water } from 'src/app/models/water';
-import { WaterType } from 'src/app/models/water-enum';
+import { Water } from 'src/app/models/water';
 import { WatersService } from 'src/app/services/waters.service';
 
 @Component({
@@ -13,6 +12,8 @@ export class WatersComponent implements OnInit {
   waters!: Water[];
   pathColour: string = "lightgreen";
   mapType: string = 'satellite';
+  
+  public isLoading: boolean = false;
 
   constructor(public watersService: WatersService) { 
 
@@ -20,7 +21,19 @@ export class WatersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.waters = this.watersService.Waters();
+    this.isLoading = true;
+
+    this.watersService.readWaters()
+    .subscribe(data => {
+      this.isLoading = false;
+      this.waters = data;
+
+      this.waters.forEach((w) => {
+        w.markers.forEach((m) => {
+          m.icon = `assets/${m.icon}.png`;
+        });
+      });
+    });
 
     // this.path = this.watersService.PathOld(this.waters[2]);
 

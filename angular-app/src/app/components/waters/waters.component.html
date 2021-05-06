@@ -8,8 +8,8 @@
         <mat-card class="news-card">
             <mat-card-header>
                 <mat-card-title>{{item.name}}</mat-card-title>
-                <mat-card-subtitle>{{item.WaterType}}</mat-card-subtitle>
-                <mat-card-subtitle>{{item.AccessType}}</mat-card-subtitle>
+                <mat-card-subtitle>{{item.waterType}}</mat-card-subtitle>
+                <mat-card-subtitle>{{item.accessType}}</mat-card-subtitle>
                 <mat-card-subtitle>Main Species: {{item.species}}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
@@ -18,7 +18,7 @@
                 <h3>Directions</h3>
                 <div [innerHTML]="item.directions"></div>
                 <br/>
-                <a target="_blank" [href]="item.Directions">Map of directions</a>
+                <a target="_blank" [href]="item.directionUrl">Map of directions</a>
                 <h3>Location</h3>
                 <table border="0">
                     <tr>
@@ -26,11 +26,11 @@
                             <img width="20px" src='assets\car.png'>
                         </td>
                         <td style="width: 18px;"> </td>
-                        <td *ngIf="item.Path.length > 0" align="center">
+                        <td *ngIf="item.path.length > 0" align="center">
                             <div style="display: inline; color: lightgreen; font-weight:900;"><b>_____</b><br/><br/></div>
                         </td>
                         <td style="width: 18px;"> </td>
-                        <td *ngIf="item.HasLimits" align="center">
+                        <td *ngIf="item.hasLimits" align="center">
                             <img width="20px" src='assets\limit.png'>
                         </td>
                     </tr>
@@ -39,11 +39,11 @@
                             Car Parking
                         </td>
                         <td style="width: 18px;"> </td>
-                        <td *ngIf="item.Path.length > 0" align="center">
+                        <td *ngIf="item.path.length > 0" align="center">
                             Route
                         </td>
                         <td style="width: 18px;"> </td>
-                        <td *ngIf="item.HasLimits" align="center">
+                        <td *ngIf="item.hasLimits" align="center">
                             Limit of stretch
                         </td>
                     </tr>
@@ -53,22 +53,22 @@
                     [scrollwheel]="false"     
                     [disableDefaultUI]="true"
                     [zoom]=14
-                    [latitude]='item.Markers[0].pos.lat' 
-                    [longitude]='item.Markers[0].pos.long'
+                    [latitude]='item.destination.lat' 
+                    [longitude]='item.destination.long'
                     >
                     <agm-map-type-control></agm-map-type-control> 
                     <agm-zoom-control></agm-zoom-control> 
                     <agm-fullscreen-control></agm-fullscreen-control> 
 
-                    <agm-marker *ngFor="let marker of item.Markers" 
+                    <agm-marker *ngFor="let marker of item.markers" 
                         [iconUrl]="marker.icon"    
-                        [latitude]="marker.pos.lat" 
-                        [longitude]="marker.pos.long">
+                        [latitude]="marker.position.lat" 
+                        [longitude]="marker.position.long">
                         <agm-info-window>{{marker.label}}</agm-info-window>
                     </agm-marker> -->
                     
                     <agm-polyline [strokeColor]="pathColour">
-                        <agm-polyline-point *ngFor="let p of item.Path" [latitude]="p.lat" [longitude]="p.long"></agm-polyline-point>
+                        <agm-polyline-point *ngFor="let p of item.path" [latitude]="p.lat" [longitude]="p.long"></agm-polyline-point>
                     </agm-polyline>
 
                 </agm-map>
