@@ -92,14 +92,22 @@ namespace AnglingClubWebServices.Data
 
         public async Task<List<MatchResult>> GetMatchResults(string matchId)
         {
-            _logger.LogWarning($"Getting matches for : {matchId}");
+            _logger.LogWarning($"Getting all match results for : {matchId}");
+
+            return (await GetAllMatchResults()).Where(x => x.MatchId == matchId).ToList();
+
+        }
+
+        public async Task<List<MatchResult>> GetAllMatchResults()
+        {
+            _logger.LogWarning($"Getting all match results");
 
             var results = new List<MatchResult>();
 
             var client = GetClient();
 
             SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND MatchId = '{matchId}' AND WeightDecimal > '' ORDER BY WeightDecimal DESC";
+            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND WeightDecimal > '' ORDER BY WeightDecimal DESC";
 
             SelectResponse response = await client.SelectAsync(request);
 

@@ -9,5 +9,6 @@ namespace AnglingClubWebServices.Interfaces
         Task AddOrUpdateMatchResult(MatchResult result);
 
         Task<List<MatchResult>> GetMatchResults(string matchId);
+        Task<List<MatchResult>> GetAllMatchResults();
     }
 }
