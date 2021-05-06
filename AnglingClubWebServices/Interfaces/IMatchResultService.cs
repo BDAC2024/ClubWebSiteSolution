@@ -6,5 +6,6 @@ namespace AnglingClubWebServices.Interfaces
     public interface IMatchResultService
     {
         List<MatchResult> GetResults(string matchId);
+        List<LeaguePosition> GetLeagueStandings(MatchType matchType, Season season);
     }
 }

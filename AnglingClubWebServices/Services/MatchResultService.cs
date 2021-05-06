@@ -9,14 +9,20 @@ namespace AnglingClubWebServices.Services
     public class MatchResultService : IMatchResultService
     {
         private readonly IMatchResultRepository _matchResultRepository;
+        private readonly IEventRepository _eventRepository;
+        private readonly IMemberRepository _memberRepository;
         private readonly ILogger<MatchResultService> _logger;
 
         public MatchResultService(
             IMatchResultRepository matchResultRepository,
+            IEventRepository eventRepository,
+            IMemberRepository memberRepository,
             ILoggerFactory loggerFactory
         )
         {
             _matchResultRepository = matchResultRepository;
+            _eventRepository = eventRepository;
+            _memberRepository = memberRepository;
             _logger = loggerFactory.CreateLogger<MatchResultService>();
         }
 
@@ -48,6 +54,59 @@ namespace AnglingClubWebServices.Services
             }
 
             return results;
+        }
+
+        public List<LeaguePosition> GetLeagueStandings(MatchType matchType, Season season)
+        {
+            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.MatchType == matchType && x.Season == season).Select(x => x.Id);
+            var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
+            var members = _memberRepository.GetMembers().Result;
+
+            var league = matchResultsForLeague
+                .GroupBy(x => x.MembershipNumber)
+                .Select(cl => new LeaguePosition
+                {
+                    Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
+                    Points = cl.Sum(c => c.Points),
+                    TotalWeightDecimal = cl.Sum(x=> x.WeightDecimal)
+                }).ToList();
+
+            var pos = 1;
+            int numberAtPos = 0;
+
+            float lastPoints = league.Any() ? league.Max(r => r.Points) : 0f;
+            float lastWeight = league.First(x => x.Points == lastPoints).TotalWeightDecimal;
+
+            foreach (var member in league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal))
+            {
+                if (member.Points < lastPoints)
+                {
+                    pos += numberAtPos;
+                    lastPoints = member.Points;
+                    lastWeight = member.TotalWeightDecimal;
+                    numberAtPos = 0;
+                }
+
+                if (member.Points == lastPoints)
+                {
+                    if (member.TotalWeightDecimal < lastWeight)
+                    {
+                        pos += numberAtPos;
+                        lastWeight = member.TotalWeightDecimal;
+                        numberAtPos = 0;
+                    }
+
+                    if (member.TotalWeightDecimal == lastWeight)
+                    {
+                        numberAtPos++;
+                    }
+                    
+                }
+
+                member.Position = pos;
+            }
+
+            return league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal).ToList();
         }
     }
 }

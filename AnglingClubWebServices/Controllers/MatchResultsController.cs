@@ -66,6 +66,31 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
+        [HttpGet("{matchType}/{season}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaguePosition>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult GetLeagueStandings(MatchType matchType, Season season)
+        {
+            var errors = new List<string>();
+
+            StartTimer();
+
+            try
+            {
+                var standings = _matchResultService.GetLeagueStandings(matchType, season);
+
+                ReportTimer("Getting league standings");
+
+                return Ok(standings);
+
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+                return BadRequest(errors);
+            }
+        }
+
         // POST api/values
         [HttpPost]
         public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody]List<MatchResultInputDto> results)
