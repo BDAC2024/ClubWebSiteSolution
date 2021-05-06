@@ -20,5 +20,10 @@ namespace AnglingClubWebServices.DTOs
         }
     }
 
+    public class MatchResultOutputDto : MatchResult
+    {
+        public string Name { get; set; }
+    }
+
 
 }
