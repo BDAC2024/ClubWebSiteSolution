@@ -75,7 +75,7 @@ namespace AnglingClubWebServices.Services
             int numberAtPos = 0;
 
             float lastPoints = league.Any() ? league.Max(r => r.Points) : 0f;
-            float lastWeight = league.First(x => x.Points == lastPoints).TotalWeightDecimal;
+            float lastWeight = league.Any() ? league.First(x => x.Points == lastPoints).TotalWeightDecimal : 0f;
 
             foreach (var member in league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal))
             {
