@@ -2,8 +2,10 @@ using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,16 +17,19 @@ namespace AnglingClubWebServices.Controllers
         private readonly ILogger<MatchResultsController> _logger;
         private readonly IMatchResultRepository _matchResultRepository;
         private readonly IMatchResultService _matchResultService;
+        private readonly IMemberRepository _memberRepository;
         private readonly IMapper _mapper;
 
         public MatchResultsController(
             IMatchResultRepository matchResultRepository,
             IMatchResultService matchResultService,
+            IMemberRepository memberRepository,
             IMapper mapper,
             ILoggerFactory loggerFactory)
         {
             _matchResultRepository = matchResultRepository;
             _matchResultService = matchResultService;
+            _memberRepository = memberRepository;
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<MatchResultsController>();
             base.Logger = _logger;
@@ -32,15 +37,33 @@ namespace AnglingClubWebServices.Controllers
 
         // GET api/values
         [HttpGet("{matchId}")]
-        public IEnumerable<MatchResult> Get(string matchId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultOutputDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult Get(string matchId)
         {
+            var errors = new List<string>();
+
             StartTimer();
 
-            var events = _matchResultService.GetResults(matchId);
+            try
+            {
+                var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetResults(matchId));
+                var members = _memberRepository.GetMembers().Result.Where(x => x.Enabled);
+                foreach (var result in results)
+                {
+                    result.Name = members.Single(x => x.MembershipNumber == result.MembershipNumber).Name;
+                }
 
-            ReportTimer("Getting match results");
+                ReportTimer("Getting match results");
 
-            return events;
+                return Ok(results);
+
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+                return BadRequest(errors);
+            }
         }
 
         // POST api/values

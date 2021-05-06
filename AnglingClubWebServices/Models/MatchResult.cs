@@ -7,14 +7,13 @@ namespace AnglingClubWebServices.Models
     public class MatchResultBase : TableBase
     {
         public string MatchId { get; set; }
-        public string Name { get; set; }
+        public int MembershipNumber { get; set; }
         public string Peg { get; set; }
         public float Points { get; set; }
     }
 
     public class MatchResult : MatchResultBase
     {
-        public string Id { get; set; }
         public float WeightDecimal { get; set; }
 
         public string Weight
@@ -49,5 +48,6 @@ namespace AnglingClubWebServices.Models
         }
 
     }
+
 
 }
