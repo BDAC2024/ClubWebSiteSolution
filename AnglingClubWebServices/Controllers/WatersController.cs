@@ -1,6 +1,7 @@
 ﻿using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -27,12 +28,76 @@ namespace AnglingClubWebServices.Controllers
             base.Logger = _logger;
         }
 
-        // GET: api/<WatersController1>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<WaterOutputDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var waterDtos = new List<WaterOutputDto>();
+
+            var errors = new List<string>();
+
+            StartTimer();
+
+            try
+            {
+                var waters = _waterRepository.GetWaters().Result;
+
+                foreach (var water in waters)
+                {
+                    var dto = new WaterOutputDto();
+
+                    dto.Access = water.Access;
+                    dto.DbKey = water.DbKey;
+                    dto.Description = water.Description;
+                    dto.Directions = water.Directions;
+                    dto.Id = water.Id;
+                    dto.Name = water.Name;
+                    dto.Species = water.Species;
+                    dto.Type = water.Type;
+
+                    var markers = water.Markers.Split('|');
+                    var markerIcons = water.MarkerIcons.Split(',').ToList<string>();
+                    var markerLabels = water.MarkerLabels.Split(',').ToList<string>();
+
+                    for (int i = 0; i < markers.Length; i++)
+                    {
+                        var marker = markers[i].Split(',');
+                        dto.Markers.Add(new Marker
+                        {
+                            Position = new Position { Lat = double.Parse(marker[0]), Long = double.Parse(marker[1]) },
+                            Label = markerLabels[i],
+                            Icon = markerIcons[i]
+                        });
+                    }
+
+
+                    var dests = water.Destination.Split(',');
+                    dto.Destination = new Position { Lat = double.Parse(dests[0]), Long = double.Parse(dests[1]) };
+ 
+                    var paths = water.Path.Split('|');
+                    for (int i = 0; i < paths.Length; i++)
+                    {
+                        var path = paths[i].Split(',');
+                        dto.Path.Add(new Position { Lat = double.Parse(path[0]), Long = double.Parse(path[1]) });
+                    }
+
+                    waterDtos.Add(dto);
+                }
+
+                ReportTimer("Getting waters");
+
+                return Ok(waterDtos);
+
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+                return BadRequest(errors);
+            }
+
         }
+
 
         // GET api/<WatersController1>/5
         [HttpGet("{id}")]
@@ -54,9 +119,9 @@ namespace AnglingClubWebServices.Controllers
             {
                 var validInput = true;
 
-                if (inputWater.Icon.Count != inputWater.Label.Count)
+                if ((inputWater.Markers.Count / 2) != inputWater.MarkerIcons.Count || (inputWater.Markers.Count / 2) != inputWater.MarkerLabels.Count)
                 {
-                    errors.Add($"{inputWater.Name} -  number of Icons and Labels should match but dont");
+                    errors.Add($"{inputWater.Name} -  number of Markers, MarkerIcons and MarkerLabels should match but dont");
                     validInput = false;
                 }
 
@@ -84,9 +149,18 @@ namespace AnglingClubWebServices.Controllers
                     water.Species = inputWater.Species;
                     water.Directions = inputWater.Directions;
 
-                    water.Icon = string.Join(",", inputWater.Icon.ToArray());
-                    water.Label = string.Join(",", inputWater.Label.ToArray());
+                    water.MarkerIcons = string.Join(",", inputWater.MarkerIcons.ToArray());
+                    water.MarkerLabels = string.Join(",", inputWater.MarkerLabels.ToArray());
                     water.Destination = string.Join(",", inputWater.Destination.ToArray());
+
+                    var markers = inputWater.Markers.ToArray();
+                    var markerPositions = new List<string>();
+
+                    for (int i = 0; i < inputWater.Markers.Count; i += 2)
+                    {
+                        markerPositions.Add($"{markers[i]},{markers[i + 1]}");
+                    }
+                    water.Markers = string.Join("|", markerPositions.ToArray());
 
                     var path = inputWater.Path.ToArray();
                     var positions = new List<string>();

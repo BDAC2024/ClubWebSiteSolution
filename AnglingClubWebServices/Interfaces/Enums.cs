@@ -28,8 +28,13 @@ namespace AnglingClubWebServices.Interfaces
 
     public enum WaterAccessType
     {
+        [Description("Members Only")]
         MembersOnly = 0,
+
+        [Description("Day Tickets Available")]
         DayTicketsAvailable,
+
+        [Description("Members and Guest Tickets")]
         MembersAndGuestTickets
     }
 
