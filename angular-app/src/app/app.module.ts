@@ -38,6 +38,7 @@ import { PreviewComponent } from './components/preview/preview.component';
 import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
 import { DiaryComponent } from './components/diary/diary.component';
 import { ErrorComponent } from './dialogs/error/error.component';
+import { LeagueStandingsComponent } from './components/league-standings/league-standings.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { ErrorComponent } from './dialogs/error/error.component';
     MatchInfoComponent,
     DiaryComponent,
     ErrorComponent,
+    LeagueStandingsComponent,
   ],
   imports: [
     BrowserModule,
