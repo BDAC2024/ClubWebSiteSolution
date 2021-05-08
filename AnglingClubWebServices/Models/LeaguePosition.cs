@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AnglingClubWebServices.Helpers;
+using System;
 
 namespace AnglingClubWebServices.Models
 {
@@ -6,6 +7,16 @@ namespace AnglingClubWebServices.Models
     public class LeaguePosition
     {
         public int Position { get; set; }
+        public string PositionOrdinal
+        {
+            get
+            {
+                return Position.Ordinal();
+
+            }
+
+        }
+
         public string Name { get; set; }
         public float Points { get; set; }
         public float TotalWeightDecimal { get; set; }
