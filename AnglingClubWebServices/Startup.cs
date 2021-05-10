@@ -93,9 +93,7 @@ namespace AnglingClubWebServices
             services.AddTransient<IMatchResultService, MatchResultService>();
             services.AddTransient<IHealthService, HealthService>();
             services.AddTransient<IMemberRepository, MemberRepository>();
-            
-
-
+            services.AddTransient<INewsRepository, NewsRepository>();
 
         }
 
