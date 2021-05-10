@@ -8,7 +8,8 @@
                 <mat-card-subtitle>{{item.date | date:'dd MMM YY'}}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-                <div [innerHTML]="item.body"></div></mat-card-content>
+                <!-- <div [innerHTML]="item.body"></div></mat-card-content> -->
+                <div [innerHTML]="item.body">{{item.body}}</div></mat-card-content>
         </mat-card>
     </li>
 </ul>

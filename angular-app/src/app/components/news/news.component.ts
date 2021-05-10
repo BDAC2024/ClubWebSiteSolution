@@ -11,12 +11,19 @@ export class NewsComponent implements OnInit {
 
   constructor(public newsService: NewsService) { }
 
-  items!: NewsItem[];
+  public items!: NewsItem[];
+  public isLoading: boolean = false;
   
   ngOnInit(): void {
   
-    this.items = this.newsService.RecentNews();
-
+    this.isLoading = true;
+    this.items = [];
+    
+    this.newsService.readNews()
+    .subscribe(data => {
+      this.isLoading = false;
+      this.items = data;
+    });
   }
 
 }
