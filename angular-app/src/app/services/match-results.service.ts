@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { plainToClass } from 'class-transformer';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AggregateWeight } from '../models/aggregate-weight';
 import { LeagueStanding } from '../models/league-standing';
 import { MatchResult } from '../models/match';
 import { MatchType } from '../models/match-enum';
@@ -27,10 +28,16 @@ export class MatchResultsService {
 }
 
 public readLeagueStandings(type: MatchType): Observable<LeagueStanding[]> {
-  return this.http.get<MatchResult[]>(`${this.globalService.ApiUrl}/api/matchResults/${type}/21`)
+  return this.http.get<MatchResult[]>(`${this.globalService.ApiUrl}/api/matchResults/standings/${type}/21`)
             .pipe(map(res => 
               plainToClass(LeagueStanding, res)
           ));
 }
 
+public readAggregateWeights(type: MatchType): Observable<AggregateWeight[]> {
+  return this.http.get<MatchResult[]>(`${this.globalService.ApiUrl}/api/matchResults/aggregateWeights/${type}/21`)
+            .pipe(map(res => 
+              plainToClass(AggregateWeight, res)
+          ));
+}
 }

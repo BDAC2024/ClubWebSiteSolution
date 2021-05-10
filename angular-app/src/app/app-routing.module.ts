@@ -8,6 +8,7 @@ import { PhotosComponent } from './components/photos/photos.component';
 import { RulesComponent } from './components/rules/rules.component';
 import { DiaryComponent } from './components/diary/diary.component';
 import { LeagueStandingsComponent } from './components/league-standings/league-standings.component';
+import { AggregateWeightsComponent } from './components/aggregate-weights/aggregate-weights.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'waters', component: WatersComponent },
   { path: 'matches', component: MatchesComponent },
   { path: 'standings', component: LeagueStandingsComponent },
+  { path: 'aggregateWeights', component: AggregateWeightsComponent },
   { path: 'photos', component: PhotosComponent },
   { path: 'rules', component: RulesComponent },
   { path: 'diary', component: DiaryComponent },

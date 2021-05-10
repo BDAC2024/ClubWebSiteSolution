@@ -15,6 +15,9 @@ import { GlobalService } from 'src/app/services/global.service';
 })
 export class NavComponent implements OnInit {
 
+  // isExpanded = true;
+  showSubMenu: boolean = false;
+  // isShowing = false;
 
   @ViewChild('drawer', { static: false })
   drawer!: MatSidenav;

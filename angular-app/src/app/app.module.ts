@@ -39,6 +39,7 @@ import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
 import { DiaryComponent } from './components/diary/diary.component';
 import { ErrorComponent } from './dialogs/error/error.component';
 import { LeagueStandingsComponent } from './components/league-standings/league-standings.component';
+import { AggregateWeightsComponent } from './components/aggregate-weights/aggregate-weights.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { LeagueStandingsComponent } from './components/league-standings/league-s
     DiaryComponent,
     ErrorComponent,
     LeagueStandingsComponent,
+    AggregateWeightsComponent,
   ],
   imports: [
     BrowserModule,

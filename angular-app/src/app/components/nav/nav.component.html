@@ -9,7 +9,15 @@
         <a mat-list-item routerLink="/news">News</a>
         <a mat-list-item routerLink="/waters">Club Waters</a>
         <a mat-list-item routerLink="/matches">Matches</a>
-        <a mat-list-item routerLink="/standings">League Standings</a>
+        <mat-list-item (click)="showSubMenu = !showSubMenu" class="parent">
+					<span class="full-width" >Standings</span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showSubMenu}" *ngIf="showSubMenu">
+					<a mat-list-item routerLink="/standings">Leagues</a>
+					<a mat-list-item routerLink="/aggregateWeights">Weights</a>
+				</div>
+        
         <a mat-list-item routerLink="/diary">Diary of Events</a>
         <a mat-list-item routerLink="/photos">Photos</a>
         <a mat-list-item routerLink="/rules">Rules</a>
