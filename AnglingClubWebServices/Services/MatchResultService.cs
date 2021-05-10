@@ -108,5 +108,44 @@ namespace AnglingClubWebServices.Services
 
             return league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal).ToList();
         }
+
+        public List<AggregateWeight> GetAggregateWeights(MatchType matchType, Season season)
+        {
+            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.MatchType == matchType && x.Season == season).Select(x => x.Id);
+            var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
+            var members = _memberRepository.GetMembers().Result;
+
+            var league = matchResultsForLeague
+                .GroupBy(x => x.MembershipNumber)
+                .Select(cl => new AggregateWeight
+                {
+                    Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
+                    TotalWeightDecimal = cl.Sum(x => x.WeightDecimal)
+                }).ToList();
+
+            var pos = 1;
+            int numberAtPos = 0;
+
+            float lastWeight = league.Any() ? league.Max(r => r.TotalWeightDecimal) : 0f;
+
+            foreach (var member in league.OrderByDescending(x => x.TotalWeightDecimal))
+            {
+                if (member.TotalWeightDecimal < lastWeight)
+                {
+                    pos += numberAtPos;
+                    lastWeight = member.TotalWeightDecimal;
+                    numberAtPos = 0;
+                }
+
+                if (member.TotalWeightDecimal == lastWeight)
+                {
+                    numberAtPos++;
+                }
+
+                member.Position = pos;
+            }
+
+            return league.OrderByDescending(x => x.TotalWeightDecimal).ToList();
+        }
     }
 }
