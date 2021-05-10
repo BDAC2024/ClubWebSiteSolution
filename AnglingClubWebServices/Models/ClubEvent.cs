@@ -66,5 +66,13 @@ namespace AnglingClubWebServices.Models
                 }
             }
         }
+
+        public bool InThePast
+        {
+            get
+            {
+                return MatchEnd != null ? MatchEnd < DateTime.Now :  Date < DateTime.Now.Date;
+            }
+        }
     }
 }
