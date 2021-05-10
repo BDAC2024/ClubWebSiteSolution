@@ -66,7 +66,7 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        [HttpGet("{matchType}/{season}")]
+        [HttpGet("standings/{matchType}/{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaguePosition>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetLeagueStandings(MatchType matchType, Season season)
@@ -80,6 +80,31 @@ namespace AnglingClubWebServices.Controllers
                 var standings = _matchResultService.GetLeagueStandings(matchType, season);
 
                 ReportTimer("Getting league standings");
+
+                return Ok(standings);
+
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+                return BadRequest(errors);
+            }
+        }
+
+        [HttpGet("aggregateWeights/{matchType}/{season}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AggregateWeight>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult GetAggregateWeights(MatchType matchType, Season season)
+        {
+            var errors = new List<string>();
+
+            StartTimer();
+
+            try
+            {
+                var standings = _matchResultService.GetAggregateWeights(matchType, season);
+
+                ReportTimer("Getting aggregate weights");
 
                 return Ok(standings);
 
