@@ -13,6 +13,7 @@ export class ClubEvent {
   @Type(() => Date)
   date!: Date;
   
+  inThePast!: boolean;
   eventType!: EventType;
   matchType?: MatchType;
   matchDraw?: Date;
