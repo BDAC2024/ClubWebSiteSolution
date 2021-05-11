@@ -113,6 +113,27 @@ namespace AnglingClubWebServices.Data
 
         }
 
+        public async Task DeleteNewsItem(string id)
+        {
+            var client = GetClient();
 
+            DeleteAttributesRequest request = new DeleteAttributesRequest();
+
+            //request.Attributes.Add(new Amazon.SimpleDB.Model.Attribute { Name = id });
+            request.DomainName = Domain;
+            request.ItemName = id;
+
+            try
+            {
+                DeleteAttributesResponse response = await client.DeleteAttributesAsync(request);
+            }
+            catch (AmazonSimpleDBException ex)
+            {
+                _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                throw;
+            }
+
+
+        }
     }
 }

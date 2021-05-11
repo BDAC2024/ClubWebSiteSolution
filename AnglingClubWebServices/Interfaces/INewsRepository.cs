@@ -8,5 +8,6 @@ namespace AnglingClubWebServices.Interfaces
     {
         Task AddOrUpdateNewsItem(NewsItem newsItem);
         Task<List<NewsItem>> GetNewsItems();
+        Task DeleteNewsItem(string id);
     }
 }

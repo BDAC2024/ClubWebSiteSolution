@@ -68,10 +68,20 @@ namespace AnglingClubWebServices.Controllers
         {
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(string id)
         {
+            var errors = new List<string>();
+
+            try
+            {
+                _newsRepository.DeleteNewsItem(id).Wait();
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
         }
     }
 }
