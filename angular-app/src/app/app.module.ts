@@ -25,6 +25,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 import { AgmCoreModule } from '@agm/core';
 
@@ -40,6 +42,8 @@ import { DiaryComponent } from './components/diary/diary.component';
 import { ErrorComponent } from './dialogs/error/error.component';
 import { LeagueStandingsComponent } from './components/league-standings/league-standings.component';
 import { AggregateWeightsComponent } from './components/aggregate-weights/aggregate-weights.component';
+import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
+import { AddEditNewsItemDialogComponent } from './dialogs/add-edit-news-item-dialog/add-edit-news-item-dialog.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +61,8 @@ import { AggregateWeightsComponent } from './components/aggregate-weights/aggreg
     ErrorComponent,
     LeagueStandingsComponent,
     AggregateWeightsComponent,
+    ConfirmDialogComponent,
+    AddEditNewsItemDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -83,7 +89,9 @@ import { AggregateWeightsComponent } from './components/aggregate-weights/aggreg
     MatDialogModule,
     MatTabsModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [
     {

@@ -5,7 +5,7 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .past-event {
-    font-weight:lighter;
+    font-weight: lighter;
 }
 
 .mat-drawer {
@@ -15,3 +15,4 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-drawer-container {
     background-color:whitesmoke ;
 }
+

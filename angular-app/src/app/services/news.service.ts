@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { plainToClass } from 'class-transformer';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { NewsItem } from '../models/news-item';
 import { GlobalService } from './global.service';
 
@@ -23,5 +23,22 @@ export class NewsService {
                 plainToClass(NewsItem, res)
             ));
   }
-  
+
+  public addOrUpdateNewsItem(newsItem: NewsItem): Observable<NewsItem[]> {
+
+    // api expects a list of one or more items
+    var newsItems: NewsItem[] = [newsItem];
+    
+    return this.http.post<NewsItem[]>(`${this.globalService.ApiUrl}/api/news`, newsItems)
+              .pipe();
+  }
+
+  public deleteNewsItem(id: string): Observable<{}> {
+
+    console.log("deleting via API...");
+    
+    return this.http.delete(`${this.globalService.ApiUrl}/api/news/${id}`)
+              .pipe();
+  }
+
 }
