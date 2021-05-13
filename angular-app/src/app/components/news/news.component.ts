@@ -31,10 +31,10 @@ export class NewsComponent implements OnInit {
   }
 
   public addNewsItem(): void {
-    var item: NewsItem = { id: "", title: "", body: "", date: new Date() };
+    var item: NewsItem = { dbKey: "", title: "", body: "", date: new Date() };
 
     const dialogRef = this.dialog.open(AddEditNewsItemDialogComponent, {
-      width: '250px',
+      width: '90vw',
       data: item
     });
 
@@ -55,7 +55,7 @@ export class NewsComponent implements OnInit {
   }
 
   public deleteNewsItem(item: NewsItem): void {
-    console.log("Deleting: " + item.id);
+    console.log("Deleting: " + item.dbKey);
 
     const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -65,7 +65,7 @@ export class NewsComponent implements OnInit {
     });
     confirmDialog.afterClosed().subscribe(result => {
       if (result === true) {
-        this.newsService.deleteNewsItem(item.id)
+        this.newsService.deleteNewsItem(item.dbKey)
         .subscribe(data => {
           this.getNews();
         });
@@ -76,10 +76,10 @@ export class NewsComponent implements OnInit {
 
   public editNewsItem(originalItem: NewsItem): void {
 
-    var item: NewsItem = { id: originalItem.id, title: originalItem.title, date: originalItem.date, body: originalItem.body};
-    
+    var item: NewsItem = { dbKey: originalItem.dbKey, title: originalItem.title, date: originalItem.date, body: originalItem.body};
+
     const dialogRef = this.dialog.open(AddEditNewsItemDialogComponent, {
-      width: '250px',
+      width: '90vw',
       data: item
     });
 

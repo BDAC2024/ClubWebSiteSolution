@@ -1,21 +1,24 @@
-<h1 *ngIf="data.id == ''" mat-dialog-title>Create news item</h1>
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{title}}</h1>
+<br/>
 <div mat-dialog-content>
     <mat-form-field>
         <mat-label>Title</mat-label>
-        <input matInput [(ngModel)]="data.title">
+        <input class="title-form-field" matInput [(ngModel)]="data.title">
     </mat-form-field>
-    <mat-form-field>
+    <br/>
+    <mat-form-field class="date-form-field">
         <mat-label>Date</mat-label>
         <input matInput [matDatepicker]="picker" [(ngModel)]="data.date">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+    <br/>
     <mat-form-field>
         <mat-label>Body</mat-label>
-        <textarea matInput [(ngModel)]="data.body" rows="10"></textarea>
+        <textarea class="body-form-field" matInput [(ngModel)]="data.body" rows="10"></textarea>
     </mat-form-field>
 </div>
 <div mat-dialog-actions class="edit-button-panel">
-  <button class="edit-button" mat-raised-button color="primary" value="Confirm" [mat-dialog-close]="data" >Ok</button>
-  <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Cancel</button>
+    <button class="edit-button" mat-raised-button color="primary" value="Confirm" [mat-dialog-close]="data" >Ok</button>
+    <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Cancel</button>
 </div>

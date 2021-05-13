@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 
 export interface DialogData {
-  id: string;
+  dbKey: string;
   title: string;
   body: string;
   date: Date;
@@ -32,15 +32,19 @@ export const MY_FORMATS = {
 })
 export class AddEditNewsItemDialogComponent {
 
+  public title: string;
+
   // public date: FormControl;
 
   constructor(public dialogRef: MatDialogRef<AddEditNewsItemDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-      // if (data.id != "") {
-      //   this.date = new FormControl(data.date);
-      // } else {
-      //   this.date = new FormControl(new Date());
-      // }
+      if (data.dbKey != "") {
+        this.title = "Edit news item";
+        // this.date = new FormControl(data.date);
+      } else {
+        this.title = "Create news item";
+        // this.date = new FormControl(new Date());
+      }
      }
 
     public cancel(): void {
