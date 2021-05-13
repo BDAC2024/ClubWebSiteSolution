@@ -14,9 +14,11 @@
     </mat-form-field>
     <br/>
     <mat-form-field>
-        <mat-label>Body</mat-label>
-        <textarea class="body-form-field" matInput [(ngModel)]="data.body" rows="10"></textarea>
+        <fate-material placeholder="Item Text" [(ngModel)]="data.body" rows="10" [buttons]="['bold', 'italic', 'underline', 'heading1', 'heading2', 'heading3', 'normal', 'indent', 'outdent', 'ordered', 'unordered', 'center', 'justify', 'left', 'right', 'undo']"></fate-material>
     </mat-form-field>
+    <br/>
+    <br/>
+    <br/>
 </div>
 <div mat-dialog-actions class="edit-button-panel">
     <button class="edit-button" mat-raised-button color="primary" value="Confirm" [mat-dialog-close]="data" >Ok</button>

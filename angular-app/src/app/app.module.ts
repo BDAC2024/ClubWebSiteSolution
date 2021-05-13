@@ -45,6 +45,9 @@ import { AggregateWeightsComponent } from './components/aggregate-weights/aggreg
 import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
 import { AddEditNewsItemDialogComponent } from './dialogs/add-edit-news-item-dialog/add-edit-news-item-dialog.component';
 
+// Rich text editor
+import { FateModule, FateMaterialModule } from 'fate-editor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,7 +94,10 @@ import { AddEditNewsItemDialogComponent } from './dialogs/add-edit-news-item-dia
     MatCardModule,
     MatProgressSpinnerModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+
+    FateModule,
+    FateMaterialModule,
   ],
   providers: [
     {
