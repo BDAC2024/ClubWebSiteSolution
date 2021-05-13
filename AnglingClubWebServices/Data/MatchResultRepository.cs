@@ -49,7 +49,7 @@ namespace AnglingClubWebServices.Data
                 }
             }
 
-            if (result.DbKey == null)
+            if (result.IsNewItem)
             {
                 result.DbKey = result.GenerateDbKey(IdPrefix);
             }

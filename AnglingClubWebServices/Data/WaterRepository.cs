@@ -27,7 +27,7 @@ namespace AnglingClubWebServices.Data
         {
             var client = GetClient();
 
-            if (water.DbKey == null)
+            if (water.IsNewItem)
             {
                 water.DbKey = water.GenerateDbKey(IdPrefix);
             }
