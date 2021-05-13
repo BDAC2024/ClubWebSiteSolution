@@ -26,7 +26,7 @@ namespace AnglingClubWebServices.Data
         {
             var client = GetClient();
 
-            if (clubEvent.DbKey == null)
+            if (clubEvent.IsNewItem)
             {
                 clubEvent.DbKey = clubEvent.GenerateDbKey(IdPrefix);
             }
