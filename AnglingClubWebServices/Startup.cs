@@ -1,4 +1,5 @@
 using AnglingClubWebServices.Data;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AnglingClubWebServices.Services;
@@ -82,9 +83,15 @@ namespace AnglingClubWebServices
                 });
             });
 
+            // All controller methods use authorization - exclude specific methods using [AllowAnonymous]
+            services.AddControllers()
+                .AddMvcOptions(x => x.Filters.Add(new AuthorizeAttribute())) //Uncomment this line to add the authorize attribute to all route by default
+                ;
+
             services.AddAutoMapper(typeof(Startup));
 
             services.Configure<RepositoryOptions>(Configuration);
+            services.Configure<AuthOptions>(Configuration);
 
             services.AddTransient<IWaterRepository, WaterRepository>();
             services.AddTransient<IEventRepository, EventRepository>();
@@ -94,6 +101,9 @@ namespace AnglingClubWebServices
             services.AddTransient<IHealthService, HealthService>();
             services.AddTransient<IMemberRepository, MemberRepository>();
             services.AddTransient<INewsRepository, NewsRepository>();
+
+            services.AddScoped<IAuthService, AuthService>();
+
 
         }
 
@@ -110,6 +120,9 @@ namespace AnglingClubWebServices
             app.UseRouting();
 
             app.UseCors(_corsPolicy);
+
+            // custom jwt auth middleware
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthorization();
 

@@ -1,4 +1,5 @@
 ﻿using AnglingClubWebServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -28,6 +29,7 @@ namespace AnglingClubWebServices.Controllers
 
         #region Methods
 
+        [AllowAnonymous]
         [HttpGet]
         public void Get()
         {
