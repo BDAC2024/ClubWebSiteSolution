@@ -1,7 +1,7 @@
-using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,22 +9,38 @@ using System.Collections.Generic;
 
 namespace AnglingClubWebServices.Controllers
 {
+
     [Route("api/[controller]")]
     public class MembersController : AnglingClubControllerBase
     {
         private readonly IMemberRepository _memberRepository;
         private readonly ILogger<MembersController> _logger;
         private readonly IMapper _mapper;
+        private readonly IAuthService _authService;
 
         public MembersController(
             IMemberRepository memberRepository,
             IMapper mapper,
+            IAuthService authService,
             ILoggerFactory loggerFactory)
         {
             _memberRepository = memberRepository;
             _mapper = mapper;
+            _authService = authService;
             _logger = loggerFactory.CreateLogger<MembersController>();
             base.Logger = _logger;
+        }
+
+        [HttpPost("authenticate")]
+        [AllowAnonymous]
+        public IActionResult Authenticate([FromBody]AuthenticateRequest model)
+        {
+            var response = _authService.Authenticate(model).Result;
+
+            if (response == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(response);
         }
 
         // GET api/values
