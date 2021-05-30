@@ -1,6 +1,7 @@
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -24,6 +25,7 @@ namespace AnglingClubWebServices.Controllers
         }
 
         // GET api/values
+        [AllowAnonymous]
         [HttpGet]
         public ReferenceData Get()
         {

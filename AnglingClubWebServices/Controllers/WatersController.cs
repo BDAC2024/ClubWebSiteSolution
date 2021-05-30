@@ -1,6 +1,7 @@
 ﻿using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,7 @@ namespace AnglingClubWebServices.Controllers
             base.Logger = _logger;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<WaterOutputDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
