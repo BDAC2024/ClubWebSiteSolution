@@ -27,7 +27,7 @@ export class NewsComponent implements OnInit {
   }
 
   public enableAdmin(set: boolean): void {
-    this.isPageAdmin = set && this.membersService.IsAdmin;
+    this.isPageAdmin = set && this.membersService.CurrentMember.isAdmin;
   }
 
   public addNewsItem(): void {

@@ -1,0 +1,20 @@
+<mat-card class="login-card">
+    <mat-card-header>
+        <mat-card-title>Member Login</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-form-field [style.width.px]=200  >
+            <mat-label>Membership Number</mat-label>
+            <input matInput type="number" [(ngModel)]="membershipNo">
+            </mat-form-field>
+            <br/>
+
+            <mat-form-field [style.width.px]=200  >
+            <mat-label>PIN</mat-label>
+            <input matInput type="number" [(ngModel)]="pin">
+            </mat-form-field>
+            <br/>
+
+            <button mat-raised-button color="primary" (click)="onSubmit()" >Login</button>
+    </mat-card-content>
+</mat-card>

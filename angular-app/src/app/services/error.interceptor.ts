@@ -26,14 +26,18 @@ export class ErrorIntercept implements HttpInterceptor {
                     let errorMessage = '';
                     if (error.error instanceof ErrorEvent) {
                         // client-side error
-                        errorMessage = `${prefix} Error: ${error.error.message}`;
+                        errorMessage = `${prefix} ${error.error.message}`;
                     } else {
                         // server-side error
-                        errorMessage = `${prefix} Error Status: ${error.status}\nMessage: ${error.message}\nDetail: ${error.error}`;
+                        if (error.error) {
+                            errorMessage = `${prefix} ${error.error.message}`;
+                        } else {
+                            errorMessage = `${prefix} Error Status: ${error.status}\nMessage: ${error.message}\nDetail: ${error.error}`;
+                        }
                     }
                     console.log(errorMessage);
 
-                    const dialogRef = this.dialog.open(ErrorComponent, {width: "250px", maxHeight: "100vh", data: error.error});
+                    const dialogRef = this.dialog.open(ErrorComponent, {width: "250px", maxHeight: "100vh", data: errorMessage});
 
                     dialogRef.afterClosed().subscribe(result => {
                     });

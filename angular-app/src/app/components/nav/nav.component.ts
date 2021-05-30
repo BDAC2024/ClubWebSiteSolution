@@ -7,6 +7,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { PreviewService } from 'src/app/services/preview.service';
 import { ScreenService } from 'src/app/services/screen.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 
 @Component({
   selector: 'app-nav',
@@ -54,6 +55,7 @@ export class NavComponent implements OnInit {
       public previewService: PreviewService,
       private screenService: ScreenService,
       private globalService: GlobalService,
+      public authenticationService: AuthenticationService,
       router: Router) {
 
         this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
@@ -97,13 +99,5 @@ export class NavComponent implements OnInit {
   ngOnInit(): void {
   }
 
-    // Methods
-
-  /** Logs out the user by calling the auth service
-   * @param inp - The best arg ever
-   * @param outp - The resultant number
-   */
-   public logout(): void {
-  }
 
 }

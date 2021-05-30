@@ -1,0 +1,16 @@
+<h2  mat-dialog-title>Preferences</h2>
+<mat-dialog-content class="mat-typography">
+    <br/>
+    Please confirm that you are happy for your name to be used in match results, league standings etc. If you do not wish to have your name displayed, you will appear as "Anonymous" instead. 
+    <br/>
+    <br/>
+    <b>Note:</b> This will only ever be visible to other club members because match results and league standings are not accessible unless logged in as a member.
+    <br/>
+    <br/>
+    <div class="checkbox-wrapper">
+        <mat-checkbox [(ngModel)]="this.prefs.allowNameToBeUsed">&nbsp;Allow my name to be stored and used</mat-checkbox>
+    </div>
+</mat-dialog-content>
+<div mat-dialog-actions class="edit-button-panel">
+    <button mat-raised-button color="primary" (click)="submit()">Save Preferences</button>
+</div>

@@ -1,0 +1,83 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { LoginDetails } from 'src/app/models/loginDetails';
+import { Member } from '../../models/member';
+import { GlobalService } from './../global.service';
+import jwt_decode from 'jwt-decode';
+import { MembersService } from '../members.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthenticationService {
+
+  private STORAGE_KEY: string = "currentMember";
+
+  private currentMemberSubject!: BehaviorSubject<Member>;
+  public currentMember!: Observable<Member>;
+
+  constructor(
+    private http: HttpClient,
+    private globalService: GlobalService,
+    private membersService: MembersService
+    ) {
+      this.getMember();
+   }
+
+   public get currentMemberValue(): Member {
+    this.getMember();
+    return this.currentMemberSubject.value;
+   }
+
+   public get isLoggedIn(): boolean {
+    this.getMember();
+    return this.currentMemberSubject.value.token != undefined;
+   }
+
+   public get isAdmin(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return JSON.parse(tokenDecoded.IsAdmin.toLowerCase());
+    } else {
+      return false;
+    }
+   }
+
+   public get allowNameToBeUsed(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return JSON.parse(tokenDecoded.AllowNameToBeUsed.toLowerCase());
+    } else {
+      return false;
+    }
+   }
+
+   login(membershipNumber: number, pin: number) {
+
+    var loginDetails = new LoginDetails(membershipNumber, pin);
+
+    return this.http.post<any>(`${this.globalService.ApiUrl}/api/members/authenticate`, loginDetails)
+        .pipe(map(user => {
+            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+            this.membersService.memberLoggedIn(user.token);
+            this.currentMemberSubject.next(user);
+            return user;
+        }));
+}
+
+  logout() {
+      // remove user from local storage to log user out
+      localStorage.removeItem(this.STORAGE_KEY);
+      this.membersService.memberLoggedOut();
+      this.currentMemberSubject.next(new Member());
+  }
+
+  private getMember() {
+    const memberJson = localStorage.getItem(this.STORAGE_KEY);
+    this.currentMemberSubject = new BehaviorSubject<Member>(memberJson !== null ? JSON.parse(memberJson) : new Member());
+    this.currentMember = this.currentMemberSubject.asObservable();
+  }
+}

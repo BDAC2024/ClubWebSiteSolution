@@ -27,6 +27,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AgmCoreModule } from '@agm/core';
 
@@ -47,6 +48,10 @@ import { AddEditNewsItemDialogComponent } from './dialogs/add-edit-news-item-dia
 
 // Rich text editor
 import { FateModule, FateMaterialModule } from 'fate-editor';
+import { LoginComponent } from './components/login/login.component';
+import { JwtInterceptor } from './services/auth/jwt.Interceptor';
+import { LogoutComponent } from './components/logout/logout.component';
+import { LoginPreferencesDialogComponent } from './dialogs/login-preferences-dialog/login-preferences-dialog.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +71,9 @@ import { FateModule, FateMaterialModule } from 'fate-editor';
     AggregateWeightsComponent,
     ConfirmDialogComponent,
     AddEditNewsItemDialogComponent,
+    LoginComponent,
+    LogoutComponent,
+    LoginPreferencesDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -95,6 +103,7 @@ import { FateModule, FateMaterialModule } from 'fate-editor';
     MatProgressSpinnerModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatCheckboxModule,
 
     FateModule,
     FateMaterialModule,
@@ -105,7 +114,13 @@ import { FateModule, FateMaterialModule } from 'fate-editor';
       useClass: ErrorIntercept,
       multi: true,
       deps: [MatDialog]
-    }
+    },
+    { 
+      provide: HTTP_INTERCEPTORS, 
+      useClass: JwtInterceptor, 
+      multi: true 
+    },
+
   ],
   bootstrap: [AppComponent]
 })

@@ -9,18 +9,23 @@ import { RulesComponent } from './components/rules/rules.component';
 import { DiaryComponent } from './components/diary/diary.component';
 import { LeagueStandingsComponent } from './components/league-standings/league-standings.component';
 import { AggregateWeightsComponent } from './components/aggregate-weights/aggregate-weights.component';
+import { LoginComponent } from './components/login/login.component';
+import { AuthGuard } from './services/auth/auth.guard';
+import { LogoutComponent } from './components/logout/logout.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
+  { path: 'login', component: LoginComponent },
+  { path: 'logout', component: LogoutComponent },
   { path: 'welcome', component: WelcomeComponent },
   { path: 'news', component: NewsComponent },
   { path: 'waters', component: WatersComponent },
-  { path: 'matches', component: MatchesComponent },
-  { path: 'standings', component: LeagueStandingsComponent },
-  { path: 'aggregateWeights', component: AggregateWeightsComponent },
-  { path: 'photos', component: PhotosComponent },
+  { path: 'matches', component: MatchesComponent, canActivate: [AuthGuard] },
+  { path: 'standings', component: LeagueStandingsComponent, canActivate: [AuthGuard] },
+  { path: 'aggregateWeights', component: AggregateWeightsComponent, canActivate: [AuthGuard] },
+  { path: 'photos', component: PhotosComponent, canActivate: [AuthGuard] },
   { path: 'rules', component: RulesComponent },
-  { path: 'diary', component: DiaryComponent },
+  { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

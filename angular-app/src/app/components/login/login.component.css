@@ -1,0 +1,8 @@
+
+::ng-deep .mat-card-header-text {
+    margin-left: 0 !important;
+}
+
+mat-card {
+    width: fit-content;
+}
