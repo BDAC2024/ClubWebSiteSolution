@@ -43,7 +43,8 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "LastPaid", Value = dateToString(member.LastPaid), Replace = true },
                 new ReplaceableAttribute { Name = "Enabled", Value = member.Enabled ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "Pin", Value = member.Pin.ToString(), Replace = true },
-
+                new ReplaceableAttribute { Name = "AllowNameToBeUsed", Value = member.AllowNameToBeUsed ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "PreferencesLastUpdated", Value = dateToString(member.PreferencesLastUpdated), Replace = true },
             };
 
             request.Items.Add(
@@ -112,6 +113,14 @@ namespace AnglingClubWebServices.Data
 
                         case "Pin":
                             member.Pin = Convert.ToInt32(attribute.Value);
+                            break;
+
+                        case "AllowNameToBeUsed":
+                            member.AllowNameToBeUsed = attribute.Value == "1";
+                            break;
+
+                        case "PreferencesLastUpdated":
+                            member.PreferencesLastUpdated = DateTime.Parse(attribute.Value);
                             break;
 
                         default:

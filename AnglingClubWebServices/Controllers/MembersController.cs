@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -17,16 +19,19 @@ namespace AnglingClubWebServices.Controllers
         private readonly ILogger<MembersController> _logger;
         private readonly IMapper _mapper;
         private readonly IAuthService _authService;
+        private readonly IEmailService _emailService;
 
         public MembersController(
             IMemberRepository memberRepository,
             IMapper mapper,
             IAuthService authService,
+            IEmailService emailService,
             ILoggerFactory loggerFactory)
         {
             _memberRepository = memberRepository;
             _mapper = mapper;
             _authService = authService;
+            _emailService = emailService;
             _logger = loggerFactory.CreateLogger<MembersController>();
             base.Logger = _logger;
         }
@@ -38,7 +43,7 @@ namespace AnglingClubWebServices.Controllers
             var response = _authService.Authenticate(model).Result;
 
             if (response == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest(new { message = "Membership Number or PIN is incorrect" });
 
             return Ok(response);
         }
@@ -51,11 +56,11 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            var events = _memberRepository.GetMembers().Result;
+            var members = _memberRepository.GetMembers().Result;
 
             ReportTimer("Getting members");
 
-            return Ok(events);
+            return Ok(members);
         }
 
         // GET api/values/5
@@ -77,6 +82,36 @@ namespace AnglingClubWebServices.Controllers
             }
 
             ReportTimer("Posting members");
+        }
+
+        [HttpPost]
+        [Route("SetPreferences")]
+        public void SetPreferences([FromBody] MemberPreferences prefs)
+        {
+            StartTimer();
+
+            var member = (_memberRepository.GetMembers().Result).Single(x => x.DbKey == prefs.Id);
+
+
+            if (prefs.AllowNameToBeUsed == true && member.AllowNameToBeUsed == false)
+            {
+                // Notify admins of request to use member's name
+                var memberEditUrl = $"http://localhost:4200/member/{member.MembershipNumber}";
+
+                _emailService.SendEmail("steve@townendmail.co.uk", $"User {member.MembershipNumber}, action required", $"User {member.MembershipNumber} has requested their name be used in match results. <a href='{memberEditUrl}'>Please update them here</a>");
+            }
+
+            member.AllowNameToBeUsed = prefs.AllowNameToBeUsed;
+            member.PreferencesLastUpdated = DateTime.Now;
+
+            if (!member.AllowNameToBeUsed)
+            {
+                member.Name = "Anonymous";
+            }
+
+            _memberRepository.AddOrUpdateMember(member);
+
+            ReportTimer("Updating member preferences");
         }
 
         // PUT api/values/5

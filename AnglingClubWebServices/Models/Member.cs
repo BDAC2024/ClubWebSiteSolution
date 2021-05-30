@@ -10,5 +10,7 @@ namespace AnglingClubWebServices.Models
         public DateTime LastPaid { get; set; }
         public bool Enabled { get; set; } = true;
         public int Pin { get; set; }
+        public bool AllowNameToBeUsed { get; set; } = false;
+        public DateTime PreferencesLastUpdated { get; set; } = DateTime.MinValue;
     }
 }

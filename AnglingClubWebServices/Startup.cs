@@ -92,6 +92,7 @@ namespace AnglingClubWebServices
 
             services.Configure<RepositoryOptions>(Configuration);
             services.Configure<AuthOptions>(Configuration);
+            services.Configure<EmailOptions>(Configuration);
 
             services.AddTransient<IWaterRepository, WaterRepository>();
             services.AddTransient<IEventRepository, EventRepository>();
@@ -103,6 +104,7 @@ namespace AnglingClubWebServices
             services.AddTransient<INewsRepository, NewsRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IEmailService, EmailService>();
 
 
         }
