@@ -39,7 +39,7 @@ export class AuthenticationService {
    public get isAdmin(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-      return JSON.parse(tokenDecoded.IsAdmin.toLowerCase());
+      return JSON.parse(tokenDecoded.Admin.toLowerCase());
     } else {
       return false;
     }
@@ -77,7 +77,11 @@ export class AuthenticationService {
 
   private getMember() {
     const memberJson = localStorage.getItem(this.STORAGE_KEY);
-    this.currentMemberSubject = new BehaviorSubject<Member>(memberJson !== null ? JSON.parse(memberJson) : new Member());
+    var member = memberJson !== null ? JSON.parse(memberJson) : new Member();
+    if (memberJson !== null) {
+      this.membersService.memberLoggedIn(member.token);
+    }
+    this.currentMemberSubject = new BehaviorSubject<Member>(member);
     this.currentMember = this.currentMemberSubject.asObservable();
   }
 }

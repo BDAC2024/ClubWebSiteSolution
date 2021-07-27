@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import jwt_decode from 'jwt-decode';
 
 export class Member {
@@ -5,9 +6,13 @@ export class Member {
     token?: string;
     membershipNumber!: number;
     name!: string;
-    isAdmin: boolean = false;
+    admin: boolean = false;
     allowNameToBeUsed: boolean = false;
-
+    enabled: boolean = false;
+    @Type(() => Date)
+    lastPaid!: Date;
+    @Type(() => Date)
+    preferencesLastUpdated!: Date;
     /**
      *
      */
@@ -17,8 +22,9 @@ export class Member {
             this.token = token;
             this.id = tokenDecoded.Key;
             this.membershipNumber = JSON.parse(tokenDecoded.MembershipNumber.toLowerCase());
-            this.isAdmin = JSON.parse(tokenDecoded.IsAdmin.toLowerCase());
+            this.admin = JSON.parse(tokenDecoded.Admin.toLowerCase());
             this.allowNameToBeUsed = JSON.parse(tokenDecoded.AllowNameToBeUsed.toLowerCase());
+            this.lastPaid = new Date(tokenDecoded.LastPaid);
         } else {
             // Do nothing, probably a logout
         }

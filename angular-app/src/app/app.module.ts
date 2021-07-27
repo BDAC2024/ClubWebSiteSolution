@@ -26,7 +26,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AgmCoreModule } from '@agm/core';
@@ -45,6 +45,7 @@ import { LeagueStandingsComponent } from './components/league-standings/league-s
 import { AggregateWeightsComponent } from './components/aggregate-weights/aggregate-weights.component';
 import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
 import { AddEditNewsItemDialogComponent } from './dialogs/add-edit-news-item-dialog/add-edit-news-item-dialog.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 // Rich text editor
 import { FateModule, FateMaterialModule } from 'fate-editor';
@@ -52,6 +53,8 @@ import { LoginComponent } from './components/login/login.component';
 import { JwtInterceptor } from './services/auth/jwt.Interceptor';
 import { LogoutComponent } from './components/logout/logout.component';
 import { LoginPreferencesDialogComponent } from './dialogs/login-preferences-dialog/login-preferences-dialog.component';
+import { MemberComponent } from './components/member/member.component';
+import { MembersComponent } from './components/members/members.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +77,8 @@ import { LoginPreferencesDialogComponent } from './dialogs/login-preferences-dia
     LoginComponent,
     LogoutComponent,
     LoginPreferencesDialogComponent,
+    MemberComponent,
+    MembersComponent,
   ],
   imports: [
     BrowserModule,
@@ -97,6 +102,7 @@ import { LoginPreferencesDialogComponent } from './dialogs/login-preferences-dia
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
+    MatPaginatorModule,
     MatDialogModule,
     MatTabsModule,
     MatCardModule,
@@ -120,7 +126,9 @@ import { LoginPreferencesDialogComponent } from './dialogs/login-preferences-dia
       useClass: JwtInterceptor, 
       multi: true 
     },
-
+    { 
+      provide: MAT_DATE_LOCALE, 
+      useValue: 'en-GB' },
   ],
   bootstrap: [AppComponent]
 })

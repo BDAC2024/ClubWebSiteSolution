@@ -24,10 +24,11 @@ export class NewsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getNews();
+    this.enableAdmin(true);
   }
 
   public enableAdmin(set: boolean): void {
-    this.isPageAdmin = set && this.membersService.CurrentMember.isAdmin;
+    this.isPageAdmin = set && this.membersService.CurrentMember.admin;
   }
 
   public addNewsItem(): void {

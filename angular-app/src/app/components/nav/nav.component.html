@@ -9,11 +9,11 @@
         <a mat-list-item routerLink="/news">News</a>
         <a mat-list-item routerLink="/waters">Club Waters</a>
         <a mat-list-item routerLink="/matches">Matches</a>
-        <mat-list-item (click)="showSubMenu = !showSubMenu" class="parent">
+        <mat-list-item (click)="showStandingsSubMenu = !showStandingsSubMenu" class="parent">
 					<span class="full-width" >Standings</span>
-					<mat-icon class="menu-button" [ngClass]="{'rotated' : showSubMenu}" >expand_more</mat-icon>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showStandingsSubMenu}" >expand_more</mat-icon>
 				</mat-list-item>
-				<div class="submenu" [ngClass]="{'expanded' : showSubMenu}" *ngIf="showSubMenu">
+				<div class="submenu" [ngClass]="{'expanded' : showStandingsSubMenu}" *ngIf="showStandingsSubMenu">
 					<a mat-list-item routerLink="/standings">Leagues</a>
 					<a mat-list-item routerLink="/aggregateWeights">Weights</a>
 				</div>
@@ -21,6 +21,14 @@
         <a mat-list-item routerLink="/diary">Diary of Events</a>
         <a mat-list-item routerLink="/photos">Photos</a>
         <a mat-list-item routerLink="/rules">Rules</a>
+        <mat-list-item (click)="showAdminSubMenu = !showAdminSubMenu" *ngIf="authenticationService.isAdmin" class="parent">
+					<span class="full-width" >Admin</span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showAdminSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showAdminSubMenu}" *ngIf="showAdminSubMenu && authenticationService.isAdmin">
+					<a mat-list-item routerLink="/members">Members</a>
+					<!-- <a mat-list-item routerLink="/aggregateWeights">Weights</a> -->
+				</div>
         <a mat-list-item routerLink="/logout" *ngIf="authenticationService.isLoggedIn">Logout</a>
     </mat-nav-list>
   </mat-sidenav>

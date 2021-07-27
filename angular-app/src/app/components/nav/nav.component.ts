@@ -17,7 +17,8 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 export class NavComponent implements OnInit {
 
   // isExpanded = true;
-  showSubMenu: boolean = false;
+  showStandingsSubMenu: boolean = false;
+  showAdminSubMenu: boolean = false;
   // isShowing = false;
 
   @ViewChild('drawer', { static: false })

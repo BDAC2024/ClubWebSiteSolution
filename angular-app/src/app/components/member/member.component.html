@@ -1,0 +1,47 @@
+<div>
+    <h1>Member's Details</h1>
+
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+    <div *ngIf="!isLoading">
+        <mat-form-field>
+            <mat-label>Membership Number</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="member.membershipNumber" [disabled]="true">
+        </mat-form-field>
+        <br/>
+        <mat-checkbox [(ngModel)]="member.enabled">
+            Enabled
+        </mat-checkbox>
+        <br/>
+        <br/>
+        <mat-checkbox [(ngModel)]="member.admin">
+            Administrator
+        </mat-checkbox>
+        <br/>
+        <br/>
+        <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="member.name" [disabled]="!member.allowNameToBeUsed">
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="date-form-field">
+            <mat-label>Membership fee paid on</mat-label>
+            <input matInput [matDatepicker]="picker1" [(ngModel)]="member.lastPaid">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+        <br/>
+        <h2>Member's Preferences</h2>
+        <ul>
+            <li *ngIf="!member.allowNameToBeUsed">Member does not want their name to be used</li>
+            <li *ngIf="member.allowNameToBeUsed">Member has allowed their name to be used</li>
+            <li>Member last updated their preferences on {{member.preferencesLastUpdated | date:'dd MMM YY'}}</li>
+        </ul>
+        <br/>
+        <button class="edit-button" mat-raised-button color="primary" (click)="save()">Save</button>
+    
+        <br/>
+        <br/>
+        <span *ngIf="status">{{status}}</span>
+    </div>
+</div>

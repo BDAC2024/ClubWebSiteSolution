@@ -12,6 +12,8 @@ import { AggregateWeightsComponent } from './components/aggregate-weights/aggreg
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './services/auth/auth.guard';
 import { LogoutComponent } from './components/logout/logout.component';
+import { MemberComponent } from './components/member/member.component';
+import { MembersComponent } from './components/members/members.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -26,6 +28,8 @@ const routes: Routes = [
   { path: 'photos', component: PhotosComponent, canActivate: [AuthGuard] },
   { path: 'rules', component: RulesComponent },
   { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
+  { path: 'member/:membershipNumber', component: MemberComponent, canActivate: [AuthGuard] },
+  { path: 'members', component: MembersComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

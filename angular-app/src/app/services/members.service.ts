@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { plainToClass } from 'class-transformer';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Member } from '../models/member';
 import { MemberPreferences } from '../models/memberPreferences';
 import { GlobalService } from './global.service';
@@ -31,5 +33,24 @@ export class MembersService {
               .pipe();
   }
 
+  public readMember(membershipNumber: number): Observable<Member> {
+    return this.http.get<Member>(`${this.globalService.ApiUrl}/api/members/${membershipNumber}`)
+              .pipe(map(res => 
+                plainToClass(Member, res)
+            ));
+  }
+
+  public readMembers(): Observable<Member[]> {
+    return this.http.get<Member[]>(`${this.globalService.ApiUrl}/api/members`)
+              .pipe(map(res => 
+                plainToClass(Member, res)
+            ));
+  }
+
+  public updateMember(member: Member): Observable<Member> {
+
+    return this.http.post<Member>(`${this.globalService.ApiUrl}/api/members/update`, member)
+              .pipe();
+  }
 
 }
