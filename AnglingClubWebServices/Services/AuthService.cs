@@ -53,8 +53,10 @@ namespace AnglingClubWebServices.Services
                 Subject = new ClaimsIdentity(new[] { 
                     new Claim("Key", member.DbKey), 
                     new Claim("MembershipNumber", member.MembershipNumber.ToString()),
-                    new Claim("IsAdmin", member.Admin.ToString()),
+                    new Claim("Admin", member.Admin.ToString()),
                     new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),
+                    new Claim("LastPaid", member.LastPaid.ToString()),
+                    new Claim("Name", member.AllowNameToBeUsed ? member.Name : "Anonymous"),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_authOptions.AuthExpireMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
