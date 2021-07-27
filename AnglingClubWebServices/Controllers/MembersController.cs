@@ -56,7 +56,7 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            var members = _memberRepository.GetMembers().Result;
+            var members = _memberRepository.GetMembers().Result.OrderBy(m => m.MembershipNumber).ToList();
 
             ReportTimer("Getting members");
 
@@ -64,10 +64,16 @@ namespace AnglingClubWebServices.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{membershipNumber}")]
+        public IActionResult Get(int membershipNumber)
         {
-            return "value";
+            StartTimer();
+
+            var member = _memberRepository.GetMembers().Result.First(m => m.MembershipNumber == membershipNumber);
+
+            ReportTimer("Getting member");
+
+            return Ok(member);
         }
 
         // POST api/values
@@ -82,6 +88,27 @@ namespace AnglingClubWebServices.Controllers
             }
 
             ReportTimer("Posting members");
+        }
+
+        [HttpPost]
+        [Route("Update")]
+        public void Update([FromBody] Member memberDto)
+        {
+            StartTimer();
+
+            var member = _memberRepository.GetMembers().Result.First(m => m.MembershipNumber == memberDto.MembershipNumber);
+
+            member.LastPaid = memberDto.LastPaid;
+            member.Admin = memberDto.Admin;
+            member.Enabled = memberDto.Enabled;
+            if (member.AllowNameToBeUsed)
+            {
+                member.Name = memberDto.Name;
+            }
+
+            _memberRepository.AddOrUpdateMember(member);
+
+            ReportTimer("Updating member");
         }
 
         [HttpPost]
