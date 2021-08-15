@@ -42,9 +42,12 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Admin", Value = member.Admin ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "LastPaid", Value = dateToString(member.LastPaid), Replace = true },
                 new ReplaceableAttribute { Name = "Enabled", Value = member.Enabled ? "1" : "0", Replace = true },
-                new ReplaceableAttribute { Name = "Pin", Value = member.Pin.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "Pin", Value = member.Pin, Replace = true },
                 new ReplaceableAttribute { Name = "AllowNameToBeUsed", Value = member.AllowNameToBeUsed ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "PreferencesLastUpdated", Value = dateToString(member.PreferencesLastUpdated), Replace = true },
+                new ReplaceableAttribute { Name = "PinResetRequired", Value = member.PinResetRequired ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "FailedLoginAttempts", Value = member.FailedLoginAttempts.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "LastLoginFailure", Value = dateToString(member.LastLoginFailure), Replace = true },
             };
 
             request.Items.Add(
@@ -112,7 +115,11 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Pin":
-                            member.Pin = Convert.ToInt32(attribute.Value);
+                            member.Pin = attribute.Value;
+                            break;
+
+                        case "PinResetRequired":
+                            member.PinResetRequired = attribute.Value == "0" ? false : true; ;
                             break;
 
                         case "AllowNameToBeUsed":
@@ -121,6 +128,14 @@ namespace AnglingClubWebServices.Data
 
                         case "PreferencesLastUpdated":
                             member.PreferencesLastUpdated = DateTime.Parse(attribute.Value);
+                            break;
+
+                        case "FailedLoginAttempts":
+                            member.FailedLoginAttempts = Convert.ToInt32(attribute.Value);
+                            break;
+
+                        case "LastLoginFailure":
+                            member.LastLoginFailure = DateTime.Parse(attribute.Value);
                             break;
 
                         default:

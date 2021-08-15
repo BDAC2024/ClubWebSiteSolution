@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AnglingClubWebServices.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ namespace AnglingClubWebServices.Controllers
     public class AnglingClubControllerBase : ControllerBase
     {
         private readonly Stopwatch _timer = new Stopwatch();
+        private Member _currentUser = null;
 
         public AnglingClubControllerBase()
         {
@@ -18,6 +20,19 @@ namespace AnglingClubWebServices.Controllers
         #region Properties
 
         protected ILogger Logger { get; set; } = null;
+
+        protected Member CurrentUser
+        {
+            get
+            {
+                if (_currentUser == null)
+                {
+                    _currentUser = (Member)HttpContext.Items["User"];
+                }
+
+                return _currentUser;
+            }
+        }
 
         #endregion
 

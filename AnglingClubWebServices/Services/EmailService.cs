@@ -28,14 +28,17 @@ namespace AnglingClubWebServices.Services
 
         public void SendEmailToSupport(string subject, string textBody, List<string> attachmentFilenames = null)
         {
-            SendEmail(_options.EmailUsername, subject, textBody, attachmentFilenames);
+            SendEmail(new List<string> { _options.EmailUsername }, subject, textBody, attachmentFilenames);
         }
 
-        public void SendEmail(string to, string subject, string textBody, List<string> attachmentFilenames = null)
+        public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null)
         {
             var mailMessage = new MimeMessage();
             mailMessage.From.Add(new MailboxAddress(_options.EmailFromName, _options.EmailFromAddress));
-            mailMessage.To.Add(MailboxAddress.Parse(to));
+            foreach (var recipient in to)
+            {
+                mailMessage.To.Add(MailboxAddress.Parse(recipient));
+            }
             mailMessage.Subject = subject;
 
             var builder = new BodyBuilder();

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace AnglingClubWebServices.Services
 {
@@ -15,6 +16,9 @@ namespace AnglingClubWebServices.Services
     {
         private readonly AuthOptions _authOptions;
         private readonly IMemberRepository _memberRepository;
+
+        private const int MAX_FAILED_LOGINS = 10;
+        private const int MINUTES_TO_LOCKOUT = 2;
 
         public AuthService(IOptions<AuthOptions> opts,
             IMemberRepository memberRepository)
@@ -25,10 +29,40 @@ namespace AnglingClubWebServices.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            var member = (await _memberRepository.GetMembers()).SingleOrDefault(x => x.MembershipNumber == model.MembershipNumber && x.Pin == model.Pin);
+            var member = (await _memberRepository.GetMembers()).Where(x => x.MembershipNumber == model.MembershipNumber && x.Enabled).OrderByDescending(x => x.LastPaid).Take(1).SingleOrDefault();
 
-            // return null if user not found
-            if (member == null) return null;
+            // return null if user not found or PIN invalid
+            if (member == null)
+            {
+                return null;
+            }
+
+            // Reject if locked out
+            if (member.FailedLoginAttempts > MAX_FAILED_LOGINS && member.LastLoginFailure.AddMinutes(MINUTES_TO_LOCKOUT) > DateTime.Now)
+            {
+                throw new Exception($"Too many failed login attempts. Your account will be locked for {MINUTES_TO_LOCKOUT} minutes before you can try again.");
+            }
+
+            // Only allow a few failed logins before locking for a short time
+            if (!member.ValidPin(model.Pin))
+            {
+                if (member.LastLoginFailure.AddMinutes(MINUTES_TO_LOCKOUT) < DateTime.Now)
+                {
+                    member.LastLoginFailure = DateTime.Now;
+                    member.FailedLoginAttempts = 0;
+                }
+
+                member.FailedLoginAttempts++;
+
+                await _memberRepository.AddOrUpdateMember(member);
+
+                return null;
+            }
+
+            member.FailedLoginAttempts = 0;
+
+            await _memberRepository.AddOrUpdateMember(member);
+
 
             // authentication successful so generate jwt token
             var token = generateJwtToken(member);
@@ -50,13 +84,15 @@ namespace AnglingClubWebServices.Services
             var key = Encoding.ASCII.GetBytes(_authOptions.AuthSecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { 
-                    new Claim("Key", member.DbKey), 
+                Subject = new ClaimsIdentity(new[] {
+                    new Claim("Key", member.DbKey),
                     new Claim("MembershipNumber", member.MembershipNumber.ToString()),
                     new Claim("Admin", member.Admin.ToString()),
                     new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),
-                    new Claim("LastPaid", member.LastPaid.ToString()),
+                    new Claim("LastPaid", member.LastPaid.ToString("u")),
+                    new Claim("PreferencesLastUpdated", member.PreferencesLastUpdated.ToString("u")),
                     new Claim("Name", member.AllowNameToBeUsed ? member.Name : "Anonymous"),
+                    new Claim("PinResetRequired", member.PinResetRequired.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_authOptions.AuthExpireMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -65,5 +101,12 @@ namespace AnglingClubWebServices.Services
             return tokenHandler.WriteToken(token);
         }
 
+        public static string HashText(string text, string salt, HashAlgorithm hasher)
+        {
+            byte[] textWithSaltBytes = Encoding.UTF8.GetBytes(string.Concat(text, salt));
+            byte[] hashedBytes = hasher.ComputeHash(textWithSaltBytes);
+            hasher.Clear();
+            return Convert.ToBase64String(hashedBytes);
+        }
     }
 }

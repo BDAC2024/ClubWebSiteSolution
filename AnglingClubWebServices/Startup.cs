@@ -102,6 +102,7 @@ namespace AnglingClubWebServices
             services.AddTransient<IHealthService, HealthService>();
             services.AddTransient<IMemberRepository, MemberRepository>();
             services.AddTransient<INewsRepository, NewsRepository>();
+            services.AddTransient<IUserAdminRepository, UserAdminRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmailService, EmailService>();
