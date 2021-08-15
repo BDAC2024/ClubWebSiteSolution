@@ -5,16 +5,44 @@
     <mat-card-content>
         <mat-form-field [style.width.px]=200  >
             <mat-label>Membership Number</mat-label>
-            <input matInput type="number" [(ngModel)]="membershipNo">
-            </mat-form-field>
-            <br/>
+            <input matInput type="number" (keyup.enter)="onSubmit()" [(ngModel)]="membershipNo">
+        </mat-form-field>
+        <br/>
 
-            <mat-form-field [style.width.px]=200  >
+        <mat-form-field [style.width.px]=200  >
             <mat-label>PIN</mat-label>
-            <input matInput type="number" [(ngModel)]="pin">
+            <input matInput type="number" (keyup.enter)="onSubmit()" [(ngModel)]="pin">
+        </mat-form-field>
+        <br/>
+
+        <div *ngIf="pinResetRequired">
+            <div class="info" [style.width.px]=200>
+                Your PIN has recently been reset. Therefore, you must enter a new PIN number of your choice
+            </div>
+            <br/>
+            <mat-form-field [style.width.px]=200  >
+                <mat-label>New PIN</mat-label>
+                <input matInput type="number" [(ngModel)]="newPin">
+            </mat-form-field>
+            <br/>
+            <mat-form-field [style.width.px]=200  >
+                <mat-label>Confirm new PIN</mat-label>
+                <input matInput type="number" [(ngModel)]="newPinConfirmation">
             </mat-form-field>
             <br/>
 
-            <button mat-raised-button color="primary" (click)="onSubmit()" >Login</button>
+            <button mat-raised-button color="primary" (click)="onNewPin()"  >Save new PIN</button>
+            <br/>
+            <br/>
+            <div *ngIf="error != ''" class="warn" [style.width.px]=200>{{error}}</div>
+        </div>
+
+        <button mat-raised-button color="primary"  *ngIf="!pinResetRequired" (click)="onSubmit()"  >Login</button>
+        <br/>
+        <br/>
+
+        <button mat-raised-button color="secondary"  *ngIf="!pinResetRequired" (click)="onForgotPin()"  >I have forgotten my PIN</button>
     </mat-card-content>
+    <mat-spinner diameter="32" *ngIf="loading"></mat-spinner>
+    <div *ngIf="message != ''" class="info" [style.width.px]=200>{{message}}</div>
 </mat-card>

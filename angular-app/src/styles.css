@@ -16,3 +16,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     background-color:whitesmoke ;
 }
 
+.info {
+    background-color: lightskyblue;
+    border-color: darkslateblue;
+    border-style: solid;
+    border-width: thin;
+    padding: 6px;
+}
+
+.warn {
+    background-color: lightgoldenrodyellow;
+    border-color: gold;
+    border-style: solid;
+    border-width: thin;
+    padding: 6px;
+}

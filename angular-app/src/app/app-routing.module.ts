@@ -14,10 +14,13 @@ import { AuthGuard } from './services/auth/auth.guard';
 import { LogoutComponent } from './components/logout/logout.component';
 import { MemberComponent } from './components/member/member.component';
 import { MembersComponent } from './components/members/members.component';
+import { MyDetailsComponent } from './components/my-details/my-details.component';
+import { UserAdminsComponent } from './components/user-admins/user-admins.component';
+import { DeactivateGuardService } from './services/deactivate-guard.service';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canDeactivate:[DeactivateGuardService]  },
   { path: 'logout', component: LogoutComponent },
   { path: 'welcome', component: WelcomeComponent },
   { path: 'news', component: NewsComponent },
@@ -28,8 +31,10 @@ const routes: Routes = [
   { path: 'photos', component: PhotosComponent, canActivate: [AuthGuard] },
   { path: 'rules', component: RulesComponent },
   { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
-  { path: 'member/:membershipNumber', component: MemberComponent, canActivate: [AuthGuard] },
+  { path: 'member/:id', component: MemberComponent, canActivate: [AuthGuard] },
   { path: 'members', component: MembersComponent, canActivate: [AuthGuard] },
+  { path: 'myDetails', component: MyDetailsComponent, canActivate: [AuthGuard] },
+  { path: 'userAdmins', component: UserAdminsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

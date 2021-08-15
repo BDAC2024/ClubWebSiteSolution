@@ -27,6 +27,9 @@ export class ErrorIntercept implements HttpInterceptor {
                     if (error.error instanceof ErrorEvent) {
                         // client-side error
                         errorMessage = `${prefix} ${error.error.message}`;
+                    } else if (typeof error.error == "string") 
+                    {
+                        errorMessage = `${prefix} ${error.error}`;
                     } else {
                         // server-side error
                         if (error.error) {

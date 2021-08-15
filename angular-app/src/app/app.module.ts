@@ -55,6 +55,11 @@ import { LogoutComponent } from './components/logout/logout.component';
 import { LoginPreferencesDialogComponent } from './dialogs/login-preferences-dialog/login-preferences-dialog.component';
 import { MemberComponent } from './components/member/member.component';
 import { MembersComponent } from './components/members/members.component';
+import { MyDetailsComponent } from './components/my-details/my-details.component';
+import { UserAdminsComponent } from './components/user-admins/user-admins.component';
+import { AddEditUserAdminDialogComponent } from './dialogs/add-edit-user-admin-dialog/add-edit-user-admin-dialog.component';
+import { MatSortModule } from '@angular/material/sort';
+import { ResetPinComponent } from './dialogs/reset-pin/reset-pin.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +84,10 @@ import { MembersComponent } from './components/members/members.component';
     LoginPreferencesDialogComponent,
     MemberComponent,
     MembersComponent,
+    MyDetailsComponent,
+    UserAdminsComponent,
+    AddEditUserAdminDialogComponent,
+    ResetPinComponent,
   ],
   imports: [
     BrowserModule,
@@ -102,6 +111,7 @@ import { MembersComponent } from './components/members/members.component';
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
+    MatSortModule,
     MatPaginatorModule,
     MatDialogModule,
     MatTabsModule,

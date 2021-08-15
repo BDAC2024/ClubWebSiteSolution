@@ -1,61 +1,67 @@
 <div>
     <h1>Members</h1>
+    <h3>Click the column headers to sort.</h3>
+    <mat-checkbox [(ngModel)]="activeOnly" (change)="getMembers()">
+        Show only active/enabled members
+    </mat-checkbox>
+
     <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
 
     <div class="mat-elevation-z2">
         <div class="table-container">
-            <table mat-table [dataSource]="members" *ngIf="members.length > 0">
+            <table mat-table [dataSource]="members"  matSort>
 
                 <!--- Note that these columns can be defined in any order.
                     The actual rendered columns are set as a property on the row definition" -->
 
                 <!-- Number Column -->
                 <ng-container matColumnDef="membershipNumber">
-                    <th mat-header-cell *matHeaderCellDef> Membership Number </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Membership Number </th>
                     <td mat-cell *matCellDef="let element" > {{element.membershipNumber}} </td>
                 </ng-container>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> Name </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
                     <td mat-cell *matCellDef="let element" > {{element.name}} </td>
                 </ng-container>
 
                 <!-- Admin Column -->
                 <ng-container matColumnDef="admin">
-                    <th mat-header-cell *matHeaderCellDef> Adminstrator </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Adminstrator </th>
                     <td mat-cell *matCellDef="let element" ><mat-checkbox [(ngModel)]="element.admin" [disabled]="true"></mat-checkbox></td>
                 </ng-container>
 
                 <!-- Enabled Column -->
                 <ng-container matColumnDef="enabled">
-                    <th mat-header-cell *matHeaderCellDef> Enabled </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Enabled </th>
                     <td mat-cell *matCellDef="let element" ><mat-checkbox [(ngModel)]="element.enabled" [disabled]="true"></mat-checkbox></td>
                 </ng-container>
 
                 <!-- Name Allowed Column -->
-                <ng-container matColumnDef="nameAllowed">
-                    <th mat-header-cell *matHeaderCellDef> Allow Name </th>
+                <ng-container matColumnDef="allowNameToBeUsed">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Allow Name </th>
                     <td mat-cell *matCellDef="let element" ><mat-checkbox [(ngModel)]="element.allowNameToBeUsed" [disabled]="true"></mat-checkbox></td>
                 </ng-container>
 
                 <!-- Pres Last Saved Column -->
-                <ng-container matColumnDef="prefsLastSaved">
-                    <th mat-header-cell *matHeaderCellDef > Prefs Last Saved </th>
+                <ng-container matColumnDef="preferencesLastUpdated">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Prefs Last Saved </th>
                     <td mat-cell *matCellDef="let element" class="cell-date"> {{element.preferencesLastUpdated | date:'dd MMM YY'}} </td>
                 </ng-container>
 
                 <!-- Date Column -->
                 <ng-container matColumnDef="lastPaid">
-                    <th mat-header-cell *matHeaderCellDef > Last Paid </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Paid </th>
                     <td mat-cell *matCellDef="let element" class="cell-date"> {{element.lastPaid | date:'dd MMM YY'}} </td>
                 </ng-container>
 
                 <!-- Edit Column -->
                 <ng-container matColumnDef="edit">
-                    <th mat-header-cell *matHeaderCellDef>Edit</th>
+                    <th mat-header-cell *matHeaderCellDef>Action</th>
                     <td mat-cell *matCellDef="let element" class="last-col">
-                        <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="edit(element)"><mat-icon>edit</mat-icon></button>
+                        <!-- <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="edit(element)"><mat-icon>edit</mat-icon></button> -->
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="edit(element)" ><mat-icon aria-hidden="false" aria-label="Edit member">edit</mat-icon> Edit</button>
                     </td>
                 </ng-container>
     

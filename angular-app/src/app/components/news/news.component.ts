@@ -24,7 +24,6 @@ export class NewsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getNews();
-    this.enableAdmin(true);
   }
 
   public enableAdmin(set: boolean): void {

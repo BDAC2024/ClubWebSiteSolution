@@ -17,9 +17,14 @@ export class LoginComponent implements OnInit {
     submitted = false;
     returnUrl!: string;
     error = '';
+    message  = '';
     
     public membershipNo!: number;
     public pin!: number;
+    public newPin!: number;
+    public newPinConfirmation!: number;
+    
+    public pinResetRequired: boolean = false;
 
     constructor(
         private membersService: MembersService,
@@ -48,19 +53,86 @@ export class LoginComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
-                    var prefs = new MemberPreferences();
-                    prefs.id = this.membersService.CurrentMember.id;
-                    prefs.allowNameToBeUsed = this.membersService.CurrentMember.allowNameToBeUsed;
+                    
+                    this.pinResetRequired = this.membersService.CurrentMember.pinResetRequired;
 
-                    const dialogRef = this.dialog.open(LoginPreferencesDialogComponent, {maxHeight: "90vh", maxWidth: "350px", data: prefs});
-
-                    dialogRef.afterClosed().subscribe(result => {
-                        this.router.navigate([this.returnUrl]);
-                    });
+                    if (this.pinResetRequired) {
+                        this.loading = false;
+                    } else {
+                        // Only show preferences on 1st login
+                        if (this.membersService.CurrentMember.preferencesLastUpdated < new Date("2010-01-01")) {
+                            var prefs = new MemberPreferences();
+                            prefs.id = this.membersService.CurrentMember.id;
+                            prefs.allowNameToBeUsed = this.membersService.CurrentMember.allowNameToBeUsed;
+        
+                            const dialogRef = this.dialog.open(LoginPreferencesDialogComponent, {maxHeight: "90vh", maxWidth: "350px", data: prefs});
+        
+                            dialogRef.afterClosed().subscribe(result => {
+                                this.router.navigate([this.returnUrl]);
+                            });
+        
+                        } else {
+                            this.router.navigate([this.returnUrl]);
+                        }
+                    }
                 },
                 error => {
                     this.error = error;
                     this.loading = false;
                 });
+    }
+
+    onForgotPin() {
+
+        this.message  = '';
+        this.submitted = true;
+        this.loading = true;
+
+        this.authenticationService.pinResetRequest(this.membershipNo)
+            .subscribe(
+                data => {
+                    this.message = "Your PIN reset request has been sent. You will be contacted soon.";
+                    this.loading = false;
+                },
+                error => {
+                    this.error = error;
+                    this.loading = false;
+                });
+    }
+
+    onNewPin() {
+
+        this.message  = '';
+
+        if (this.newPin != this.newPinConfirmation) {
+            this.error = "Error: New PIN and Confirmation of new PIN must match";
+        } else {
+            this.submitted = true;
+            this.loading = true;
+            this.error = "";
+
+            this.authenticationService.setNewPin(this.newPin)
+            .subscribe(
+                data => {
+                    this.pin = this.newPin;
+                    this.loading = false;
+                    this.submitted = false;
+                    this.onSubmit();
+                },
+                error => {
+                    this.error = error;
+                    this.loading = false;
+                });
+        }
+
+    }
+
+    canExit(): boolean {
+
+        if (this.pinResetRequired) {
+            this.error = "You must change your PIN before continuing.";
+        }
+
+        return !this.pinResetRequired;
     }
 }

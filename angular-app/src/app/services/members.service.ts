@@ -33,15 +33,15 @@ export class MembersService {
               .pipe();
   }
 
-  public readMember(membershipNumber: number): Observable<Member> {
-    return this.http.get<Member>(`${this.globalService.ApiUrl}/api/members/${membershipNumber}`)
+  public readMember(id: string): Observable<Member> {
+    return this.http.get<Member>(`${this.globalService.ApiUrl}/api/members/${id}`)
               .pipe(map(res => 
                 plainToClass(Member, res)
             ));
   }
 
-  public readMembers(): Observable<Member[]> {
-    return this.http.get<Member[]>(`${this.globalService.ApiUrl}/api/members`)
+  public readMembers(activeOnly: boolean): Observable<Member[]> {
+    return this.http.get<Member[]>(`${this.globalService.ApiUrl}/api/members/${activeOnly}`)
               .pipe(map(res => 
                 plainToClass(Member, res)
             ));
@@ -51,6 +51,14 @@ export class MembersService {
 
     return this.http.post<Member>(`${this.globalService.ApiUrl}/api/members/update`, member)
               .pipe();
+  }
+
+  public resetPin(member: Member): Observable<number> {
+
+    return this.http.post<number>(`${this.globalService.ApiUrl}/api/members/pinreset/${member.membershipNumber}`, '')
+              .pipe(data => {
+                return data;
+              });
   }
 
 }

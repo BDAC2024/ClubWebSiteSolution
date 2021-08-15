@@ -66,7 +66,15 @@ export class AuthenticationService {
             this.currentMemberSubject.next(user);
             return user;
         }));
-}
+  }
+
+  pinResetRequest(membershipNumber: number) {
+    return this.http.post<void>(`${this.globalService.ApiUrl}/api/members/pinresetrequest/${membershipNumber}`, '');
+  }
+
+  setNewPin(newPin: number) {
+    return this.http.post<void>(`${this.globalService.ApiUrl}/api/members/SetNewPinOfCurrentUser/${newPin}`, '');
+  }
 
   logout() {
       // remove user from local storage to log user out

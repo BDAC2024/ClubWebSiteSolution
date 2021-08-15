@@ -3,6 +3,7 @@ import jwt_decode from 'jwt-decode';
 
 export class Member {
     id!: string;
+    dbKey!: string;
     token?: string;
     membershipNumber!: number;
     name!: string;
@@ -13,6 +14,7 @@ export class Member {
     lastPaid!: Date;
     @Type(() => Date)
     preferencesLastUpdated!: Date;
+    pinResetRequired: boolean = false;
     /**
      *
      */
@@ -25,6 +27,9 @@ export class Member {
             this.admin = JSON.parse(tokenDecoded.Admin.toLowerCase());
             this.allowNameToBeUsed = JSON.parse(tokenDecoded.AllowNameToBeUsed.toLowerCase());
             this.lastPaid = new Date(tokenDecoded.LastPaid);
+            this.preferencesLastUpdated = new Date(tokenDecoded.PreferencesLastUpdated);
+            this.name = tokenDecoded.Name;
+            this.pinResetRequired = JSON.parse(tokenDecoded.PinResetRequired.toLowerCase());
         } else {
             // Do nothing, probably a logout
         }

@@ -27,8 +27,10 @@
 				</mat-list-item>
 				<div class="submenu" [ngClass]="{'expanded' : showAdminSubMenu}" *ngIf="showAdminSubMenu && authenticationService.isAdmin">
 					<a mat-list-item routerLink="/members">Members</a>
+					<a mat-list-item routerLink="/userAdmins">User Admins</a>
 					<!-- <a mat-list-item routerLink="/aggregateWeights">Weights</a> -->
 				</div>
+        <a mat-list-item routerLink="/myDetails" *ngIf="authenticationService.isLoggedIn">My Details</a>
         <a mat-list-item routerLink="/logout" *ngIf="authenticationService.isLoggedIn">Logout</a>
     </mat-nav-list>
   </mat-sidenav>
