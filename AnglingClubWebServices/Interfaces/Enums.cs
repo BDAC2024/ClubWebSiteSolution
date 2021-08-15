@@ -40,8 +40,11 @@ namespace AnglingClubWebServices.Interfaces
 
     public enum Season
     {
+        [Description("2020/21,2020-03-15,2021-03-14")]
+        S20To21 = 20,
+
         [Description("2021/22,2021-03-15,2022-03-14")]
-        S21To22 = 21,
+        S21To22,
 
         [Description("2022/23,2022-03-15,2023-03-14")]
         S22To23,
