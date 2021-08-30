@@ -60,6 +60,8 @@ import { UserAdminsComponent } from './components/user-admins/user-admins.compon
 import { AddEditUserAdminDialogComponent } from './dialogs/add-edit-user-admin-dialog/add-edit-user-admin-dialog.component';
 import { MatSortModule } from '@angular/material/sort';
 import { ResetPinComponent } from './dialogs/reset-pin/reset-pin.component';
+import { AddEditWaterDialogComponent } from './dialogs/add-edit-water-dialog/add-edit-water-dialog.component';
+import { AddEditRulesDialogComponent } from './dialogs/add-edit-rules-dialog/add-edit-rules-dialog.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +90,8 @@ import { ResetPinComponent } from './dialogs/reset-pin/reset-pin.component';
     UserAdminsComponent,
     AddEditUserAdminDialogComponent,
     ResetPinComponent,
+    AddEditWaterDialogComponent,
+    AddEditRulesDialogComponent,
   ],
   imports: [
     BrowserModule,

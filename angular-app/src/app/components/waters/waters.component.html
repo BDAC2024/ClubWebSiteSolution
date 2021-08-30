@@ -1,4 +1,12 @@
-<h1>Club Waters</h1>
+<h1 [ngClass]="{'left-header': membersService.CurrentMember.admin}">Club Waters</h1>
+<div *ngIf="membersService.CurrentMember.admin">
+    <div class="edit-button-panel">
+        <button class="edit-button" mat-raised-button color="primary" *ngIf="!isPageAdmin" (click)="enableAdmin(true)" ><mat-icon aria-hidden="false" aria-label="Unlock">lock_open</mat-icon> Unlock</button>
+        <button class="edit-button" mat-raised-button color="primary" *ngIf="isPageAdmin" (click)="enableAdmin(false)" ><mat-icon aria-hidden="false" aria-label="Lock">lock</mat-icon> Lock</button>
+    </div>
+    <br/>
+    <br/>
+</div>
 <h3>PLEASE COMPLY WITH ALL NOTICE BOARDS</h3>
 <p>
     Keep to all footpaths, do not wander from banks. All gates must be closed after being opened. Do not climb on walls. Do not cause a parking obstruction by blocking gateways etc.
@@ -13,7 +21,13 @@
                 <mat-card-subtitle>Main Species: {{item.species}}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-                <br/>
+                <div *ngIf="isPageAdmin">
+                    <div class="edit-button-panel">
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="editWater(item)" ><mat-icon aria-hidden="false" aria-label="Edit water">edit</mat-icon> Edit</button>        
+                    </div>
+                    <br/>
+                    <br/>
+                </div>
                 <div [innerHTML]="item.description"></div>
                 <h3>Directions</h3>
                 <div [innerHTML]="item.directions"></div>

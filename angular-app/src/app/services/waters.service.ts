@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Water } from '../models/water';
+import { Water, WaterUpdateDto } from '../models/water';
 import { plainToClass } from 'class-transformer';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalService } from './global.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -33,4 +33,13 @@ export class WatersService {
                   plainToClass(Water, res)
               ));
   }
+
+  public addOrUpdateWater(water: Water): Observable<string[]> {
+
+    var dto: WaterUpdateDto = { dbKey: water.dbKey, description: water.description, directions: water.directions };
+
+    return this.http.post<string[]>(`${this.globalService.ApiUrl}/api/waters/UpdateDescription`, dto)
+              .pipe();
+  }
+ 
 }

@@ -1,6 +1,7 @@
 import { WaterAccessType, WaterType } from "./water-enum";
 export class Water {
     id!: number;
+    dbKey!: string;
     name!: string;
     type!: WaterType;
     access!: WaterAccessType;
@@ -18,6 +19,12 @@ export class Water {
         return `https://www.google.co.uk/maps/dir//${this.destination.lat},${this.destination.long}/${this.destination.lat},${this.destination.long}`
     }
 
+}
+
+export class WaterUpdateDto {
+    dbKey!: string;
+    description!: string;
+    directions!: string;
 }
 
 export class Marker {

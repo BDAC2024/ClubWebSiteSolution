@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { AddEditWaterDialogComponent } from 'src/app/dialogs/add-edit-water-dialog/add-edit-water-dialog.component';
 import { Water } from 'src/app/models/water';
+import { MembersService } from 'src/app/services/members.service';
 import { WatersService } from 'src/app/services/waters.service';
 
 @Component({
@@ -14,13 +17,59 @@ export class WatersComponent implements OnInit {
   mapType: string = 'satellite';
   
   public isLoading: boolean = false;
+  public isPageAdmin: boolean = false;
 
-  constructor(public watersService: WatersService) { 
+  constructor(
+    public watersService: WatersService,
+    public membersService: MembersService,
+    private dialog: MatDialog) { 
 
 
   }
 
   ngOnInit(): void {
+    this.getWaters();
+
+    // this.path = this.watersService.PathOld(this.waters[2]);
+
+    // this.path.forEach((p) => {console.log(`lat: ${p.lat}, long: ${p.long}`) });
+
+    // this.path.push({ lat: 54.098626321067286, long: -1.3566482946865484});
+    // this.path.push({ lat: 54.09867070551979, long: -1.357407887485396});
+    // this.path.push({ lat: 54.098134031424564, long: -1.3576232247914872});
+  }
+
+  public enableAdmin(set: boolean): void {
+    this.isPageAdmin = set && this.membersService.CurrentMember.admin;
+  }
+
+  public editWater(originalItem: Water): void {
+
+    var item: Water = JSON.parse(JSON.stringify(originalItem));
+
+    const dialogRef = this.dialog.open(AddEditWaterDialogComponent, {
+      width: '90vw',
+      data: item
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`The dialog was closed : `);
+      console.log(result);
+
+      if (result) {
+        console.log("Editing: " + item.name);
+
+        this.watersService.addOrUpdateWater(result)
+        .subscribe(data => {
+          this.getWaters();
+        });
+      }
+    });
+
+  }
+
+  private getWaters(): void
+  {
     this.isLoading = true;
 
     this.watersService.readWaters()
@@ -35,14 +84,5 @@ export class WatersComponent implements OnInit {
       });
     });
 
-    // this.path = this.watersService.PathOld(this.waters[2]);
-
-    // this.path.forEach((p) => {console.log(`lat: ${p.lat}, long: ${p.long}`) });
-
-    // this.path.push({ lat: 54.098626321067286, long: -1.3566482946865484});
-    // this.path.push({ lat: 54.09867070551979, long: -1.357407887485396});
-    // this.path.push({ lat: 54.098134031424564, long: -1.3576232247914872});
   }
-
-
 }

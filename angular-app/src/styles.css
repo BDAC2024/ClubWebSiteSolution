@@ -31,3 +31,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-width: thin;
     padding: 6px;
 }
+
+.edit-button-panel {
+    float: right;
+  }
+  
+.edit-button {
+    margin-left: 12px;
+}
+  
+.left-header {
+    float: left;
+  }
+  

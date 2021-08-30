@@ -19,6 +19,7 @@ export class NavComponent implements OnInit {
   // isExpanded = true;
   showStandingsSubMenu: boolean = false;
   showAdminSubMenu: boolean = false;
+  showRulesSubMenu: boolean = false;
   // isShowing = false;
 
   @ViewChild('drawer', { static: false })

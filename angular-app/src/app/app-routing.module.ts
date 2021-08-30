@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'standings', component: LeagueStandingsComponent, canActivate: [AuthGuard] },
   { path: 'aggregateWeights', component: AggregateWeightsComponent, canActivate: [AuthGuard] },
   { path: 'photos', component: PhotosComponent, canActivate: [AuthGuard] },
-  { path: 'rules', component: RulesComponent },
+  { path: 'rules/:type', component: RulesComponent },
   { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
   { path: 'member/:id', component: MemberComponent, canActivate: [AuthGuard] },
   { path: 'members', component: MembersComponent, canActivate: [AuthGuard] },
