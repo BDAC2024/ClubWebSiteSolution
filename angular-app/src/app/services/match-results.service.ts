@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { AggregateWeight } from '../models/aggregate-weight';
 import { LeagueStanding } from '../models/league-standing';
 import { MatchResult } from '../models/match';
-import { MatchType } from '../models/match-enum';
+import { AggregateWeightType, MatchType } from '../models/match-enum';
 import { GlobalService } from './global.service';
 
 @Injectable({
@@ -34,7 +34,7 @@ public readLeagueStandings(type: MatchType): Observable<LeagueStanding[]> {
           ));
 }
 
-public readAggregateWeights(type: MatchType): Observable<AggregateWeight[]> {
+public readAggregateWeights(type: AggregateWeightType): Observable<AggregateWeight[]> {
   return this.http.get<MatchResult[]>(`${this.globalService.ApiUrl}/api/matchResults/aggregateWeights/${type}/21`)
             .pipe(map(res => 
               plainToClass(AggregateWeight, res)

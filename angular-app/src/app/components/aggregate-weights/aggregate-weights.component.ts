@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AggregateWeight } from 'src/app/models/aggregate-weight';
-import { MatchType } from 'src/app/models/match-enum';
+import { AggregateWeightType, MatchType } from 'src/app/models/match-enum';
 import { MatchResultsService } from 'src/app/services/match-results.service';
 import { MatchService } from 'src/app/services/match.service';
 import { ScreenService } from 'src/app/services/screen.service';
@@ -27,15 +27,15 @@ export class AggregateWeightsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadWeights(MatchType.Spring);
+    this.loadWeights(AggregateWeightType.Spring);
 
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.loadWeights(tabChangeEvent.index as MatchType);
+    this.loadWeights(tabChangeEvent.index as AggregateWeightType);
   }
 
-  private loadWeights(type: MatchType): void
+  private loadWeights(type: AggregateWeightType): void
   {
     this.isLoading = true;
     this.weights = [];

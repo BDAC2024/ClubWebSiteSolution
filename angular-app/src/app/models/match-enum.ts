@@ -37,3 +37,35 @@ export namespace MatchType {
   }
 }
 
+export enum AggregateWeightType {
+  Spring = 0,
+  ClubRiver,
+  ClubPond
+}
+
+export namespace AggregateWeightType {
+  export function CompactName(type: AggregateWeightType): string {
+    switch(type) {
+      case AggregateWeightType.Spring:
+        return "Spring";
+      case AggregateWeightType.ClubRiver:
+        return "Club/River";
+      case AggregateWeightType.ClubPond:
+        return "Club/Pond";
+      default:
+        return AggregateWeightType[type];
+    }
+  }
+  export function FullName(type: AggregateWeightType): string {
+    switch(type) {
+      case AggregateWeightType.Spring:
+        return "Spring Leage";
+      case AggregateWeightType.ClubRiver:
+        return "Club Match - River";
+      case AggregateWeightType.ClubPond:
+        return "Club Match - Pond";
+      default:
+        return AggregateWeightType[type];
+    }
+  }
+}
