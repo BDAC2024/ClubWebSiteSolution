@@ -60,7 +60,7 @@ namespace AnglingClubWebServices.Services
         {
             var matchIds = _eventRepository.GetEvents().Result.Where(x => x.MatchType == matchType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
-            var members = _memberRepository.GetMembers().Result;
+            var members = _memberRepository.GetMembers().Result.Where(x => x.Season == season);
 
             var league = matchResultsForLeague
                 .GroupBy(x => x.MembershipNumber)
@@ -109,11 +109,11 @@ namespace AnglingClubWebServices.Services
             return league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal).ToList();
         }
 
-        public List<AggregateWeight> GetAggregateWeights(MatchType matchType, Season season)
+        public List<AggregateWeight> GetAggregateWeights(AggregateWeightType aggWeightType, Season season)
         {
-            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.MatchType == matchType && x.Season == season).Select(x => x.Id);
+            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.AggregateWeightType == aggWeightType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
-            var members = _memberRepository.GetMembers().Result;
+            var members = _memberRepository.GetMembers().Result.Where(x => x.Season == season);
 
             var league = matchResultsForLeague
                 .GroupBy(x => x.MembershipNumber)
