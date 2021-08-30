@@ -14,6 +14,10 @@ namespace AnglingClubWebServices.Data
     public class WaterRepository : RepositoryBase, IWaterRepository
     {
         private const string IdPrefix = "Water";
+        
+        private const string MultiValueSeparator = "~|";
+        private const int MultiValueSegmentSize = 1000;
+
         private readonly ILogger<WaterRepository> _logger;
 
         public WaterRepository(
@@ -42,9 +46,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Name", Value = water.Name, Replace = true },
                 new ReplaceableAttribute { Name = "Type", Value = ((int)water.Type).ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Access", Value = ((int)water.Access).ToString(), Replace = true },
-                new ReplaceableAttribute { Name = "Description", Value = water.Description, Replace = true },
                 new ReplaceableAttribute { Name = "Species", Value = water.Species, Replace = true },
-                new ReplaceableAttribute { Name = "Directions", Value = water.Directions, Replace = true },
 
                 new ReplaceableAttribute { Name = "Markers", Value = water.Markers, Replace = true },
                 new ReplaceableAttribute { Name = "MarkerIcons", Value = water.MarkerIcons, Replace = true },
@@ -74,6 +76,103 @@ namespace AnglingClubWebServices.Data
                 throw;
             }
 
+            await UpdateDesc(water);
+            await UpdateDirections(water);
+        }
+
+        public async Task UpdateDesc(Water water)
+        {
+            for (int i = 0; i < (water.Description.Length / MultiValueSegmentSize) + 1; i++)
+            {
+                await AddPartOfDescription(water.DbKey, water.Description, i);
+            }
+
+        }
+
+        public async Task UpdateDirections(Water water)
+        {
+            for (int i = 0; i < (water.Directions.Length / MultiValueSegmentSize) + 1; i++)
+            {
+                await AddPartOfDirections(water.DbKey, water.Directions, i);
+            }
+
+        }
+
+
+        private async Task AddPartOfDescription(string dbKey, string description, int index)
+        {
+            var descriptionSegment = new string(description.Skip(index * MultiValueSegmentSize).Take(MultiValueSegmentSize).ToArray());
+
+            if (descriptionSegment != "")
+            {
+                var client = GetClient();
+
+                BatchPutAttributesRequest request = new BatchPutAttributesRequest();
+                request.DomainName = Domain;
+
+                // Mandatory Properties
+                var attributes = new List<ReplaceableAttribute>
+                {
+                    new ReplaceableAttribute { Name = "Description", Value = $"{index}{MultiValueSeparator}{descriptionSegment}", Replace = index == 0 },
+                };
+
+                request.Items.Add(
+                    new ReplaceableItem
+                    {
+                        Name = dbKey,
+                        Attributes = attributes
+                    }
+                );
+
+                try
+                {
+                    BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    _logger.LogDebug($"Water description segment added");
+                }
+                catch (AmazonSimpleDBException ex)
+                {
+                    _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                    throw;
+                }
+            }
+        }
+
+        private async Task AddPartOfDirections(string dbKey, string directions, int index)
+        {
+            var directionsSegment = new string(directions.Skip(index * MultiValueSegmentSize).Take(MultiValueSegmentSize).ToArray());
+
+            if (directionsSegment != "")
+            {
+                var client = GetClient();
+
+                BatchPutAttributesRequest request = new BatchPutAttributesRequest();
+                request.DomainName = Domain;
+
+                // Mandatory Properties
+                var attributes = new List<ReplaceableAttribute>
+                {
+                    new ReplaceableAttribute { Name = "Directions", Value = $"{index}{MultiValueSeparator}{directionsSegment}", Replace = index == 0 },
+                };
+
+                request.Items.Add(
+                    new ReplaceableItem
+                    {
+                        Name = dbKey,
+                        Attributes = attributes
+                    }
+                );
+
+                try
+                {
+                    BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    _logger.LogDebug($"Water directions segment added");
+                }
+                catch (AmazonSimpleDBException ex)
+                {
+                    _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                    throw;
+                }
+            }
         }
 
         public async Task<List<Water>> GetWaters()
@@ -91,6 +190,9 @@ namespace AnglingClubWebServices.Data
 
             foreach (var item in response.Items)
             {
+                var descriptionArr = new List<MultiValued>();
+                var directionArr = new List<MultiValued>();
+
                 var water = new Water();
 
                 water.DbKey = item.Name;
@@ -116,7 +218,7 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Description":
-                            water.Description = attribute.Value;
+                            descriptionArr.Add(GetMultiValuedElement(attribute.Value));
                             break;
 
                         case "Species":
@@ -124,7 +226,7 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Directions":
-                            water.Directions = attribute.Value;
+                            directionArr.Add(GetMultiValuedElement(attribute.Value));
                             break;
 
                         case "Markers":
@@ -152,6 +254,9 @@ namespace AnglingClubWebServices.Data
                     }
                 }
 
+                water.Description = string.Join("", descriptionArr.OrderBy(x => x.Index).Select(x => x.Text).ToArray());
+                water.Directions = string.Join("", directionArr.OrderBy(x => x.Index).Select(x => x.Text).ToArray());
+
                 waters.Add(water);
             }
 
@@ -159,5 +264,22 @@ namespace AnglingClubWebServices.Data
 
         }
 
+        private MultiValued GetMultiValuedElement(string attributeValue)
+        {
+            if (attributeValue.Contains(MultiValueSeparator))
+            {
+                return new MultiValued { Index = Convert.ToInt32(attributeValue.Split(MultiValueSeparator)[0]), Text = attributeValue.Split(MultiValueSeparator)[1] };
+            }
+            else
+            {
+                return new MultiValued { Index = 0, Text = attributeValue };
+            }
+        }
+
+        private class MultiValued
+        {
+            public int Index { get; set; }
+            public string Text { get; set; }
+        }
     }
 }

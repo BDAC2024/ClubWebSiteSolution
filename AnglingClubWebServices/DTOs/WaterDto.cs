@@ -16,6 +16,12 @@ namespace AnglingClubWebServices.DTOs
         public List<double> Path { get; set; }
     }
 
+    public class WaterUpdateDto : TableBase
+    {
+        public string Description { get; set; }
+        public string Directions { get; set; }
+    }
+
     public class WaterOutputDto : WaterBase
     {
         public float Id { get; set; }

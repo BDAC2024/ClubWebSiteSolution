@@ -206,6 +206,55 @@ namespace AnglingClubWebServices.Controllers
 
         }
 
+        // POST api/<WatersController1>
+        [HttpPost("UpdateDescription")]
+        public async System.Threading.Tasks.Task<IActionResult> UpdateWater([FromBody] WaterUpdateDto waterToUpdate)
+        {
+            StartTimer();
+
+            List<Water> waters = new List<Water>();
+            var errors = new List<string>();
+
+            var water = _waterRepository.GetWaters().Result.Single(x => x.DbKey == waterToUpdate.DbKey);
+
+            water.Description = waterToUpdate.Description;
+
+            try
+            {
+                await _waterRepository.UpdateDesc(water);
+
+                ReportTimer("Updating water desc");
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+            }
+
+
+            water.Directions = waterToUpdate.Directions;
+            try
+            {
+                await _waterRepository.UpdateDirections(water);
+
+                ReportTimer("Updating water directions");
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+            else
+            {
+                return Ok();
+            }
+
+        }
+
+
         // PUT api/<WatersController1>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
