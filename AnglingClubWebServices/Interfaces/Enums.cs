@@ -151,4 +151,18 @@ namespace AnglingClubWebServices.Interfaces
         S49To50,
 
     }
+
+    public enum RuleType
+    {
+        General = 0,
+
+        Match,
+
+        [Description("Junior / Intermediate Member - General")]
+        JuniorGeneral,
+
+        [Description("Junior / Intermediate Member - Match")]
+        JuniorMatch,
+    }
+
 }
