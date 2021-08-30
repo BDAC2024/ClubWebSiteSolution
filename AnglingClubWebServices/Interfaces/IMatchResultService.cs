@@ -7,6 +7,6 @@ namespace AnglingClubWebServices.Interfaces
     {
         List<MatchResult> GetResults(string matchId);
         List<LeaguePosition> GetLeagueStandings(MatchType matchType, Season season);
-        List<AggregateWeight> GetAggregateWeights(MatchType matchType, Season season);
+        List<AggregateWeight> GetAggregateWeights(AggregateWeightType aggWeightType, Season season);
     }
 }

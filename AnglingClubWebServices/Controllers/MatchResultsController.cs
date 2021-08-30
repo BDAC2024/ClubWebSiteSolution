@@ -91,10 +91,10 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        [HttpGet("aggregateWeights/{matchType}/{season}")]
+        [HttpGet("aggregateWeights/{aggWeightType}/{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AggregateWeight>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public IActionResult GetAggregateWeights(MatchType matchType, Season season)
+        public IActionResult GetAggregateWeights(AggregateWeightType aggWeightType, Season season)
         {
             var errors = new List<string>();
 
@@ -102,7 +102,7 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                var standings = _matchResultService.GetAggregateWeights(matchType, season);
+                var standings = _matchResultService.GetAggregateWeights(aggWeightType, season);
 
                 ReportTimer("Getting aggregate weights");
 
