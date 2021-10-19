@@ -53,7 +53,8 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                await WriteInBatches(request, client);
                 _logger.LogDebug($"Rules added: {rules.DbKey} - {rules.Title}");
             }
             catch (AmazonSimpleDBException ex)
@@ -70,14 +71,9 @@ namespace AnglingClubWebServices.Data
 
             var rules = new List<Rules>();
 
-            var client = GetClient();
+            var items = await GetData(IdPrefix);
 
-            SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%'";
-
-            SelectResponse response = await client.SelectAsync(request);
-
-            foreach (var item in response.Items)
+            foreach (var item in items)
             {
                 var rule = new Rules();
 

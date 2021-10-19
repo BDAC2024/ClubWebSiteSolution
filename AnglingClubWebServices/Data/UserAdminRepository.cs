@@ -51,7 +51,8 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                await WriteInBatches(request, client);
                 _logger.LogDebug($"User admin added: {userAdmin.DbKey} - {userAdmin.EmailAddress}");
             }
             catch (AmazonSimpleDBException ex)
@@ -68,14 +69,9 @@ namespace AnglingClubWebServices.Data
 
             var userAdmins = new List<UserAdminContact>();
 
-            var client = GetClient();
+            var items = await GetData(IdPrefix, "AND EmailAddress > ''", "ORDER BY EmailAddress");
 
-            SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND EmailAddress > '' ORDER BY EmailAddress DESC";
-
-            SelectResponse response = await client.SelectAsync(request);
-
-            foreach (var item in response.Items)
+            foreach (var item in items)
             {
                 var userAdmin = new UserAdminContact();
 

@@ -18,6 +18,10 @@ namespace AnglingClubWebServices.Data
         private readonly IMemberRepository _memberRepository;
         private readonly ILogger<MatchResultRepository> _logger;
 
+        private List<ClubEvent> _cachedEvents = null;
+        private List<Member> _cachedMembers = null;
+        private List<MatchResult> _cachedResults = null;
+
         public MatchResultRepository(
             IOptions<RepositoryOptions> opts,
             IEventRepository eventRepository,
@@ -35,7 +39,8 @@ namespace AnglingClubWebServices.Data
 
             // Validate MatchId
             {
-                if (!(await _eventRepository.GetEvents()).Any(x => x.Id == result.MatchId))
+                _cachedEvents ??= await _eventRepository.GetEvents();
+                if (!_cachedEvents.Any(x => x.Id == result.MatchId))
                 {
                     throw new KeyNotFoundException($"Match '{result.MatchId}' does not exist");
                 }
@@ -43,12 +48,24 @@ namespace AnglingClubWebServices.Data
 
             // Validate MembershipNumber
             {
-                if (!(await _memberRepository.GetMembers()).Any(x => x.MembershipNumber == result.MembershipNumber))
+                _cachedMembers ??= await _memberRepository.GetMembers();
+                if (!_cachedMembers.Any(x => x.MembershipNumber == result.MembershipNumber))
                 {
                     throw new KeyNotFoundException($"Member '{result.MembershipNumber}' does not exist");
                 }
             }
 
+            // If this result already exists, grab its key
+            {
+                _cachedResults ??= await GetAllMatchResults();
+                var existingResult = _cachedResults.SingleOrDefault(x => x.MatchId == result.MatchId && x.MembershipNumber == result.MembershipNumber);
+                if (existingResult != null)
+                {
+                    result.DbKey = existingResult.DbKey;
+                }
+            }
+
+            // If key is still blank then generate a new one
             if (result.IsNewItem)
             {
                 result.DbKey = result.GenerateDbKey(IdPrefix);
@@ -79,7 +96,8 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                await WriteInBatches(request, client);
                 _logger.LogDebug($"Match result added");
             }
             catch (AmazonSimpleDBException ex)
@@ -104,14 +122,9 @@ namespace AnglingClubWebServices.Data
 
             var results = new List<MatchResult>();
 
-            var client = GetClient();
+            var items = await GetData(IdPrefix, "AND WeightDecimal > ''", "ORDER BY WeightDecimal DESC");
 
-            SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND WeightDecimal > '' ORDER BY WeightDecimal DESC";
-
-            SelectResponse response = await client.SelectAsync(request);
-
-            foreach (var item in response.Items)
+            foreach (var item in items)
             {
                 var result = new MatchResult();
 
