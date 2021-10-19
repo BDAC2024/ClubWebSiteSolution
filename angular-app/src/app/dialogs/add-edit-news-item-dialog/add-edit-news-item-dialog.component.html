@@ -6,7 +6,7 @@
         <input class="title-form-field" matInput [(ngModel)]="data.title">
     </mat-form-field>
     <br/>
-    <mat-form-field class="date-form-field">
+    <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
         <mat-label>Date</mat-label>
         <input matInput [matDatepicker]="picker" [(ngModel)]="data.date">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>

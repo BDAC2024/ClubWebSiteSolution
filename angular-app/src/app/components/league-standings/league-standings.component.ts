@@ -6,6 +6,8 @@ import { MatchType } from 'src/app/models/match-enum';
 import { LeagueStanding } from 'src/app/models/league-standing';
 import { MatchService } from 'src/app/services/match.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { RefDataService } from 'src/app/services/ref-data.service';
+import { RefData, Season } from 'src/app/models/refData';
 
 @Component({
   selector: 'app-league-standings',
@@ -17,33 +19,49 @@ export class LeagueStandingsComponent implements OnInit {
   public displayedColumns: string[];
   public isLoading: boolean = false;
   public standings: LeagueStanding[] = [];
+  public refData!: RefData;
+  public selectedSeason!: number;
+  public selectedMatchType: MatchType = MatchType.Spring;
 
   constructor(
     public matchResultsService: MatchResultsService,
     public matchService: MatchService,
+    private refDataService: RefDataService,
+    private globalService: GlobalService,
     public screenService: ScreenService
   ) { 
     this.displayedColumns = ["position", "name", "points", "weight"];
   }
 
   ngOnInit(): void {
-    this.loadLeague(MatchType.Spring);
+    this.getRefData();
 
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.loadLeague(tabChangeEvent.index as MatchType);
+    this.selectedMatchType = tabChangeEvent.index as MatchType;
+    this.loadLeague();
   }
 
-  private loadLeague(type: MatchType): void
+  public loadLeague(): void
   {
     this.isLoading = true;
     this.standings = [];
     
-    this.matchResultsService.readLeagueStandings(type)
+    this.globalService.setStoredSeason(this.selectedSeason);
+    this.matchResultsService.readLeagueStandings(this.selectedMatchType, this.selectedSeason)
     .subscribe(data => {
       this.isLoading = false;
       this.standings = data;
+    });
+  }
+
+  private getRefData() {
+    this.refDataService.getRefData()
+    .subscribe(data => {
+      this.refData = data;
+      this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
+      this.loadLeague();
     });
   }
 

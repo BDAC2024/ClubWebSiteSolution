@@ -40,8 +40,8 @@ export class MembersService {
             ));
   }
 
-  public readMembers(activeOnly: boolean): Observable<Member[]> {
-    return this.http.get<Member[]>(`${this.globalService.ApiUrl}/api/members/${activeOnly}`)
+  public readMembers(season: number): Observable<Member[]> {
+    return this.http.get<Member[]>(`${this.globalService.ApiUrl}/api/members/GetForSeason/${season}`)
               .pipe(map(res => 
                 plainToClass(Member, res)
             ));

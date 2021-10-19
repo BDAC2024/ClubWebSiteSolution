@@ -13,10 +13,24 @@ export class GlobalService {
 
    public OnLocalhost: boolean;
    public ApiUrl: string;
+   public storedSeason: number = 0;
 
    public log(message: string) {
      if (this.OnLocalhost) {
        console.log(message);
      }
+   }
+
+   public getStoredSeason(defaultIfEmpty: number): number {
+
+    if (this.storedSeason == 0 ) {
+      this.storedSeason = defaultIfEmpty;
+    }
+
+    return this.storedSeason;
+   }
+
+   public setStoredSeason(season: number): void {
+      this.storedSeason = season;
    }
 }

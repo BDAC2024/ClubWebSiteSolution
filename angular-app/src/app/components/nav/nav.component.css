@@ -69,11 +69,6 @@
     padding-top: 10px;
   }
   
-  .example-fill-remaining-space {
-    /* This fills the remaining space, by using flexbox.
-       Every toolbar row uses a flexbox row layout. */
-    flex: 1 1 auto;
-  }
   
   .logout-button {
     background-color: rgb(230, 230, 240); 

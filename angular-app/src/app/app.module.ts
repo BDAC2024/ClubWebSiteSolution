@@ -62,6 +62,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { ResetPinComponent } from './dialogs/reset-pin/reset-pin.component';
 import { AddEditWaterDialogComponent } from './dialogs/add-edit-water-dialog/add-edit-water-dialog.component';
 import { AddEditRulesDialogComponent } from './dialogs/add-edit-rules-dialog/add-edit-rules-dialog.component';
+import { AuthenticationService } from './services/auth/authentication.service';
+import { Router } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -124,7 +128,9 @@ import { AddEditRulesDialogComponent } from './dialogs/add-edit-rules-dialog/add
     MatDatepickerModule,
     MatNativeDateModule,
     MatCheckboxModule,
-
+    MatSelectModule,
+    ScrollingModule, 
+    
     FateModule,
     FateMaterialModule,
   ],
@@ -133,7 +139,7 @@ import { AddEditRulesDialogComponent } from './dialogs/add-edit-rules-dialog/add
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorIntercept,
       multi: true,
-      deps: [MatDialog]
+      deps: [MatDialog, AuthenticationService, Router]
     },
     { 
       provide: HTTP_INTERCEPTORS, 

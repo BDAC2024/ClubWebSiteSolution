@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { AddEditWaterDialogComponent } from 'src/app/dialogs/add-edit-water-dialog/add-edit-water-dialog.component';
 import { Water } from 'src/app/models/water';
+import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { MembersService } from 'src/app/services/members.service';
 import { WatersService } from 'src/app/services/waters.service';
 
@@ -22,7 +24,9 @@ export class WatersComponent implements OnInit {
   constructor(
     public watersService: WatersService,
     public membersService: MembersService,
-    private dialog: MatDialog) { 
+    public authenticationService: AuthenticationService,
+    private dialog: MatDialog,
+    private router: Router) { 
 
 
   }
@@ -84,5 +88,9 @@ export class WatersComponent implements OnInit {
       });
     });
 
+  }
+
+  public memberLogin(): void {
+    this.router.navigate(['/login'], { queryParams: { returnUrl: "/waters" } });
   }
 }

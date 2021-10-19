@@ -1,5 +1,15 @@
 <div>
-    <h1>League Standings</h1>
+    <div style="display: flex;">
+        <h1 class="left-header">League Standings</h1>
+        <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']" ></span>
+        <mat-form-field class="season-selector" *ngIf="!isLoading">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="loadLeague()" >
+            <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>  
+
     <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
         <mat-tab label="{{matchService.SpringTabName}}"></mat-tab>
         <mat-tab label="{{matchService.ClubTabName}}"></mat-tab>

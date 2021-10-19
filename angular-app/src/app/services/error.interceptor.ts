@@ -9,10 +9,14 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorComponent } from '../dialogs/error/error.component';
+import { AuthenticationService } from './auth/authentication.service';
+import { Router } from '@angular/router';
 
 export class ErrorIntercept implements HttpInterceptor {
 
-    constructor(public dialog: MatDialog) { }
+    private membershipExpired: boolean = false;
+
+    constructor(public dialog: MatDialog, public authenticationService: AuthenticationService, private router: Router) { }
 
     intercept(
         request: HttpRequest<any>,
@@ -34,6 +38,13 @@ export class ErrorIntercept implements HttpInterceptor {
                         // server-side error
                         if (error.error) {
                             errorMessage = `${prefix} ${error.error.message}`;
+
+                            if (error.status == 401 && this.authenticationService.isLoggedIn)
+                            { 
+                                errorMessage += ". You will now be logged out.";
+                                this.membershipExpired = true;
+                            }
+
                         } else {
                             errorMessage = `${prefix} Error Status: ${error.status}\nMessage: ${error.message}\nDetail: ${error.error}`;
                         }
@@ -43,6 +54,11 @@ export class ErrorIntercept implements HttpInterceptor {
                     const dialogRef = this.dialog.open(ErrorComponent, {width: "250px", maxHeight: "100vh", data: errorMessage});
 
                     dialogRef.afterClosed().subscribe(result => {
+                        if (this.membershipExpired) {
+                            this.membershipExpired = false;
+                            this.authenticationService.logout();
+                            this.router.navigate(['/']);
+                        }
                     });
 
                     return throwError(errorMessage);

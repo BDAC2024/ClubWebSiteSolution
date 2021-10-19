@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelectionListChange } from '@angular/material/list';
 import { ActivatedRoute } from '@angular/router';
 import { ResetPinComponent } from 'src/app/dialogs/reset-pin/reset-pin.component';
 import { Member } from 'src/app/models/member';
 import { MembersService } from 'src/app/services/members.service';
+import { SelectionModel } from "@angular/cdk/collections";
+import { RefData, Season } from 'src/app/models/refData';
+import { RefDataService } from 'src/app/services/ref-data.service';
 
 @Component({
   selector: 'app-member',
@@ -17,9 +21,12 @@ export class MemberComponent implements OnInit {
   public isLoading: boolean = false;
   public status: string = "";
   public message: string = "";
+  public selection = new SelectionModel(true);
+  public refData!: RefData;
 
   constructor(private route: ActivatedRoute,
     private membersService: MembersService,
+    private refDataService: RefDataService,
     public dialog: MatDialog,
     ) { 
     this.route.params.subscribe(params => {
@@ -31,14 +38,18 @@ export class MemberComponent implements OnInit {
         .subscribe(data => {
           this.member = data;
           this.isLoading = false;
+          this.selection.select(...this.member.seasonsActive);
         });
     })
   }
 
   ngOnInit(): void {
+    this.getRefData();
   }
 
   public save(): void {
+    this.member.seasonsActive = this.selection.selected as number[];
+
     this.membersService.updateMember(this.member)
     .subscribe(data => {
       this.status = "Saved successfully";
@@ -56,5 +67,26 @@ export class MemberComponent implements OnInit {
 
 
   }
-  
+ 
+  public onActiveSeasonChange(selection: MatSelectionListChange): void {
+    selection.options[0].selected
+      ? this.selection.select(selection.options[0].value)
+      : this.selection.deselect(selection.options[0].value);
+  }
+
+  public getRefData() {
+    this.refDataService.getRefData()
+    .subscribe(data => {
+      this.refData = data;
+
+      this.refData.seasons = this.refData.seasons
+        .filter((s) => {
+          return s.season <= this.refData.currentSeason + 1;
+        })
+        .sort((a, b) => {
+          return a.season < b.season && 1 || -1;
+        });
+    });
+  }
+
 }

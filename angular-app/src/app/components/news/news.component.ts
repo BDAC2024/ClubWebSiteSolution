@@ -40,6 +40,10 @@ export class NewsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`The dialog was closed : `);
+
+      // make it mid-day to avoid any DST issues
+      result.date.setHours(12);
+
       console.log(result);
 
       if (result) {
@@ -85,6 +89,10 @@ export class NewsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`The dialog was closed : `);
+
+      // make it mid-day to avoid any DST issues
+      result.date.setHours(12);
+
       console.log(result);
 
       if (result) {

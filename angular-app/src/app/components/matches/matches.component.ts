@@ -10,6 +10,8 @@ import { ScreenService } from 'src/app/services/screen.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { DisplayedColumnsForMatches } from 'src/app/models/displayed-columns-matches';
 import { ClubEventService } from 'src/app/services/club-event.service';
+import { RefDataService } from 'src/app/services/ref-data.service';
+import { RefData } from 'src/app/models/refData';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
 
@@ -24,11 +26,15 @@ export class MatchesComponent implements OnInit {
   public matches: ClubEvent[] = [];
   public allMatches!: ClubEvent[];
   public isLoading: boolean = false;
-  
+  public refData!: RefData;
+  public selectedSeason!: number;
+  public selectedMatchType: MatchType = MatchType.Spring;
+
   constructor(
     public matchService: MatchService,
     public clubEventService: ClubEventService,
     public screenService: ScreenService,
+    private refDataService: RefDataService,
     public dialog: MatDialog,
     public globalService: GlobalService) {
 
@@ -45,13 +51,7 @@ export class MatchesComponent implements OnInit {
   ngOnInit(): void {
     this.globalService.log("ngOnInit running");
     this.isLoading = true;
-
-    this.clubEventService.readEvents()
-    .subscribe(data => {
-      this.isLoading = false;
-      this.allMatches = data;
-      this.loadMatches(0 as MatchType);
-    });
+    this.getRefData();
   }
 
   public showMore(match: ClubEvent)
@@ -63,13 +63,14 @@ export class MatchesComponent implements OnInit {
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.loadMatches(tabChangeEvent.index as MatchType);
+    this.selectedMatchType = tabChangeEvent.index as MatchType;
+    this.loadMatches();
   }
 
-  private loadMatches(type: MatchType): void
+  private loadMatches(): void
   {
       
-    this.matches = this.allMatches.filter(m => m.matchType === type);
+    this.matches = this.allMatches.filter(m => m.matchType === this.selectedMatchType);
 
     this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
@@ -101,4 +102,22 @@ export class MatchesComponent implements OnInit {
     }
   }
 
+  public getRefData() {
+    this.refDataService.getRefData()
+    .subscribe(data => {
+      this.refData = data;
+      this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
+      this.getMatches();
+    });
+  }
+
+  public getMatches() {
+    this.globalService.setStoredSeason(this.selectedSeason);
+    this.clubEventService.readEvents(this.selectedSeason)
+    .subscribe(data => {
+      this.isLoading = false;
+      this.allMatches = data;
+      this.loadMatches();
+    });
+  }
 }

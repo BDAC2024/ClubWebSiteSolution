@@ -6,8 +6,10 @@ import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.compon
 import { ClubEvent } from 'src/app/models/club-event';
 import { DisplayedColumnsForEvents } from 'src/app/models/displayed-columns-events';
 import { EventType } from 'src/app/models/event-enum';
+import { RefData } from 'src/app/models/refData';
 import { ClubEventService } from 'src/app/services/club-event.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { RefDataService } from 'src/app/services/ref-data.service';
 import { ScreenService } from 'src/app/services/screen.service';
 
 const datepipe: DatePipe = new DatePipe('en-GB');
@@ -25,10 +27,14 @@ export class DiaryComponent implements OnInit {
   public displayedColumns: string[];
   public matchType: number = EventType.Match;
   public isLoading: boolean = false;
+  public selectedSeason!: number;
+  public refData!: RefData;
+  public selectedEventType: EventType = EventType.All;
 
   constructor(
     public screenService: ScreenService,
     public clubEventService: ClubEventService,
+    public refDataService: RefDataService,
     public dialog: MatDialog,
     public globalService: GlobalService
   ) { 
@@ -43,18 +49,13 @@ export class DiaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-
-    this.clubEventService.readEvents()
-    .subscribe(data => {
-      this.isLoading = false;
-      this.allEvents = data;
-      this.loadEvents(0 as EventType);
-    });
+    this.getRefData();
 
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-     this.loadEvents(tabChangeEvent.index as EventType);
+    this.selectedEventType = tabChangeEvent.index as EventType;
+     this.loadEvents();
   }
 
   public showMore(match: ClubEvent)
@@ -65,12 +66,12 @@ export class DiaryComponent implements OnInit {
     });
   }
 
-  private loadEvents(type: EventType): void
+  private loadEvents(): void
   {
-    if (type == EventType.All) {
+    if (this.selectedEventType == EventType.All) {
       this.events = this.allEvents;
     } else {
-      this.events = this.allEvents.filter(m => m.eventType === type);
+      this.events = this.allEvents.filter(m => m.eventType === this.selectedEventType);
     }
 
     this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
@@ -106,4 +107,23 @@ export class DiaryComponent implements OnInit {
     }
   }
 
+  public getRefData() {
+    this.refDataService.getRefData()
+    .subscribe(data => {
+      this.refData = data;
+      this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
+      this.getEvents();
+    });
+  }
+
+  public getEvents() {
+    this.globalService.setStoredSeason(this.selectedSeason);
+    this.clubEventService.readEvents(this.selectedSeason)
+    .subscribe(data => {
+      this.isLoading = false;
+      this.allEvents = data;
+      this.loadEvents();
+    });
+
+  }
 }

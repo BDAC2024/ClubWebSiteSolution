@@ -90,4 +90,13 @@
             </mat-card-content>
         </mat-card>
     </li>
+    <li *ngIf="!this.authenticationService.isLoggedIn">
+        <mat-card class="members-only-card">
+            Currently showing waters that do not require club membership.
+            <br/>
+            <br/>
+            <button mat-raised-button color="primary" (click)="memberLogin()"  >Members can log in here</button>
+        </mat-card>
+
+    </li>
 </ul>

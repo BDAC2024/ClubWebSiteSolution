@@ -44,3 +44,22 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     float: left;
   }
   
+.season-selector {
+    width: 100px;
+}
+
+.season-selector-margin-desktop {
+    width: 60px;
+}
+
+.example-fill-remaining-space {
+    /* This fills the remaining space, by using flexbox.
+       Every toolbar row uses a flexbox row layout. */
+    flex: 1 1 auto;
+  }
+
+.members-only-card {
+    background-color: rgb(247, 88, 88);
+    color: white;
+    text-align: center;
+}

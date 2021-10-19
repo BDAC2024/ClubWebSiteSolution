@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AggregateWeight } from 'src/app/models/aggregate-weight';
 import { AggregateWeightType, MatchType } from 'src/app/models/match-enum';
+import { RefData } from 'src/app/models/refData';
+import { GlobalService } from 'src/app/services/global.service';
 import { MatchResultsService } from 'src/app/services/match-results.service';
 import { MatchService } from 'src/app/services/match.service';
+import { RefDataService } from 'src/app/services/ref-data.service';
 import { ScreenService } from 'src/app/services/screen.service';
 
 @Component({
@@ -16,10 +19,15 @@ export class AggregateWeightsComponent implements OnInit {
   public displayedColumns: string[];
   public isLoading: boolean = false;
   public weights: AggregateWeight[] = [];
+  public refData!: RefData;
+  public selectedSeason!: number;
+  public selectedAggregateWeightType: AggregateWeightType = AggregateWeightType.Spring;
 
   constructor(
     public matchResultsService: MatchResultsService,
     public matchService: MatchService,
+    private refDataService: RefDataService,
+    private globalService: GlobalService,
     public screenService: ScreenService
 
   ) { 
@@ -27,23 +35,35 @@ export class AggregateWeightsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadWeights(AggregateWeightType.Spring);
+    this.getRefData();
 
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.loadWeights(tabChangeEvent.index as AggregateWeightType);
+    this.selectedAggregateWeightType = tabChangeEvent.index as AggregateWeightType;
+    this.loadWeights();
   }
 
-  private loadWeights(type: AggregateWeightType): void
+  public loadWeights(): void
   {
     this.isLoading = true;
     this.weights = [];
     
-    this.matchResultsService.readAggregateWeights(type)
+    this.globalService.setStoredSeason(this.selectedSeason);
+    
+    this.matchResultsService.readAggregateWeights(this.selectedAggregateWeightType, this.selectedSeason)
     .subscribe(data => {
       this.isLoading = false;
       this.weights = data;
+    });
+  }
+
+  private getRefData() {
+    this.refDataService.getRefData()
+    .subscribe(data => {
+      this.refData = data;
+      this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
+      this.loadWeights();
     });
   }
 

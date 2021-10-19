@@ -33,8 +33,8 @@ export class ClubEventService {
     return this.screenService.IsHandsetPortrait? EventType.CompactName(type) : EventType.FullName(type)
   }
 
-  public readEvents(): Observable<ClubEvent[]> {
-    return this.http.get<ClubEvent[]>(`${this.globalService.ApiUrl}/api/events`)
+  public readEvents(season: number): Observable<ClubEvent[]> {
+    return this.http.get<ClubEvent[]>(`${this.globalService.ApiUrl}/api/events/${season}`)
               .pipe(map(res => 
                   plainToClass(ClubEvent, res)
               ));
