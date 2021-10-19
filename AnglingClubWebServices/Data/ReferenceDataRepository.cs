@@ -31,6 +31,8 @@ namespace AnglingClubWebServices.Data
                 
             }
 
+            refData.CurrentSeason = EnumUtils.CurrentSeason();
+
             return refData;
 
         }

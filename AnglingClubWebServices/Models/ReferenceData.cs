@@ -6,6 +6,8 @@ namespace AnglingClubWebServices.Models
 {
     public class ReferenceData
     {
+        public Season CurrentSeason { get; set; }
+
         public List<SeasonInfo> Seasons { get; set; } = new List<SeasonInfo>();
     }
 

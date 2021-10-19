@@ -45,7 +45,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 var waters = _waterRepository.GetWaters().Result;
 
-                foreach (var water in waters)
+                foreach (var water in waters.Where( x => (CurrentUser == null && x.Access != WaterAccessType.MembersOnly) || (CurrentUser != null)))
                 {
                     var dto = new WaterOutputDto();
 

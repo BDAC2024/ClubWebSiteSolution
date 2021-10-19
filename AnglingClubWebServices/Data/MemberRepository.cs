@@ -1,11 +1,13 @@
 ﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -14,6 +16,7 @@ namespace AnglingClubWebServices.Data
     {
         private const string IdPrefix = "Member";
         private readonly ILogger<MemberRepository> _logger;
+
 
         public MemberRepository(
             IOptions<RepositoryOptions> opts,
@@ -26,9 +29,24 @@ namespace AnglingClubWebServices.Data
         {
             var client = GetClient();
 
+            if (!member.AllowNameToBeUsed)
+            {
+                member.Name = "Anonymous";
+            }
+
             if (member.IsNewItem)
             {
                 member.DbKey = member.GenerateDbKey(IdPrefix);
+            }
+
+
+            // Check that there aren't already members of this membership number in each active season
+            foreach (var season in member.SeasonsActive)
+            {
+                if (GetMembers().Result.Any(x => x.MembershipNumber == member.MembershipNumber && x.SeasonsActive.Contains(season) && x.DbKey != member.DbKey))
+                {
+                    throw new Exception($"Membership number {member.MembershipNumber} is already active for {season.SeasonName()}");
+                }
             }
 
             BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -40,8 +58,6 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Name", Value = member.Name, Replace = true },
                 new ReplaceableAttribute { Name = "MembershipNumber", Value = member.MembershipNumber.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Admin", Value = member.Admin ? "1" : "0", Replace = true },
-                new ReplaceableAttribute { Name = "LastPaid", Value = dateToString(member.LastPaid), Replace = true },
-                new ReplaceableAttribute { Name = "Enabled", Value = member.Enabled ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "Pin", Value = member.Pin, Replace = true },
                 new ReplaceableAttribute { Name = "AllowNameToBeUsed", Value = member.AllowNameToBeUsed ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "PreferencesLastUpdated", Value = dateToString(member.PreferencesLastUpdated), Replace = true },
@@ -49,6 +65,11 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "FailedLoginAttempts", Value = member.FailedLoginAttempts.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "LastLoginFailure", Value = dateToString(member.LastLoginFailure), Replace = true },
             };
+
+            foreach (var season in member.SeasonsActive)
+            {
+                attributes.Add(new ReplaceableAttribute { Name = "SeasonsActive", Value = ((int)season).ToString(), Replace = true });
+            }
 
             request.Items.Add(
                 new ReplaceableItem
@@ -60,8 +81,10 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                await WriteInBatches(request, client);
                 _logger.LogDebug($"Member added: {member.DbKey} - {member.Name}");
+
             }
             catch (AmazonSimpleDBException ex)
             {
@@ -71,20 +94,15 @@ namespace AnglingClubWebServices.Data
 
         }
 
-        public async Task<List<Member>> GetMembers()
+        public async Task<List<Member>> GetMembers(Season? activeSeason = null)
         {
             _logger.LogWarning($"Getting members at : {DateTime.Now.ToString("HH:mm:ss.000")}");
 
             var members = new List<Member>();
 
-            var client = GetClient();
+            var items = await GetData(IdPrefix, "AND Name > ''", "ORDER BY Name");
 
-            SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND Name > '' ORDER BY Name";
-
-            SelectResponse response = await client.SelectAsync(request);
-
-            foreach (var item in response.Items)
+            foreach (var item in items)
             {
                 var member = new Member();
 
@@ -106,12 +124,8 @@ namespace AnglingClubWebServices.Data
                             member.Admin = attribute.Value == "0" ? false : true;
                             break;
 
-                        case "LastPaid":
-                            member.LastPaid = DateTime.Parse(attribute.Value);
-                            break;
-
-                        case "Enabled":
-                            member.Enabled = attribute.Value == "0" ? false : true;
+                        case "SeasonsActive":
+                            member.SeasonsActive.Add((Season)Convert.ToInt32(attribute.Value));
                             break;
 
                         case "Pin":
@@ -146,7 +160,14 @@ namespace AnglingClubWebServices.Data
                 members.Add(member);
             }
 
-            return members;
+            if (activeSeason.HasValue)
+            {
+                return members.Where(x => x.SeasonsActive.Contains(activeSeason.Value)).ToList();
+            }
+            else
+            {
+                return members;
+            }
 
         }
 

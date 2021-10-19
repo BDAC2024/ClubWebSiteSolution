@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -28,14 +29,14 @@ namespace AnglingClubWebServices.Controllers
         }
 
         // GET api/values
-        [HttpGet]
+        [HttpGet("{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ClubEvent>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public IActionResult Get()
+        public IActionResult Get(Season season)
         {
             StartTimer();
 
-            var events = _eventRepository.GetEvents().Result;
+            var events = (_eventRepository.GetEvents().Result).Where(x => x.Season == season);
 
             ReportTimer("Getting events");
 
@@ -50,27 +51,47 @@ namespace AnglingClubWebServices.Controllers
             //return BadRequest(errors);
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]List<ClubEventInputDto> events)
+        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody]List<ClubEventInputDto> events)
         {
             StartTimer();
+            var errors = new List<string>();
 
-            var clubEvents = _mapper.Map<List<ClubEvent>>(events);
-
-            foreach (var ev in clubEvents)
+            try
             {
-                _eventRepository.AddOrUpdateEvent(ev);
-            }
+                var clubEvents = _mapper.Map<List<ClubEvent>>(events);
 
-            ReportTimer("Posting events");
+                foreach (var ev in clubEvents)
+                {
+                    try
+                    {
+                        await _eventRepository.AddOrUpdateEvent(ev);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        errors.Add($"{ev.Id} - {ex.Message}");
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                errors.Add(ex.Message);
+
+            }
+            finally
+            {
+                ReportTimer("Posting events");
+
+            }
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+            else
+            {
+                return Ok();
+            }
         }
 
         // PUT api/values/5

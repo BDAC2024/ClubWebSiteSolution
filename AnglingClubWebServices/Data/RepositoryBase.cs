@@ -1,6 +1,7 @@
 ﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,11 @@ namespace AnglingClubWebServices.Data
         private readonly string _secret;
         private readonly string _domain;
         private ILogger<RepositoryBase> _logger;
+
+        private const int QUERY_BATCH_SIZE = 2000;
+        private const int UPDATE_BATCH_SIZE = 25;
+        private int batchNumber = 0;
+
 
         public RepositoryBase(string accessId, string secret, string domain, ILoggerFactory loggerFactory)
         {
@@ -144,6 +150,74 @@ namespace AnglingClubWebServices.Data
             //return date.ToString("yyyy-MM-ddTHH:mm:ss.000Z");
             return date.ToString("yyyy-MM-dd HH:mm:ss");
         }
+
+        protected async Task<List<Item>> GetData(string idPrefix, string additionalWhereClause = "", string orderByClause = "")
+        {
+            List<Item> items = new List<Item>();
+
+            var client = GetClient();
+            string nextToken = null;
+
+            do
+            {
+                SelectRequest request = new SelectRequest();
+                request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{(idPrefix == "" ? "" : $"{idPrefix}:")}%' {additionalWhereClause} {orderByClause} LIMIT {QUERY_BATCH_SIZE}";
+                request.NextToken = nextToken;
+
+                SelectResponse response = await client.SelectAsync(request);
+                nextToken = response.NextToken;
+
+                items.AddRange(response.Items);
+
+            } while (nextToken != null);
+
+            return items;
+        }
+
+        protected async Task WriteInBatches(BatchPutAttributesRequest request, AmazonSimpleDBClient client)
+        {
+            List<ReplaceableAttribute> attributes = new List<ReplaceableAttribute>();
+
+            request.Items = request.Items.OrderBy(x => x.Name).ToList();
+
+            while (request.Items.Any())
+            {
+                batchNumber++;
+
+                BatchPutAttributesRequest requestBatch = new BatchPutAttributesRequest();
+                requestBatch.DomainName = request.DomainName;
+
+                requestBatch.Items.AddRange(request.Items.Take(UPDATE_BATCH_SIZE));
+
+                await storeBatchOfItems(client, requestBatch);
+
+                request.Items.RemoveRange(0, request.Items.Count() < UPDATE_BATCH_SIZE ? request.Items.Count() : UPDATE_BATCH_SIZE);
+            }
+        }
+
+        private async Task storeBatchOfItems(AmazonSimpleDBClient client, BatchPutAttributesRequest request)
+        {
+            try
+            {
+                /*
+                _logger.LogDebug($"Writing new batch {batchNumber}...");
+                var itemNo = 1;
+
+                foreach (var item in request.Items)
+                {
+                    _logger.LogDebug($"  Item: {itemNo++} = {item.Name}");
+                }
+                */
+
+                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+            }
+            catch (AmazonSimpleDBException ex)
+            {
+                _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                throw;
+            }
+        }
+
 
     }
 }

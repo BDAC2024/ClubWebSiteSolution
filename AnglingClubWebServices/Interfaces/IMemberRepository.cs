@@ -7,6 +7,6 @@ namespace AnglingClubWebServices.Interfaces
     public interface IMemberRepository
     {
         Task AddOrUpdateMember(Member member);
-        Task<List<Member>> GetMembers();
+        Task<List<Member>> GetMembers(Season? activeSeason = null);
     }
 }

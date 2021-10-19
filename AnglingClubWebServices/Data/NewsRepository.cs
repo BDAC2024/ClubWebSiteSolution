@@ -53,7 +53,8 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                await WriteInBatches(request, client);
                 _logger.LogDebug($"News Item added: {newsItem.DbKey} - {newsItem.Title}");
             }
             catch (AmazonSimpleDBException ex)
@@ -70,14 +71,9 @@ namespace AnglingClubWebServices.Data
 
             var newsItems = new List<NewsItem>();
 
-            var client = GetClient();
+            var items = await GetData(IdPrefix, "AND Date > ''", "ORDER BY Date DESC");
 
-            SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND Date > '' ORDER BY Date DESC";
-
-            SelectResponse response = await client.SelectAsync(request);
-
-            foreach (var item in response.Items)
+            foreach (var item in items)
             {
                 var newsItem = new NewsItem();
 

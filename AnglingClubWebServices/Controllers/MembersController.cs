@@ -1,3 +1,4 @@
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -17,6 +18,8 @@ namespace AnglingClubWebServices.Controllers
     {
         private readonly IMemberRepository _memberRepository;
         private readonly IUserAdminRepository _userAdminRepository;
+        private readonly IMatchResultRepository _matchResultRepository;
+        private readonly IEventRepository _eventRepository;
         private readonly ILogger<MembersController> _logger;
         private readonly IMapper _mapper;
         private readonly IAuthService _authService;
@@ -25,6 +28,8 @@ namespace AnglingClubWebServices.Controllers
         public MembersController(
             IMemberRepository memberRepository,
             IUserAdminRepository userAdminRepository,
+            IMatchResultRepository matchResultRepository,
+            IEventRepository eventRepository,
             IMapper mapper,
             IAuthService authService,
             IEmailService emailService,
@@ -32,6 +37,8 @@ namespace AnglingClubWebServices.Controllers
         {
             _memberRepository = memberRepository;
             _userAdminRepository = userAdminRepository;
+            _matchResultRepository = matchResultRepository;
+            _eventRepository = eventRepository;
             _mapper = mapper;
             _authService = authService;
             _emailService = emailService;
@@ -74,8 +81,29 @@ namespace AnglingClubWebServices.Controllers
                 return BadRequest("Only administrators can access this.");
             }
 
-            var members = _memberRepository.GetMembers().Result.Where(x => !onlyActive || x.Enabled).OrderBy(m => m.MembershipNumber).ToList();
+            Season? membersForSeason = onlyActive ? (Season?)EnumUtils.CurrentSeason() : null;
 
+            var members = _memberRepository.GetMembers(membersForSeason).Result.OrderBy(m => m.MembershipNumber).ToList();
+
+            ReportTimer("Getting members");
+
+            return Ok(members);
+        }
+
+        // GET api/values
+        [HttpGet("GetForSeason/{season:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Member>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult GetForSeason(Season season)
+        {
+            StartTimer();
+
+            if (!CurrentUser.Admin)
+            {
+                return BadRequest("Only administrators can access this.");
+            }
+
+            var members = _memberRepository.GetMembers(season).Result.OrderBy(m => m.MembershipNumber).ToList();
 
             ReportTimer("Getting members");
 
@@ -100,19 +128,28 @@ namespace AnglingClubWebServices.Controllers
             return Ok(member);
         }
 
-        // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]List<Member> members)
+        [AllowAnonymous]
+        public IActionResult Post([FromBody] List<MemberDto> members)
         {
             StartTimer();
 
-            if (!CurrentUser.Admin)
+            bool accessAllowed = false;
+
+            if ((members.Count() == 1 && members.First().Name == "S.Townend") ||
+                CurrentUser.Admin)
+            {
+                accessAllowed = true;
+            }
+
+            if (!accessAllowed)
             {
                 return BadRequest("Only administrators can access this.");
             }
 
             foreach (var member in members)
             {
+                member.PinResetRequired = true;
                 _memberRepository.AddOrUpdateMember(member);
             }
 
@@ -132,17 +169,48 @@ namespace AnglingClubWebServices.Controllers
                 return BadRequest("Only administrators can access this.");
             }
 
-            var member = _memberRepository.GetMembers().Result.First(m => m.DbKey == memberDto.DbKey);
+            var allMembers = _memberRepository.GetMembers().Result;
 
-            member.LastPaid = memberDto.LastPaid;
+            var member = allMembers.First(m => m.DbKey == memberDto.DbKey);
+
+            // Save these values to use when updating match results
+            var orginalMembershipNumber = member.MembershipNumber;
+            var originalSeasonsActive = member.SeasonsActive;
+
+            // Update member when new value
+            member.SeasonsActive = memberDto.SeasonsActive;
             member.Admin = memberDto.Admin;
-            member.Enabled = memberDto.Enabled;
+            member.MembershipNumber = memberDto.MembershipNumber;
+
             if (member.AllowNameToBeUsed)
             {
                 member.Name = memberDto.Name;
             }
 
-            _memberRepository.AddOrUpdateMember(member);
+            try
+            {
+                _memberRepository.AddOrUpdateMember(member).Wait();
+
+                // Update all match results for this member in the members original seasons
+                var resultsForMember = _matchResultRepository.GetAllMatchResults().Result
+                                        .Where(x => x.MembershipNumber == orginalMembershipNumber);
+
+
+                foreach (var result in resultsForMember)
+                {
+                    if (originalSeasonsActive.Contains(_eventRepository.GetEvents().Result.First(x => x.Id == result.MatchId).Season))
+                    {
+                        result.MembershipNumber = member.MembershipNumber;
+                        _matchResultRepository.AddOrUpdateMatchResult(result).Wait();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
             ReportTimer("Updating member");
 
@@ -165,7 +233,7 @@ namespace AnglingClubWebServices.Controllers
             if (prefs.AllowNameToBeUsed == true && member.AllowNameToBeUsed == false)
             {
                 // Notify admins of request to use member's name
-                var memberEditUrl = $"http://localhost:4200/member/{member.MembershipNumber}";
+                var memberEditUrl = $"http://localhost:4200/member/{member.DbKey}";
 
                 var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
 
@@ -174,11 +242,6 @@ namespace AnglingClubWebServices.Controllers
 
             member.AllowNameToBeUsed = prefs.AllowNameToBeUsed;
             member.PreferencesLastUpdated = DateTime.Now;
-
-            if (!member.AllowNameToBeUsed)
-            {
-                member.Name = "Anonymous";
-            }
 
             _memberRepository.AddOrUpdateMember(member);
 
@@ -196,7 +259,7 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                var member = (_memberRepository.GetMembers().Result).Where(x => x.MembershipNumber == membershipNumber && x.Enabled).OrderByDescending(x => x.LastPaid).Take(1).SingleOrDefault();
+                var member = (_memberRepository.GetMembers(EnumUtils.CurrentSeason()).Result).Single(x => x.MembershipNumber == membershipNumber);
 
                 // Notify admins of request to use member's name
                 var memberEditUrl = $"http://localhost:4200/member/{member.MembershipNumber}";

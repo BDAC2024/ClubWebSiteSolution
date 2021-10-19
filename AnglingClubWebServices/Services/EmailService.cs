@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AnglingClubWebServices.Services
 {
@@ -33,34 +34,37 @@ namespace AnglingClubWebServices.Services
 
         public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null)
         {
-            var mailMessage = new MimeMessage();
-            mailMessage.From.Add(new MailboxAddress(_options.EmailFromName, _options.EmailFromAddress));
-            foreach (var recipient in to)
+            if (to.Any())
             {
-                mailMessage.To.Add(MailboxAddress.Parse(recipient));
-            }
-            mailMessage.Subject = subject;
-
-            var builder = new BodyBuilder();
-            builder.TextBody = textBody;
-            builder.HtmlBody = textBody;
-
-            if (attachmentFilenames != null)
-            {
-                foreach (var att in attachmentFilenames)
+                var mailMessage = new MimeMessage();
+                mailMessage.From.Add(new MailboxAddress(_options.EmailFromName, _options.EmailFromAddress));
+                foreach (var recipient in to)
                 {
-                    builder.Attachments.Add(att);
+                    mailMessage.To.Add(MailboxAddress.Parse(recipient));
                 }
-            }
+                mailMessage.Subject = subject;
 
-            mailMessage.Body = builder.ToMessageBody();
+                var builder = new BodyBuilder();
+                builder.TextBody = textBody;
+                builder.HtmlBody = textBody;
 
-            using (var smtpClient = new SmtpClient())
-            {
-                smtpClient.Connect(_options.EmailHost, _options.EmailPort, true);
-                smtpClient.Authenticate(_options.EmailUsername, _options.EmailPassword);
-                smtpClient.Send(mailMessage);
-                smtpClient.Disconnect(true);
+                if (attachmentFilenames != null)
+                {
+                    foreach (var att in attachmentFilenames)
+                    {
+                        builder.Attachments.Add(att);
+                    }
+                }
+
+                mailMessage.Body = builder.ToMessageBody();
+
+                using (var smtpClient = new SmtpClient())
+                {
+                    smtpClient.Connect(_options.EmailHost, _options.EmailPort, true);
+                    smtpClient.Authenticate(_options.EmailUsername, _options.EmailPassword);
+                    smtpClient.Send(mailMessage);
+                    smtpClient.Disconnect(true);
+                }
             }
         }
 

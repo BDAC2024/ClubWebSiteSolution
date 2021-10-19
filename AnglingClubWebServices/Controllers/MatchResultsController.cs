@@ -17,6 +17,7 @@ namespace AnglingClubWebServices.Controllers
         private readonly ILogger<MatchResultsController> _logger;
         private readonly IMatchResultRepository _matchResultRepository;
         private readonly IMatchResultService _matchResultService;
+        private readonly IEventRepository _eventRepository;
         private readonly IMemberRepository _memberRepository;
         private readonly IMapper _mapper;
 
@@ -24,11 +25,13 @@ namespace AnglingClubWebServices.Controllers
             IMatchResultRepository matchResultRepository,
             IMatchResultService matchResultService,
             IMemberRepository memberRepository,
+            IEventRepository eventRepository,
             IMapper mapper,
             ILoggerFactory loggerFactory)
         {
             _matchResultRepository = matchResultRepository;
             _matchResultService = matchResultService;
+            _eventRepository = eventRepository;
             _memberRepository = memberRepository;
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<MatchResultsController>();
@@ -48,7 +51,8 @@ namespace AnglingClubWebServices.Controllers
             try
             {
                 var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetResults(matchId));
-                var members = _memberRepository.GetMembers().Result.Where(x => x.Enabled);
+                var match = _eventRepository.GetEvents().Result.Single(x => x.Id == matchId);
+                var members = _memberRepository.GetMembers(match.Season).Result;
                 foreach (var result in results)
                 {
                     result.Name = members.Single(x => x.MembershipNumber == result.MembershipNumber).Name;
@@ -133,13 +137,10 @@ namespace AnglingClubWebServices.Controllers
                     try
                     {
                         await _matchResultRepository.AddOrUpdateMatchResult(result);
-
-                        ReportTimer("Posting match results");
-
                     }
                     catch (System.Exception ex)
                     {
-                        errors.Add(ex.Message);
+                        errors.Add($"{result.MatchId}, Member: {result.MembershipNumber} - {ex.Message}");
                     }
                 }
 
@@ -148,6 +149,11 @@ namespace AnglingClubWebServices.Controllers
             {
                 errors.Add(ex.Message);
                 
+            }
+            finally
+            {
+                ReportTimer("Posting match results");
+
             }
 
             if (errors.Any())

@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Interfaces;
+﻿using AnglingClubWebServices.Helpers;
+using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -6,9 +7,9 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
 
 namespace AnglingClubWebServices.Services
 {
@@ -29,7 +30,7 @@ namespace AnglingClubWebServices.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            var member = (await _memberRepository.GetMembers()).Where(x => x.MembershipNumber == model.MembershipNumber && x.Enabled).OrderByDescending(x => x.LastPaid).Take(1).SingleOrDefault();
+            var member = (await _memberRepository.GetMembers(EnumUtils.CurrentSeason())).SingleOrDefault(x => x.MembershipNumber == model.MembershipNumber);
 
             // return null if user not found or PIN invalid
             if (member == null)
@@ -71,7 +72,7 @@ namespace AnglingClubWebServices.Services
         }
         public async Task<Member> GetByKey(string key)
         {
-            var member = (await _memberRepository.GetMembers()).Single(x => x.DbKey == key);
+            var member = (await _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason())).Single(x => x.DbKey == key);
             return member;
         }
 
@@ -89,7 +90,6 @@ namespace AnglingClubWebServices.Services
                     new Claim("MembershipNumber", member.MembershipNumber.ToString()),
                     new Claim("Admin", member.Admin.ToString()),
                     new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),
-                    new Claim("LastPaid", member.LastPaid.ToString("u")),
                     new Claim("PreferencesLastUpdated", member.PreferencesLastUpdated.ToString("u")),
                     new Claim("Name", member.AllowNameToBeUsed ? member.Name : "Anonymous"),
                     new Claim("PinResetRequired", member.PinResetRequired.ToString())

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -14,6 +15,8 @@ namespace AnglingClubWebServices.Data
     {
         private const string IdPrefix = "Event";
         private readonly ILogger<EventRepository> _logger;
+
+        private List<ClubEvent> _cachedEvents = null;
 
         public EventRepository(
             IOptions<RepositoryOptions> opts,
@@ -26,50 +29,70 @@ namespace AnglingClubWebServices.Data
         {
             var client = GetClient();
 
-            if (clubEvent.IsNewItem)
-            {
-                clubEvent.DbKey = clubEvent.GenerateDbKey(IdPrefix);
-            }
-
-            BatchPutAttributesRequest request = new BatchPutAttributesRequest();
-            request.DomainName = Domain;
-
-            // Mandatory properties
-            var attributes = new List<ReplaceableAttribute>
-            {
-                new ReplaceableAttribute { Name = "Id", Value = clubEvent.Id, Replace = true },
-                new ReplaceableAttribute { Name = "Season", Value = ((int)clubEvent.Season).ToString(), Replace = true },
-                new ReplaceableAttribute { Name = "Date", Value = dateToString(clubEvent.Date), Replace = true },
-                new ReplaceableAttribute { Name = "EventType", Value = ((int)clubEvent.EventType).ToString(), Replace = true },
-                new ReplaceableAttribute { Name = "Description", Value = clubEvent.Description, Replace = true }
-
-            };
-
-            // Optional properties
-            if (clubEvent.MatchType != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchType", Value = ((int)clubEvent.MatchType.Value).ToString(), Replace = true }); }
-            if (clubEvent.AggregateWeightType != null) { attributes.Add(new ReplaceableAttribute { Name = "AggregateWeightType", Value = ((int)clubEvent.AggregateWeightType.Value).ToString(), Replace = true }); }
-            if (clubEvent.MatchDraw != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchDraw", Value = dateToString(clubEvent.MatchDraw.Value), Replace = true }); }
-            if (clubEvent.MatchStart != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchStart", Value = dateToString(clubEvent.MatchStart.Value), Replace = true }); }
-            if (clubEvent.MatchEnd != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchEnd", Value = dateToString(clubEvent.MatchEnd.Value), Replace = true }); }
-            if (clubEvent.Number != null) { attributes.Add(new ReplaceableAttribute { Name = "Number", Value = numberToString(clubEvent.Number.Value), Replace = true }); }
-            if (clubEvent.Cup != null) { attributes.Add(new ReplaceableAttribute { Name = "Cup", Value = clubEvent.Cup, Replace = true }); }
-
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = clubEvent.DbKey,
-                    Attributes = attributes
-                }
-            ); 
-
             try
             {
-                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
-                _logger.LogDebug($"Event added: {clubEvent.DbKey} - {clubEvent.Description}");
+
+                // If this event already exists, grab its key
+                {
+                    _cachedEvents ??= await GetEvents();
+                    var existingEvent = _cachedEvents.SingleOrDefault(x => x.Id == clubEvent.Id);
+                    if (existingEvent != null)
+                    {
+                        clubEvent.DbKey = existingEvent.DbKey;
+                    }
+                }
+
+                if (clubEvent.IsNewItem)
+                {
+                    clubEvent.DbKey = clubEvent.GenerateDbKey(IdPrefix);
+                }
+
+                BatchPutAttributesRequest request = new BatchPutAttributesRequest();
+                request.DomainName = Domain;
+
+                // Mandatory properties
+                var attributes = new List<ReplaceableAttribute>
+                {
+                    new ReplaceableAttribute { Name = "Id", Value = clubEvent.Id, Replace = true },
+                    new ReplaceableAttribute { Name = "Season", Value = ((int)clubEvent.Season).ToString(), Replace = true },
+                    new ReplaceableAttribute { Name = "Date", Value = dateToString(clubEvent.Date), Replace = true },
+                    new ReplaceableAttribute { Name = "EventType", Value = ((int)clubEvent.EventType).ToString(), Replace = true },
+                    new ReplaceableAttribute { Name = "Description", Value = clubEvent.Description, Replace = true }
+
+                };
+
+                // Optional properties
+                if (clubEvent.MatchType != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchType", Value = ((int)clubEvent.MatchType.Value).ToString(), Replace = true }); }
+                if (clubEvent.AggregateWeightType != null) { attributes.Add(new ReplaceableAttribute { Name = "AggregateWeightType", Value = ((int)clubEvent.AggregateWeightType.Value).ToString(), Replace = true }); }
+                if (clubEvent.MatchDraw != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchDraw", Value = dateToString(clubEvent.MatchDraw.Value), Replace = true }); }
+                if (clubEvent.MatchStart != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchStart", Value = dateToString(clubEvent.MatchStart.Value), Replace = true }); }
+                if (clubEvent.MatchEnd != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchEnd", Value = dateToString(clubEvent.MatchEnd.Value), Replace = true }); }
+                if (clubEvent.Number != null) { attributes.Add(new ReplaceableAttribute { Name = "Number", Value = numberToString(clubEvent.Number.Value), Replace = true }); }
+                if (clubEvent.Cup != null) { attributes.Add(new ReplaceableAttribute { Name = "Cup", Value = clubEvent.Cup, Replace = true }); }
+
+                request.Items.Add(
+                    new ReplaceableItem
+                    {
+                        Name = clubEvent.DbKey,
+                        Attributes = attributes
+                    }
+                ); 
+
+                try
+                {
+                    await WriteInBatches(request, client);
+                    //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    _logger.LogDebug($"Event added: {clubEvent.DbKey} - {clubEvent.Description}");
+                }
+                catch (AmazonSimpleDBException ex)
+                {
+                    _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                    throw;
+                }
             }
-            catch (AmazonSimpleDBException ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                _logger.LogError(ex, $"Failed to store event");
                 throw;
             }
 
@@ -81,14 +104,9 @@ namespace AnglingClubWebServices.Data
 
             var events = new List<ClubEvent>();
 
-            var client = GetClient();
+            var items = await GetData(IdPrefix, "AND Date > ''", "ORDER BY Date");
 
-            SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND Date > '' ORDER BY Date";
-
-            SelectResponse response = await client.SelectAsync(request);
-
-            foreach (var item in response.Items)
+            foreach (var item in items)
             {
                 var clubEvent = new ClubEvent();
 

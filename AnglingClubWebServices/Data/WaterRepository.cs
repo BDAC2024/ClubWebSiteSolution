@@ -67,7 +67,8 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                await WriteInBatches(request, client);
                 _logger.LogDebug($"Water added");
             }
             catch (AmazonSimpleDBException ex)
@@ -126,7 +127,8 @@ namespace AnglingClubWebServices.Data
 
                 try
                 {
-                    BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    await WriteInBatches(request, client);
                     _logger.LogDebug($"Water description segment added");
                 }
                 catch (AmazonSimpleDBException ex)
@@ -164,7 +166,8 @@ namespace AnglingClubWebServices.Data
 
                 try
                 {
-                    BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    await WriteInBatches(request, client);
                     _logger.LogDebug($"Water directions segment added");
                 }
                 catch (AmazonSimpleDBException ex)
@@ -181,14 +184,9 @@ namespace AnglingClubWebServices.Data
 
             var waters = new List<Water>();
 
-            var client = GetClient();
+            var items = await GetData(IdPrefix, "AND Name > ''", "ORDER BY Name");
 
-            SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{IdPrefix}:%' AND Name > '' ORDER BY Name";
-
-            SelectResponse response = await client.SelectAsync(request);
-
-            foreach (var item in response.Items)
+            foreach (var item in items)
             {
                 var descriptionArr = new List<MultiValued>();
                 var directionArr = new List<MultiValued>();

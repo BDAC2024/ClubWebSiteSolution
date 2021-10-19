@@ -104,6 +104,7 @@ namespace AnglingClubWebServices
             services.AddTransient<INewsRepository, NewsRepository>();
             services.AddTransient<IRulesRepository, RulesRepository>();
             services.AddTransient<IUserAdminRepository, UserAdminRepository>();
+            services.AddTransient<IBackupRepository, BackupRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmailService, EmailService>();

@@ -60,7 +60,7 @@ namespace AnglingClubWebServices.Services
         {
             var matchIds = _eventRepository.GetEvents().Result.Where(x => x.MatchType == matchType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
-            var members = _memberRepository.GetMembers().Result.Where(x => x.Season == season);
+            var members = _memberRepository.GetMembers(season).Result;
 
             var league = matchResultsForLeague
                 .GroupBy(x => x.MembershipNumber)
@@ -113,7 +113,7 @@ namespace AnglingClubWebServices.Services
         {
             var matchIds = _eventRepository.GetEvents().Result.Where(x => x.AggregateWeightType == aggWeightType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
-            var members = _memberRepository.GetMembers().Result.Where(x => x.Season == season);
+            var members = _memberRepository.GetMembers(season).Result;
 
             var league = matchResultsForLeague
                 .GroupBy(x => x.MembershipNumber)
