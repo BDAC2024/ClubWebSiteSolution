@@ -20,7 +20,7 @@ namespace AnglingClubWebServices.Data
 
         public MemberRepository(
             IOptions<RepositoryOptions> opts,
-            ILoggerFactory loggerFactory) : base(opts.Value.AWSAccessId, opts.Value.AWSSecret, opts.Value.SimpleDbDomain, loggerFactory)
+            ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<MemberRepository>();
         }
@@ -62,8 +62,10 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "AllowNameToBeUsed", Value = member.AllowNameToBeUsed ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "PreferencesLastUpdated", Value = dateToString(member.PreferencesLastUpdated), Replace = true },
                 new ReplaceableAttribute { Name = "PinResetRequired", Value = member.PinResetRequired ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "PinResetRequested", Value = member.PinResetRequested ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "FailedLoginAttempts", Value = member.FailedLoginAttempts.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "LastLoginFailure", Value = dateToString(member.LastLoginFailure), Replace = true },
+                new ReplaceableAttribute { Name = "ReLoginRequired", Value = member.ReLoginRequired ? "1" : "0", Replace = true },
             };
 
             foreach (var season in member.SeasonsActive)
@@ -136,6 +138,10 @@ namespace AnglingClubWebServices.Data
                             member.PinResetRequired = attribute.Value == "0" ? false : true; ;
                             break;
 
+                        case "PinResetRequested":
+                            member.PinResetRequested = attribute.Value == "0" ? false : true; ;
+                            break;
+                            
                         case "AllowNameToBeUsed":
                             member.AllowNameToBeUsed = attribute.Value == "1";
                             break;
@@ -150,6 +156,10 @@ namespace AnglingClubWebServices.Data
 
                         case "LastLoginFailure":
                             member.LastLoginFailure = DateTime.Parse(attribute.Value);
+                            break;
+
+                        case "ReLoginRequired":
+                            member.ReLoginRequired = attribute.Value == "0" ? false : true;
                             break;
 
                         default:

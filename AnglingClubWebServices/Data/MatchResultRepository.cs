@@ -26,7 +26,7 @@ namespace AnglingClubWebServices.Data
             IOptions<RepositoryOptions> opts,
             IEventRepository eventRepository,
             IMemberRepository memberRepository,
-            ILoggerFactory loggerFactory) : base(opts.Value.AWSAccessId, opts.Value.AWSSecret, opts.Value.SimpleDbDomain, loggerFactory)
+            ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
         {
             _eventRepository = eventRepository;
             _memberRepository = memberRepository;

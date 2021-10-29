@@ -18,6 +18,93 @@
 			"Description" : "Simple DB Domain",
 			"MinLength" : "0"
 		},
+  		"BackupBucket" : {
+			"Type" : "String",
+			"Description" : "S3 bucket for DB backups",
+			"MinLength" : "0"
+		},
+  		"AWSRegion" : {
+			"Type" : "String",
+			"Description" : "AWS Region",
+			"MinLength" : "0"
+		},
+  		"AuthSecretKey" : {
+			"Type" : "String",
+			"Description" : "Auth signing key",
+			"MinLength" : "0"
+		},
+  		"AuthExpireMinutes" : {
+			"Type" : "Number",
+			"Description" : "Minutes that token will be valid default is 1 year"
+		},
+  		"DeveloperName" : {
+			"Type" : "String",
+			"Description" : "Name of developer as given in member JSON file",
+			"MinLength" : "0"
+		},
+  		"PrimaryEmailHost" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"PrimaryEmailPort" : {
+			"Type" : "Number",
+			"Description" : ""
+		},
+  		"PrimaryEmailUsername" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"PrimaryEmailPassword" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"PrimaryEmailFromName" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"PrimaryEmailFromAddress" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"PrimaryEmailRepairUrl" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"FallbackEmailHost" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"FallbackEmailPort" : {
+			"Type" : "Number",
+			"Description" : ""
+		},
+  		"FallbackEmailUsername" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"FallbackEmailPassword" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"FallbackEmailFromName" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+  		"FallbackEmailFromAddress" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
   		"CORSOrigins" : {
 			"Type" : "String",
 			"Description" : "Comma separated allowed domains",
@@ -48,6 +135,24 @@
 				"AWSAccessId" : { "Ref" : "AWSAccessId" } ,
 				"AWSSecret" : { "Ref" : "AWSSecret" } ,
 				"SimpleDbDomain" : { "Ref" : "SimpleDbDomain" } ,
+				"BackupBucket" : { "Ref" : "BackupBucket" } ,
+				"AWSRegion" : { "Ref" : "AWSRegion" } ,
+				"AuthSecretKey" : { "Ref" : "AuthSecretKey" } ,
+				"AuthExpireMinutes" : { "Ref" : "AuthExpireMinutes" } ,
+				"DeveloperName" : { "Ref" : "DeveloperName" } ,
+				"PrimaryEmailHost" : { "Ref" : "PrimaryEmailHost" } ,
+				"PrimaryEmailPort" : { "Ref" : "PrimaryEmailPort" } ,
+				"PrimaryEmailUsername" : { "Ref" : "PrimaryEmailUsername" } ,
+				"PrimaryEmailPassword" : { "Ref" : "PrimaryEmailPassword" } ,
+				"PrimaryEmailFromName" : { "Ref" : "PrimaryEmailFromName" } ,
+				"PrimaryEmailFromAddress" : { "Ref" : "PrimaryEmailFromAddress" } ,
+				"PrimaryEmailRepairUrl" : { "Ref" : "PrimaryEmailRepairUrl" } ,
+				"FallbackEmailHost" : { "Ref" : "FallbackEmailHost" } ,
+				"FallbackEmailPort" : { "Ref" : "FallbackEmailPort" } ,
+				"FallbackEmailUsername" : { "Ref" : "FallbackEmailUsername" } ,
+				"FallbackEmailPassword" : { "Ref" : "FallbackEmailPassword" } ,
+				"FallbackEmailFromName" : { "Ref" : "FallbackEmailFromName" } ,
+				"FallbackEmailFromAddress" : { "Ref" : "FallbackEmailFromAddress" } ,
 				"CORSOrigins" : { "Ref" : "CORSOrigins" } ,
 				"LogLevel" : { "Ref" : "LogLevel" } 
 			}

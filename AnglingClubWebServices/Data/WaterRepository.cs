@@ -15,14 +15,11 @@ namespace AnglingClubWebServices.Data
     {
         private const string IdPrefix = "Water";
         
-        private const string MultiValueSeparator = "~|";
-        private const int MultiValueSegmentSize = 1000;
-
         private readonly ILogger<WaterRepository> _logger;
 
         public WaterRepository(
             IOptions<RepositoryOptions> opts,
-            ILoggerFactory loggerFactory) : base(opts.Value.AWSAccessId, opts.Value.AWSSecret, opts.Value.SimpleDbDomain, loggerFactory)
+            ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<WaterRepository>();
         }
@@ -262,22 +259,5 @@ namespace AnglingClubWebServices.Data
 
         }
 
-        private MultiValued GetMultiValuedElement(string attributeValue)
-        {
-            if (attributeValue.Contains(MultiValueSeparator))
-            {
-                return new MultiValued { Index = Convert.ToInt32(attributeValue.Split(MultiValueSeparator)[0]), Text = attributeValue.Split(MultiValueSeparator)[1] };
-            }
-            else
-            {
-                return new MultiValued { Index = 0, Text = attributeValue };
-            }
-        }
-
-        private class MultiValued
-        {
-            public int Index { get; set; }
-            public string Text { get; set; }
-        }
     }
 }

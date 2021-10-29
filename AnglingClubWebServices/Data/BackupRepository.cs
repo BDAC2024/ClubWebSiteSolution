@@ -15,11 +15,10 @@ namespace AnglingClubWebServices.Data
     public class BackupRepository : RepositoryBase, IBackupRepository
     {
         private readonly ILogger<BackupRepository> _logger;
-        private const string KeyName = "dbKey";
 
         public BackupRepository(
             IOptions<RepositoryOptions> opts,
-            ILoggerFactory loggerFactory) : base(opts.Value.AWSAccessId, opts.Value.AWSSecret, opts.Value.SimpleDbDomain, loggerFactory)
+            ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<BackupRepository>();
         }
@@ -45,7 +44,7 @@ namespace AnglingClubWebServices.Data
 
             foreach (var line in backupLines.OrderBy(x => x.LineNumber))
             {
-                newItem = line.AttributeName == KeyName;
+                newItem = line.AttributeName == BACKUP_KEYNAME;
 
                 if (newItem)
                 {
@@ -82,37 +81,16 @@ namespace AnglingClubWebServices.Data
 
         public async Task<List<BackupLine>> Backup(int itemsToBackup)
         {
-            _logger.LogWarning($"Getting news items at : {DateTime.Now.ToString("HH:mm:ss.000")}");
+            _logger.LogWarning($"Getting backup items at : {DateTime.Now.ToString("HH:mm:ss.000")}");
 
-            var backupLines = new List<BackupLine>();
-            var lineNo = 0;
-            var itemsBackedUp = 0;
-
-            var items = await GetData("");
-
-            foreach (var item in items)
-            {
-                if (itemsToBackup == -1 || itemsBackedUp < itemsToBackup)
-                {
-                    backupLines.Add(new BackupLine { LineNumber = lineNo++, AttributeName = KeyName, AttributeValue = item.Name });
-                    itemsBackedUp++;
-
-                    foreach (var attribute in item.Attributes)
-                    {
-                        backupLines.Add(new BackupLine { LineNumber = lineNo++, AttributeName = attribute.Name, AttributeValue = attribute.Value });
-                    }
-                }
-            }
-
-            return backupLines;
-
+            return await BackupData(itemsToBackup);
         }
 
         public async Task ClearDb(string domainToClear)
         {
             var client = GetClient();
 
-            var itemNames = Backup(-1).Result.Where(x => x.AttributeName == KeyName).Select(x => x.AttributeValue);
+            var itemNames = Backup(-1).Result.Where(x => x.AttributeName == BACKUP_KEYNAME).Select(x => x.AttributeValue);
             var batch = 0; // Max 25 delets per batch
             List<string> itemBatch;
 

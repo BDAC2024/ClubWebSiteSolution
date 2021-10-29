@@ -61,6 +61,7 @@ namespace AnglingClubWebServices.Services
             }
 
             member.FailedLoginAttempts = 0;
+            member.ReLoginRequired = false;
 
             await _memberRepository.AddOrUpdateMember(member);
 
@@ -76,7 +77,35 @@ namespace AnglingClubWebServices.Services
             return member;
         }
 
+        public async Task<Member> GetAuthorisedUserByKey(string key)
+        {
+            // get members with the passed id
+            var members = (await _memberRepository.GetMembers()).Where(x => x.DbKey == key);
 
+            if (!members.Any())
+            {
+                throw new Exception("Member not found");
+            }
+
+            // restrict to members of the current season
+            members = members.Where(x => x.SeasonsActive.Contains((Season)EnumUtils.CurrentSeason()));
+
+            if (!members.Any())
+            {
+                throw new Exception("Membership has expired");
+            }
+
+            // now chec for those that have to re-login
+            members = members.Where(x => !x.ReLoginRequired);
+
+            if (!members.Any())
+            {
+                throw new Exception("You must re-enter your login details");
+            }
+
+            // If all is good, should be left with a single valid member
+            return members.Single();
+        }
 
         private string generateJwtToken(Member member)
         {
@@ -107,6 +136,11 @@ namespace AnglingClubWebServices.Services
             byte[] hashedBytes = hasher.ComputeHash(textWithSaltBytes);
             hasher.Clear();
             return Convert.ToBase64String(hashedBytes);
+        }
+
+        public string GetDeveloperName()
+        {
+            return _authOptions.DeveloperName;
         }
     }
 }

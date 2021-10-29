@@ -136,7 +136,7 @@ namespace AnglingClubWebServices.Controllers
 
             bool accessAllowed = false;
 
-            if ((members.Count() == 1 && members.First().Name == "S.Townend") ||
+            if ((members.Count() == 1 && members.First().Name == _authService.GetDeveloperName()) ||
                 CurrentUser.Admin)
             {
                 accessAllowed = true;
@@ -150,7 +150,7 @@ namespace AnglingClubWebServices.Controllers
             foreach (var member in members)
             {
                 member.PinResetRequired = true;
-                _memberRepository.AddOrUpdateMember(member);
+                _memberRepository.AddOrUpdateMember(member).Wait();
             }
 
             ReportTimer("Posting members");
@@ -181,6 +181,7 @@ namespace AnglingClubWebServices.Controllers
             member.SeasonsActive = memberDto.SeasonsActive;
             member.Admin = memberDto.Admin;
             member.MembershipNumber = memberDto.MembershipNumber;
+            member.ReLoginRequired = memberDto.ReLoginRequired;
 
             if (member.AllowNameToBeUsed)
             {
@@ -262,13 +263,17 @@ namespace AnglingClubWebServices.Controllers
                 var member = (_memberRepository.GetMembers(EnumUtils.CurrentSeason()).Result).Single(x => x.MembershipNumber == membershipNumber);
 
                 // Notify admins of request to use member's name
-                var memberEditUrl = $"http://localhost:4200/member/{member.MembershipNumber}";
+                var memberEditUrl = $"http://localhost:4200/member/{member.DbKey}";
 
                 var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
 
                 _emailService.SendEmail(userAdmins, $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")}, PIN reset requested", $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")} has requested their PIN be reset. <a href='{memberEditUrl}'>Please reset their PIN here</a>");
 
                 ReportTimer("PIN reset request");
+
+                member.PinResetRequested = true;
+
+                _memberRepository.AddOrUpdateMember(member).Wait();
 
                 return Ok();
 
@@ -294,7 +299,13 @@ namespace AnglingClubWebServices.Controllers
             {
                 var member = (_memberRepository.GetMembers().Result).Single(x => x.DbKey == id);
 
+                if (!member.PinResetRequested)
+                {
+                    return BadRequest("PIN reset has not been requested or has already been done.");
+                }
+
                 var newPin = member.NewPin();
+                member.PinResetRequested = false;
 
                 _memberRepository.AddOrUpdateMember(member);
 
@@ -319,6 +330,11 @@ namespace AnglingClubWebServices.Controllers
         public IActionResult SetNewPinOfCurrentUser(int newPin)
         {
             StartTimer();
+
+            if (newPin < 1000)
+            {
+                return BadRequest("Sorry, PIN must be at least 4 digits and greater than 999");
+            }
 
             try
             {

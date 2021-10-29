@@ -13,6 +13,7 @@ namespace AnglingClubWebServices.Models
         public int MembershipNumber { get; set; }
         public bool Admin { get; set; } = false;
         public string Pin { get; set; }
+        public bool PinResetRequested { get; set; } = false;
         public bool PinResetRequired { get; set; } = true;
         public bool AllowNameToBeUsed { get; set; } = false;
         public DateTime PreferencesLastUpdated { get; set; } = DateTime.MinValue;
@@ -20,6 +21,7 @@ namespace AnglingClubWebServices.Models
         public int FailedLoginAttempts { get; set; } = 0;
 
         public List<Season> SeasonsActive { get; set; } = new List<Season>();
+        public bool ReLoginRequired { get; set; } = false;
 
         public int NewPin(int? toPin = null)
         {
@@ -49,5 +51,6 @@ namespace AnglingClubWebServices.Models
 
             return hashedPinToCheck == Pin;
         }
+
     }
 }
