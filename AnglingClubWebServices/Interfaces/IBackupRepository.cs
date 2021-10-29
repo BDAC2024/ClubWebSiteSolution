@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Models;
+﻿using Amazon.SimpleDB.Model;
+using AnglingClubWebServices.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

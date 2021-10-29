@@ -1,5 +1,7 @@
-﻿using Amazon.SimpleDB;
+﻿using Amazon.S3;
+using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -11,31 +13,31 @@ namespace AnglingClubWebServices.Data
 {
     public abstract class RepositoryBase
     {
-        private readonly string _assessId;
-        private readonly string _secret;
-        private readonly string _domain;
+        private RepositoryOptions _options;
         private ILogger<RepositoryBase> _logger;
 
         private const int QUERY_BATCH_SIZE = 2000;
         private const int UPDATE_BATCH_SIZE = 25;
+        protected const string BACKUP_KEYNAME = "dbKey";
+
         private int batchNumber = 0;
 
+        protected const string MultiValueSeparator = "~|";
+        protected const int MultiValueSegmentSize = 1000;
 
-        public RepositoryBase(string accessId, string secret, string domain, ILoggerFactory loggerFactory)
+        public RepositoryBase(RepositoryOptions options, ILoggerFactory loggerFactory)
         {
-            _assessId = accessId;
-            _secret = secret;
-            _domain = domain;
+            _options = options;
             _logger = loggerFactory.CreateLogger<RepositoryBase>();
-
-            if (!checkDomainExists(_domain).Result)
+            
+            if (!checkDomainExists(_options.SimpleDbDomain).Result)
             {
-                createDomain(_domain).Wait();
+                createDomain(_options.SimpleDbDomain).Wait();
             }
 
         }
 
-        internal string Domain { get { return _domain; } }
+        internal string Domain { get { return _options.SimpleDbDomain; } }
 
         private async Task createDomain(string domainName)
         {
@@ -73,7 +75,7 @@ namespace AnglingClubWebServices.Data
             int nextId = -1;
 
             GetAttributesRequest request = new GetAttributesRequest();
-            request.DomainName = _domain;
+            request.DomainName = _options.SimpleDbDomain;
             request.ItemName = "NextId";
             request.AttributeNames = new List<string> { "Id" };
             request.ConsistentRead = true;
@@ -90,7 +92,7 @@ namespace AnglingClubWebServices.Data
                     }
 
                     PutAttributesRequest putRequest = new PutAttributesRequest();
-                    putRequest.DomainName = _domain;
+                    putRequest.DomainName = _options.SimpleDbDomain;
                     putRequest.ItemName = "NextId";
                     putRequest.Attributes.Add(
                         new ReplaceableAttribute { Name = "Id", Value = numberToString(++nextId), Replace = true }
@@ -119,7 +121,7 @@ namespace AnglingClubWebServices.Data
 
         internal AmazonSimpleDBClient GetClient()
         {
-            AmazonSimpleDBClient client = new AmazonSimpleDBClient(_assessId, _secret, Amazon.RegionEndpoint.EUWest1);
+            AmazonSimpleDBClient client = new AmazonSimpleDBClient(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
 
             return client;
         }
@@ -193,7 +195,135 @@ namespace AnglingClubWebServices.Data
 
                 request.Items.RemoveRange(0, request.Items.Count() < UPDATE_BATCH_SIZE ? request.Items.Count() : UPDATE_BATCH_SIZE);
             }
+
+            // If backup is older than today - generate a new backup file
+            var systemData = new SystemData();
+
+            var items = await GetData("System");
+
+            if (items.Any())
+            {
+                var item = items.Single();
+                systemData.DbKey = item.Name;
+
+                foreach (var attribute in item.Attributes)
+                {
+                    switch (attribute.Name)
+                    {
+                        case "LastBackUp":
+                            systemData.LastBackUp = DateTime.Parse(attribute.Value);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                systemData.LastBackUp = DateTime.MinValue;
+            }
+
+            if (systemData.LastBackUp < DateTime.Now.AddDays(-1))
+            {
+                var backupData = await BackupData(-1);
+
+                await saveBackup(backupData);
+
+                try
+                {
+                    systemData.LastBackUp = DateTime.Now;
+
+                    if (systemData.IsNewItem)
+                    {
+                        systemData.DbKey = systemData.GenerateDbKey("System");
+                    }
+
+                    BatchPutAttributesRequest sysDataRequest = new BatchPutAttributesRequest();
+                    sysDataRequest.DomainName = Domain;
+
+                    // Mandatory properties
+                    var sysDataAttributes = new List<ReplaceableAttribute>
+                    {
+                        new ReplaceableAttribute { Name = "LastBackUp", Value = dateToString(systemData.LastBackUp), Replace = true },
+
+                    };
+
+                    sysDataRequest.Items.Add(
+                        new ReplaceableItem
+                        {
+                            Name = systemData.DbKey,
+                            Attributes = sysDataAttributes
+                        }
+                    );
+
+                    try
+                    {
+                        await storeBatchOfItems(client, sysDataRequest);
+
+                        _logger.LogDebug($"Sytem Data added: {systemData.DbKey}");
+                    }
+                    catch (AmazonSimpleDBException ex)
+                    {
+                        _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                        throw;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to store System data");
+                    throw;
+                }
+
+            }
         }
+
+        protected async Task<List<BackupLine>> BackupData(int itemsToBackup)
+        {
+            _logger.LogWarning($"Getting backup items at : {DateTime.Now.ToString("HH:mm:ss.000")}");
+
+            var backupLines = new List<BackupLine>();
+            var lineNo = 0;
+            var itemsBackedUp = 0;
+
+            var items = await GetData("");
+
+            foreach (var item in items)
+            {
+                if (itemsToBackup == -1 || itemsBackedUp < itemsToBackup)
+                {
+                    backupLines.Add(new BackupLine { LineNumber = lineNo++, AttributeName = BACKUP_KEYNAME, AttributeValue = item.Name });
+                    itemsBackedUp++;
+
+                    foreach (var attribute in item.Attributes)
+                    {
+                        backupLines.Add(new BackupLine { LineNumber = lineNo++, AttributeName = attribute.Name, AttributeValue = attribute.Value });
+                    }
+                }
+            }
+
+            return backupLines;
+
+        }
+
+        protected MultiValued GetMultiValuedElement(string attributeValue)
+        {
+            if (attributeValue.Contains(MultiValueSeparator))
+            {
+                return new MultiValued { Index = Convert.ToInt32(attributeValue.Split(MultiValueSeparator)[0]), Text = attributeValue.Split(MultiValueSeparator)[1] };
+            }
+            else
+            {
+                return new MultiValued { Index = 0, Text = attributeValue };
+            }
+        }
+
+        protected class MultiValued
+        {
+            public int Index { get; set; }
+            public string Text { get; set; }
+        }
+
 
         private async Task storeBatchOfItems(AmazonSimpleDBClient client, BatchPutAttributesRequest request)
         {
@@ -218,6 +348,23 @@ namespace AnglingClubWebServices.Data
             }
         }
 
+        private async Task saveBackup(List<BackupLine> backupData)
+        {
+            var backupAsString = JsonConvert.SerializeObject(backupData);
 
+            AmazonS3Client s3Client;
+
+            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+
+            await s3Client.PutObjectAsync(new Amazon.S3.Model.PutObjectRequest 
+            {
+                BucketName = _options.BackupBucket,
+                Key = $"Backup_{Domain}_{DateTime.Now:yyyy-MM-dd}.json",
+                ContentType = "application/json",
+                ContentBody = backupAsString
+
+            });
+
+        }
     }
 }

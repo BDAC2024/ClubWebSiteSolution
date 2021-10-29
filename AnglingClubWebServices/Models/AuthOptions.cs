@@ -4,5 +4,7 @@
     {
         public string AuthSecretKey { get; set; }
         public int AuthExpireMinutes { get; set; }
+        public string DeveloperName { get; set; }
+
     }
 }

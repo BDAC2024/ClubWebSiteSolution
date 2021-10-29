@@ -89,7 +89,7 @@ namespace AnglingClubWebServices.Controllers
 
                 ReportTimer("Getting waters");
 
-                return Ok(waterDtos);
+                return Ok(waterDtos.OrderBy(x => x.Name).ToList());
 
             }
             catch (Exception ex)
@@ -113,6 +113,7 @@ namespace AnglingClubWebServices.Controllers
         public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody] List<WaterInputDto> inputWaters)
         {
             StartTimer();
+            var existingWaters = _waterRepository.GetWaters().Result;
 
             List<Water> waters = new List<Water>();
             var errors = new List<string>();
@@ -142,6 +143,13 @@ namespace AnglingClubWebServices.Controllers
                 if (validInput)
                 {
                     var water = new Water();
+
+                    var existingWater = existingWaters.SingleOrDefault(x => x.Id == inputWater.Id);
+
+                    if (existingWater != null)
+                    {
+                        water.DbKey = existingWater.DbKey;
+                    }
 
                     water.Id = inputWater.Id;
                     water.Name = inputWater.Name;

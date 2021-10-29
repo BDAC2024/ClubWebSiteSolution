@@ -30,7 +30,9 @@ namespace AnglingClubWebServices.Helpers
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (token != null)
+            {
                 attachUserToContext(context, memberService, token);
+            }
 
             await _next(context);
         }
@@ -54,8 +56,17 @@ namespace AnglingClubWebServices.Helpers
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userKey = jwtToken.Claims.First(x => x.Type == "Key").Value;
 
-                // attach user to context on successful jwt validation
-                context.Items["User"] = memberService.GetByKey(userKey).Result;
+
+                try
+                {
+                    // attach user to context on successful jwt validation
+                    context.Items["User"] = memberService.GetAuthorisedUserByKey(userKey).Result;
+                }
+                catch (Exception ex)
+                {
+                    context.Items["UserError"] = ex.Message;
+                    throw;
+                }
             }
             catch
             {

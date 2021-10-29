@@ -1,6 +1,7 @@
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -42,7 +43,13 @@ namespace AnglingClubWebServices.Controllers
         }
 
 
-        // POST api/values
+        /// <summary>
+        /// Can be anonymous because it will not restore to a domian that has any data
+        /// </summary>
+        /// <param name="backupLines"></param>
+        /// <param name="restoreToDomain"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost("{restoreToDomain}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

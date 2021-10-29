@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -17,7 +18,7 @@ namespace AnglingClubWebServices.Data
 
         public RulesRepository(
             IOptions<RepositoryOptions> opts,
-            ILoggerFactory loggerFactory) : base(opts.Value.AWSAccessId, opts.Value.AWSSecret, opts.Value.SimpleDbDomain, loggerFactory)
+            ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<RulesRepository>();
         }
@@ -38,7 +39,6 @@ namespace AnglingClubWebServices.Data
             var attributes = new List<ReplaceableAttribute>
             {
                 new ReplaceableAttribute { Name = "Title", Value = rules.Title, Replace = true },
-                new ReplaceableAttribute { Name = "Body", Value = rules.Body, Replace = true },
                 new ReplaceableAttribute { Name = "RuleType", Value = ((int)rules.RuleType).ToString(), Replace = true },
 
             };
@@ -63,6 +63,55 @@ namespace AnglingClubWebServices.Data
                 throw;
             }
 
+            await UpdateBody(rules);
+        }
+
+        public async Task UpdateBody(Rules rules)
+        {
+            for (int i = 0; i < (rules.Body.Length / MultiValueSegmentSize) + 1; i++)
+            {
+                await AddPartOfBody(rules.DbKey, rules.Body, i);
+            }
+
+        }
+
+        private async Task AddPartOfBody(string dbKey, string body, int index)
+        {
+            var bodySegment = new string(body.Skip(index * MultiValueSegmentSize).Take(MultiValueSegmentSize).ToArray());
+
+            if (bodySegment != "")
+            {
+                var client = GetClient();
+
+                BatchPutAttributesRequest request = new BatchPutAttributesRequest();
+                request.DomainName = Domain;
+
+                // Mandatory Properties
+                var attributes = new List<ReplaceableAttribute>
+                {
+                    new ReplaceableAttribute { Name = "Body", Value = $"{index}{MultiValueSeparator}{bodySegment}", Replace = index == 0 },
+                };
+
+                request.Items.Add(
+                    new ReplaceableItem
+                    {
+                        Name = dbKey,
+                        Attributes = attributes
+                    }
+                );
+
+                try
+                {
+                    //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    await WriteInBatches(request, client);
+                    _logger.LogDebug($"Rules body segment added");
+                }
+                catch (AmazonSimpleDBException ex)
+                {
+                    _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                    throw;
+                }
+            }
         }
 
         public async Task<List<Rules>> GetRules()
@@ -75,6 +124,8 @@ namespace AnglingClubWebServices.Data
 
             foreach (var item in items)
             {
+                var bodyArr = new List<MultiValued>();
+
                 var rule = new Rules();
 
                 rule.DbKey = item.Name;
@@ -88,7 +139,7 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Body":
-                            rule.Body = attribute.Value;
+                            bodyArr.Add(GetMultiValuedElement(attribute.Value));
                             break;
 
                         case "RuleType":
@@ -99,6 +150,8 @@ namespace AnglingClubWebServices.Data
                             break;
                     }
                 }
+
+                rule.Body = string.Join("", bodyArr.OrderBy(x => x.Index).Select(x => x.Text).ToArray());
 
                 rules.Add(rule);
             }

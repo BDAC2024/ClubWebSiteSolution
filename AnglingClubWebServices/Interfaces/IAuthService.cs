@@ -8,6 +8,9 @@ namespace AnglingClubWebServices.Interfaces
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest model);
 
         Task<Member> GetByKey(string key);
+        Task<Member> GetAuthorisedUserByKey(string key);
+
+        string GetDeveloperName();
 
     }
 }

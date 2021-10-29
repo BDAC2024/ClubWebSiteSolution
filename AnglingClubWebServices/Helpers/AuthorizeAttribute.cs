@@ -31,7 +31,8 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         if (member == null)
         {
             // not logged in
-            context.Result = new JsonResult(new { message = "Member not found or membership has expired" }) { StatusCode = StatusCodes.Status401Unauthorized };
+//            context.Result = new JsonResult(new { message = "Member not found or membership has expired" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            context.Result = new JsonResult(new { message = context.HttpContext.Items["UserError"] }) { StatusCode = StatusCodes.Status401Unauthorized };
         }
     }
 }
