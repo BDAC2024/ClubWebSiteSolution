@@ -11,10 +11,10 @@ export class PreviewService {
     ) {
     this.previewCodeValid = false;
 
-    if (globalService.OnLocalhost)
-    {
-      this.previewCodeValid = true;
-    }
+    // if (globalService.OnLocalhost)
+    // {
+    //   this.previewCodeValid = true;
+    // }
    }
 
   public previewCodeValid: boolean;
