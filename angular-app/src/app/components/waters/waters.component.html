@@ -36,7 +36,7 @@
                         <br/>
                     </div>
                     <div class="col-md-6">
-                        <a target="_blank" [href]="item.directionUrl">Map of directions</a>
+                        <a target="_blank" [href]="item.directionUrl">Driving directions</a>
                         <h3>Location</h3>
                         <table border="0">
                             <tr>
@@ -71,8 +71,8 @@
                         [scrollwheel]="false"     
                         [disableDefaultUI]="true"
                         [zoom]=14.5
-                        [latitude]='item.destination.lat' 
-                        [longitude]='item.destination.long'
+                        [latitude]='item.centre.lat' 
+                        [longitude]='item.centre.long'
                         >
                         <agm-map-type-control></agm-map-type-control> 
                         <agm-zoom-control></agm-zoom-control> 

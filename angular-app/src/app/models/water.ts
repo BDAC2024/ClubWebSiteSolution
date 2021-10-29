@@ -11,12 +11,13 @@ export class Water {
     species!: string;
     directions!: string;
     destination!: Position;
+    centre!: Position;
     markers!: Marker[];
     path!: Position[];
     hasLimits!: boolean;
 
     public get directionUrl(): string {
-        return `https://www.google.co.uk/maps/dir//${this.destination.lat},${this.destination.long}/${this.destination.lat},${this.destination.long}`
+        return `https://www.google.co.uk/maps/dir//${this.destination.lat},${this.destination.long}`
     }
 
 }
