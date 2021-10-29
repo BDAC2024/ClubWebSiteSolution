@@ -12,6 +12,7 @@ namespace AnglingClubWebServices.DTOs
         public List<string> MarkerLabels { get; set; }
 
         public List<double> Destination { get; set; }
+        public List<double> Centre { get; set; }
         public List<double> Markers { get; set; }
         public List<double> Path { get; set; }
     }
@@ -42,7 +43,8 @@ namespace AnglingClubWebServices.DTOs
 
         public List<Marker> Markers { get; set; } = new List<Marker>();
 
-        public Position Destination { get; set; } 
+        public Position Centre { get; set; }
+        public Position Destination { get; set; }
 
         public List<Position> Path { get; set; } = new List<Position>();
 

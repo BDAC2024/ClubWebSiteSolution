@@ -76,7 +76,10 @@ namespace AnglingClubWebServices.Controllers
 
                     var dests = water.Destination.Split(',');
                     dto.Destination = new Position { Lat = double.Parse(dests[0]), Long = double.Parse(dests[1]) };
- 
+
+                    var centre = water.Centre.Split(',');
+                    dto.Centre = new Position { Lat = double.Parse(centre[0]), Long = double.Parse(centre[1]) };
+
                     var paths = water.Path.Split('|');
                     for (int i = 0; i < paths.Length; i++)
                     {
@@ -162,6 +165,7 @@ namespace AnglingClubWebServices.Controllers
                     water.MarkerIcons = string.Join(",", inputWater.MarkerIcons.ToArray());
                     water.MarkerLabels = string.Join(",", inputWater.MarkerLabels.ToArray());
                     water.Destination = string.Join(",", inputWater.Destination.ToArray());
+                    water.Centre = string.Join(",", inputWater.Centre.ToArray());
 
                     var markers = inputWater.Markers.ToArray();
                     var markerPositions = new List<string>();

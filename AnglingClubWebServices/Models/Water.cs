@@ -1,5 +1,4 @@
 ﻿using AnglingClubWebServices.Interfaces;
-using System.Collections.Generic;
 
 namespace AnglingClubWebServices.Models
 {
@@ -23,6 +22,7 @@ namespace AnglingClubWebServices.Models
         public string MarkerLabels { get; set; }
 
         public string Destination { get; set; }
+        public string Centre { get; set; }
         public string Path { get; set; }
 
     }
