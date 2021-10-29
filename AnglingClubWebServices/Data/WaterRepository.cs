@@ -50,6 +50,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "MarkerLabels", Value = water.MarkerLabels, Replace = true },
 
                 new ReplaceableAttribute { Name = "Destination", Value = water.Destination, Replace = true },
+                new ReplaceableAttribute { Name = "Centre", Value = water.Centre, Replace = true },
                 new ReplaceableAttribute { Name = "Path", Value = water.Path, Replace = true },
 
             };
@@ -238,6 +239,10 @@ namespace AnglingClubWebServices.Data
 
                         case "Destination":
                             water.Destination = attribute.Value;
+                            break;
+
+                        case "Centre":
+                            water.Centre = attribute.Value;
                             break;
 
                         case "Path":
