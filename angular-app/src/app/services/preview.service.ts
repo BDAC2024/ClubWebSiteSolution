@@ -17,5 +17,6 @@ export class PreviewService {
     // }
    }
 
-  public previewCodeValid: boolean;
-}
+   public previewCodeValid: boolean;
+   public inBeta: boolean = true;
+  }

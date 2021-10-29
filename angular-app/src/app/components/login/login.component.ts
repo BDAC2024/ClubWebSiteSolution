@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginPreferencesDialogComponent } from 'src/app/dialogs/login-preferences-dialog/login-preferences-dialog.component';
 import { MemberPreferences } from 'src/app/models/memberPreferences';
 import { MembersService } from 'src/app/services/members.service';
+import { PreviewService } from 'src/app/services/preview.service';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit {
 
     constructor(
         private membersService: MembersService,
+        public previewService: PreviewService,
         private route: ActivatedRoute,
         private router: Router,
         public dialog: MatDialog,
