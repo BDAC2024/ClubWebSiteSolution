@@ -86,8 +86,9 @@
     </div>
 </mat-toolbar>
     <div class="nav-content" ngClass.xs="nav-content-mobile">
-      <router-outlet *ngIf="previewService.previewCodeValid"></router-outlet>
-      <app-preview *ngIf="!previewService.previewCodeValid"></app-preview>
+      <!-- <router-outlet *ngIf="previewService.previewCodeValid"></router-outlet>
+      <app-preview *ngIf="!previewService.previewCodeValid"></app-preview> -->
+      <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
