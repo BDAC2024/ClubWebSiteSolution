@@ -15,6 +15,11 @@
         </mat-checkbox>
         <br/>
         <br/>
+        <mat-checkbox [(ngModel)]="member.reLoginRequired">
+            Require re-login
+        </mat-checkbox>
+        <br/>
+        <br/>
         <mat-form-field>
             <mat-label>Name</mat-label>
             <input class="title-form-field" matInput [(ngModel)]="member.name" [disabled]="!member.allowNameToBeUsed">

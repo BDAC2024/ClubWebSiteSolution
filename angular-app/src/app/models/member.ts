@@ -13,6 +13,7 @@ export class Member {
     preferencesLastUpdated!: Date;
     pinResetRequired: boolean = false;
     seasonsActive!: number[];
+    reLoginRequired: boolean = false;
     /**
      *
      */
@@ -27,6 +28,13 @@ export class Member {
             this.preferencesLastUpdated = new Date(tokenDecoded.PreferencesLastUpdated);
             this.name = tokenDecoded.Name;
             this.pinResetRequired = JSON.parse(tokenDecoded.PinResetRequired.toLowerCase());
+
+            if (tokenDecoded.ReLoginRequired) {
+                this.reLoginRequired = JSON.parse(tokenDecoded.ReLoginRequired.toLowerCase());
+            } else {
+                this.reLoginRequired = false;
+            }
+            
         } else {
             // Do nothing, probably a logout
         }

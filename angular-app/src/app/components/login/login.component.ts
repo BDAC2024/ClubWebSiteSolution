@@ -23,7 +23,8 @@ export class LoginComponent implements OnInit {
     public pin!: number;
     public newPin!: number;
     public newPinConfirmation!: number;
-    
+    public stayLoggedIn!: boolean;
+
     public pinResetRequired: boolean = false;
 
     constructor(
@@ -49,7 +50,7 @@ export class LoginComponent implements OnInit {
 
         this.loading = true;
 
-        this.authenticationService.login(this.membershipNo, this.pin)
+        this.authenticationService.login(this.membershipNo, this.pin, this.stayLoggedIn)
             .pipe(first())
             .subscribe(
                 data => {
@@ -91,7 +92,7 @@ export class LoginComponent implements OnInit {
         this.authenticationService.pinResetRequest(this.membershipNo)
             .subscribe(
                 data => {
-                    this.message = "Your PIN reset request has been sent. You will be contacted soon.";
+                    this.message = "Your PIN reset request has been sent. Please contact the Membership Officer to get your new PIN number (contact details in your membership book).";
                     this.loading = false;
                 },
                 error => {

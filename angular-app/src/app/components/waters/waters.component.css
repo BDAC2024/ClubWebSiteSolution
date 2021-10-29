@@ -25,7 +25,7 @@ li {
 }
 
 agm-map {
-    height: 300px;
+    height: 600px;
 }
 
 ::ng-deep .rule-list {

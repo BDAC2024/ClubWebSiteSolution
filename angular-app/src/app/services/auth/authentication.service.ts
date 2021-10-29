@@ -54,14 +54,19 @@ export class AuthenticationService {
     }
    }
 
-   login(membershipNumber: number, pin: number) {
+   login(membershipNumber: number, pin: number, stayLoggedIn: boolean) {
 
     var loginDetails = new LoginDetails(membershipNumber, pin);
 
     return this.http.post<any>(`${this.globalService.ApiUrl}/api/members/authenticate`, loginDetails)
         .pipe(map(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+            if (stayLoggedIn) {
+              localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+            } else {
+              sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+            }
+
             this.membersService.memberLoggedIn(user.token);
             this.currentMemberSubject.next(user);
             return user;
@@ -79,12 +84,18 @@ export class AuthenticationService {
   logout() {
       // remove user from local storage to log user out
       localStorage.removeItem(this.STORAGE_KEY);
+      sessionStorage.removeItem(this.STORAGE_KEY);
       this.membersService.memberLoggedOut();
       this.currentMemberSubject.next(new Member());
   }
 
   private getMember() {
-    const memberJson = localStorage.getItem(this.STORAGE_KEY);
+    var memberJson = localStorage.getItem(this.STORAGE_KEY);
+
+    if (memberJson == null) {
+      memberJson = sessionStorage.getItem(this.STORAGE_KEY);
+    }
+
     var member = memberJson !== null ? JSON.parse(memberJson) : new Member();
     if (memberJson !== null) {
       this.membersService.memberLoggedIn(member.token);

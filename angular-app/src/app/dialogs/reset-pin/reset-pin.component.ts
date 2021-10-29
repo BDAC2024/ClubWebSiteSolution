@@ -15,6 +15,7 @@ export class ResetPinComponent implements OnInit {
   public loading: boolean = false;
   public message: string = "";
   public canClose: boolean = false;
+  public pinChanged: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<ResetPinComponent>,
     @Inject(MAT_DIALOG_DATA) public member: Member,
@@ -29,8 +30,12 @@ export class ResetPinComponent implements OnInit {
     this.membersService.resetPin(this.member)
     .subscribe(data => {
       this.loading = false;
+      this.pinChanged = true;
       this.message = `PIN has been reset to ${data}. An email has also been sent to the Boroughbridge Angling Club Website's gmail with this new PIN number.`;
       this.canClose = true;
+    },
+    error => {
+      this.dialogRef.close();
     });
   }
 

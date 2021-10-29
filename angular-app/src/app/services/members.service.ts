@@ -55,7 +55,7 @@ export class MembersService {
 
   public resetPin(member: Member): Observable<number> {
 
-    return this.http.post<number>(`${this.globalService.ApiUrl}/api/members/pinreset/${member.membershipNumber}`, '')
+    return this.http.post<number>(`${this.globalService.ApiUrl}/api/members/pinreset/${member.dbKey}`, '')
               .pipe(data => {
                 return data;
               });

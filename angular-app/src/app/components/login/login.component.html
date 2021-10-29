@@ -1,6 +1,9 @@
 <mat-card class="members-only-card">
     <mat-card-content>
-        This can only be viewed by current club members
+        This can only be viewed by current club members.
+        <br/>
+        <br/>
+        If you have not used the site before, please contact the Membership Officer to request your PIN number (contact details in your membership book).
     </mat-card-content>
 </mat-card>
 <br/>
@@ -11,13 +14,13 @@
     <mat-card-content>
         <mat-form-field [style.width.px]=200  >
             <mat-label>Membership Number</mat-label>
-            <input matInput type="number" (keyup.enter)="onSubmit()" [(ngModel)]="membershipNo">
+            <input matInput type="number" name="username" id="username" (keyup.enter)="onSubmit()" [(ngModel)]="membershipNo">
         </mat-form-field>
         <br/>
 
         <mat-form-field [style.width.px]=200  >
             <mat-label>PIN</mat-label>
-            <input matInput type="number" (keyup.enter)="onSubmit()" [(ngModel)]="pin">
+            <input matInput type="number" name="password" id="password" (keyup.enter)="onSubmit()" [(ngModel)]="pin" >
         </mat-form-field>
         <br/>
 
@@ -33,7 +36,7 @@
             <br/>
             <mat-form-field [style.width.px]=200  >
                 <mat-label>Confirm new PIN</mat-label>
-                <input matInput type="number" [(ngModel)]="newPinConfirmation">
+                <input matInput type="number" [(ngModel)]="newPinConfirmation" minlength="4">
             </mat-form-field>
             <br/>
 
@@ -43,6 +46,11 @@
             <div *ngIf="error != ''" class="warn" [style.width.px]=200>{{error}}</div>
         </div>
 
+        <mat-checkbox [(ngModel)]="stayLoggedIn">
+            Stay logged in on this device?
+        </mat-checkbox>
+        <br/>
+        <br/>
         <button mat-raised-button color="primary"  *ngIf="!pinResetRequired" (click)="onSubmit()"  >Login</button>
         <br/>
         <br/>
