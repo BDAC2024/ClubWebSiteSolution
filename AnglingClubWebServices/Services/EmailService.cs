@@ -79,6 +79,8 @@ namespace AnglingClubWebServices.Services
             }
             catch (System.Exception ex)
             {
+                _logger.LogWarning("Primary email sending failed - trying fallback email.", ex);
+
                 try
                 {
                     // Email failed via primary email account. Re-send a fallback account

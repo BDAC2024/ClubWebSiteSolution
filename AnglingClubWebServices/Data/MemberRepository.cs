@@ -23,7 +23,10 @@ namespace AnglingClubWebServices.Data
             ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<MemberRepository>();
+            SiteUrl = opts.Value.SiteUrl;
         }
+
+        public string SiteUrl { get;  }
 
         public async Task AddOrUpdateMember(Member member)
         {

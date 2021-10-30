@@ -234,7 +234,7 @@ namespace AnglingClubWebServices.Controllers
             if (prefs.AllowNameToBeUsed == true && member.AllowNameToBeUsed == false)
             {
                 // Notify admins of request to use member's name
-                var memberEditUrl = $"http://localhost:4200/member/{member.DbKey}";
+                var memberEditUrl = $"{_memberRepository.SiteUrl}member/{member.DbKey}";
 
                 var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
 
@@ -263,7 +263,7 @@ namespace AnglingClubWebServices.Controllers
                 var member = (_memberRepository.GetMembers(EnumUtils.CurrentSeason()).Result).Single(x => x.MembershipNumber == membershipNumber);
 
                 // Notify admins of request to use member's name
-                var memberEditUrl = $"http://localhost:4200/member/{member.DbKey}";
+                var memberEditUrl = $"{_memberRepository.SiteUrl}member/{member.DbKey}";
 
                 var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
 

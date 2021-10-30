@@ -28,6 +28,11 @@
 			"Description" : "AWS Region",
 			"MinLength" : "0"
 		},
+  		"SiteUrl" : {
+			"Type" : "String",
+			"Description" : "Website URL",
+			"MinLength" : "0"
+		},
   		"AuthSecretKey" : {
 			"Type" : "String",
 			"Description" : "Auth signing key",
@@ -137,6 +142,7 @@
 				"SimpleDbDomain" : { "Ref" : "SimpleDbDomain" } ,
 				"BackupBucket" : { "Ref" : "BackupBucket" } ,
 				"AWSRegion" : { "Ref" : "AWSRegion" } ,
+				"SiteUrl" : { "Ref" : "SiteUrl" } ,
 				"AuthSecretKey" : { "Ref" : "AuthSecretKey" } ,
 				"AuthExpireMinutes" : { "Ref" : "AuthExpireMinutes" } ,
 				"DeveloperName" : { "Ref" : "DeveloperName" } ,
