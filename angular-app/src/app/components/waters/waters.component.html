@@ -36,7 +36,7 @@
                         <br/>
                     </div>
                     <div class="col-md-6">
-                        <a target="_blank" [href]="item.directionUrl">Driving directions</a>
+                        <a target="_blank" [href]="item.directionUrl">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.
                         <h3>Location</h3>
                         <table border="0">
                             <tr>
@@ -68,6 +68,7 @@
                         </table>
                         <agm-map 
                         [mapTypeId]='$any(mapType)'
+                        gestureHandling="cooperative"
                         [scrollwheel]="false"     
                         [disableDefaultUI]="true"
                         [zoom]=14.5
