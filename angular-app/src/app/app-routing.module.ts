@@ -17,6 +17,7 @@ import { MembersComponent } from './components/members/members.component';
 import { MyDetailsComponent } from './components/my-details/my-details.component';
 import { UserAdminsComponent } from './components/user-admins/user-admins.component';
 import { DeactivateGuardService } from './services/deactivate-guard.service';
+import { ClubOfficersComponent } from './components/club-officers/club-officers.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -25,11 +26,12 @@ const routes: Routes = [
   { path: 'welcome', component: WelcomeComponent },
   { path: 'news', component: NewsComponent },
   { path: 'waters', component: WatersComponent },
+  { path: 'officers', component: ClubOfficersComponent },
   { path: 'matches', component: MatchesComponent, canActivate: [AuthGuard] },
   { path: 'standings', component: LeagueStandingsComponent, canActivate: [AuthGuard] },
   { path: 'aggregateWeights', component: AggregateWeightsComponent, canActivate: [AuthGuard] },
   { path: 'photos', component: PhotosComponent, canActivate: [AuthGuard] },
-  { path: 'rules/:type', component: RulesComponent },
+  { path: 'rules/:type', component: RulesComponent, canActivate: [AuthGuard]  },
   { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
   { path: 'member/:id', component: MemberComponent, canActivate: [AuthGuard] },
   { path: 'members', component: MembersComponent, canActivate: [AuthGuard] },

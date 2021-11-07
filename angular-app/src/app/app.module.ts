@@ -66,6 +66,7 @@ import { AuthenticationService } from './services/auth/authentication.service';
 import { Router } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { ClubOfficersComponent } from './components/club-officers/club-officers.component';
 
 @NgModule({
   declarations: [
@@ -96,6 +97,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     ResetPinComponent,
     AddEditWaterDialogComponent,
     AddEditRulesDialogComponent,
+    ClubOfficersComponent,
   ],
   imports: [
     BrowserModule,
