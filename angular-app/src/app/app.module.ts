@@ -67,6 +67,7 @@ import { Router } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ClubOfficersComponent } from './components/club-officers/club-officers.component';
+import { FormsComponent } from './components/forms/forms.component';
 
 @NgModule({
   declarations: [
@@ -98,6 +99,7 @@ import { ClubOfficersComponent } from './components/club-officers/club-officers.
     AddEditWaterDialogComponent,
     AddEditRulesDialogComponent,
     ClubOfficersComponent,
+    FormsComponent,
   ],
   imports: [
     BrowserModule,

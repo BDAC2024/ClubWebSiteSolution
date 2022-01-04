@@ -18,6 +18,7 @@ import { MyDetailsComponent } from './components/my-details/my-details.component
 import { UserAdminsComponent } from './components/user-admins/user-admins.component';
 import { DeactivateGuardService } from './services/deactivate-guard.service';
 import { ClubOfficersComponent } from './components/club-officers/club-officers.component';
+import { FormsComponent } from './components/forms/forms.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'news', component: NewsComponent },
   { path: 'waters', component: WatersComponent },
   { path: 'officers', component: ClubOfficersComponent },
+  { path: 'forms', component: FormsComponent },
   { path: 'matches', component: MatchesComponent, canActivate: [AuthGuard] },
   { path: 'standings', component: LeagueStandingsComponent, canActivate: [AuthGuard] },
   { path: 'aggregateWeights', component: AggregateWeightsComponent, canActivate: [AuthGuard] },

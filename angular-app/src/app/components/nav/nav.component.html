@@ -36,6 +36,8 @@
 
         <a mat-list-item routerLink="/officers">Club Officers</a>
 
+        <a mat-list-item routerLink="/forms">Club Forms</a>
+
         <mat-list-item (click)="showAdminSubMenu = !showAdminSubMenu" *ngIf="authenticationService.isAdmin" class="parent">
 					<span class="full-width" >Admin</span>
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showAdminSubMenu}" >expand_more</mat-icon>
