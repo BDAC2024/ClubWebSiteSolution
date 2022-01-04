@@ -3,7 +3,7 @@ export enum MatchType {
   Club,
   Junior,
   OSU,
-  Officials
+  Specials
 }
 
 export namespace MatchType {
@@ -14,9 +14,11 @@ export namespace MatchType {
       case MatchType.Club:
         return "Club";
       case MatchType.Junior:
-        return "Jnr";
+        return "Junior";
       case MatchType.OSU:
-        return "O.S.U";
+        return "OSU";
+      case MatchType.Specials:
+        return "Specials";
       default:
         return MatchType[type];
     }
@@ -31,6 +33,8 @@ export namespace MatchType {
         return "Junior Match";
       case MatchType.OSU:
         return "Ouse/Swale/Ure";
+      case MatchType.Specials:
+        return "Specials";
       default:
         return MatchType[type];
     }
@@ -40,7 +44,8 @@ export namespace MatchType {
 export enum AggregateWeightType {
   Spring = 0,
   ClubRiver,
-  ClubPond
+  ClubPond,
+  None
 }
 
 export namespace AggregateWeightType {
