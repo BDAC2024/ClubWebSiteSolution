@@ -22,10 +22,10 @@ namespace AnglingClubWebServices.Interfaces
         [Description("Junior League")]
         Junior,
 
-        [Description("Oise, Swale, Ure Team League")]
+        [Description("Ouse, Swale, Ure Team League")]
         OSU,
 
-        Officials
+        Specials
     }
 
     public enum AggregateWeightType
@@ -33,11 +33,13 @@ namespace AnglingClubWebServices.Interfaces
         [Description("Spring League")]
         Spring = 0,
 
-        [Description("Clube League - Rivers")]
+        [Description("Club League - Rivers")]
         ClubRiver,
 
-        [Description("Clube League - Pond")]
+        [Description("Club League - Pond")]
         ClubPond,
+
+        None,
     }
 
     public enum WaterType
