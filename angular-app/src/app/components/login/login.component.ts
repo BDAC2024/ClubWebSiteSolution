@@ -50,6 +50,7 @@ export class LoginComponent implements OnInit {
     onSubmit() {
         this.submitted = true;
         this.message = "";
+        this.error = "";
         this.loading = true;
 
         this.authenticationService.login(this.membershipNo, this.pin, this.stayLoggedIn)
