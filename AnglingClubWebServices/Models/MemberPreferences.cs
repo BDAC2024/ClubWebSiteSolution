@@ -4,5 +4,6 @@
     {
         public string Id { get; set; }
         public bool AllowNameToBeUsed { get; set; }
+        public string Email { get; set; }
     }
 }

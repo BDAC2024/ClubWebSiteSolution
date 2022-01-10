@@ -242,6 +242,7 @@ namespace AnglingClubWebServices.Controllers
             }
 
             member.AllowNameToBeUsed = prefs.AllowNameToBeUsed;
+            member.Email = prefs.Email;
             member.PreferencesLastUpdated = DateTime.Now;
 
             _memberRepository.AddOrUpdateMember(member);
@@ -261,21 +262,32 @@ namespace AnglingClubWebServices.Controllers
             try
             {
                 var member = (_memberRepository.GetMembers(EnumUtils.CurrentSeason()).Result).Single(x => x.MembershipNumber == membershipNumber);
+                var usingEMail = !string.IsNullOrEmpty(member.Email);
 
-                // Notify admins of request to use member's name
-                var memberEditUrl = $"{_memberRepository.SiteUrl}member/{member.DbKey}";
+                if (usingEMail)
+                {
+                    var newPin = member.NewPin();
+                    var memberEmail = new List<string> { member.Email };
+                    _memberRepository.AddOrUpdateMember(member);
 
-                var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
+                    _emailService.SendEmail(memberEmail, $"Your new PIN for Boroughbridge Angling Club", $"Your PIN has been reset to <b>{newPin}</b>. You will have have to change this to a new PIN of your choice when you login.");
+                }
+                else
+                {
+                    var memberEditUrl = $"{_memberRepository.SiteUrl}member/{member.DbKey}";
 
-                _emailService.SendEmail(userAdmins, $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")}, PIN reset requested", $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")} has requested their PIN be reset. <a href='{memberEditUrl}'>Please reset their PIN here</a>");
+                    var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
 
-                ReportTimer("PIN reset request");
+                    _emailService.SendEmail(userAdmins, $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")}, PIN reset requested", $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")} has requested their PIN be reset. <a href='{memberEditUrl}'>Please reset their PIN here</a>");
 
-                member.PinResetRequested = true;
+                    ReportTimer("PIN reset request");
 
-                _memberRepository.AddOrUpdateMember(member).Wait();
+                    member.PinResetRequested = true;
 
-                return Ok();
+                    _memberRepository.AddOrUpdateMember(member).Wait();
+                }
+
+                return Ok(usingEMail);
 
             }
             catch (Exception)
