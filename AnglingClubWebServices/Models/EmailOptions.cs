@@ -4,7 +4,8 @@ namespace AnglingClubWebServices.Models
 {
     public class EmailOptions
     {
-        private string _fromAddress;
+        private string _primaryFromAddress;
+        private string _fallbackFromAddress;
 
         public string PrimaryEmailHost { get; set; }
         public int PrimaryEmailPort { get; set; }
@@ -15,14 +16,14 @@ namespace AnglingClubWebServices.Models
         {
             get
             {
-                return _fromAddress;
+                return _primaryFromAddress;
             }
 
             set
             {
                 if (RegexUtilities.IsValidEmail(value))
                 {
-                    _fromAddress = value;
+                    _primaryFromAddress = value;
                 }
                 else
                 {
@@ -41,14 +42,14 @@ namespace AnglingClubWebServices.Models
         {
             get
             {
-                return _fromAddress;
+                return _fallbackFromAddress;
             }
 
             set
             {
                 if (RegexUtilities.IsValidEmail(value))
                 {
-                    _fromAddress = value;
+                    _fallbackFromAddress = value;
                 }
                 else
                 {
