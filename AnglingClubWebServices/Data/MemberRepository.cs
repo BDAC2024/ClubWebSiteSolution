@@ -59,6 +59,7 @@ namespace AnglingClubWebServices.Data
             var attributes = new List<ReplaceableAttribute>
             {
                 new ReplaceableAttribute { Name = "Name", Value = member.Name, Replace = true },
+                new ReplaceableAttribute { Name = "Email", Value = member.Email?? "", Replace = true },
                 new ReplaceableAttribute { Name = "MembershipNumber", Value = member.MembershipNumber.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Admin", Value = member.Admin ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "Pin", Value = member.Pin, Replace = true },
@@ -119,6 +120,10 @@ namespace AnglingClubWebServices.Data
                     {
                         case "Name":
                             member.Name = attribute.Value;
+                            break;
+
+                        case "Email":
+                            member.Email = attribute.Value;
                             break;
 
                         case "MembershipNumber":

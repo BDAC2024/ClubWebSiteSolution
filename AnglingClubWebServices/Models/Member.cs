@@ -10,6 +10,7 @@ namespace AnglingClubWebServices.Models
     {
 
         public string Name { get; set; }
+        public string Email { get; set; }
         public int MembershipNumber { get; set; }
         public bool Admin { get; set; } = false;
         public string Pin { get; set; }

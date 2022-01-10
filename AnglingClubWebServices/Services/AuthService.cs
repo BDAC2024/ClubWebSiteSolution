@@ -121,6 +121,7 @@ namespace AnglingClubWebServices.Services
                     new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),
                     new Claim("PreferencesLastUpdated", member.PreferencesLastUpdated.ToString("u")),
                     new Claim("Name", member.AllowNameToBeUsed ? member.Name : "Anonymous"),
+                    new Claim("Email", member.Email),
                     new Claim("PinResetRequired", member.PinResetRequired.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_authOptions.AuthExpireMinutes),
