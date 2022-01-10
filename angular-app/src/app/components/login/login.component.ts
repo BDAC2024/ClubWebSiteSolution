@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
-
+        this.message = "";
         this.loading = true;
 
         this.authenticationService.login(this.membershipNo, this.pin, this.stayLoggedIn)
@@ -67,7 +67,8 @@ export class LoginComponent implements OnInit {
                             var prefs = new MemberPreferences();
                             prefs.id = this.membersService.CurrentMember.id;
                             prefs.allowNameToBeUsed = this.membersService.CurrentMember.allowNameToBeUsed;
-        
+                            prefs.email = this.membersService.CurrentMember.email;
+
                             const dialogRef = this.dialog.open(LoginPreferencesDialogComponent, {maxHeight: "90vh", maxWidth: "350px", data: prefs});
         
                             dialogRef.afterClosed().subscribe(result => {
@@ -93,8 +94,12 @@ export class LoginComponent implements OnInit {
 
         this.authenticationService.pinResetRequest(this.membershipNo)
             .subscribe(
-                data => {
-                    this.message = "Your PIN reset request has been sent. Please contact the Membership Officer to get your new PIN number (contact details in your membership book).";
+                usingEmail => {
+                    if (usingEmail) {
+                        this.message = "Your PIN reset has been done and sent to your registered email address.";
+                    } else {
+                        this.message = "Your PIN reset request has been sent. Please contact the Membership Officer to get your new PIN number (contact details in your membership book).";
+                    }
                     this.loading = false;
                 },
                 error => {

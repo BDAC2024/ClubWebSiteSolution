@@ -7,6 +7,7 @@ export class Member {
     token?: string;
     membershipNumber!: number;
     name!: string;
+    email!: string;
     admin: boolean = false;
     allowNameToBeUsed: boolean = false;
     @Type(() => Date)
@@ -27,6 +28,7 @@ export class Member {
             this.allowNameToBeUsed = JSON.parse(tokenDecoded.AllowNameToBeUsed.toLowerCase());
             this.preferencesLastUpdated = new Date(tokenDecoded.PreferencesLastUpdated);
             this.name = tokenDecoded.Name;
+            this.email = tokenDecoded.Email;
             this.pinResetRequired = JSON.parse(tokenDecoded.PinResetRequired.toLowerCase());
 
             if (tokenDecoded.ReLoginRequired) {

@@ -24,6 +24,7 @@ export class MyDetailsComponent implements OnInit {
       this.prefs.id = data.dbKey;
       this.prefs.allowNameToBeUsed = data.allowNameToBeUsed;
       this.name = data.name;
+      this.prefs.email = data.email;
     });
 
   }

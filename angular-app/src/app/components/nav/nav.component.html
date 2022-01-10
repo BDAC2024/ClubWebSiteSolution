@@ -23,21 +23,28 @@
         <a mat-list-item routerLink="/diary">Diary of Events</a>
         <!-- <a mat-list-item routerLink="/photos">Photos</a> -->
 
-        <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" class="parent">
-					<span class="full-width" >Rules</span>
-					<mat-icon class="menu-button" [ngClass]="{'rotated' : showRulesSubMenu}" >expand_more</mat-icon>
+
+        <mat-list-item (click)="showClubInfoSubMenu = !showClubInfoSubMenu" class="parent">
+					<span class="full-width" >Club Info</span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showClubInfoSubMenu}" >expand_more</mat-icon>
 				</mat-list-item>
-				<div class="submenu" [ngClass]="{'expanded' : showRulesSubMenu}" *ngIf="showRulesSubMenu">
-					<a mat-list-item routerLink="/rules/0" >General</a>
-					<a mat-list-item routerLink="/rules/1">Match</a>
-					<a mat-list-item routerLink="/rules/2">Junior / Int General</a>
-					<a mat-list-item routerLink="/rules/3">Junior / Int Match</a>
+				<div class="submenu" [ngClass]="{'expanded' : showClubInfoSubMenu}" *ngIf="showClubInfoSubMenu">
+					<a mat-list-item routerLink="/officers">Club Officers</a>
+          <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" class="parent">
+            <span class="full-width" >Rules</span>
+            <mat-icon class="menu-button" [ngClass]="{'rotated' : showRulesSubMenu}" >expand_more</mat-icon>
+          </mat-list-item>
+          <div class="submenu" [ngClass]="{'expanded' : showRulesSubMenu}" *ngIf="showRulesSubMenu">
+            <a mat-list-item routerLink="/rules/0" >General</a>
+            <a mat-list-item routerLink="/rules/1">Match</a>
+            <a mat-list-item routerLink="/rules/2">Jnr General</a>
+            <a mat-list-item routerLink="/rules/3">Jnr Match</a>
+          </div>
+          <a mat-list-item routerLink="/forms">Club Forms</a>
+					<a mat-list-item routerLink="/environmental">Environmental</a>
+					<a mat-list-item routerLink="/anglingTrust">Angling Trust</a>
 				</div>
-
-        <a mat-list-item routerLink="/officers">Club Officers</a>
-
-        <a mat-list-item routerLink="/forms">Club Forms</a>
-
+        
         <mat-list-item (click)="showAdminSubMenu = !showAdminSubMenu" *ngIf="authenticationService.isAdmin" class="parent">
 					<span class="full-width" >Admin</span>
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showAdminSubMenu}" >expand_more</mat-icon>

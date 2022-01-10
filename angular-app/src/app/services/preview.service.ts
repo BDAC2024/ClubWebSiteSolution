@@ -18,5 +18,5 @@ export class PreviewService {
    }
 
    public previewCodeValid: boolean;
-   public inBeta: boolean = true;
+   public inBeta: boolean = false;
   }

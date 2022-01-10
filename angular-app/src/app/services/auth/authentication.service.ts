@@ -74,7 +74,10 @@ export class AuthenticationService {
   }
 
   pinResetRequest(membershipNumber: number) {
-    return this.http.post<void>(`${this.globalService.ApiUrl}/api/members/pinresetrequest/${membershipNumber}`, '');
+    return this.http.post<boolean>(`${this.globalService.ApiUrl}/api/members/pinresetrequest/${membershipNumber}`, '')
+    .pipe(
+      map(result => {return result})
+    );
   }
 
   setNewPin(newPin: number) {

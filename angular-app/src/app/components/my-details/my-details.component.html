@@ -28,11 +28,16 @@
         <mat-checkbox [(ngModel)]="this.prefs.allowNameToBeUsed">&nbsp;Allow my name to be stored and used</mat-checkbox>
     </div>
     <br/>
-    You can change this anytime using "My Details" from the menu.
+    <mat-form-field>
+        <mat-label>Email (optional)</mat-label>
+        <input class="title-form-field" matInput [(ngModel)]="this.prefs.email">
+    </mat-form-field>
+    <br/>
+    Your email will simplify PIN resets and may be used for important club notifications.
     <br/>
     <br/>
     <div mat-dialog-actions class="edit-button-panel">
-        <button mat-raised-button color="primary" (click)="submit()">Save Preferences</button>
+        <button mat-raised-button color="primary" (click)="submit()">Save Details</button>
     </div>
     <br/>
     <br/>

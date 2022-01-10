@@ -68,6 +68,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ClubOfficersComponent } from './components/club-officers/club-officers.component';
 import { FormsComponent } from './components/forms/forms.component';
+import { AnglingTrustComponent } from './components/angling-trust/angling-trust.component';
+import { EnvironmentalComponent } from './components/environmental/environmental.component';
 
 @NgModule({
   declarations: [
@@ -100,6 +102,8 @@ import { FormsComponent } from './components/forms/forms.component';
     AddEditRulesDialogComponent,
     ClubOfficersComponent,
     FormsComponent,
+    AnglingTrustComponent,
+    EnvironmentalComponent,
   ],
   imports: [
     BrowserModule,
