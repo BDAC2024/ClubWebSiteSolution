@@ -74,7 +74,7 @@ export class MembersComponent implements OnInit, AfterViewInit {
     if (isHandsetPortait) {
       this.displayedColumns = ["membershipNumber", "name", "admin", "edit"];
     } else {
-      this.displayedColumns = ["membershipNumber", "name", "admin", "allowNameToBeUsed", "preferencesLastUpdated", "edit"];
+      this.displayedColumns = ["membershipNumber", "name", "email", "admin", "allowNameToBeUsed", "preferencesLastUpdated", "edit"];
     }
   }
 }

@@ -24,6 +24,11 @@
             <mat-label>Name</mat-label>
             <input class="title-form-field" matInput [(ngModel)]="member.name" [disabled]="!member.allowNameToBeUsed">
         </mat-form-field>
+            <br/>
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="member.email">
+        </mat-form-field>
         <br/>
             <label class="my-mat-label" >
                 Member for Seasons
