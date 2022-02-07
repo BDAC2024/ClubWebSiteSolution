@@ -51,7 +51,7 @@ export class ErrorIntercept implements HttpInterceptor {
                     }
                     console.log(errorMessage);
 
-                    const dialogRef = this.dialog.open(ErrorComponent, {width: "250px", maxHeight: "100vh", data: errorMessage});
+                    const dialogRef = this.dialog.open(ErrorComponent, {width: "250px", maxHeight: "100vh", data: { body: errorMessage }});
 
                     dialogRef.afterClosed().subscribe(result => {
                         if (this.membershipExpired) {

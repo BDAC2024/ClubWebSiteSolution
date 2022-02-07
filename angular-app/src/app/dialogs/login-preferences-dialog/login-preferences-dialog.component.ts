@@ -25,7 +25,7 @@ export class LoginPreferencesDialogComponent implements OnInit {
     // prefs.id = this.data.member.id;
     // prefs.allowNameToBeUsed = this.data.member.allowNameToBeUsed;
 
-    this.membersService.addOrUpdateMember(this.prefs)
+    this.membersService.addOrUpdateMemberPrefs(this.prefs)
       .subscribe(data => {
         this.dialogRef.close();
       });

@@ -1,7 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { AddMemberComponent } from 'src/app/dialogs/add-member/add-member.component';
+import { ErrorComponent } from 'src/app/dialogs/error/error.component';
 import { Member } from 'src/app/models/member';
 import { RefData, Season } from 'src/app/models/refData';
 import { GlobalService } from 'src/app/services/global.service';
@@ -30,7 +33,8 @@ export class MembersComponent implements OnInit, AfterViewInit {
     private refDataService: RefDataService,
     public screenService: ScreenService,
     public globalService: GlobalService,
-    private router: Router) {
+    private router: Router,
+    private dialog: MatDialog) {
 
       screenService.OrientationChange.on(() => {
         this.setDisplayedColumns(screenService.IsHandsetPortrait);
@@ -58,6 +62,26 @@ export class MembersComponent implements OnInit, AfterViewInit {
       this.members.data = data as Member[];
       this.isLoading = false;
     });
+  }
+
+  public addMember() {
+    var member: Member = { dbKey: "", id: '', membershipNumber: 0, admin: false, allowNameToBeUsed: false, name: '', email: '', seasonsActive: [], pinResetRequired: true, preferencesLastUpdated: new Date(), reLoginRequired: false, initialPin: 0 };
+
+    const dialogRef = this.dialog.open(AddMemberComponent, {
+      width: this.screenService.IsHandset ? '90vw' : '40vw',
+      data: member
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`The dialog was closed : `);
+
+      console.log(result);
+
+      if (result) {
+        this.getMembers();
+      }
+    });
+
   }
 
   public getRefData() {

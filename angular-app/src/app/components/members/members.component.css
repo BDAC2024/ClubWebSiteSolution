@@ -28,3 +28,11 @@ table {
     max-height: calc(100vh - 255px); /* or height: calc(100vh - 155px); depending on your need  change */
     overflow: auto;
 }
+
+.edit-button-panel {
+    float: right;
+  }
+  
+.edit-button {
+    margin-left: 12px;
+}

@@ -21,7 +21,7 @@
         <br/>
         <br/>
         <mat-form-field>
-            <mat-label>Name</mat-label>
+            <mat-label>Name (Initial.Lastname)</mat-label>
             <input class="title-form-field" matInput [(ngModel)]="member.name" [disabled]="!member.allowNameToBeUsed">
         </mat-form-field>
             <br/>
@@ -42,8 +42,10 @@
             </cdk-virtual-scroll-viewport>
         </mat-selection-list>
         <br/>
-        <h2>Member's Preferences</h2>
+        <h2>Member's Info</h2>
         <ul>
+            <li *ngIf="member.initialPin != 0">Their initial PIN is {{member.initialPin}} until they login and change it</li>
+            <li *ngIf="member.initialPin == 0">Member has reset their PIN so initial PIN is no longer visible</li>
             <li *ngIf="!member.allowNameToBeUsed">Member does not want their name to be used</li>
             <li *ngIf="member.allowNameToBeUsed">Member has allowed their name to be used</li>
             <li>Member last updated their preferences on {{member.preferencesLastUpdated | date:'dd MMM YY'}}</li>

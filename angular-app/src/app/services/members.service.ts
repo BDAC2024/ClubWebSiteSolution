@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { plainToClass } from 'class-transformer';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Member } from '../models/member';
 import { MemberPreferences } from '../models/memberPreferences';
 import { GlobalService } from './global.service';
@@ -27,7 +27,17 @@ export class MembersService {
     this.CurrentMember = new Member();
   }
 
-  public addOrUpdateMember(prefs: MemberPreferences): Observable<void> {
+  public addOrUpdateMember(member: Member): Observable<number> {
+   
+    return this.http.post<number>(`${this.globalService.ApiUrl}/api/members/addMember`, member)
+              .pipe(map(res => res),
+                catchError((error: HttpErrorResponse) => {
+                  return throwError("Arghhh");
+              })
+            );
+  }
+
+  public addOrUpdateMemberPrefs(prefs: MemberPreferences): Observable<void> {
    
     return this.http.post<void>(`${this.globalService.ApiUrl}/api/members/setPreferences`, prefs)
               .pipe();

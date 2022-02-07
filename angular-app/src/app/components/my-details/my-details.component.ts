@@ -30,7 +30,7 @@ export class MyDetailsComponent implements OnInit {
   }
 
   public submit(): void {
-    this.membersService.addOrUpdateMember(this.prefs)
+    this.membersService.addOrUpdateMemberPrefs(this.prefs)
       .subscribe(data => {
         this.status = "Saved successfully";
 

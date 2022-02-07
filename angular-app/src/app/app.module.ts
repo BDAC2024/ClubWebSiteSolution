@@ -70,6 +70,7 @@ import { ClubOfficersComponent } from './components/club-officers/club-officers.
 import { FormsComponent } from './components/forms/forms.component';
 import { AnglingTrustComponent } from './components/angling-trust/angling-trust.component';
 import { EnvironmentalComponent } from './components/environmental/environmental.component';
+import { AddMemberComponent } from './dialogs/add-member/add-member.component';
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { EnvironmentalComponent } from './components/environmental/environmental
     FormsComponent,
     AnglingTrustComponent,
     EnvironmentalComponent,
+    AddMemberComponent,
   ],
   imports: [
     BrowserModule,

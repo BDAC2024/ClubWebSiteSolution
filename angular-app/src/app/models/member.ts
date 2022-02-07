@@ -15,6 +15,7 @@ export class Member {
     pinResetRequired: boolean = false;
     seasonsActive!: number[];
     reLoginRequired: boolean = false;
+    initialPin!: number;
     /**
      *
      */
