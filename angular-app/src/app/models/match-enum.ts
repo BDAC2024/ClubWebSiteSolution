@@ -3,7 +3,8 @@ export enum MatchType {
   Club,
   Junior,
   OSU,
-  Specials
+  Specials,
+  Pairs
 }
 
 export namespace MatchType {
@@ -19,6 +20,8 @@ export namespace MatchType {
         return "OSU";
       case MatchType.Specials:
         return "Specials";
+      case MatchType.Pairs:
+        return "Pairs";
       default:
         return MatchType[type];
     }
@@ -35,6 +38,8 @@ export namespace MatchType {
         return "Ouse/Swale/Ure";
       case MatchType.Specials:
         return "Specials";
+      case MatchType.Pairs:
+        return "Pairs";
       default:
         return MatchType[type];
     }

@@ -26,6 +26,7 @@ export class MatchService {
   public get JuniorTabName() : string { return this.getTabName(MatchType.Junior); }
   public get OsuTabName() : string { return this.getTabName(MatchType.OSU); }
   public get SpecialsTabName() : string { return this.getTabName(MatchType.Specials); }
+  public get PairsTabName() : string { return this.getTabName(MatchType.Pairs); }
 
   private getTabName(type: MatchType): string {
     return this.screenService.IsHandsetPortrait? MatchType.CompactName(type) : MatchType.FullName(type)
