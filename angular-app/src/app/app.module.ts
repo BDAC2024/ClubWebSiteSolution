@@ -71,6 +71,10 @@ import { FormsComponent } from './components/forms/forms.component';
 import { AnglingTrustComponent } from './components/angling-trust/angling-trust.component';
 import { EnvironmentalComponent } from './components/environmental/environmental.component';
 import { AddMemberComponent } from './dialogs/add-member/add-member.component';
+import { RulesGeneralComponent } from './components/rules-general/rules-general.component';
+import { RulesMatchComponent } from './components/rules-match/rules-match.component';
+import { RulesJnrGeneralComponent } from './components/rules-jnr-general/rules-jnr-general.component';
+import { RulesJnrMatchComponent } from './components/rules-jnr-match/rules-jnr-match.component';
 
 @NgModule({
   declarations: [
@@ -106,6 +110,10 @@ import { AddMemberComponent } from './dialogs/add-member/add-member.component';
     AnglingTrustComponent,
     EnvironmentalComponent,
     AddMemberComponent,
+    RulesGeneralComponent,
+    RulesMatchComponent,
+    RulesJnrGeneralComponent,
+    RulesJnrMatchComponent,
   ],
   imports: [
     BrowserModule,

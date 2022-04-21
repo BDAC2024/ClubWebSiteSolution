@@ -35,10 +35,10 @@
             <mat-icon class="menu-button" [ngClass]="{'rotated' : showRulesSubMenu}" >expand_more</mat-icon>
           </mat-list-item>
           <div class="submenu" [ngClass]="{'expanded' : showRulesSubMenu}" *ngIf="showRulesSubMenu">
-            <a mat-list-item routerLink="/rules/0" >General</a>
-            <a mat-list-item routerLink="/rules/1">Match</a>
-            <a mat-list-item routerLink="/rules/2">Jnr General</a>
-            <a mat-list-item routerLink="/rules/3">Jnr Match</a>
+            <a mat-list-item routerLink="/rulesGeneral" >General</a>
+            <a mat-list-item routerLink="/rulesMatch" >Match</a>
+            <a mat-list-item routerLink="/rulesJnrGeneral">Jnr General</a>
+            <a mat-list-item routerLink="/rulesJnrMatch">Jnr Match</a>
           </div>
           <a mat-list-item routerLink="/forms">Club Forms</a>
 					<a mat-list-item routerLink="/environmental">Environmental</a>

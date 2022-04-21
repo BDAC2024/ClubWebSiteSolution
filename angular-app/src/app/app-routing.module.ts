@@ -21,6 +21,10 @@ import { ClubOfficersComponent } from './components/club-officers/club-officers.
 import { FormsComponent } from './components/forms/forms.component';
 import { AnglingTrustComponent } from './components/angling-trust/angling-trust.component';
 import { EnvironmentalComponent } from './components/environmental/environmental.component';
+import { RulesGeneralComponent } from './components/rules-general/rules-general.component';
+import { RulesMatchComponent } from './components/rules-match/rules-match.component';
+import { RulesJnrGeneralComponent } from './components/rules-jnr-general/rules-jnr-general.component';
+import { RulesJnrMatchComponent } from './components/rules-jnr-match/rules-jnr-match.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -43,6 +47,10 @@ const routes: Routes = [
   { path: 'members', component: MembersComponent, canActivate: [AuthGuard] },
   { path: 'myDetails', component: MyDetailsComponent, canActivate: [AuthGuard] },
   { path: 'userAdmins', component: UserAdminsComponent, canActivate: [AuthGuard] },
+  { path: 'rulesGeneral', component: RulesGeneralComponent, canActivate: [AuthGuard] },
+  { path: 'rulesMatch', component: RulesMatchComponent, canActivate: [AuthGuard] },
+  { path: 'rulesJnrGeneral', component: RulesJnrGeneralComponent, canActivate: [AuthGuard] },
+  { path: 'rulesJnrMatch', component: RulesJnrMatchComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
