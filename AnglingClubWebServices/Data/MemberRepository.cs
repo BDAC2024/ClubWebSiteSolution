@@ -62,6 +62,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Email", Value = member.Email?? "", Replace = true },
                 new ReplaceableAttribute { Name = "MembershipNumber", Value = member.MembershipNumber.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Admin", Value = member.Admin ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "InitialPin", Value = member.InitialPin.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Pin", Value = member.Pin, Replace = true },
                 new ReplaceableAttribute { Name = "AllowNameToBeUsed", Value = member.AllowNameToBeUsed ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "PreferencesLastUpdated", Value = dateToString(member.PreferencesLastUpdated), Replace = true },
@@ -140,6 +141,10 @@ namespace AnglingClubWebServices.Data
 
                         case "Pin":
                             member.Pin = attribute.Value;
+                            break;
+
+                        case "InitialPin":
+                            member.InitialPin = attribute.Value != "" ? Convert.ToInt32(attribute.Value) : 0;
                             break;
 
                         case "PinResetRequired":

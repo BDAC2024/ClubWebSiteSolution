@@ -1,3 +1,4 @@
+using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
@@ -159,6 +160,101 @@ namespace AnglingClubWebServices.Controllers
         }
 
         [HttpPost]
+        [Route("UploadinitialPins")]
+        public IActionResult UploadinitialPins([FromBody] List<MemberInitialPinDto> initialMemberPins)
+        {
+            StartTimer();
+
+            bool accessAllowed = false;
+
+            if (CurrentUser.Name == _authService.GetDeveloperName() && CurrentUser.Admin)
+            {
+                accessAllowed = true;
+            }
+
+            if (!accessAllowed)
+            {
+                return BadRequest("Only administrators can access this.");
+            }
+
+            foreach (var initialMemberPin in initialMemberPins)
+            {
+                var member = _memberRepository.GetMembers(EnumUtils.CurrentSeason()).Result.SingleOrDefault(x => x.MembershipNumber == initialMemberPin.MembershipNumber);
+
+                if (member != null)
+                {
+                    // Check that the initial pin matches their current PIN and they do not appear to have logged in
+                    if (member.ValidPin(initialMemberPin.InitialPin) 
+                        && !member.AllowNameToBeUsed
+                        && member.PinResetRequired
+                        && string.IsNullOrEmpty(member.Email))
+                    {
+                        member.InitialPin = initialMemberPin.InitialPin;
+                        _memberRepository.AddOrUpdateMember(member).Wait();
+                        //_logger.LogWarning($"About to set initial PIN for member: {initialMemberPin.MembershipNumber} - {initialMemberPin.Name}");
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Cannot set initial PIN for member: {initialMemberPin.MembershipNumber} - {initialMemberPin.Name}");
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning($"Cannot set initial PIN for member: {initialMemberPin.MembershipNumber} - {initialMemberPin.Name} - they cannot be found for current season");
+                }
+            }
+
+            ReportTimer("Adding initial member pins");
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("AddMember")]
+        public IActionResult AddMember([FromBody] MemberDto member)
+        {
+            StartTimer();
+
+            bool accessAllowed = false;
+
+            if (CurrentUser.Admin)
+            {
+                accessAllowed = true;
+            }
+
+            if (!accessAllowed)
+            {
+                return BadRequest("Only administrators can access this.");
+            }
+
+            member.PinResetRequired = true;
+            member.InitialPin = member.NewPin();
+            member.PreferencesLastUpdated = DateTime.MinValue;
+
+            try
+            {
+                _memberRepository.AddOrUpdateMember(member).Wait();
+
+                return Ok(member.InitialPin);
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    return BadRequest(ex.InnerException.Message);
+                }
+                else
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            finally
+            {
+                ReportTimer("Posting member");
+            }
+        }
+
+        [HttpPost]
         [Route("Update")]
         public IActionResult Update([FromBody] Member memberDto)
         {
@@ -182,6 +278,7 @@ namespace AnglingClubWebServices.Controllers
             member.Admin = memberDto.Admin;
             member.MembershipNumber = memberDto.MembershipNumber;
             member.ReLoginRequired = memberDto.ReLoginRequired;
+            member.Email = memberDto.Email;
 
             if (member.AllowNameToBeUsed)
             {

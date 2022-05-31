@@ -11,6 +11,7 @@ namespace AnglingClubWebServices.Models
         public string Species { get; set; }
         public string Directions { get; set; }
 
+        public string VideoShortCode { get; set; }
     }
 
     public class Water : WaterBase

@@ -45,6 +45,8 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Access", Value = ((int)water.Access).ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Species", Value = water.Species, Replace = true },
 
+                new ReplaceableAttribute { Name = "VideoShortCode", Value = water.VideoShortCode, Replace = true },
+
                 new ReplaceableAttribute { Name = "Markers", Value = water.Markers, Replace = true },
                 new ReplaceableAttribute { Name = "MarkerIcons", Value = water.MarkerIcons, Replace = true },
                 new ReplaceableAttribute { Name = "MarkerLabels", Value = water.MarkerLabels, Replace = true },
@@ -223,6 +225,10 @@ namespace AnglingClubWebServices.Data
 
                         case "Directions":
                             directionArr.Add(GetMultiValuedElement(attribute.Value));
+                            break;
+
+                        case "VideoShortCode":
+                            water.VideoShortCode = attribute.Value;
                             break;
 
                         case "Markers":

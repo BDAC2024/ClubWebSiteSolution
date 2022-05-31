@@ -13,6 +13,10 @@ namespace AnglingClubWebServices.Models
         public string Email { get; set; }
         public int MembershipNumber { get; set; }
         public bool Admin { get; set; } = false;
+        /// <summary>
+        /// Will be set to 0 once user has set a new pin
+        /// </summary>
+        public int InitialPin { get; set; }
         public string Pin { get; set; }
         public bool PinResetRequested { get; set; } = false;
         public bool PinResetRequired { get; set; } = true;
@@ -38,6 +42,7 @@ namespace AnglingClubWebServices.Models
             {
                 PinResetRequired = false;
                 newPin = toPin.Value;
+                InitialPin = 0;
             }
             
             var hashedPin = AuthService.HashText(newPin.ToString(), MembershipNumber.ToString(), new SHA1CryptoServiceProvider());

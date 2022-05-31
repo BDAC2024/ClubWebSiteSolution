@@ -66,6 +66,7 @@ namespace AnglingClubWebServices.Services
                 .GroupBy(x => x.MembershipNumber)
                 .Select(cl => new LeaguePosition
                 {
+                    MembershipNumber = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).MembershipNumber,
                     Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
                     Points = cl.Sum(c => c.Points),
                     TotalWeightDecimal = cl.Sum(x=> x.WeightDecimal)
@@ -120,7 +121,8 @@ namespace AnglingClubWebServices.Services
                 .Select(cl => new AggregateWeight
                 {
                     Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
-                    TotalWeightDecimal = cl.Sum(x => x.WeightDecimal)
+                    TotalWeightDecimal = cl.Sum(x => x.WeightDecimal),
+                    MembershipNumber = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).MembershipNumber
                 }).ToList();
 
             var pos = 1;
