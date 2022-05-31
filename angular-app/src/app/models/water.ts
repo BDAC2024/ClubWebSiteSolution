@@ -8,6 +8,7 @@ export class Water {
     waterType!: string;
     accessType!: string;
     description!: string;
+    videoShortCode!: string;
     species!: string;
     directions!: string;
     destination!: Position;

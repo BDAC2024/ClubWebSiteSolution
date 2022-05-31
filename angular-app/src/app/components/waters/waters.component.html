@@ -34,6 +34,17 @@
                         <h3>Directions</h3>
                         <div [innerHTML]="item.directions"></div>
                         <br/>
+                        <h3>Access Video</h3>
+                        <span *ngIf="!item.videoShortCode">Access video is not yet available for this water.<br/></span>
+                        <iframe *ngIf="item.videoShortCode"
+                            [src]="videoURL(item.videoShortCode)" 
+                            [width]="videoWidth" [height]="videoHeight" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                        <br/>
                     </div>
                     <div class="col-md-6">
                         <a target="_blank" [href]="item.directionUrl">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.

@@ -6,6 +6,8 @@ import { Water } from 'src/app/models/water';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { MembersService } from 'src/app/services/members.service';
 import { WatersService } from 'src/app/services/waters.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ScreenService } from 'src/app/services/screen.service';
 
 @Component({
   selector: 'app-waters',
@@ -17,6 +19,10 @@ export class WatersComponent implements OnInit {
   waters!: Water[];
   pathColour: string = "lightgreen";
   mapType: string = 'satellite';
+
+  youTubeEmbedRoot: string = "https://www.youtube.com/embed/";
+  videoWidth: number = 560;
+  videoHeight: number = 315;
   
   public isLoading: boolean = false;
   public isPageAdmin: boolean = false;
@@ -25,10 +31,16 @@ export class WatersComponent implements OnInit {
     public watersService: WatersService,
     public membersService: MembersService,
     public authenticationService: AuthenticationService,
+    public screenService: ScreenService,
     private dialog: MatDialog,
-    private router: Router) { 
+    private router: Router,
+    private sanitizer: DomSanitizer) { 
 
-
+      screenService.OrientationChange.on(() => {
+        this.videoWidth = screenService.IsHandsetPortrait ? 300 : 560;
+        this.videoHeight = this.videoWidth / (16 / 9);
+      });
+  
   }
 
   ngOnInit(): void {
@@ -41,6 +53,10 @@ export class WatersComponent implements OnInit {
     // this.path.push({ lat: 54.098626321067286, long: -1.3566482946865484});
     // this.path.push({ lat: 54.09867070551979, long: -1.357407887485396});
     // this.path.push({ lat: 54.098134031424564, long: -1.3576232247914872});
+  }
+
+  public videoURL(videoShortCode: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(this.youTubeEmbedRoot + videoShortCode);
   }
 
   public enableAdmin(set: boolean): void {
