@@ -25,7 +25,8 @@ namespace AnglingClubWebServices.Interfaces
         [Description("Ouse, Swale, Ure Team League")]
         OSU,
 
-        Specials
+        Specials,
+        Pairs
     }
 
     public enum AggregateWeightType

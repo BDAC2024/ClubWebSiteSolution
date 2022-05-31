@@ -76,7 +76,7 @@ namespace AnglingClubWebServices
                 options.AddPolicy(_corsPolicy, builder =>
                 {
                     builder
-                     //.AllowAnyOrigin()
+                     .AllowAnyOrigin()
                      .WithOrigins(origins)
                      .AllowAnyHeader()
                      .AllowAnyMethod();

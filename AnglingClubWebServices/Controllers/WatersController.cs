@@ -53,6 +53,7 @@ namespace AnglingClubWebServices.Controllers
                     dto.DbKey = water.DbKey;
                     dto.Description = water.Description;
                     dto.Directions = water.Directions;
+                    dto.VideoShortCode = water.VideoShortCode;
                     dto.Id = water.Id;
                     dto.Name = water.Name;
                     dto.Species = water.Species;
@@ -161,6 +162,7 @@ namespace AnglingClubWebServices.Controllers
                     water.Description = inputWater.Description;
                     water.Species = inputWater.Species;
                     water.Directions = inputWater.Directions;
+                    water.VideoShortCode = inputWater.VideoShortCode;
 
                     water.MarkerIcons = string.Join(",", inputWater.MarkerIcons.ToArray());
                     water.MarkerLabels = string.Join(",", inputWater.MarkerLabels.ToArray());

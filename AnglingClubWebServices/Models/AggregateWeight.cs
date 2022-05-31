@@ -20,6 +20,7 @@ namespace AnglingClubWebServices.Models
         public string Name { get; set; }
         public float TotalWeightDecimal { get; set; }
 
+        public int MembershipNumber { get; set; }
         public string Weight
         {
             get
