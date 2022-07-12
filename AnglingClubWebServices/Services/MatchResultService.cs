@@ -26,31 +26,47 @@ namespace AnglingClubWebServices.Services
             _logger = loggerFactory.CreateLogger<MatchResultService>();
         }
 
-        public List<MatchResult> GetResults(string matchId)
+        public List<MatchResult> GetResults(string matchId, MatchType matchType)
         {
-            var results = _matchResultRepository.GetMatchResults(matchId).Result;
+            var results = (_matchResultRepository.GetMatchResults(matchId).Result).OrderByDescending(r => r.Points).ThenByDescending(r => r.WeightDecimal).ToList();
 
             var pos = 1;
             int numberAtPos = 0;
 
             float lastWeight = results.Any() ? results.Max(r => r.WeightDecimal) : 0f;
+            float lastPoints = 10000;
 
-
-            foreach (var result in results.OrderByDescending(r => r.WeightDecimal))
+            foreach (var result in results)
             {
-                if (result.WeightDecimal < lastWeight)
+
+                if (matchType == MatchType.OSU)
                 {
-                    pos+= numberAtPos;
-                    lastWeight = result.WeightDecimal;
-                    numberAtPos = 0;
+                    if (result.Points < lastPoints)
+                    {
+                        pos += numberAtPos;
+                        lastPoints = result.Points;
+                        numberAtPos = 0;
+
+                    }
                 }
+                else
+                {
+                    if (result.WeightDecimal < lastWeight)
+                    {
+                        pos += numberAtPos;
+                        lastWeight = result.WeightDecimal;
+                        numberAtPos = 0;
+                    }
+
+                }
+
 
                 if (result.WeightDecimal == lastWeight)
                 {
                     numberAtPos++;
                 }
 
-                result.Position = result.WeightDecimal > 0 ? pos : 0;
+                result.Position = matchType == MatchType.OSU || result.WeightDecimal > 0 ? pos : 0;
             }
 
             return results;
