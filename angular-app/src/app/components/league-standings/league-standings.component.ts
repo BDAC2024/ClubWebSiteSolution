@@ -53,6 +53,10 @@ export class LeagueStandingsComponent implements OnInit {
     .subscribe(data => {
       this.isLoading = false;
       this.standings = data;
+
+      if (this.selectedMatchType == MatchType.OSU) {
+        this.displayedColumns = ["position", "name", "points"]
+      }
     });
   }
 

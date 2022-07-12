@@ -42,6 +42,10 @@ export class MatchInfoComponent implements OnInit {
       {
         this.displayedColumns = ["pos", "name", "peg", "weight"];
       }
+
+      if (this.match.matchType == MatchType.OSU) {
+        this.displayedColumns = ["pos", "name", "pts"];
+      }
     });
 
   }
