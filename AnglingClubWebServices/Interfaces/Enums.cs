@@ -41,6 +41,9 @@ namespace AnglingClubWebServices.Interfaces
         ClubPond,
 
         None,
+
+        [Description("Pairs")]
+        Pairs,
     }
 
     public enum WaterType
