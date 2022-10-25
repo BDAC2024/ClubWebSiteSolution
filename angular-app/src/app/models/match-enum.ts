@@ -50,7 +50,9 @@ export enum AggregateWeightType {
   Spring = 0,
   ClubRiver,
   ClubPond,
-  None
+  None,
+  Pairs,
+
 }
 
 export namespace AggregateWeightType {
@@ -62,6 +64,8 @@ export namespace AggregateWeightType {
         return "Club/River";
       case AggregateWeightType.ClubPond:
         return "Club/Pond";
+      case AggregateWeightType.Pairs:
+        return "Pairs";
       default:
         return AggregateWeightType[type];
     }
@@ -74,6 +78,8 @@ export namespace AggregateWeightType {
         return "Club Match - River";
       case AggregateWeightType.ClubPond:
         return "Club Match - Pond";
+      case AggregateWeightType.Pairs:
+        return "Pairs";
       default:
         return AggregateWeightType[type];
     }

@@ -35,6 +35,7 @@ export class MatchService {
   public get AggSpringTabName() : string { return this.getAggTabName(AggregateWeightType.Spring); }
   public get AggClubRiverTabName() : string { return this.getAggTabName(AggregateWeightType.ClubRiver); }
   public get AggClubPondTabName() : string { return this.getAggTabName(AggregateWeightType.ClubPond); }
+  public get AggPairsTabName() : string { return this.getAggTabName(AggregateWeightType.Pairs); }
 
   private getAggTabName(type: AggregateWeightType): string {
     return this.screenService.IsHandsetPortrait? AggregateWeightType.CompactName(type) : AggregateWeightType.FullName(type)

@@ -40,7 +40,25 @@ export class AggregateWeightsComponent implements OnInit {
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.selectedAggregateWeightType = tabChangeEvent.index as AggregateWeightType;
+
+    switch (tabChangeEvent.index) {
+      case 0:
+        this.selectedAggregateWeightType = AggregateWeightType.Spring;
+        break;
+        
+      case 1:
+        this.selectedAggregateWeightType = AggregateWeightType.ClubRiver;
+        break;
+        
+      case 2:
+        this.selectedAggregateWeightType = AggregateWeightType.ClubPond;
+        break;
+
+      case 3:
+        this.selectedAggregateWeightType = AggregateWeightType.Pairs;
+        break;
+    }
+
     this.loadWeights();
   }
 
