@@ -44,6 +44,7 @@ namespace AnglingClubWebServices.Interfaces
 
         [Description("Pairs")]
         Pairs,
+
     }
 
     public enum WaterType
