@@ -28,6 +28,21 @@ namespace AnglingClubWebServices.Models
         public List<Season> SeasonsActive { get; set; } = new List<Season>();
         public bool ReLoginRequired { get; set; } = false;
 
+        public string Surname 
+        {
+            get
+            { 
+                if (Name != "Anonymous" && Name.Contains("."))
+                {
+                    return Name.Split(".")[1];
+                }
+                else
+                {
+                    return Name;
+                }
+            } 
+        }
+
         public int NewPin(int? toPin = null)
         {
             int newPin;
