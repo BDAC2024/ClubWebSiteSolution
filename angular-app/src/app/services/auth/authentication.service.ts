@@ -45,6 +45,20 @@ export class AuthenticationService {
     }
    }
 
+   public get isDeveloper(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      if (tokenDecoded.Developer) {
+        return JSON.parse(tokenDecoded.Developer.toLowerCase());
+      } else {
+        return false;
+      }
+      
+    } else {
+      return false;
+    }
+   }
+
    public get allowNameToBeUsed(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
