@@ -57,6 +57,13 @@ export class MembersService {
             ));
   }
 
+  public readAllMembers(): Observable<Member[]> {
+    return this.http.get<Member[]>(`${this.globalService.ApiUrl}/api/members`)
+              .pipe(map(res => 
+                plainToClass(Member, res)
+            ));
+  }
+
   public updateMember(member: Member): Observable<Member> {
 
     return this.http.post<Member>(`${this.globalService.ApiUrl}/api/members/update`, member)

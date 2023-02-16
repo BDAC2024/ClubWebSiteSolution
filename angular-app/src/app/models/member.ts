@@ -7,6 +7,7 @@ export class Member {
     token?: string;
     membershipNumber!: number;
     name!: string;
+    surname!: string;
     email!: string;
     admin: boolean = false;
     allowNameToBeUsed: boolean = false;

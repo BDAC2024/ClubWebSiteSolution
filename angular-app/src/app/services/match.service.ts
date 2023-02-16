@@ -27,6 +27,7 @@ export class MatchService {
   public get OsuTabName() : string { return this.getTabName(MatchType.OSU); }
   public get SpecialsTabName() : string { return this.getTabName(MatchType.Specials); }
   public get PairsTabName() : string { return this.getTabName(MatchType.Pairs); }
+  public get EveningTabName() : string { return this.getTabName(MatchType.Evening); }
 
   private getTabName(type: MatchType): string {
     return this.screenService.IsHandsetPortrait? MatchType.CompactName(type) : MatchType.FullName(type)
@@ -36,6 +37,7 @@ export class MatchService {
   public get AggClubRiverTabName() : string { return this.getAggTabName(AggregateWeightType.ClubRiver); }
   public get AggClubPondTabName() : string { return this.getAggTabName(AggregateWeightType.ClubPond); }
   public get AggPairsTabName() : string { return this.getAggTabName(AggregateWeightType.Pairs); }
+  public get AggEveningTabName() : string { return this.getAggTabName(AggregateWeightType.Evening); }
 
   private getAggTabName(type: AggregateWeightType): string {
     return this.screenService.IsHandsetPortrait? AggregateWeightType.CompactName(type) : AggregateWeightType.FullName(type)

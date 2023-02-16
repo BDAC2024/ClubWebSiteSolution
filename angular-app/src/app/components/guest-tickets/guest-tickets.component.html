@@ -1,0 +1,69 @@
+<div>
+    <div style="display: flex;">
+        <h1 class="left-header">Guest Tickets</h1>
+        <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']" ></span>
+        <mat-form-field class="season-selector" *ngIf="!isLoading">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="getTickets()" >
+            <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <span [ngClass]="[this.screenService.IsHandset ? '' : 'example-fill-remaining-space']" ></span>
+        <div class="edit-button-panel">
+            <button class="btn-primary" mat-stroked-button color="primary" (click)="issueTicket()" ><mat-icon aria-hidden="false" aria-label="Issue a ticket">add</mat-icon> Issue Ticket</button>
+        </div>
+    
+    </div>  
+
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+    <div class="mat-elevation-z8">
+        <!-- <div class="table-container"> -->
+            <table mat-table [dataSource]="tickets"  matSort>
+
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Number Column -->
+                <ng-container matColumnDef="ticketNumber">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header align="left" class="first-col-header">No.</th>
+                    <td mat-cell *matCellDef="let element" > {{element.ticketNumber}} </td>
+                </ng-container>
+
+                <!-- Issued On Column -->
+                <ng-container matColumnDef="issuedOn">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Issued On </th>
+                    <td mat-cell *matCellDef="let element" class="cell-date"> {{element.issuedOn | date:'dd MMM YY'}} </td>
+                </ng-container>
+
+                <!-- Issued By Column -->
+                <ng-container matColumnDef="issuedBy">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Issued By </th>
+                    <td mat-cell *matCellDef="let element" > {{element.issuedBy}} </td>
+                </ng-container>
+
+                <!-- Ticket Valid On Column -->
+                <ng-container matColumnDef="ticketValidOn">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Valid On </th>
+                    <td mat-cell *matCellDef="let element" class="cell-date"> {{element.ticketValidOn | date:'dd MMM YY'}} </td>
+                </ng-container>
+
+                <!-- Member Column -->
+                <ng-container matColumnDef="membersName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Member </th>
+                    <td mat-cell *matCellDef="let element" > {{element.membersName}} </td>
+                </ng-container>
+
+                <!-- Guest Column -->
+                <ng-container matColumnDef="guestsName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Guest </th>
+                    <td mat-cell *matCellDef="let element" > {{element.guestsName}} </td>
+                </ng-container>
+   
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        <!-- </div> -->
+    </div>
+
+</div>

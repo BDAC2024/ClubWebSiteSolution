@@ -1,0 +1,43 @@
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{title}}</h1>
+<br/>
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+<div > 
+
+    <div mat-dialog-content *ngIf="!isLoading">
+
+        <mat-form-field class="half-width" *ngIf="!isLoading">
+            <mat-label>Member Name</mat-label>
+            <mat-select [(ngModel)]="selectedMember" (selectionChange)="previewTicket()">
+                <mat-option *ngFor="let member of members" [value]="member">{{member.name}}</mat-option>
+                </mat-select>
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="half-width" *ngIf="!isLoading">
+            <mat-label>Email ticket to</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="guestTicket.emailTo">
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="half-width" *ngIf="!isLoading">
+            <mat-label>Guest Name</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="guestTicket.guestsName" (change)="onChangeEvent($event)">
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
+            <mat-label>Ticket valid for</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="guestTicket.ticketValidOn" (dateChange)="previewTicket()">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <br/>
+    </div>
+
+    <div>
+        <canvas #canvasEl></canvas>
+    </div>
+
+    <div mat-dialog-actions class="edit-button-panel">
+        <button class="edit-button" mat-raised-button color="primary" value="Confirm" [mat-dialog-close]="data" >Send</button>
+        <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Cancel</button>
+    </div>
+</div>

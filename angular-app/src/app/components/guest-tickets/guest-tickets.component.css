@@ -1,0 +1,38 @@
+.mat-cell {
+    padding: 0 16px 0 0;
+}
+
+.mat-header-cell
+{
+    padding: 0 16px 0 0;
+}
+
+.first-col {
+    padding: 0 10px 0 4px !important;
+    text-align: center;
+}
+
+.last-col {
+    padding: 0 2px 0 0 !important;
+}
+
+.cell-date {
+    white-space: nowrap;
+}
+
+table {
+    width: 100%;
+  }
+
+.table-container {
+    max-height: calc(100vh - 255px); /* or height: calc(100vh - 155px); depending on your need  change */
+    overflow: auto;
+}
+
+.edit-button-panel {
+    float: right;
+  }
+  
+.edit-button {
+    margin-left: 12px;
+}

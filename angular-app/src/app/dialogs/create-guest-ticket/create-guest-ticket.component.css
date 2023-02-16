@@ -1,0 +1,46 @@
+.edit-button-panel {
+    float: right;
+  }
+  
+  .edit-button {
+    margin-left: 12px;
+  }
+  
+  .left-header {
+    float: left;
+  }
+  
+  ::ng-deep.mat-dialog-container {
+    resize: both; 
+    overflow: auto;
+    background: #fff;
+  }
+
+  [mat-dialog-title] {
+    margin: -24px -24px 0px -24px !important;
+    padding: 10px 24px;
+    background: #369;
+    color: #fff;
+    cursor: move;
+    text-align: center;
+  }
+
+  /* [mat-dialog-actions] {
+    margin: 0px -24px 0px -24px !important;
+    padding: 10px 24px;
+    background: #369;
+    color: #fff;
+  } */
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .half-width {
+    width: 50%;
+  }
+
+  .date-form-field {
+    width: 150px;
+  }  
+

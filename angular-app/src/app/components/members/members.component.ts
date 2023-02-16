@@ -65,7 +65,10 @@ export class MembersComponent implements OnInit, AfterViewInit {
   }
 
   public addMember() {
-    var member: Member = { dbKey: "", id: '', membershipNumber: 0, admin: false, allowNameToBeUsed: false, name: '', email: '', seasonsActive: [], pinResetRequired: true, preferencesLastUpdated: new Date(), reLoginRequired: false, initialPin: 0 };
+    var member: Member = {
+      dbKey: "", id: '', membershipNumber: 0, admin: false, allowNameToBeUsed: false, name: '', email: '', seasonsActive: [], pinResetRequired: true, preferencesLastUpdated: new Date(), reLoginRequired: false, initialPin: 0,
+      surname: ''
+    };
 
     const dialogRef = this.dialog.open(AddMemberComponent, {
       width: this.screenService.IsHandset ? '90vw' : '40vw',

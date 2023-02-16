@@ -4,7 +4,8 @@ export enum MatchType {
   Junior,
   OSU,
   Specials,
-  Pairs
+  Pairs,
+  Evening
 }
 
 export namespace MatchType {
@@ -22,6 +23,8 @@ export namespace MatchType {
         return "Specials";
       case MatchType.Pairs:
         return "Pairs";
+      case MatchType.Evening:
+        return "Evening";
       default:
         return MatchType[type];
     }
@@ -40,6 +43,8 @@ export namespace MatchType {
         return "Specials";
       case MatchType.Pairs:
         return "Pairs";
+      case MatchType.Evening:
+        return "Evening League";
       default:
         return MatchType[type];
     }
@@ -52,7 +57,7 @@ export enum AggregateWeightType {
   ClubPond,
   None,
   Pairs,
-
+  Evening,
 }
 
 export namespace AggregateWeightType {
@@ -64,10 +69,12 @@ export namespace AggregateWeightType {
         return "Club/River";
       case AggregateWeightType.ClubPond:
         return "Club/Pond";
-      case AggregateWeightType.Pairs:
-        return "Pairs";
-      default:
-        return AggregateWeightType[type];
+        case AggregateWeightType.Pairs:
+          return "Pairs";
+        case AggregateWeightType.Evening:
+          return "Evening";
+        default:
+          return AggregateWeightType[type];
     }
   }
   export function FullName(type: AggregateWeightType): string {
@@ -80,6 +87,8 @@ export namespace AggregateWeightType {
         return "Club Match - Pond";
       case AggregateWeightType.Pairs:
         return "Pairs";
+      case AggregateWeightType.Evening:
+        return "Evening";
       default:
         return AggregateWeightType[type];
     }

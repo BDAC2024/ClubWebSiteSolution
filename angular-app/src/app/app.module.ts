@@ -75,6 +75,9 @@ import { RulesGeneralComponent } from './components/rules-general/rules-general.
 import { RulesMatchComponent } from './components/rules-match/rules-match.component';
 import { RulesJnrGeneralComponent } from './components/rules-jnr-general/rules-jnr-general.component';
 import { RulesJnrMatchComponent } from './components/rules-jnr-match/rules-jnr-match.component';
+import { GuestTicketCreateComponent } from './components/guest-ticket-create/guest-ticket-create.component';
+import { GuestTicketsComponent } from './components/guest-tickets/guest-tickets.component';
+import { CreateGuestTicketComponent } from './dialogs/create-guest-ticket/create-guest-ticket.component';
 
 @NgModule({
   declarations: [
@@ -114,6 +117,9 @@ import { RulesJnrMatchComponent } from './components/rules-jnr-match/rules-jnr-m
     RulesMatchComponent,
     RulesJnrGeneralComponent,
     RulesJnrMatchComponent,
+    GuestTicketCreateComponent,
+    GuestTicketsComponent,
+    CreateGuestTicketComponent,
   ],
   imports: [
     BrowserModule,
