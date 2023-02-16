@@ -58,6 +58,10 @@ export class AggregateWeightsComponent implements OnInit {
       case 3:
         this.selectedAggregateWeightType = AggregateWeightType.Pairs;
         break;
+
+      case 4:
+        this.selectedAggregateWeightType = AggregateWeightType.Evening;
+        break;
     }
 
     this.loadWeights();

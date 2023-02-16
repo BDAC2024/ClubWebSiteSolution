@@ -39,7 +39,29 @@ export class LeagueStandingsComponent implements OnInit {
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.selectedMatchType = tabChangeEvent.index as MatchType;
+
+    switch (tabChangeEvent.index) {
+      case 0:
+        this.selectedMatchType = MatchType.Spring;
+        break;
+        
+      case 1:
+        this.selectedMatchType = MatchType.Club;
+        break;
+        
+      case 2:
+        this.selectedMatchType = MatchType.Junior;
+        break;
+
+      case 3:
+        this.selectedMatchType = MatchType.OSU;
+        break;
+
+      case 4:
+        this.selectedMatchType = MatchType.Evening;
+        break;
+    }
+
     this.loadLeague();
   }
 
