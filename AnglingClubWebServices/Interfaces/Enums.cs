@@ -26,7 +26,12 @@ namespace AnglingClubWebServices.Interfaces
         OSU,
 
         Specials,
-        Pairs
+
+        [Description("Pairs")]
+        Pairs,
+
+        [Description("Evening League")]
+        Evening
     }
 
     public enum AggregateWeightType
@@ -44,6 +49,9 @@ namespace AnglingClubWebServices.Interfaces
 
         [Description("Pairs")]
         Pairs,
+
+        [Description("Evening League")]
+        Evening,
 
     }
 
