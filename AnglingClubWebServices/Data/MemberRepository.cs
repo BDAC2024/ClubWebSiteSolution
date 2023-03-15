@@ -32,23 +32,17 @@ namespace AnglingClubWebServices.Data
         {
             var client = GetClient();
 
-            if (!member.AllowNameToBeUsed)
-            {
-                member.Name = "Anonymous";
-            }
-
             if (member.IsNewItem)
             {
                 member.DbKey = member.GenerateDbKey(IdPrefix);
             }
-
 
             // Check that there aren't already members of this membership number in each active season
             foreach (var season in member.SeasonsActive)
             {
                 if (GetMembers().Result.Any(x => x.MembershipNumber == member.MembershipNumber && x.SeasonsActive.Contains(season) && x.DbKey != member.DbKey))
                 {
-                    throw new Exception($"Membership number {member.MembershipNumber} is already active for {season.SeasonName()}");
+                    //throw new Exception($"Membership number {member.MembershipNumber} is already active for {season.SeasonName()}");
                 }
             }
 
@@ -101,7 +95,7 @@ namespace AnglingClubWebServices.Data
 
         }
 
-        public async Task<List<Member>> GetMembers(Season? activeSeason = null)
+        public async Task<List<Member>> GetMembers(Season? activeSeason = null, bool forMatchResults = false)
         {
             _logger.LogWarning($"Getting members at : {DateTime.Now.ToString("HH:mm:ss.000")}");
 
@@ -177,6 +171,14 @@ namespace AnglingClubWebServices.Data
 
                         default:
                             break;
+                    }
+                }
+
+                if (forMatchResults)
+                {
+                    foreach (var anonMember in members.Where(x => !x.AllowNameToBeUsed))
+                    {
+                        anonMember.Name = "Anonymous";
                     }
                 }
 

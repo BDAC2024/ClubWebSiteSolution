@@ -49,7 +49,7 @@ namespace AnglingClubWebServices.Controllers
 
         [HttpPost("authenticate")]
         [AllowAnonymous]
-        public IActionResult Authenticate([FromBody]AuthenticateRequest model)
+        public IActionResult Authenticate([FromBody] AuthenticateRequest model)
         {
             try
             {
@@ -148,10 +148,51 @@ namespace AnglingClubWebServices.Controllers
                 return BadRequest("Only administrators can access this.");
             }
 
-            foreach (var member in members)
+            var allMembers = _memberRepository.GetMembers().Result;
+
+            try
             {
-                member.PinResetRequired = true;
-                _memberRepository.AddOrUpdateMember(member).Wait();
+                foreach (var member in members)
+                {
+                    var existingMember = allMembers.FirstOrDefault(x => x.MembershipNumber == member.MembershipNumber && 
+                        x.Name.ToLower() == "anonymous" ? x.SeasonsActive.Contains(member.SeasonsActive.First()) : x.Name.ToLower() == member.Name.ToLower());
+
+                    if (existingMember == null)
+                    {
+                        member.PinResetRequired = true;
+                        _memberRepository.AddOrUpdateMember(member).Wait();
+                    }
+                    else
+                    {
+                        member.DbKey = existingMember.DbKey;
+
+                        existingMember = allMembers.First(m => m.DbKey == member.DbKey);
+
+                        // Update member when new value
+                        if (member.SeasonsActive.Count == 1)
+                        {
+                            if (!existingMember.SeasonsActive.Contains(member.SeasonsActive.First()))
+                            {
+                                existingMember.SeasonsActive.Add(member.SeasonsActive.First());
+                            }
+                        }
+                        else
+                        {
+                            member.SeasonsActive = member.SeasonsActive;
+                        }
+
+                        existingMember.Admin = member.Admin;
+                        existingMember.MembershipNumber = member.MembershipNumber;
+
+                        existingMember.Name = member.Name;
+
+                        _memberRepository.AddOrUpdateMember(existingMember).Wait();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
             ReportTimer("Posting members");
@@ -184,7 +225,7 @@ namespace AnglingClubWebServices.Controllers
                 if (member != null)
                 {
                     // Check that the initial pin matches their current PIN and they do not appear to have logged in
-                    if (member.ValidPin(initialMemberPin.InitialPin) 
+                    if (member.ValidPin(initialMemberPin.InitialPin)
                         && !member.AllowNameToBeUsed
                         && member.PinResetRequired
                         && string.IsNullOrEmpty(member.Email))
@@ -256,7 +297,7 @@ namespace AnglingClubWebServices.Controllers
 
         [HttpPost]
         [Route("Update")]
-        public IActionResult Update([FromBody] Member memberDto)
+        public IActionResult Update([FromBody] MemberDto memberDto)
         {
             StartTimer();
 
@@ -265,28 +306,26 @@ namespace AnglingClubWebServices.Controllers
                 return BadRequest("Only administrators can access this.");
             }
 
-            var allMembers = _memberRepository.GetMembers().Result;
-
-            var member = allMembers.First(m => m.DbKey == memberDto.DbKey);
-
-            // Save these values to use when updating match results
-            var orginalMembershipNumber = member.MembershipNumber;
-            var originalSeasonsActive = member.SeasonsActive;
-
-            // Update member when new value
-            member.SeasonsActive = memberDto.SeasonsActive;
-            member.Admin = memberDto.Admin;
-            member.MembershipNumber = memberDto.MembershipNumber;
-            member.ReLoginRequired = memberDto.ReLoginRequired;
-            member.Email = memberDto.Email;
-
-            if (member.AllowNameToBeUsed)
-            {
-                member.Name = memberDto.Name;
-            }
-
             try
             {
+                var allMembers = _memberRepository.GetMembers().Result;
+
+                var member = allMembers.First(m => m.DbKey == memberDto.DbKey);
+
+                // Save these values to use when updating match results
+                var orginalMembershipNumber = member.MembershipNumber;
+                var originalSeasonsActive = member.SeasonsActive;
+
+                // Update member when new value
+                member.SeasonsActive = memberDto.SeasonsActive;
+
+                member.Admin = memberDto.Admin;
+                member.MembershipNumber = memberDto.MembershipNumber;
+                member.ReLoginRequired = memberDto.ReLoginRequired;
+                member.Email = memberDto.Email;
+
+                member.Name = memberDto.Name;
+
                 _memberRepository.AddOrUpdateMember(member).Wait();
 
                 // Update all match results for this member in the members original seasons
@@ -308,7 +347,6 @@ namespace AnglingClubWebServices.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
 
             ReportTimer("Updating member");
 
@@ -477,5 +515,6 @@ namespace AnglingClubWebServices.Controllers
         public void Delete(int id)
         {
         }
+
     }
 }

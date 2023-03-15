@@ -52,7 +52,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 var match = _eventRepository.GetEvents().Result.Single(x => x.Id == matchId);
                 var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetResults(matchId, match.MatchType.GetValueOrDefault(MatchType.Club)));
-                var members = _memberRepository.GetMembers(match.Season).Result;
+                var members = _memberRepository.GetMembers(match.Season, true).Result;
                 foreach (var result in results)
                 {
                     result.Name = members.Single(x => x.MembershipNumber == result.MembershipNumber).Name;
@@ -83,7 +83,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 var standings = _matchResultService.GetLeagueStandings(matchType, season);
 
-                ReportTimer("Getting league standings");
+                ReportTimer($"Getting league standings for {matchType} in {season}");
 
                 return Ok(standings);
 
@@ -108,7 +108,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 var standings = _matchResultService.GetAggregateWeights(aggWeightType, season);
 
-                ReportTimer("Getting aggregate weights");
+                ReportTimer($"Getting aggregate weights for {aggWeightType} in {season}");
 
                 return Ok(standings);
 
