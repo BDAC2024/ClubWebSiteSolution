@@ -59,7 +59,7 @@ namespace AnglingClubWebServices.Helpers
         /// <returns></returns>
         public static DateTime SeasonEnds(this Season value)
         {
-            var ends = DateTime.Parse(seasonParts(value)[2]);
+            var ends = DateTime.Parse(seasonParts(value)[2]).AddHours(23).AddMinutes(59);
 
             return ends;
         }

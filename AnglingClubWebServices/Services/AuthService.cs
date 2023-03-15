@@ -118,7 +118,7 @@ namespace AnglingClubWebServices.Services
                     new Claim("Key", member.DbKey),
                     new Claim("MembershipNumber", member.MembershipNumber.ToString()),
                     new Claim("Admin", member.Admin.ToString()),
-                    //new Claim("Developer", (member.Name == GetDeveloperName()).ToString()),
+                    new Claim("Developer", (member.Name == GetDeveloperName()).ToString()),
                     new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),
                     new Claim("PreferencesLastUpdated", member.PreferencesLastUpdated.ToString("u")),
                     new Claim("Name", member.AllowNameToBeUsed ? member.Name : "Anonymous"),

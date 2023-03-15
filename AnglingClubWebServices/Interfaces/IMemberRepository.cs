@@ -8,6 +8,6 @@ namespace AnglingClubWebServices.Interfaces
     {
         string SiteUrl { get; }
         Task AddOrUpdateMember(Member member);
-        Task<List<Member>> GetMembers(Season? activeSeason = null);
+        Task<List<Member>> GetMembers(Season? activeSeason = null, bool forMatches = false);
     }
 }
