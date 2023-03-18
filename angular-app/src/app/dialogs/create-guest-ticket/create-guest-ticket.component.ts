@@ -33,7 +33,7 @@ export const MY_FORMATS = {
 
 
 // Sizes in mm
-const MARGIN = 10;         
+const MARGIN = 1;         
 const TICKET_WIDTH  = 173; 
 const TICKET_HEIGHT = 82;  
 const VERTICAL_DIVIDER = 60;
@@ -345,7 +345,7 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
 
   private setCanvasSCALE(isHandsetPortait: boolean) {
     if (isHandsetPortait) {
-      this.SCALE = 1.2;
+      this.SCALE = 1.4;
     } else {
       this.SCALE = 3.5;
     }
