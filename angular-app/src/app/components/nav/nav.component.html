@@ -52,7 +52,7 @@
 				<div class="submenu" [ngClass]="{'expanded' : showAdminSubMenu}" *ngIf="showAdminSubMenu && authenticationService.isAdmin">
 					<a mat-list-item routerLink="/members">Members</a>
 					<a mat-list-item routerLink="/userAdmins">User Admins</a>
-					<a mat-list-item routerLink="/guestTickets" *ngIf="authenticationService.isDeveloper">Guest Tickets</a>
+					<a mat-list-item routerLink="/guestTickets" *ngIf="isPreviewer()" ><span class="alert">Guest Tickets</span></a>
 					<!-- <a mat-list-item routerLink="/aggregateWeights">Weights</a> -->
 				</div>
 

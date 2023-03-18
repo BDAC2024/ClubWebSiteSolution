@@ -11,6 +11,7 @@ export class GuestTicket {
   emailTo!: string;
   guestsName!: string;
   season!: number;
+  imageData!: string;
 }
 
 

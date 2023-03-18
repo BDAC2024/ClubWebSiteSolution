@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { Member } from 'src/app/models/member';
 import { MembersService } from 'src/app/services/members.service';
@@ -9,6 +9,10 @@ import { RefDataService } from 'src/app/services/ref-data.service';
 import { GuestTicket } from 'src/app/models/guest-ticket';
 import { ScreenService } from 'src/app/services/screen.service';
 import { ThrowStmt } from '@angular/compiler';
+import { GuestTicketService } from 'src/app/services/guest-ticket.service';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { ErrorComponent } from '../error/error.component';
 
 
 export interface DialogData {
@@ -44,7 +48,9 @@ const TICKET_NUMBER_DIVIDER = 55;
 })
 
 export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
-
+  myControl: FormControl = new FormControl();
+  emailControl: FormControl = new FormControl();
+  
   private SCALE = 3.5;
   private CANVAS_WIDTH  = (TICKET_WIDTH * this.SCALE) + (MARGIN * this.SCALE * 2);
   private CANVAS_HEIGHT = (TICKET_HEIGHT * this.SCALE) + (MARGIN * this.SCALE * 2);
@@ -53,10 +59,14 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
   public selectedMember!: Member;
   public members!: Member[];
   public refData!: RefData;
+  public emailTo: string = "";
+  public isSaving: boolean = false;
 
   public isLoading: boolean = false;
+  filteredOptions!: Observable<Member[]>;
+  editMode: boolean = false;
 
-  public guestTicket!: GuestTicket;
+  //public guestTicket!: GuestTicket;
 
   @ViewChild('canvasEl', { static: false }) canvas!: ElementRef<HTMLCanvasElement>; 
 
@@ -66,10 +76,13 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     private membersService: MembersService,
     private refDataService: RefDataService,
     public screenService: ScreenService,
+    private guestTicketService: GuestTicketService,
+    private dialog: MatDialog,
 
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-      if (data.dbKey != "") {
+    @Inject(MAT_DIALOG_DATA) public guestTicket: GuestTicket) {
+      if (guestTicket.dbKey != "") {
         this.title = "Edit Guest Ticket";
+        this.editMode = true;
       } else {
         this.title = "Issue Guest Ticket";
       }
@@ -77,19 +90,69 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
       screenService.OrientationChange.on(() => {
         this.setCanvasSCALE(screenService.IsHandsetPortrait);
       });
+
   }
     
 
   public cancel(): void {
-    this.dialogRef.close();
+    if (!this.editMode && this.guestTicket.dbKey != null && this.guestTicket.dbKey.trim() != "") {
+      this.guestTicketService.deleteGuestTicket(this.guestTicket.dbKey)
+        .subscribe(data => {
+          this.dialogRef.close();
+        });
+    } else {
+      this.dialogRef.close();
+    }
+  }
+
+  public send(): void {
+
+    this.isSaving = true;
+
+    this.guestTicketService.addOrUpdateGuestTicket(this.guestTicket)
+    .subscribe(data => {
+      this.guestTicketService.issueGuestTicket(this.guestTicket)
+      .subscribe(data => {
+        this.isSaving = false;
+
+        const popupRef = this.dialog.open(ErrorComponent, {width: "300px", maxHeight: "100vh", data: {title: "Success", body: "Ticket has been emailed to " + this.guestTicket.emailTo}});
+    
+        popupRef.afterClosed().subscribe(result => {
+          this.dialogRef.close(this.guestTicket);
+        });
+  
+      }, err=> {
+        this.isSaving = false;
+
+        const popupRef = this.dialog.open(ErrorComponent, {width: "300px", maxHeight: "100vh", data: {title: "Failed", body: "Could not send ticket to " + this.guestTicket.emailTo + err}});
+      });
+    });
+
   }
 
   ngOnInit(): void {
     this.isLoading = true;
     this.getRefData();
 
-    this.guestTicket = new GuestTicket();
+    //this.guestTicket = new GuestTicket();
+    this.filteredOptions = this.myControl.valueChanges
+    .pipe(
+    startWith(''),
+    map(val => this.filter(val))
+    );
+  }
 
+  filter(val: string): Member[] {
+    return this.members.filter(option =>
+      option.name.toLowerCase().includes(val.toLowerCase()));
+  }
+
+  updateSelectedMember(selectedMember: Member) {
+    console.log("updateSelectedMember: Setting selectedMember = " + selectedMember.name);
+    this.selectedMember = selectedMember;
+    this.emailTo = selectedMember.email;
+    console.log("updateSelectedMember: Setting emailTo = " + this.emailTo);
+    this.onChangeEvent(selectedMember);
   }
 
   ngAfterViewInit() {
@@ -115,36 +178,71 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
   }
 
   public getMembers() {
-    this.membersService.readAllMembers()
+    this.membersService.readMembers(this.guestTicket.season)
     .subscribe(data => {
       this.members = data as Member[];
       this.members = this.members
       .sort((a, b) => {
         return b.surname < a.surname && 1 || -1;
       })
+      if (this.editMode) {
+        this.emailTo = this.guestTicket.emailTo;
+        this.selectedMember = this.members.filter(option =>
+          option.membershipNumber == this.guestTicket.membershipNumber)[0];
+          console.log("getMembers: Setting selectedMember to: " + this.selectedMember.name);
+          this.myControl.setValue(this.selectedMember.name);
+        this.onChangeEvent(this.selectedMember);
+        this.previewTicket();
+      }
+
       this.isLoading = false;
     });
   }
 
 
   public onChangeEvent(event: any) {
-    this.previewTicket();
+
+    if (!this.isLoading) {
+      console.log("onChangeEvent: Previewing...");
+
+      this.previewTicket();
+
+      if (this.formComplete() && !this.editMode) {
+        console.log("onChangeEvent: formComplete so updating...");
+
+        this.guestTicketService.addOrUpdateGuestTicket(this.guestTicket)
+          .subscribe(data => {
+            this.guestTicket = data;
+            console.log("onChangeEvent: Previewing again after updating...");
+            this.previewTicket();
+          });
+      }
+    }
   }
 
   public previewTicket() {
 
-    this.guestTicket.cost = 5;
     //this.guestTicket.ticketNumber ;
     this.guestTicket.issuedBy = this.membersService.CurrentMember.name;
+    this.guestTicket.issuedByMembershipNumber = this.membersService.CurrentMember.membershipNumber;
     this.guestTicket.issuedOn = new Date();
-    this.guestTicket.membersName = this.selectedMember.name;
-    this.guestTicket.emailTo = this.selectedMember.email;
-
-    if (this.guestTicket.ticketValidOn == null || this.selectedMember == null || this.guestTicket.guestsName == null || this.guestTicket.guestsName.trim() == "") {
-      return;
-    }
+    //if (this.selectedMember != null) {
+      this.guestTicket.membersName = this.selectedMember.name;
+      this.guestTicket.membershipNumber = this.selectedMember.membershipNumber;
+    //}
+    this.guestTicket.emailTo = this.emailTo;
 
     this.drawTicket(this.context);
+  }
+
+  formComplete(): boolean {
+    return !this.emailControl.invalid && 
+          this.guestTicket.ticketValidOn != null &&
+          this.selectedMember != null && 
+          this.guestTicket.guestsName != null && 
+          this.guestTicket.guestsName.trim() != "" &&
+          this.guestTicket.emailTo != null &&
+          this.guestTicket.emailTo.trim() != "";
   }
 
   drawTicket(ctx: CanvasRenderingContext2D): void {
@@ -152,6 +250,10 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     ctx.beginPath();
 
     ctx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
+
+    if (!this.formComplete()) {
+      return;
+    }
 
     ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
@@ -187,7 +289,7 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     ctx.fillText("Ticket Covers:", (MARGIN + (VERTICAL_DIVIDER / 2)) * this.SCALE, (MARGIN + 60) * this.SCALE);
 
     ctx.textAlign = "left";
-    ctx.fillText("Date: " + this.guestTicket.ticketValidOn!.toDateString() , (MARGIN + 9) * this.SCALE, (MARGIN + 70) * this.SCALE);
+    ctx.fillText("Date: " + new Date(Date.parse(this.guestTicket.ticketValidOn!.toString())).toDateString() , (MARGIN + 9) * this.SCALE, (MARGIN + 70) * this.SCALE);
 
     ctx.textAlign = "center";
     ctx.font=`normal normal bold ${14 / 3.5 * this.SCALE}px arial`;
@@ -233,8 +335,8 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     ctx.stroke();
     
     //var dataUrl = this.canvas.nativeElement.toDataURL('image/jpeg', 1.0);
-    var dataUrl = this.canvas.nativeElement.toDataURL();
-    console.log(dataUrl);
+    this.guestTicket.imageData = this.canvas.nativeElement.toDataURL();
+    //console.log(this.guestTicket.imageData);
   }
 
   addLeadingZeros(num: number, totalLength: number): string {

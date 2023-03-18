@@ -27,7 +27,11 @@
             <br/>
         <mat-form-field>
             <mat-label>Email</mat-label>
-            <input class="title-form-field" matInput [(ngModel)]="member.email">
+            <input type="email" name="email" [formControl]="emailControl" class="title-form-field" ngModel email="true" matInput [(ngModel)]="member.email">
+            <div *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)" class="alert">
+                Please enter a valid email address.
+            </div>
+
         </mat-form-field>
         <br/>
             <label class="my-mat-label" >
@@ -51,9 +55,12 @@
             <li>Member last updated their preferences on {{member.preferencesLastUpdated | date:'dd MMM YY'}}</li>
         </ul>
         <br/>
-        <button class="member-button" mat-raised-button color="primary" (click)="save()">Save</button>
-        <button class="member-button" mat-raised-button color="primary" (click)="resetPin()">Reset PIN</button>
-        <br/>
+        <div mat-dialog-actions >
+            <!-- <mat-spinner diameter="20" *ngIf="isSaving" style="display:inline-block"></mat-spinner> -->
+            <button class="edit-button" mat-raised-button color="primary" style="display:inline-block" *ngIf="isSaving" [disabled]="isSaving">Saving...</button>
+            <button class="edit-button" mat-raised-button color="primary" style="display:inline-block" (click)="save()" *ngIf="!isSaving" [disabled]="emailControl.invalid">Save</button>
+            <button class="edit-button" mat-raised-button color="primary"  (click)="resetPin()">Reset PIN</button>
+        </div>
         <br/>
         <span *ngIf="status">{{status}}</span>
     </div>

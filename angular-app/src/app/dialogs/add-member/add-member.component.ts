@@ -1,11 +1,13 @@
 import { SelectionModel } from "@angular/cdk/collections";
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from "@angular/forms";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
 import { Member } from 'src/app/models/member';
 import { RefData } from 'src/app/models/refData';
 import { MembersService } from 'src/app/services/members.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
+import { ScreenService } from "src/app/services/screen.service";
 import { ErrorComponent } from "../error/error.component";
 
 @Component({
@@ -14,6 +16,7 @@ import { ErrorComponent } from "../error/error.component";
   styleUrls: ['./add-member.component.css']
 })
 export class AddMemberComponent implements OnInit {
+  emailControl: FormControl = new FormControl();
 
   private membershipNumber!: number;
   public member!: Member;
@@ -29,7 +32,8 @@ export class AddMemberComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Member,
     private refDataService: RefDataService,
     private membersService: MembersService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public screenService: ScreenService,
   ) { }
 
   ngOnInit(): void {
@@ -44,7 +48,7 @@ export class AddMemberComponent implements OnInit {
 
       this.refData.seasons = this.refData.seasons
       .filter((s) => {
-        return s.season <= this.refData.currentSeason + 1;
+        return s.season <= this.refData.currentSeason;
       })
       .sort((a, b) => {
         return a.season < b.season && 1 || -1;

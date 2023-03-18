@@ -32,6 +32,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     padding: 6px;
 }
 
+.alert {
+    color: red;
+    font-size: small;
+}
+
 .edit-button-panel {
     float: right;
   }
@@ -62,4 +67,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     background-color: rgb(247, 88, 88);
     color: white;
     /* text-align: center; */
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.half-width {
+    width: 50%;
+}
+
+.full-width {
+    width: 100%;
 }

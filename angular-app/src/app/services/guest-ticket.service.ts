@@ -23,4 +23,24 @@ export class GuestTicketService {
             ));
   }
 
+  public addOrUpdateGuestTicket(guestTicket: GuestTicket): Observable<GuestTicket> {
+
+    return this.http.post<GuestTicket>(`${this.globalService.ApiUrl}/api/guestTicket`, guestTicket)
+              .pipe();
+  }
+
+  public issueGuestTicket(guestTicket: GuestTicket): Observable<void> {
+
+    return this.http.post<void>(`${this.globalService.ApiUrl}/api/guestTicket/issue`, guestTicket)
+              .pipe();
+  }
+
+  public deleteGuestTicket(id: string): Observable<{}> {
+
+    console.log("deleting via API...");
+    
+    return this.http.delete(`${this.globalService.ApiUrl}/api/guestTicket/${id}`)
+              .pipe();
+  }
+
 }

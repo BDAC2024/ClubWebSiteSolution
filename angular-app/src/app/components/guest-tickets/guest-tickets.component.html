@@ -59,7 +59,16 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Guest </th>
                     <td mat-cell *matCellDef="let element" > {{element.guestsName}} </td>
                 </ng-container>
-   
+
+                <!-- View Column -->
+                <ng-container matColumnDef="edit">
+                    <th mat-header-cell *matHeaderCellDef>Action</th>
+                    <td mat-cell *matCellDef="let element" class="last-col">
+                        <!-- <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="edit(element)"><mat-icon>edit</mat-icon></button> -->
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="edit(element)" ><mat-icon aria-hidden="false" aria-label="Edit ticket">edit</mat-icon> Edit</button>
+                    </td>
+                </ng-container>
+                
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>

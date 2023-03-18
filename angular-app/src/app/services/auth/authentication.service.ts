@@ -45,6 +45,18 @@ export class AuthenticationService {
     }
    }
 
+   public isPreviewer(previewers: number[]): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+
+      return previewers.includes(parseInt(tokenDecoded.MembershipNumber));
+
+    } else {
+      return false;
+    }
+
+   }
+
    public get isDeveloper(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
@@ -120,4 +132,5 @@ export class AuthenticationService {
     this.currentMemberSubject = new BehaviorSubject<Member>(member);
     this.currentMember = this.currentMemberSubject.asObservable();
   }
+ 
 }

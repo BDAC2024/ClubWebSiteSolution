@@ -59,6 +59,7 @@ import { MyDetailsComponent } from './components/my-details/my-details.component
 import { UserAdminsComponent } from './components/user-admins/user-admins.component';
 import { AddEditUserAdminDialogComponent } from './dialogs/add-edit-user-admin-dialog/add-edit-user-admin-dialog.component';
 import { MatSortModule } from '@angular/material/sort';
+import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ResetPinComponent } from './dialogs/reset-pin/reset-pin.component';
 import { AddEditWaterDialogComponent } from './dialogs/add-edit-water-dialog/add-edit-water-dialog.component';
 import { AddEditRulesDialogComponent } from './dialogs/add-edit-rules-dialog/add-edit-rules-dialog.component';
@@ -153,8 +154,8 @@ import { CreateGuestTicketComponent } from './dialogs/create-guest-ticket/create
     MatNativeDateModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatAutocompleteModule,
     ScrollingModule, 
-    
     FateModule,
     FateMaterialModule,
   ],

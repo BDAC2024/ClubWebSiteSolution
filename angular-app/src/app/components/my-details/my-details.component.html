@@ -30,14 +30,17 @@
     <br/>
     <mat-form-field>
         <mat-label>Email (optional)</mat-label>
-        <input class="title-form-field" matInput [(ngModel)]="this.prefs.email">
+        <input type="email" name="email" [formControl]="emailControl" class="title-form-field" ngModel email="true" matInput [(ngModel)]="this.prefs.email">
+        <div *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)" class="alert">
+            Please enter a valid email address.
+        </div>
     </mat-form-field>
     <br/>
     Your email will simplify PIN resets and may be used for important club notifications.
     <br/>
     <br/>
     <div mat-dialog-actions class="edit-button-panel">
-        <button mat-raised-button color="primary" (click)="submit()">Save Details</button>
+        <button mat-raised-button color="primary" [disabled]="emailControl.invalid" (click)="submit()">Save Details</button>
     </div>
     <br/>
     <br/>

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CreateGuestTicketComponent } from 'src/app/dialogs/create-guest-ticket/create-guest-ticket.component';
@@ -16,7 +17,7 @@ import { GuestTicketCreateComponent } from '../guest-ticket-create/guest-ticket-
   templateUrl: './guest-tickets.component.html',
   styleUrls: ['./guest-tickets.component.css']
 })
-export class GuestTicketsComponent implements OnInit {
+export class GuestTicketsComponent implements OnInit, AfterViewInit {
 
   public tickets = new MatTableDataSource<GuestTicket>();
 
@@ -25,6 +26,8 @@ export class GuestTicketsComponent implements OnInit {
 
   public displayedColumns: string[] = ["ticketNumber", "issuedOn", "issuedBy", "ticketValidOn", "membersName", "guestsName"];
   public isLoading: boolean = false;
+
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private guestTicketService: GuestTicketService,
@@ -45,6 +48,10 @@ export class GuestTicketsComponent implements OnInit {
     this.getRefData();
   }
 
+  ngAfterViewInit(): void {
+    this.tickets.sort = this.sort;
+  }
+
   public getRefData() {
     this.refDataService.getRefData()
     .subscribe(data => {
@@ -63,14 +70,45 @@ export class GuestTicketsComponent implements OnInit {
      });
   }
 
+  public edit(ticket: GuestTicket) {
+
+    const dialogRef = this.dialog.open(CreateGuestTicketComponent, {
+      width: this.screenService.IsHandset ? '100vw' : '40vw',
+      data: Object.assign({}, ticket)
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`The dialog was closed : `);
+
+      console.log(result);
+
+      if (result) {
+          this.getTickets();
+      }
+    });
+
+  }
+
   public issueTicket() {
-    var dialogData: any = {
-      dbKey: ""
+    var ticketData: GuestTicket = { 
+      dbKey: "", 
+      ticketNumber: 0, 
+      cost: 0, 
+      issuedBy: '', 
+      issuedByMembershipNumber: 0, 
+      issuedOn: new Date(), 
+      ticketValidOn: null, 
+      membersName: '', 
+      membershipNumber: 0, 
+      emailTo: '', 
+      guestsName: '', 
+      season: this.selectedSeason,
+      imageData: ''
     };
 
     const dialogRef = this.dialog.open(CreateGuestTicketComponent, {
       width: this.screenService.IsHandset ? '100vw' : '40vw',
-      data: dialogData
+      data: ticketData
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -88,9 +126,9 @@ export class GuestTicketsComponent implements OnInit {
   private setDisplayedColumns(isHandsetPortait: boolean) {
 
     if (isHandsetPortait) {
-      this.displayedColumns = ["ticketNumber", "ticketValidOn", "membersName", "guestsName"];
+      this.displayedColumns = ["ticketNumber", "ticketValidOn", "membersName", "edit"];
     } else {
-      this.displayedColumns = ["ticketNumber", "issuedOn", "issuedBy", "ticketValidOn", "membersName", "guestsName"];
+      this.displayedColumns = ["ticketNumber", "issuedOn", "issuedBy", "ticketValidOn", "membersName", "guestsName", "edit"];
     }
   }
 

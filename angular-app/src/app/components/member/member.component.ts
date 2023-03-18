@@ -8,6 +8,7 @@ import { MembersService } from 'src/app/services/members.service';
 import { SelectionModel } from "@angular/cdk/collections";
 import { RefData, Season } from 'src/app/models/refData';
 import { RefDataService } from 'src/app/services/ref-data.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-member',
@@ -15,6 +16,7 @@ import { RefDataService } from 'src/app/services/ref-data.service';
   styleUrls: ['./member.component.css']
 })
 export class MemberComponent implements OnInit {
+  emailControl: FormControl = new FormControl();
 
   private membershipNumber!: number;
   public member!: Member;
@@ -23,6 +25,7 @@ export class MemberComponent implements OnInit {
   public message: string = "";
   public selection = new SelectionModel(true);
   public refData!: RefData;
+  public isSaving: boolean = false;
 
   constructor(private route: ActivatedRoute,
     private membersService: MembersService,
@@ -48,11 +51,15 @@ export class MemberComponent implements OnInit {
   }
 
   public save(): void {
+    this.isSaving = true;
+    this.status = "";
+    
     this.member.seasonsActive = this.selection.selected as number[];
 
     this.membersService.updateMember(this.member)
     .subscribe(data => {
       this.status = "Saved successfully";
+      this.isSaving = false;
     });
 
   }

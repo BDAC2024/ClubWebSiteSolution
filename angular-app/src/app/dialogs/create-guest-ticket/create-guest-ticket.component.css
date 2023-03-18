@@ -32,13 +32,6 @@
     color: #fff;
   } */
 
-  mat-form-field {
-    width: 100%;
-  }
-
-  .half-width {
-    width: 50%;
-  }
 
   .date-form-field {
     width: 150px;
