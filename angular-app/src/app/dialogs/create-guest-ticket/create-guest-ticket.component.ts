@@ -55,9 +55,8 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
   myControl: FormControl = new FormControl();
   emailControl: FormControl = new FormControl();
   
-  private SCALE = 3.5;
-  private CANVAS_WIDTH  = (TICKET_WIDTH * this.SCALE) + (MARGIN * this.SCALE * 2);
-  private CANVAS_HEIGHT = (TICKET_HEIGHT * this.SCALE) + (MARGIN * this.SCALE * 2);
+  private VIEWING_SCALE = 3.8;
+  private PRINTING_SCALE = 10;
 
   private screenWidth: number = 0;
   private screenHeight: number = 0;
@@ -81,9 +80,11 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
 
   //public guestTicket!: GuestTicket;
 
-  @ViewChild('canvasEl', { static: false }) canvas!: ElementRef<HTMLCanvasElement>; 
+  @ViewChild('viewingCanvasEl', { static: false }) viewingCanvas!: ElementRef<HTMLCanvasElement>; 
+  @ViewChild('printingCanvasEl', { static: false }) printingCanvas!: ElementRef<HTMLCanvasElement>; 
 
-  private context!: CanvasRenderingContext2D;
+  private viewingContext!: CanvasRenderingContext2D;
+  private printingContext!: CanvasRenderingContext2D;
 
   private readonly viewportChange = this.viewportRuler
     .change(200)
@@ -142,7 +143,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     this.ticketWidth = this.dialogWidth - 4;
     this.ticketHeight = this.dialogHeight - DIALOG_USED_HEIGHT;
 
-    this.setCanvasSCALE();
+    this.setCanvasElementSize();
   }
 
   public cancel(): void {
@@ -208,14 +209,13 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngAfterViewInit() {
-    //alert("after view init");
-    //this.canvas.nativeElement.width = this.CANVAS_WIDTH;
-    //this.canvas.nativeElement.height = this.CANVAS_HEIGHT;
- 
-    //this.canvas.nativeElement.style.backgroundColor = "Yellow";
 
-    this.context = <CanvasRenderingContext2D>(
-      this.canvas.nativeElement as HTMLCanvasElement
+    this.viewingContext = <CanvasRenderingContext2D>(
+      this.viewingCanvas.nativeElement as HTMLCanvasElement
+    ).getContext("2d");
+
+    this.printingContext = <CanvasRenderingContext2D>(
+      this.printingCanvas.nativeElement as HTMLCanvasElement
     ).getContext("2d");
 
     this.setSize();
@@ -288,7 +288,8 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     //}
     this.guestTicket.emailTo = this.emailTo;
 
-    this.drawTicket(this.context);
+    this.drawTicket(this.viewingContext, this.VIEWING_SCALE);
+    this.drawTicket(this.printingContext, this.PRINTING_SCALE);
   }
 
   formComplete(): boolean {
@@ -301,97 +302,102 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
           this.guestTicket.emailTo.trim() != "";
   }
 
-  drawTicket(ctx: CanvasRenderingContext2D): void {
+  drawTicket(ctx: CanvasRenderingContext2D, scale: number): void {
 
     ctx.beginPath();
 
-    ctx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
+    var canvasWidth  = (TICKET_WIDTH * scale) + (MARGIN * scale * 2);
+    var canvasHeight = (TICKET_HEIGHT * scale) + (MARGIN * scale * 2);
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
     if (!this.formComplete()) {
       return;
     }
 
     ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     ctx.fillStyle = "#000000";
-    ctx.rect(MARGIN * this.SCALE, MARGIN * this.SCALE, TICKET_WIDTH * this.SCALE, TICKET_HEIGHT * this.SCALE);
+    ctx.rect(MARGIN * scale, MARGIN * scale, TICKET_WIDTH * scale, TICKET_HEIGHT * scale);
 
-    ctx.moveTo((MARGIN + VERTICAL_DIVIDER) * this.SCALE, MARGIN * this.SCALE);
-    ctx.lineTo((MARGIN + VERTICAL_DIVIDER) * this.SCALE, (MARGIN + TICKET_HEIGHT) * this.SCALE);
+    ctx.moveTo((MARGIN + VERTICAL_DIVIDER) * scale, MARGIN * scale);
+    ctx.lineTo((MARGIN + VERTICAL_DIVIDER) * scale, (MARGIN + TICKET_HEIGHT) * scale);
 
-    ctx.moveTo(MARGIN * this.SCALE, (MARGIN + PRICE_DIVIDER) * this.SCALE);
-    ctx.lineTo((MARGIN + VERTICAL_DIVIDER) * this.SCALE,  (MARGIN + PRICE_DIVIDER) * this.SCALE);
+    ctx.moveTo(MARGIN * scale, (MARGIN + PRICE_DIVIDER) * scale);
+    ctx.lineTo((MARGIN + VERTICAL_DIVIDER) * scale,  (MARGIN + PRICE_DIVIDER) * scale);
 
-    ctx.moveTo(MARGIN * this.SCALE, (MARGIN + TICKET_NUMBER_DIVIDER) * this.SCALE);
-    ctx.lineTo((MARGIN + VERTICAL_DIVIDER) * this.SCALE,  (MARGIN + TICKET_NUMBER_DIVIDER) * this.SCALE);
+    ctx.moveTo(MARGIN * scale, (MARGIN + TICKET_NUMBER_DIVIDER) * scale);
+    ctx.lineTo((MARGIN + VERTICAL_DIVIDER) * scale,  (MARGIN + TICKET_NUMBER_DIVIDER) * scale);
 
     // e.g. context.font="italic small-caps bold 12px arial";
-    ctx.font=`normal normal normal ${16 / 3.5 * this.SCALE}px arial`;
+    ctx.font=`normal normal normal ${16 / 3.5 * scale}px arial`;
 
     ctx.textAlign = "center";
-    ctx.fillText("£" + (Math.round(this.guestTicket.cost * 100) / 100).toFixed(2), (MARGIN + (VERTICAL_DIVIDER / 2)) * this.SCALE, (MARGIN + 11) * this.SCALE);
+    ctx.fillText("£" + (Math.round(this.guestTicket.cost * 100) / 100).toFixed(2), (MARGIN + (VERTICAL_DIVIDER / 2)) * scale, (MARGIN + 11) * scale);
 
-    ctx.fillText("TICKET NO.", (MARGIN + (VERTICAL_DIVIDER / 2)) * this.SCALE, (MARGIN + 26) * this.SCALE);
-    ctx.fillText((this.guestTicket.ticketNumber == null ? "Generated when sent" : ("On line/" + this.addLeadingZeros(this.guestTicket.ticketNumber, 4))), (MARGIN + (VERTICAL_DIVIDER / 2)) * this.SCALE, (MARGIN + 33) * this.SCALE);
+    ctx.fillText("TICKET NO.", (MARGIN + (VERTICAL_DIVIDER / 2)) * scale, (MARGIN + 26) * scale);
+    ctx.fillText((this.guestTicket.ticketNumber == null ? "Generated when sent" : ("On line/" + this.addLeadingZeros(this.guestTicket.ticketNumber, 4))), (MARGIN + (VERTICAL_DIVIDER / 2)) * scale, (MARGIN + 33) * scale);
 
-    ctx.font=`normal normal normal ${12 / 3.5 * this.SCALE}px arial`;
+    ctx.font=`normal normal normal ${12 / 3.5 * scale}px arial`;
 
     ctx.textAlign = "left";
-    ctx.fillText("Issued by: " + this.guestTicket.issuedBy, (MARGIN + 9) * this.SCALE, (MARGIN + 42) * this.SCALE);
-    ctx.fillText("Issued on: " + this.guestTicket.issuedOn.toDateString(), (MARGIN + 9) * this.SCALE, (MARGIN + 48) * this.SCALE);
+    ctx.fillText("Issued by: " + this.guestTicket.issuedBy, (MARGIN + 9) * scale, (MARGIN + 42) * scale);
+    ctx.fillText("Issued on: " + this.guestTicket.issuedOn.toDateString(), (MARGIN + 9) * scale, (MARGIN + 48) * scale);
 
     ctx.textAlign = "center";
-    ctx.fillText("Ticket Covers:", (MARGIN + (VERTICAL_DIVIDER / 2)) * this.SCALE, (MARGIN + 60) * this.SCALE);
+    ctx.fillText("Ticket Covers:", (MARGIN + (VERTICAL_DIVIDER / 2)) * scale, (MARGIN + 60) * scale);
 
     ctx.textAlign = "left";
-    ctx.fillText("Date: " + new Date(Date.parse(this.guestTicket.ticketValidOn!.toString())).toDateString() , (MARGIN + 9) * this.SCALE, (MARGIN + 70) * this.SCALE);
+    ctx.fillText("Date: " + new Date(Date.parse(this.guestTicket.ticketValidOn!.toString())).toDateString() , (MARGIN + 9) * scale, (MARGIN + 70) * scale);
 
     ctx.textAlign = "center";
-    ctx.font=`normal normal bold ${14 / 3.5 * this.SCALE}px arial`;
-    ctx.fillText("BOROUGHBRIDGE & DISTRICT ANGLING CLUB", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * this.SCALE, (MARGIN + 10) * this.SCALE);
+    ctx.font=`normal normal bold ${14 / 3.5 * scale}px arial`;
+    ctx.fillText("BOROUGHBRIDGE & DISTRICT ANGLING CLUB", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * scale, (MARGIN + 10) * scale);
 
-    ctx.font=`normal normal bold ${18 / 3.5 * this.SCALE}px arial`;
-    ctx.fillText("MEMBERS GUEST TICKET", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * this.SCALE, (MARGIN + 25) * this.SCALE);
+    ctx.font=`normal normal bold ${18 / 3.5 * scale}px arial`;
+    ctx.fillText("MEMBERS GUEST TICKET", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * scale, (MARGIN + 25) * scale);
 
-    ctx.font=`normal normal normal ${12 / 3.5 * this.SCALE}px arial`;
-    ctx.fillText("for the", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * this.SCALE, (MARGIN + 34) * this.SCALE);
-    ctx.font=`normal normal normal ${14 / 3.5 * this.SCALE}px arial`;
-    ctx.fillText("CLUB WATERS: RIVER URE & ROECLIFFE POND", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * this.SCALE, (MARGIN + 40) * this.SCALE);
-
-    ctx.textAlign = "left";
-    ctx.fillText("MEMBERS NAME: " + this.guestTicket.membersName, (MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE, (MARGIN + 50) * this.SCALE);
-    ctx.fillText("GUESTS NAME: " + this.guestTicket.guestsName, (MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE, (MARGIN + 58) * this.SCALE);
+    ctx.font=`normal normal normal ${12 / 3.5 * scale}px arial`;
+    ctx.fillText("for the", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * scale, (MARGIN + 34) * scale);
+    ctx.font=`normal normal normal ${14 / 3.5 * scale}px arial`;
+    ctx.fillText("CLUB WATERS: RIVER URE & ROECLIFFE POND", (MARGIN + (TICKET_WIDTH - ((TICKET_WIDTH - VERTICAL_DIVIDER) / 2))) * scale, (MARGIN + 40) * scale);
 
     ctx.textAlign = "left";
-    ctx.font=`normal normal normal ${12 / 3.5 * this.SCALE}px arial`;
-    ctx.fillText("NO TICKETS AVAILABLE ON ANY SUNDAY MATCH VENUES", (MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE, (MARGIN + 70) * this.SCALE);
-    ctx.font=`normal normal normal ${10 / 3.5 * this.SCALE}px arial`;
+    ctx.fillText("MEMBERS NAME: " + this.guestTicket.membersName, (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 50) * scale);
+    ctx.fillText("GUESTS NAME: " + this.guestTicket.guestsName, (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 58) * scale);
+
+    ctx.textAlign = "left";
+    ctx.font=`normal normal normal ${12 / 3.5 * scale}px arial`;
+    ctx.fillText("NO TICKETS AVAILABLE ON ANY SUNDAY MATCH VENUES", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 70) * scale);
+    ctx.font=`normal normal normal ${10 / 3.5 * scale}px arial`;
     var noticeText = "Please read the rules and bait bans on the notice board ";
     var noticeTextWidth = ctx.measureText(noticeText).width;
-    ctx.fillText(noticeText, (MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE, (MARGIN + 74) * this.SCALE);
+    ctx.fillText(noticeText, (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 74) * scale);
 
     ctx.fillStyle = "#FF0000";
-    ctx.font=`normal normal bold ${10 / 3.5 * this.SCALE}px arial`;
-    ctx.fillText("before", ((MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE) + noticeTextWidth, (MARGIN + 74) * this.SCALE);
+    ctx.font=`normal normal bold ${10 / 3.5 * scale}px arial`;
+    ctx.fillText("before", ((MARGIN + VERTICAL_DIVIDER + 9) * scale) + noticeTextWidth, (MARGIN + 74) * scale);
     var before = "before";
     var beforeWidth = ctx.measureText(before).width;
-    ctx.moveTo(((MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE) + noticeTextWidth,  ((MARGIN + 74) * this.SCALE) + 2);
-    ctx.lineTo(((MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE) + noticeTextWidth + beforeWidth,  ((MARGIN + 74) * this.SCALE) + 2);
+    ctx.moveTo(((MARGIN + VERTICAL_DIVIDER + 9) * scale) + noticeTextWidth,  ((MARGIN + 74) * scale) + 2);
+    ctx.lineTo(((MARGIN + VERTICAL_DIVIDER + 9) * scale) + noticeTextWidth + beforeWidth,  ((MARGIN + 74) * scale) + 2);
 
     ctx.fillStyle = "#000000";
-    ctx.font=`normal normal normal ${10 / 3.5 * this.SCALE}px arial`;
+    ctx.font=`normal normal normal ${10 / 3.5 * scale}px arial`;
     var noticeTextBefore = noticeText + "before ";
     var noticeTextBeforeWidth = ctx.measureText(noticeTextBefore).width + 2;
-    ctx.fillText("fishing.", ((MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE) + noticeTextBeforeWidth, (MARGIN + 74) * this.SCALE);
+    ctx.fillText("fishing.", ((MARGIN + VERTICAL_DIVIDER + 9) * scale) + noticeTextBeforeWidth, (MARGIN + 74) * scale);
 
-    //ctx.fillText("Please read the rules and bait bans on the notice board before fishing.", (MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE, (MARGIN + 74) * this.SCALE);
-    ctx.fillText("Members must fish with their guest and be responsible for them.", (MARGIN + VERTICAL_DIVIDER + 9) * this.SCALE, (MARGIN + 78) * this.SCALE);
+    //ctx.fillText("Please read the rules and bait bans on the notice board before fishing.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 74) * scale);
+    ctx.fillText("Members must fish with their guest and be responsible for them.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 78) * scale);
 
     ctx.stroke();
     
     //var dataUrl = this.canvas.nativeElement.toDataURL('image/jpeg', 1.0);
-    this.guestTicket.imageData = this.canvas.nativeElement.toDataURL();
+    if (ctx == this.printingContext) {
+      this.guestTicket.imageData = this.printingCanvas.nativeElement.toDataURL();
+    }
     //console.log(this.guestTicket.imageData);
   }
 
@@ -399,29 +405,18 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     return String(num).padStart(totalLength, '0');
   }
 
-  private setCanvasSCALE() {
-    // if (isPortait) {
-    //   this.SCALE = ((this.screenService.Width * .95)  - 4 - (MARGIN *2)) / TICKET_WIDTH;
-    // } else {
-      //this.SCALE = 3.5;
-      var verticalFormUsed = 360; // Pixels taken up by form so remainder for ticket
-      if (this.screenService.Height < 500) {
-        verticalFormUsed = 50;
-      }
-      this.SCALE = ((this.screenService.Height * .9) - verticalFormUsed - 4 - (MARGIN *2)) / TICKET_HEIGHT;
-      
-     this.SCALE = 3.8;
-      //this.SCALE = 10;
-      //this.SCALE = 0;
-    // }
+  private setCanvasElementSize() {
 
-    this.CANVAS_WIDTH  = (TICKET_WIDTH * this.SCALE) + (MARGIN * this.SCALE * 2);
-    this.CANVAS_HEIGHT = (TICKET_HEIGHT * this.SCALE) + (MARGIN * this.SCALE * 2);
-  
-    this.canvas.nativeElement.width = this.CANVAS_WIDTH;
-    this.canvas.nativeElement.height = this.CANVAS_HEIGHT;
+    var viewingCanvasWidth  = (TICKET_WIDTH * this.VIEWING_SCALE) + (MARGIN * this.VIEWING_SCALE * 2);
+    var viewingCanvasHeight = (TICKET_HEIGHT * this.VIEWING_SCALE) + (MARGIN * this.VIEWING_SCALE * 2);
+    this.viewingCanvas.nativeElement.width = viewingCanvasWidth;
+    this.viewingCanvas.nativeElement.height = viewingCanvasHeight;
 
-    console.log(`${new Date().toLocaleTimeString()} - setting scale to: ${this.SCALE}, dialogWIdth: ${this.dialogWidth}, dialogHeight: ${this.dialogHeight}, screenAspectRatio: ${this.screenAspectRatio}`);
+    var printingCanvasWidth  = (TICKET_WIDTH * this.PRINTING_SCALE) + (MARGIN * this.PRINTING_SCALE * 2);
+    var printingCanvasHeight = (TICKET_HEIGHT * this.PRINTING_SCALE) + (MARGIN * this.PRINTING_SCALE * 2);
+    this.printingCanvas.nativeElement.width = printingCanvasWidth;
+    this.printingCanvas.nativeElement.height = printingCanvasHeight;
+
     this.previewTicket();
   }
 

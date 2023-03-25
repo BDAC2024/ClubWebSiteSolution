@@ -41,3 +41,6 @@
     margin-left: -22px;
   }
   
+  .printingCanvas {
+    display: none;
+  }
