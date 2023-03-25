@@ -107,6 +107,9 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
         this.title = "Issue Guest Ticket";
       }
 
+      this.emailTo = guestTicket.emailTo;
+      this.emailControl.setValue(this.emailTo);
+
       console.log(`Width: ${screenService.Width}`);
       console.log(`IsPortrait: ${screenService.IsPortrait}`);
       
@@ -253,6 +256,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
 
   public onEmailChangeEvent(event: any) {
     this.emailTo = this.emailControl.value;
+    this.guestTicket.emailTo = this.emailTo;
   }
 
 
@@ -282,11 +286,13 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     this.guestTicket.issuedBy = this.membersService.CurrentMember.name;
     this.guestTicket.issuedByMembershipNumber = this.membersService.CurrentMember.membershipNumber;
     this.guestTicket.issuedOn = new Date();
-    //if (this.selectedMember != null) {
+    if (this.selectedMember != null) {
       this.guestTicket.membersName = this.selectedMember?.name;
       this.guestTicket.membershipNumber = this.selectedMember?.membershipNumber;
-    //}
-    this.guestTicket.emailTo = this.emailTo;
+    }
+    if (this.emailTo) {
+      this.guestTicket.emailTo = this.emailTo;
+    }
 
     this.drawTicket(this.viewingContext, this.VIEWING_SCALE);
     this.drawTicket(this.printingContext, this.PRINTING_SCALE);
