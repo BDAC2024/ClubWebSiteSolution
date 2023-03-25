@@ -73,7 +73,7 @@ export class GuestTicketsComponent implements OnInit, AfterViewInit {
   public edit(ticket: GuestTicket) {
 
     const dialogRef = this.dialog.open(CreateGuestTicketComponent, {
-      width: this.screenService.IsHandset ? '100vw' : '40vw',
+      width: this.screenService.IsPortrait ? '100vw' : '40vw',
       data: Object.assign({}, ticket)
     });
 
@@ -106,12 +106,33 @@ export class GuestTicketsComponent implements OnInit, AfterViewInit {
       imageData: ''
     };
 
-    const dialogRef = this.dialog.open(CreateGuestTicketComponent, {
-      width: this.screenService.IsHandset ? '100vw' : '40vw',
+    var dialogRef: any;
+
+    dialogRef = this.dialog.open(CreateGuestTicketComponent, {
+      width: '25%',
+      height: '25%',
       data: ticketData
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    // if (this.screenService.IsLandscape && this.screenService.Width > 500) {
+    //   dialogRef = this.dialog.open(CreateGuestTicketComponent, {
+    //     width: '50%',
+    //     maxWidth: '100%',
+    //     height: '90%',
+    //     maxHeight: '100%',
+    //     data: ticketData
+    //   });
+    // } else {
+    //   dialogRef = this.dialog.open(CreateGuestTicketComponent, {
+    //     width: '100%',
+    //     maxWidth: '95vw',
+    //     height: '100%',
+    //     maxHeight: '95vh',
+    //     data: ticketData
+    //   });
+    // }
+
+    dialogRef.afterClosed().subscribe((result: any) => {
       console.log(`The dialog was closed : `);
 
       console.log(result);

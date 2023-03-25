@@ -51,12 +51,32 @@ export class NavComponent implements OnInit {
     this.screenService.IsHandsetPortrait = result.matches;
   });
 
+  // portraitTabletLayoutChanges = this.breakpointObserver.observe(Breakpoints.TabletPortrait)
+  // .subscribe(result => {
+  //   this.screenService.IsTabletPortrait = result.matches;
+  // });
+
+  // portraitWebLayoutChanges = this.breakpointObserver.observe(Breakpoints.WebPortrait)
+  // .subscribe(result => {
+  //   this.screenService.IsWebPortrait = result.matches;
+  // });
+
   // Change column settings if landscape occurs
   landscapeLayoutChanges = this.breakpointObserver.observe(Breakpoints.HandsetLandscape)
   .subscribe(result => {
     this.screenService.IsHandsetLandscape = result.matches;
   });
-    
+
+  // landscapeTabletLayoutChanges = this.breakpointObserver.observe(Breakpoints.TabletLandscape)
+  // .subscribe(result => {
+  //   this.screenService.IsTabletLandscape = result.matches;
+  // });
+  
+  // landscapeWebLayoutChanges = this.breakpointObserver.observe(Breakpoints.WebLandscape)
+  // .subscribe(result => {
+  //   this.screenService.IsWebLandscape = result.matches;
+  // });
+  
     constructor(
       private breakpointObserver: BreakpointObserver, 
       public previewService: PreviewService,

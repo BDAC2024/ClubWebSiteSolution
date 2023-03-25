@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
@@ -13,6 +13,7 @@ import { GuestTicketService } from 'src/app/services/guest-ticket.service';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ErrorComponent } from '../error/error.component';
+import { ViewportRuler } from '@angular/cdk/scrolling';
 
 
 export interface DialogData {
@@ -40,6 +41,9 @@ const VERTICAL_DIVIDER = 60;
 const PRICE_DIVIDER = 19;
 const TICKET_NUMBER_DIVIDER = 55;
 
+const DIALOG_USED_HEIGHT = 392; // pixels
+const IDEAL_DIALOG_WIDTH = 672;
+const IDEAL_DIALOG_HEIGHT = 700;
 
 @Component({
   selector: 'app-create-guest-ticket',
@@ -47,13 +51,22 @@ const TICKET_NUMBER_DIVIDER = 55;
   styleUrls: ['./create-guest-ticket.component.css']
 })
 
-export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
+export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewInit {
   myControl: FormControl = new FormControl();
   emailControl: FormControl = new FormControl();
   
   private SCALE = 3.5;
   private CANVAS_WIDTH  = (TICKET_WIDTH * this.SCALE) + (MARGIN * this.SCALE * 2);
   private CANVAS_HEIGHT = (TICKET_HEIGHT * this.SCALE) + (MARGIN * this.SCALE * 2);
+
+  private screenWidth: number = 0;
+  private screenHeight: number = 0;
+  
+  private dialogWidth: number = 0; // pixels
+  private dialogHeight: number = 0; // pixels
+
+  private ticketWidth: number = 0; // pixels
+  private ticketHeight: number = 0; // pixels
 
   public title: string;
   public selectedMember!: Member;
@@ -72,13 +85,19 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
 
   private context!: CanvasRenderingContext2D;
 
+  private readonly viewportChange = this.viewportRuler
+    .change(200)
+    .subscribe(() => this.ngZone.run(() => this.setSize()));
+
   constructor(public dialogRef: MatDialogRef<CreateGuestTicketComponent>,
     private membersService: MembersService,
     private refDataService: RefDataService,
     public screenService: ScreenService,
     private guestTicketService: GuestTicketService,
     private dialog: MatDialog,
-
+    private readonly viewportRuler: ViewportRuler,
+    private readonly ngZone: NgZone,
+    
     @Inject(MAT_DIALOG_DATA) public guestTicket: GuestTicket) {
       if (guestTicket.dbKey != "") {
         this.title = "Edit Guest Ticket";
@@ -87,12 +106,44 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
         this.title = "Issue Guest Ticket";
       }
 
-      screenService.OrientationChange.on(() => {
-        this.setCanvasSCALE(screenService.IsHandsetPortrait);
-      });
+      console.log(`Width: ${screenService.Width}`);
+      console.log(`IsPortrait: ${screenService.IsPortrait}`);
+      
+      // screenService.OrientationChange.on(() => {
+      //   //this.setCanvasSCALE(screenService.IsPortrait);
+      // });
 
   }
     
+
+  // Never forget to unsubscribe!
+  ngOnDestroy() {
+    this.viewportChange.unsubscribe();
+  }
+
+  private setSize() {
+    const { width, height } = this.viewportRuler.getViewportSize();
+    this.screenWidth = width;
+    this.screenHeight = height;
+
+    this.dialogWidth = width * 0.98;
+    if (this.dialogWidth > IDEAL_DIALOG_WIDTH) {
+      this.dialogWidth = IDEAL_DIALOG_WIDTH;
+    }
+
+    this.dialogHeight = height * 0.98;
+    if (this.dialogHeight > IDEAL_DIALOG_HEIGHT) {
+      this.dialogHeight = IDEAL_DIALOG_HEIGHT;
+    }
+
+    this.dialogRef.updateSize(`${this.dialogWidth}px`, `${this.dialogHeight}px`);
+    //this.dialogRef.updateSize(`50%`, `50%`);
+
+    this.ticketWidth = this.dialogWidth - 4;
+    this.ticketHeight = this.dialogHeight - DIALOG_USED_HEIGHT;
+
+    this.setCanvasSCALE();
+  }
 
   public cancel(): void {
     if (!this.editMode && this.guestTicket.dbKey != null && this.guestTicket.dbKey.trim() != "") {
@@ -151,6 +202,7 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     console.log("updateSelectedMember: Setting selectedMember = " + selectedMember.name);
     this.selectedMember = selectedMember;
     this.emailTo = selectedMember.email;
+    this.emailControl.setValue(this.emailTo);
     console.log("updateSelectedMember: Setting emailTo = " + this.emailTo);
     this.onChangeEvent(selectedMember);
   }
@@ -166,7 +218,7 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
       this.canvas.nativeElement as HTMLCanvasElement
     ).getContext("2d");
 
-    this.setCanvasSCALE(this.screenService.IsHandsetPortrait);
+    this.setSize();
   }
 
   public getRefData() {
@@ -199,6 +251,10 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     });
   }
 
+  public onEmailChangeEvent(event: any) {
+    this.emailTo = this.emailControl.value;
+  }
+
 
   public onChangeEvent(event: any) {
 
@@ -227,8 +283,8 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     this.guestTicket.issuedByMembershipNumber = this.membersService.CurrentMember.membershipNumber;
     this.guestTicket.issuedOn = new Date();
     //if (this.selectedMember != null) {
-      this.guestTicket.membersName = this.selectedMember.name;
-      this.guestTicket.membershipNumber = this.selectedMember.membershipNumber;
+      this.guestTicket.membersName = this.selectedMember?.name;
+      this.guestTicket.membershipNumber = this.selectedMember?.membershipNumber;
     //}
     this.guestTicket.emailTo = this.emailTo;
 
@@ -343,12 +399,21 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     return String(num).padStart(totalLength, '0');
   }
 
-  private setCanvasSCALE(isHandsetPortait: boolean) {
-    if (isHandsetPortait) {
-      this.SCALE = 1.4;
-    } else {
-      this.SCALE = 3.5;
-    }
+  private setCanvasSCALE() {
+    // if (isPortait) {
+    //   this.SCALE = ((this.screenService.Width * .95)  - 4 - (MARGIN *2)) / TICKET_WIDTH;
+    // } else {
+      //this.SCALE = 3.5;
+      var verticalFormUsed = 360; // Pixels taken up by form so remainder for ticket
+      if (this.screenService.Height < 500) {
+        verticalFormUsed = 50;
+      }
+      this.SCALE = ((this.screenService.Height * .9) - verticalFormUsed - 4 - (MARGIN *2)) / TICKET_HEIGHT;
+      
+     this.SCALE = 3.8;
+      //this.SCALE = 10;
+      //this.SCALE = 0;
+    // }
 
     this.CANVAS_WIDTH  = (TICKET_WIDTH * this.SCALE) + (MARGIN * this.SCALE * 2);
     this.CANVAS_HEIGHT = (TICKET_HEIGHT * this.SCALE) + (MARGIN * this.SCALE * 2);
@@ -356,9 +421,13 @@ export class CreateGuestTicketComponent implements OnInit, AfterViewInit {
     this.canvas.nativeElement.width = this.CANVAS_WIDTH;
     this.canvas.nativeElement.height = this.CANVAS_HEIGHT;
 
-    //alert("setting scale to: " + this.SCALE);
+    console.log(`${new Date().toLocaleTimeString()} - setting scale to: ${this.SCALE}, dialogWIdth: ${this.dialogWidth}, dialogHeight: ${this.dialogHeight}, screenAspectRatio: ${this.screenAspectRatio}`);
     this.previewTicket();
   }
+
+  private get screenAspectRatio() :number {return this.screenWidth / this.screenHeight};
+  private get ticketAvailableAspectRatio() :number {return this.ticketWidth / this.ticketHeight};
+
 }
 
 

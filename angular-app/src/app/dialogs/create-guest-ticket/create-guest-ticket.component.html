@@ -19,7 +19,7 @@
         <br/>
         <mat-form-field  [ngClass]="[this.screenService.IsHandsetPortrait ? 'full-width' : 'half-width']" *ngIf="!isLoading">
             <mat-label>Email ticket to</mat-label>
-            <input type="email" [formControl]="emailControl" name="email" class="title-form-field" ngModel email="true" matInput [(ngModel)]="emailTo" (change)="onChangeEvent($event)">
+            <input type="email" [formControl]="emailControl" name="email" class="title-form-field" email="true" matInput (change)="onEmailChangeEvent($event)">
             <div *ngIf="emailControl.invalid" class="alert">
                 Please enter a valid email address.
             </div>
@@ -39,10 +39,10 @@
         <br/>
     </div>
 
-    <div>
-        <canvas #canvasEl></canvas>
+    <div >
+        <canvas #canvasEl class="ticketCanvas"></canvas>
     </div>
-
+        
     <div mat-dialog-actions class="edit-button-panel">
         <mat-spinner diameter="32" *ngIf="isSaving"></mat-spinner>
         <button class="edit-button" mat-raised-button color="primary" value="Confirm" *ngIf="editMode && !isSaving" [disabled]="!formComplete()" (click)="send()">Resend</button>
@@ -50,3 +50,5 @@
         <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Cancel</button>
     </div>
 </div>
+
+
