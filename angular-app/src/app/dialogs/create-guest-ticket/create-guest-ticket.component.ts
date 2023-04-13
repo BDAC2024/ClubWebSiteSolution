@@ -36,14 +36,14 @@ export const MY_FORMATS = {
 // Sizes in mm
 const MARGIN = 1;         
 const TICKET_WIDTH  = 173; 
-const TICKET_HEIGHT = 82;  
+const TICKET_HEIGHT = 86;  
 const VERTICAL_DIVIDER = 60;
 const PRICE_DIVIDER = 19;
 const TICKET_NUMBER_DIVIDER = 55;
 
 const DIALOG_USED_HEIGHT = 392; // pixels
 const IDEAL_DIALOG_WIDTH = 672;
-const IDEAL_DIALOG_HEIGHT = 700;
+const IDEAL_DIALOG_HEIGHT = 715;
 
 @Component({
   selector: 'app-create-guest-ticket',
@@ -397,6 +397,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
 
     //ctx.fillText("Please read the rules and bait bans on the notice board before fishing.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 74) * scale);
     ctx.fillText("Members must fish with their guest and be responsible for them.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 78) * scale);
+    ctx.fillText("NO FISHING from boats either moving or static/moored.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 82) * scale);
 
     ctx.stroke();
     

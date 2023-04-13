@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "42a1dd96-6048-4b91-a5f6-6ec1c5ab81d6",
+    "name": "Angling Club - Prod",
+    "default": true,
+    "sortNum": 10000,
+    "created": "2023-04-05T15:31:43.422Z",
+    "modified": "2023-04-05T15:31:43.422Z",
+    "data": [
+      {
+        "name": "accessToken",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJLZXkiOiJNZW1iZXI6NjZlNjA2YTAtYWQwZC00MDI0LWJmNmYtZWQ3YzM5NjFmMzU1IiwiTWVtYmVyc2hpcE51bWJlciI6IjExOCIsIkFkbWluIjoiVHJ1ZSIsIkFsbG93TmFtZVRvQmVVc2VkIjoiVHJ1ZSIsIlByZWZlcmVuY2VzTGFzdFVwZGF0ZWQiOiIyMDIyLTAxLTEwIDE4OjU0OjUyWiIsIk5hbWUiOiJTLlRvd25lbmQiLCJFbWFpbCI6InN0ZXZlQHRvd25lbmRtYWlsLmNvLnVrIiwiUGluUmVzZXRSZXF1aXJlZCI6IkZhbHNlIiwibmJmIjoxNjc3MjQ1NzcwLCJleHAiOjE2ODE3Mzg1NzAsImlhdCI6MTY3NzI0NTc3MH0._i4CnWZERlPp6yOyYIYZKHv8wLyFiScnS5sAEGsc-pU"
+      },
+      {
+        "name": "baseUrl",
+        "value": "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod"
+      }
+    ]
+  },
+  {
+    "_id": "c806245d-c822-495a-87a4-fa3045c3d049",
+    "name": "Angling Club - local",
+    "default": false,
+    "sortNum": 20000,
+    "created": "2023-04-05T15:31:51.679Z",
+    "modified": "2023-04-05T15:31:51.679Z",
+    "data": [
+      {
+        "name": "accessToken",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJLZXkiOiJNZW1iZXI6NjZlNjA2YTAtYWQwZC00MDI0LWJmNmYtZWQ3YzM5NjFmMzU1IiwiTWVtYmVyc2hpcE51bWJlciI6IjExOCIsIkFkbWluIjoiVHJ1ZSIsIkFsbG93TmFtZVRvQmVVc2VkIjoiVHJ1ZSIsIlByZWZlcmVuY2VzTGFzdFVwZGF0ZWQiOiIyMDIyLTAxLTEwIDE4OjU0OjUyWiIsIk5hbWUiOiJTLlRvd25lbmQiLCJFbWFpbCI6InN0ZXZlQHRvd25lbmRtYWlsLmNvLnVrIiwiUGluUmVzZXRSZXF1aXJlZCI6IkZhbHNlIiwibmJmIjoxNjc3MjQ1NzcwLCJleHAiOjE2ODE3Mzg1NzAsImlhdCI6MTY3NzI0NTc3MH0._i4CnWZERlPp6yOyYIYZKHv8wLyFiScnS5sAEGsc-pU"
+      },
+      {
+        "name": "baseUrl",
+        "value": "https://localhost:5001"
+      }
+    ]
+  }
+]
