@@ -377,7 +377,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     ctx.font=`normal normal normal ${12 / 3.5 * scale}px arial`;
     ctx.fillText("NO TICKETS AVAILABLE ON ANY SUNDAY MATCH VENUES", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 70) * scale);
     ctx.font=`normal normal normal ${10 / 3.5 * scale}px arial`;
-    var noticeText = "Please read the rules and bait bans on the notice board ";
+    var noticeText = "Please read the pond rules and bait bans on the notice board ";
     var noticeTextWidth = ctx.measureText(noticeText).width;
     ctx.fillText(noticeText, (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 74) * scale);
 
@@ -395,7 +395,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     var noticeTextBeforeWidth = ctx.measureText(noticeTextBefore).width + 2;
     ctx.fillText("fishing.", ((MARGIN + VERTICAL_DIVIDER + 9) * scale) + noticeTextBeforeWidth, (MARGIN + 74) * scale);
 
-    //ctx.fillText("Please read the rules and bait bans on the notice board before fishing.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 74) * scale);
+    //ctx.fillText("Please read the pond rules and bait bans on the notice board before fishing.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 74) * scale);
     ctx.fillText("Members must fish with their guest and be responsible for them.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 78) * scale);
     ctx.fillText("NO FISHING from boats either moving or static/moored.", (MARGIN + VERTICAL_DIVIDER + 9) * scale, (MARGIN + 82) * scale);
 

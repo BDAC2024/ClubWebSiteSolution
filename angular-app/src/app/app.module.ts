@@ -28,7 +28,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-
+import { MatBadgeModule} from '@angular/material/badge';
 import { AgmCoreModule } from '@agm/core';
 
 import { WelcomeComponent } from './components/welcome/welcome.component';
@@ -155,6 +155,7 @@ import { CreateGuestTicketComponent } from './dialogs/create-guest-ticket/create
     MatCheckboxModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatBadgeModule,
     ScrollingModule, 
     FateModule,
     FateMaterialModule,
