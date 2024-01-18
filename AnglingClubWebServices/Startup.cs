@@ -39,6 +39,8 @@ namespace AnglingClubWebServices
 
                 LogLevel logLevel = LogLevel.Information; // Default
 
+                var tst = Configuration["TestSecret"];
+                
                 switch (Configuration[Startup.LogLevelKey].ToLower())
                 {
                     case "debug":
@@ -93,6 +95,7 @@ namespace AnglingClubWebServices
             services.Configure<RepositoryOptions>(Configuration);
             services.Configure<AuthOptions>(Configuration);
             services.Configure<EmailOptions>(Configuration);
+            services.Configure<StripeOptions>(Configuration);
 
             services.AddTransient<IWaterRepository, WaterRepository>();
             services.AddTransient<IEventRepository, EventRepository>();
@@ -105,6 +108,9 @@ namespace AnglingClubWebServices
             services.AddTransient<IRulesRepository, RulesRepository>();
             services.AddTransient<IUserAdminRepository, UserAdminRepository>();
             services.AddTransient<IBackupRepository, BackupRepository>();
+            services.AddTransient<IGuestTicketRepository, GuestTicketRepository>();
+            services.AddTransient<IAppSettingsRepository, AppSettingsRepository>();
+            services.AddTransient<IPaymentsService, PaymentService>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmailService, EmailService>();

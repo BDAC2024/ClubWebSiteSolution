@@ -60,7 +60,7 @@ namespace AnglingClubWebServices.Models
                 InitialPin = 0;
             }
             
-            var hashedPin = AuthService.HashText(newPin.ToString(), MembershipNumber.ToString(), new SHA1CryptoServiceProvider());
+            var hashedPin = AuthService.HashText(newPin.ToString(), MembershipNumber.ToString(), SHA1.Create());
             Pin = hashedPin;
 
             return newPin;
@@ -68,7 +68,7 @@ namespace AnglingClubWebServices.Models
 
         public bool ValidPin(int pinToCheck)
         {
-            var hashedPinToCheck = AuthService.HashText(pinToCheck.ToString(), MembershipNumber.ToString(), new SHA1CryptoServiceProvider());
+            var hashedPinToCheck = AuthService.HashText(pinToCheck.ToString(), MembershipNumber.ToString(), SHA1.Create());
 
             return hashedPinToCheck == Pin;
         }

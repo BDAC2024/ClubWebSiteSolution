@@ -332,13 +332,17 @@ namespace AnglingClubWebServices.Controllers
                 var resultsForMember = _matchResultRepository.GetAllMatchResults().Result
                                         .Where(x => x.MembershipNumber == orginalMembershipNumber);
 
+                var allEvents = _eventRepository.GetEvents().Result;
 
                 foreach (var result in resultsForMember)
                 {
-                    if (originalSeasonsActive.Contains(_eventRepository.GetEvents().Result.First(x => x.Id == result.MatchId).Season))
+                    if (originalSeasonsActive.Contains(allEvents.First(x => x.Id == result.MatchId).Season))
                     {
-                        result.MembershipNumber = member.MembershipNumber;
-                        _matchResultRepository.AddOrUpdateMatchResult(result).Wait();
+                        if (result.MembershipNumber != member.MembershipNumber)
+                        {
+                            result.MembershipNumber = member.MembershipNumber;
+                            _matchResultRepository.AddOrUpdateMatchResult(result).Wait();
+                        }
                     }
                 }
 

@@ -9,6 +9,8 @@ namespace AnglingClubWebServices.Models
         public Season CurrentSeason { get; set; }
 
         public List<SeasonInfo> Seasons { get; set; } = new List<SeasonInfo>();
+
+        public AppSettings AppSettings { get; set; }
     }
 
     public class SeasonInfo
