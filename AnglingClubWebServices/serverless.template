@@ -119,6 +119,11 @@
 			"Type" : "String",
 			"Description" : "One of Debug, Information, Warning, Error. Defaults to Information if not given",
 			"MinLength" : "0"
+		},
+		"StripeApiKey" : {
+			"Type" : "String",
+			"Description" : "API key for Stripe",
+			"MinLength" : "0"
 		}
   },
   "Conditions": {},
@@ -160,7 +165,8 @@
 				"FallbackEmailFromName" : { "Ref" : "FallbackEmailFromName" } ,
 				"FallbackEmailFromAddress" : { "Ref" : "FallbackEmailFromAddress" } ,
 				"CORSOrigins" : { "Ref" : "CORSOrigins" } ,
-				"LogLevel" : { "Ref" : "LogLevel" } 
+				"LogLevel" : { "Ref" : "LogLevel" },
+				"StripeApiKey" : { "Ref" : "StripeApiKey" }
 			}
 		},
         "Events": {

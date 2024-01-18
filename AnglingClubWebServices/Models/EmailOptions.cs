@@ -59,4 +59,11 @@ namespace AnglingClubWebServices.Models
         }
 
     }
+
+    public class CanvasAttachment
+    {
+        public string DataUrl { get; set; }
+        public string Filename { get; set; }
+    }
+
 }

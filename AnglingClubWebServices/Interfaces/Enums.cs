@@ -180,4 +180,10 @@ namespace AnglingClubWebServices.Interfaces
         JuniorMatch,
     }
 
+    public enum PaymentType
+    {
+        Membership = 0,
+        GuestTicket,
+        DayTicket,
+    }
 }

@@ -55,7 +55,15 @@ namespace AnglingClubWebServices.Controllers
                 var members = _memberRepository.GetMembers(match.Season, true).Result;
                 foreach (var result in results)
                 {
-                    result.Name = members.Single(x => x.MembershipNumber == result.MembershipNumber).Name;
+                    var member = members.FirstOrDefault(x => x.MembershipNumber == result.MembershipNumber);
+                    if (member != null)
+                    {
+                        result.Name = member.Name;
+                    }
+                    else
+                    {
+                        result.Name = $"Member {result.MembershipNumber} not found";
+                    }
                 }
 
                 ReportTimer("Getting match results");

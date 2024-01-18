@@ -28,7 +28,7 @@ namespace AnglingClubWebServices.Helpers
 
             foreach (var season in GetValues<Season>())
             {
-                if (date > season.SeasonStarts() && date <= season.SeasonEnds())
+                if (date >= season.SeasonStarts() && date <= season.SeasonEnds())
                 {
                     matchingSeason = season;
                     break;
@@ -45,6 +45,15 @@ namespace AnglingClubWebServices.Helpers
         public static Season CurrentSeason()
         {
             return SeasonForDate(DateTime.Now).Value;
+        }
+
+        /// <summary>
+        /// Returns the season as 2022/2023 etc
+        /// </summary>
+        /// <returns></returns>
+        public static string SeasonDisplay(Season season)
+        {
+            return $"20{Convert.ToInt32(season)}/20{Convert.ToInt32(season) + 1}";
         }
     }
 }

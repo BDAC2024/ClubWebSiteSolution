@@ -42,7 +42,7 @@ namespace AnglingClubWebServices.Data
             {
                 if (GetMembers().Result.Any(x => x.MembershipNumber == member.MembershipNumber && x.SeasonsActive.Contains(season) && x.DbKey != member.DbKey))
                 {
-                    //throw new Exception($"Membership number {member.MembershipNumber} is already active for {season.SeasonName()}");
+                    throw new Exception($"Membership number {member.MembershipNumber} is already active for {season.SeasonName()}");
                 }
             }
 

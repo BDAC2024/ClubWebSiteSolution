@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace AnglingClubWebServices.Services
@@ -32,12 +33,12 @@ namespace AnglingClubWebServices.Services
 
         #region Methods
 
-        public void SendEmailToSupport(string subject, string textBody, List<string> attachmentFilenames = null)
+        public void SendEmailToSupport(string subject, string textBody, List<string> attachmentFilenames = null, List<CanvasAttachment> canvasAttachments = null)
         {
-            SendEmail(new List<string> { _options.PrimaryEmailUsername }, subject, textBody, attachmentFilenames);
+            SendEmail(new List<string> { _options.PrimaryEmailUsername }, subject, textBody, attachmentFilenames, canvasAttachments);
         }
 
-        public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null)
+        public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null, List<CanvasAttachment> canvasAttachments = null)
         {
             if (to.Any())
             {
@@ -51,7 +52,28 @@ namespace AnglingClubWebServices.Services
 
                 var builder = new BodyBuilder();
                 builder.TextBody = textBody;
-                builder.HtmlBody = textBody;
+                builder.HtmlBody = textBody + "<br><br>";
+
+
+                if (canvasAttachments != null)
+                {
+                    foreach (var att in canvasAttachments)
+                    {
+                        var canvasDataUrl = att.DataUrl; 
+                        var canvasBase64 = canvasDataUrl.Replace("data:image/png;base64,", "");
+                        byte[] temp_backToBytes = Convert.FromBase64String(canvasBase64);
+                        var canvasAtt = new MimePart("image", "png", new MemoryStream(temp_backToBytes))
+                        {
+                            ContentTransferEncoding = ContentEncoding.Base64,
+                            FileName = att.Filename
+                        };
+
+                        builder.Attachments.Add(canvasAtt);
+
+                        builder.HtmlBody += $"<img src='{att.DataUrl}'/>";
+                    }
+                }
+
 
                 if (attachmentFilenames != null)
                 {
@@ -77,6 +99,14 @@ namespace AnglingClubWebServices.Services
             {
                 sendViaSMTP(mailMessage, _options.PrimaryEmailHost, _options.PrimaryEmailPort, _options.PrimaryEmailUsername, _options.PrimaryEmailPassword);
             }
+            catch (InvalidDataException)
+            {
+                throw;
+            }
+            catch (SmtpCommandException)
+            {
+                throw;
+            }
             catch (System.Exception ex)
             {
                 _logger.LogWarning("Primary email sending failed - trying fallback email.", ex);
@@ -101,8 +131,6 @@ namespace AnglingClubWebServices.Services
                                         Environment.NewLine +
                                         $"Google may have disabled less-secure app access (e.g. login via username/password). This can be checked and re-enabled here: {_options.PrimaryEmailRepairUrl}";
 
-                    builder.HtmlBody = builder.TextBody;
-
                     repairEmailMessage.Body = builder.ToMessageBody();
 
                     sendViaSMTP(repairEmailMessage, _options.FallbackEmailHost, _options.FallbackEmailPort, _options.FallbackEmailUsername, _options.FallbackEmailPassword);
@@ -119,6 +147,7 @@ namespace AnglingClubWebServices.Services
 
         private void sendViaSMTP(MimeMessage mailMessage, string emailHost, int emailPort, string emailUsername, string emailPassword)
         {
+
             using (var smtpClient = new SmtpClient())
             {
                 if (emailHost.ToLower().Contains("outlook"))
@@ -131,13 +160,33 @@ namespace AnglingClubWebServices.Services
                 }
 
                 smtpClient.Authenticate(emailUsername, emailPassword);
-                smtpClient.Send(mailMessage);
-                smtpClient.Disconnect(true);
+
+                try
+                {
+                    smtpClient.Send(mailMessage);
+                }
+                catch (SmtpCommandException smtpEx)
+                {
+                    if (smtpEx.ErrorCode == SmtpErrorCode.RecipientNotAccepted)
+                    {
+                        throw new InvalidDataException("Email address is invalid");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("sendViaSMTP failed.", ex);
+                    throw;
+                }
+                finally
+                {
+                    smtpClient.Disconnect(true);
+                }
             }
 
         }
 
 
         #endregion Helper Methods
+
     }
 }
