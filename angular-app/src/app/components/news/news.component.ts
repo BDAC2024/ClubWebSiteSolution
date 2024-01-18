@@ -115,7 +115,16 @@ export class NewsComponent implements OnInit {
     .subscribe(data => {
       this.isLoading = false;
       this.items = data;
+      this.newsService.isThereNewNews();
     });
 
+  }
+
+  public isNew(itemDate: Date) : boolean {
+    var daysConsideredRecent = 14;
+    var now = new Date();
+    var newNewsDate: Date = new Date(now.getTime() - daysConsideredRecent * (24 * 60 * 60 * 1000));
+
+    return itemDate > newNewsDate;
   }
 }

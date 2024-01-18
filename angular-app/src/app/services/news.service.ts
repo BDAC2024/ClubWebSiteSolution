@@ -41,4 +41,22 @@ export class NewsService {
               .pipe();
   }
 
+  public isThereNewNews(): void {
+
+    var newsItems: NewsItem[];
+
+    this.readNews()
+    .subscribe(data => {
+      newsItems = data;
+      var daysConsideredRecent = 14;
+      var now = new Date();
+      var newNewsDate: Date = new Date(now.getTime() - daysConsideredRecent * (24 * 60 * 60 * 1000));
+  
+      this.NewNews = newsItems.filter(m => m.date > newNewsDate).length > 0;
+    });
+
+
+  }
+
+  public NewNews: boolean = false;
 }

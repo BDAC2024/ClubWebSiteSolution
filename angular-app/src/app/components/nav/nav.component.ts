@@ -10,6 +10,7 @@ import { GlobalService } from 'src/app/services/global.service';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { RefData } from 'src/app/models/refData';
+import { NewsService } from 'src/app/services/news.service';
 
 @Component({
   selector: 'app-nav',
@@ -84,6 +85,7 @@ export class NavComponent implements OnInit {
       private globalService: GlobalService,
       public authenticationService: AuthenticationService,
       private refDataService: RefDataService,
+      public newsService: NewsService,
       router: Router) {
 
         this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
@@ -126,6 +128,7 @@ export class NavComponent implements OnInit {
 
   ngOnInit(): void {
     this.getRefData();
+    this.newsService.isThereNewNews();
   }
 
   public getRefData() {
@@ -151,4 +154,6 @@ export class NavComponent implements OnInit {
       return false;
     }
   }
+
+
 }

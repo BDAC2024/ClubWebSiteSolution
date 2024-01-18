@@ -27,6 +27,8 @@ import { RulesJnrGeneralComponent } from './components/rules-jnr-general/rules-j
 import { RulesJnrMatchComponent } from './components/rules-jnr-match/rules-jnr-match.component';
 import { GuestTicketCreateComponent } from './components/guest-ticket-create/guest-ticket-create.component';
 import { GuestTicketsComponent } from './components/guest-tickets/guest-tickets.component';
+import { BuyMembershipsComponent } from './components/buy-memberships/buy-memberships.component';
+import { PaymentsComponent } from './components/payments/payments.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -55,6 +57,8 @@ const routes: Routes = [
   { path: 'rulesJnrMatch', component: RulesJnrMatchComponent, canActivate: [AuthGuard] },
   { path: 'guestTickets', component: GuestTicketsComponent, canActivate: [AuthGuard] },
   { path: 'guestTicketCreate', component: GuestTicketCreateComponent, canActivate: [AuthGuard] },
+  { path: 'buyMemberships', component: BuyMembershipsComponent, canActivate: [AuthGuard] },
+  { path: 'payments', component: PaymentsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

@@ -1,0 +1,18 @@
+{
+    "_id": "42a1dd96-6048-4b91-a5f6-6ec1c5ab81d6",
+    "name": "Angling Club - Prod",
+    "default": true,
+    "sortNum": 10000,
+    "created": "2023-04-05T15:31:43.422Z",
+    "modified": "2023-04-05T15:31:43.422Z",
+    "data": [
+        {
+            "name": "accessToken",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJLZXkiOiJNZW1iZXI6NjZlNjA2YTAtYWQwZC00MDI0LWJmNmYtZWQ3YzM5NjFmMzU1IiwiTWVtYmVyc2hpcE51bWJlciI6IjExOCIsIkFkbWluIjoiVHJ1ZSIsIkRldmVsb3BlciI6IlRydWUiLCJBbGxvd05hbWVUb0JlVXNlZCI6IlRydWUiLCJQcmVmZXJlbmNlc0xhc3RVcGRhdGVkIjoiMjAyMi0wMS0xMCAxODo1NDo1MloiLCJOYW1lIjoiUy5Ub3duZW5kIiwiRW1haWwiOiJzdGV2ZUB0b3duZW5kbWFpbC5jby51ayIsIlBpblJlc2V0UmVxdWlyZWQiOiJGYWxzZSIsIm5iZiI6MTY5MDQ1MDA1NiwiZXhwIjoxNjk0OTQyODU2LCJpYXQiOjE2OTA0NTAwNTZ9.NnNgiKzHiXfglxmT3EHJpw1esRniEtGbGJY8u0bzh2s"
+        },
+        {
+            "name": "baseUrl",
+            "value": "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod"
+        }
+    ]
+}

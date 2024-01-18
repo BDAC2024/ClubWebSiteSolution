@@ -13,7 +13,20 @@
         <li *ngFor="let item of items">
             <mat-card class="news-card">
                 <mat-card-header>
-                    <mat-card-title>{{item.title}}</mat-card-title>
+                    <mat-card-title>
+                        <div *ngIf="this.isNew(item.date)" 
+                            class="custom-badge" 
+                                matBadge="!!!" 
+                                matBadgeOverlap="false" 
+                                matBadgePosition="after" 
+                                matBadgeSize="small"
+                                matBadgeColor="accent">
+                            {{item.title}}
+                        </div>
+                        <div *ngIf="!this.isNew(item.date)">
+                            {{item.title}}
+                        </div>
+                    </mat-card-title>
                     <mat-card-subtitle>{{item.date | date:'dd MMM YY'}}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>

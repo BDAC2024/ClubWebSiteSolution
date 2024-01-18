@@ -7,7 +7,20 @@
     <!-- <mat-nav-list *ngIf="previewService.previewCodeValid"> -->
     <mat-nav-list >
       <a mat-list-item routerLink="/welcome">Welcome</a>
-        <a mat-list-item routerLink="/news">News</a>
+        <a mat-list-item routerLink="/news">
+          <div *ngIf="this.newsService.NewNews"
+              class="custom-badge" 
+                  matBadge="new" 
+                  matBadgeOverlap="false" 
+                  matBadgePosition="after" 
+                  matBadgeSize="small"
+                  matBadgeColor="accent">
+            News
+          </div>
+          <div *ngIf="!this.newsService.NewNews">
+            News
+          </div>
+        </a>
         <a mat-list-item routerLink="/waters">Club Waters</a>
         <a mat-list-item routerLink="/matches">Matches</a>
 
@@ -41,6 +54,16 @@
             <a mat-list-item routerLink="/rulesJnrMatch">Jnr Match</a>
           </div>
           <a mat-list-item routerLink="/forms">Club Forms</a>
+          <a mat-list-item routerLink="/buyMemberships" *ngIf="isPreviewer()">
+            <div class="custom-badge" 
+                  matBadge="preview" 
+                  matBadgeOverlap="false" 
+                  matBadgePosition="after" 
+                  matBadgeSize="small"
+                  matBadgeColor="warn">
+                Buy membership
+                </div>
+          </a>
 					<a mat-list-item routerLink="/environmental">Environmental</a>
 					<a mat-list-item routerLink="/anglingTrust">Angling Trust</a>
 				</div>
@@ -60,6 +83,16 @@
                   matBadgeSize="small"
                   matBadgeColor="warn">
               Guest Tickets
+            </div>
+          </a>
+					<a mat-list-item routerLink="/payments" *ngIf="isPreviewer()" >
+            <div class="custom-badge" 
+                  matBadge="preview" 
+                  matBadgeOverlap="false" 
+                  matBadgePosition="after" 
+                  matBadgeSize="small"
+                  matBadgeColor="warn">
+              Payments
             </div>
           </a>
 					<!-- <a mat-list-item routerLink="/aggregateWeights">Weights</a> -->

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -19,7 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
@@ -79,6 +79,8 @@ import { RulesJnrMatchComponent } from './components/rules-jnr-match/rules-jnr-m
 import { GuestTicketCreateComponent } from './components/guest-ticket-create/guest-ticket-create.component';
 import { GuestTicketsComponent } from './components/guest-tickets/guest-tickets.component';
 import { CreateGuestTicketComponent } from './dialogs/create-guest-ticket/create-guest-ticket.component';
+import { BuyMembershipsComponent } from './components/buy-memberships/buy-memberships.component';
+import { PaymentsComponent } from './components/payments/payments.component';
 
 @NgModule({
   declarations: [
@@ -121,6 +123,8 @@ import { CreateGuestTicketComponent } from './dialogs/create-guest-ticket/create
     GuestTicketCreateComponent,
     GuestTicketsComponent,
     CreateGuestTicketComponent,
+    BuyMembershipsComponent,
+    PaymentsComponent,
   ],
   imports: [
     BrowserModule,
@@ -176,6 +180,7 @@ import { CreateGuestTicketComponent } from './dialogs/create-guest-ticket/create
       provide: MAT_DATE_LOCALE, 
       useValue: 'en-GB' },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule { }

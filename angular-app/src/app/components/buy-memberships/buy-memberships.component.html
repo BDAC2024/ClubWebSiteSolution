@@ -1,0 +1,20 @@
+<h1>Purchase membership online</h1>
+
+<h3>Notes: - 
+    <ul>
+        <li>All online membership purchases include a £2 postage and handling charge</li>
+        <li>To avoid the £2 handling charge, <a href="/forms">use the postal version (including a self-addressed envelope)</a></li>
+    </ul>
+<h3>
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+<mat-card class="example-card" *ngFor="let membership of obs | async">
+    <mat-card-header>
+        <mat-card-title>{{membership.type}}</mat-card-title>
+        <mat-card-subtitle>Term: {{membership.term}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div *ngIf="membership.notes != ''">Note: {{membership.notes}}</div>
+        Cost: {{membership.cost | currency:'GBP'}} <button class="edit-button" mat-stroked-button color="primary" (click)="buy(membership)"><mat-icon aria-hidden="false" aria-label="Buy now">shopping_cart</mat-icon> Buy now</button>
+    </mat-card-content>
+</mat-card>
