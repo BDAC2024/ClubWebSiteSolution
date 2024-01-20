@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Stripe;
 
 namespace AnglingClubWebServices
 {
@@ -89,6 +90,7 @@ namespace AnglingClubWebServices
             services.AddControllers()
                 .AddMvcOptions(x => x.Filters.Add(new AuthorizeAttribute())) //Uncomment this line to add the authorize attribute to all route by default
                 ;
+
 
             services.AddAutoMapper(typeof(Startup));
 

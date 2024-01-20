@@ -23,6 +23,8 @@ namespace AnglingClubWebServices.Controllers
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<PaymentsController>();
             base.Logger = _logger;
+
+            _logger.LogWarning($"Inside CTOR for PaymentsController");
         }
 
         [HttpGet()]

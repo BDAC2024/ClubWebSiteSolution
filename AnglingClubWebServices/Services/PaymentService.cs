@@ -20,14 +20,16 @@ namespace AnglingClubWebServices.Services
             var payments = new List<Payment>();
 
             var sessionService = new SessionService();
-            StripeList<Session> sessions = sessionService.List();
+            var sessionOptions = new Stripe.Checkout.SessionListOptions { Limit = 100};
+            StripeList<Session> sessions = sessionService.List(sessionOptions);
 
             var completeSessions = sessions
                                     .Where(x => x.PaymentStatus == "paid" && x.CustomFields.Any())
                                     .Select(x => new { x.Id, x.PaymentIntentId, Name = x.CustomFields.First().Text.Value, x.CustomerDetails, x.AmountTotal, x.Created, x.Status, x.PaymentStatus });
 
             var service = new ChargeService();
-            StripeList<Charge> charges = service.List();
+            var chargeOptions = new ChargeListOptions { Limit = 100 };
+            StripeList<Charge> charges = service.List(chargeOptions); //.Where(x => x.Description != "(created by Stripe CLI)").ToList();
 
             var refundedCharges = charges.Where(x => x.Refunded == true).Select(x => new { x.PaymentIntentId });
 
@@ -41,7 +43,7 @@ namespace AnglingClubWebServices.Services
                 var product = productService.Get(lineItems.First().Price.ProductId);
                 var category = product.Metadata.Where(m => m.Key == "Category").First().Value;
                 var charge = charges.FirstOrDefault(c => c.PaymentIntentId == session.PaymentIntentId);
-                var address = charge.Shipping != null ? charge.Shipping.Address : charge.BillingDetails.Address;
+                var address = charge == null? null : (charge.Shipping != null ? charge.Shipping.Address : charge.BillingDetails.Address);
 
 
                 payments.Add(new Payment
@@ -54,8 +56,8 @@ namespace AnglingClubWebServices.Services
                     Amount = session.AmountTotal.Value / 100,
                     PaidOn = session.Created.ToLocalTime(),
                     Status = refundedCharges.Any(x => x.PaymentIntentId == session.PaymentIntentId) ? "refunded" : $"{session.Status} ({session.PaymentStatus})",
-                    CardHoldersName = charge.BillingDetails.Name,
-                    ShippingAddress = $"{address.Line1}, {(address.Line2 != null ? address.Line2 + ", " : "")}{address.City}, {address.PostalCode}"
+                    CardHoldersName = charge == null ? "Unknown" : charge.BillingDetails.Name,
+                    ShippingAddress = charge == null ? "Unknown" : $"{address.Line1}, {(address.Line2 != null ? address.Line2 + ", " : "")}{address.City}, {address.PostalCode}"
                 });
             }
 
