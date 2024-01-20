@@ -124,6 +124,11 @@
 			"Type" : "String",
 			"Description" : "API key for Stripe",
 			"MinLength" : "0"
+		},
+		"StripeWebHookEndpointSecret" : {
+			"Type" : "String",
+			"Description" : "Webhook secret for Stripe",
+			"MinLength" : "0"
 		}
   },
   "Conditions": {},
@@ -166,7 +171,8 @@
 				"FallbackEmailFromAddress" : { "Ref" : "FallbackEmailFromAddress" } ,
 				"CORSOrigins" : { "Ref" : "CORSOrigins" } ,
 				"LogLevel" : { "Ref" : "LogLevel" },
-				"StripeApiKey" : { "Ref" : "StripeApiKey" }
+				"StripeApiKey" : { "Ref" : "StripeApiKey" },
+				"StripeWebHookEndpointSecret" : { "Ref" : "StripeWebHookEndpointSecret" }
 			}
 		},
         "Events": {
