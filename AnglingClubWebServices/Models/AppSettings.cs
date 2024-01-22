@@ -8,5 +8,10 @@ namespace AnglingClubWebServices.Models
         public decimal GuestTicketCost { get; set; }
         public List<int> Previewers { get; set; } = new List<int>();
 
+
+        public decimal DayTicketCost { get; set; }
+        public string DayTicketStyle { get; set; }
+        public string DayTicket { get; set; }
+
     }
 }

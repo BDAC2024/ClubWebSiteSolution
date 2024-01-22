@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Interfaces;
+﻿using Amazon.S3.Model;
+using AnglingClubWebServices.Interfaces;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -88,6 +89,16 @@ namespace AnglingClubWebServices.Helpers
                 default:
                     return num + "th";
             }
+        }
+
+        /// <summary>
+        /// Returns a date of the form "Sat 15th Dec 2024"
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string PrettyDate(this DateTime value)
+        {
+            return value.ToString("ddd ") + value.Day.Ordinal() + value.ToString(" MMM yyyy");
         }
 
         /// <summary>

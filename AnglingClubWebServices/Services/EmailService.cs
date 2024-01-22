@@ -33,12 +33,12 @@ namespace AnglingClubWebServices.Services
 
         #region Methods
 
-        public void SendEmailToSupport(string subject, string textBody, List<string> attachmentFilenames = null, List<CanvasAttachment> canvasAttachments = null)
+        public void SendEmailToSupport(string subject, string textBody, List<string> attachmentFilenames = null, List<ImageAttachment> canvasAttachments = null)
         {
             SendEmail(new List<string> { _options.PrimaryEmailUsername }, subject, textBody, attachmentFilenames, canvasAttachments);
         }
 
-        public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null, List<CanvasAttachment> canvasAttachments = null)
+        public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null, List<ImageAttachment> imageAttachments = null)
         {
             if (to.Any())
             {
@@ -54,26 +54,24 @@ namespace AnglingClubWebServices.Services
                 builder.TextBody = textBody;
                 builder.HtmlBody = textBody + "<br><br>";
 
-
-                if (canvasAttachments != null)
+                if (imageAttachments != null)
                 {
-                    foreach (var att in canvasAttachments)
+                    foreach (var att in imageAttachments)
                     {
-                        var canvasDataUrl = att.DataUrl; 
-                        var canvasBase64 = canvasDataUrl.Replace("data:image/png;base64,", "");
-                        byte[] temp_backToBytes = Convert.FromBase64String(canvasBase64);
-                        var canvasAtt = new MimePart("image", "png", new MemoryStream(temp_backToBytes))
+                        var imageDataUrl = att.DataUrl; 
+                        var imageBase64 = imageDataUrl.Replace("data:image/png;base64,", "");
+                        byte[] temp_backToBytes = Convert.FromBase64String(imageBase64);
+                        var imageAtt = new MimePart("image", "png", new MemoryStream(temp_backToBytes))
                         {
                             ContentTransferEncoding = ContentEncoding.Base64,
                             FileName = att.Filename
                         };
 
-                        builder.Attachments.Add(canvasAtt);
+                        builder.Attachments.Add(imageAtt);
 
                         builder.HtmlBody += $"<img src='{att.DataUrl}'/>";
                     }
                 }
-
 
                 if (attachmentFilenames != null)
                 {
@@ -109,7 +107,7 @@ namespace AnglingClubWebServices.Services
             }
             catch (System.Exception ex)
             {
-                _logger.LogWarning("Primary email sending failed - trying fallback email.", ex);
+                _logger.LogWarning(ex, "Primary email sending failed - trying fallback email.");
 
                 try
                 {
@@ -138,7 +136,7 @@ namespace AnglingClubWebServices.Services
                 }
                 catch (System.Exception fex)
                 {
-                    _logger.LogError("Neither primary or fallback email sending worked.", fex);
+                    _logger.LogError(fex, "Neither primary or fallback email sending worked.");
                     throw;
                 }
             }
@@ -174,7 +172,7 @@ namespace AnglingClubWebServices.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("sendViaSMTP failed.", ex);
+                    _logger.LogError(ex, "sendViaSMTP failed.");
                     throw;
                 }
                 finally

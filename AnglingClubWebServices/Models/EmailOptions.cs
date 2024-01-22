@@ -60,7 +60,7 @@ namespace AnglingClubWebServices.Models
 
     }
 
-    public class CanvasAttachment
+    public class ImageAttachment
     {
         public string DataUrl { get; set; }
         public string Filename { get; set; }

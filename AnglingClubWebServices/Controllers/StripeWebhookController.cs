@@ -21,10 +21,12 @@ namespace AnglingClubWebServices.Controllers
         private readonly IEmailService _emailService;
         private readonly string _endpointSecret;
         private readonly ILogger<WebHookController> _logger;
-        public WebHookController(IOptions<StripeOptions> opts, IEmailService emailService, ILoggerFactory loggerFactory)
+        private readonly ITicketService _ticketService;
+
+        public WebHookController(IOptions<StripeOptions> opts, IEmailService emailService, ILoggerFactory loggerFactory, ITicketService ticketService)
         {
             _emailService = emailService;
-            
+
             _endpointSecret = opts.Value.StripeWebHookEndpointSecret;
             StripeConfiguration.ApiKey = opts.Value.StripeApiKey;
 
@@ -32,6 +34,7 @@ namespace AnglingClubWebServices.Controllers
             base.Logger = _logger;
 
             _logger.LogWarning($"Inside CTOR for WebHookController");
+            _ticketService = ticketService;
         }
 
         [AllowAnonymous]
@@ -61,6 +64,8 @@ namespace AnglingClubWebServices.Controllers
                     _logger.LogWarning(msg);
                     //Console.WriteLine("A successful payment for {0} was made.", paymentIntent.Amount);
                     _emailService.SendEmailToSupport("Payment received", msg);
+
+                    _ticketService.IssueDayTicket(DateTime.Now, paymentIntent.Shipping.Name, paymentIntent.ReceiptEmail, paymentIntent.Id);
                 }
                 // ... handle other event types
                 else

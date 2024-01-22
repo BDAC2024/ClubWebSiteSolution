@@ -39,12 +39,12 @@ namespace AnglingClubWebServices.Controllers
                     return BadRequest("Cannot send an email: To, Subject and Body required");
                 }
 
-                List<CanvasAttachment> canvasAttachments = null;
+                List<ImageAttachment> canvasAttachments = null;
 
                 if (!string.IsNullOrEmpty(canvasDataUrl) && ! string.IsNullOrEmpty(canvasFilename))
                 {
-                    canvasAttachments = new List<CanvasAttachment>();
-                    canvasAttachments.Add(new CanvasAttachment
+                    canvasAttachments = new List<ImageAttachment>();
+                    canvasAttachments.Add(new ImageAttachment
                     {
                         Filename = canvasFilename,
                         DataUrl = HttpUtility.UrlDecode(canvasDataUrl)
@@ -94,7 +94,7 @@ namespace AnglingClubWebServices.Controllers
             public string To { get; set; }
             public string Subject { get; set; }
             public string Body { get; set; }
-            public List<CanvasAttachment> CanvasAttachments { get; set; }
+            public List<ImageAttachment> CanvasAttachments { get; set; }
         }
     }
 }

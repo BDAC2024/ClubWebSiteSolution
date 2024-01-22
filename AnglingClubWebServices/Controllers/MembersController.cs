@@ -471,7 +471,7 @@ namespace AnglingClubWebServices.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Cannot reset PIN", ex);
+                _logger.LogError(ex, "Cannot reset PIN");
                 return BadRequest("Sorry, PIN reset cannot be done.");
             }
         }
@@ -502,7 +502,7 @@ namespace AnglingClubWebServices.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Cannot change PIN  of current user", ex);
+                _logger.LogError(ex, "Cannot change PIN  of current user");
                 return BadRequest("Sorry, PIN cannot be changed.");
             }
         }
