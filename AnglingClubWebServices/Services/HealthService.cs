@@ -38,7 +38,7 @@ namespace AnglingClubWebServices.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Health Check failed", ex);
+                _logger.LogError(ex, "Health Check failed");
                 throw;
             }
         }

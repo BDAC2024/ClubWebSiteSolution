@@ -75,6 +75,9 @@ namespace AnglingClubWebServices.Interfaces
 
     public enum Season
     {
+        [Description("Unknown,2019-03-15,2020-03-14")]
+        Unknown = 0,
+
         [Description("2020/21,2020-03-15,2021-03-14")]
         S20To21 = 20,
 

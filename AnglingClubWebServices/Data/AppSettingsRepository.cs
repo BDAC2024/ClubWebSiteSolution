@@ -39,6 +39,9 @@ namespace AnglingClubWebServices.Data
             var attributes = new List<ReplaceableAttribute>
             {
                 new ReplaceableAttribute { Name = "GuestTicketCost", Value = appSettings.GuestTicketCost.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "DayTicketCost", Value = appSettings.DayTicketCost.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "DayTicketStyle", Value = appSettings.DayTicketStyle, Replace = true },
+                new ReplaceableAttribute { Name = "DayTicket", Value = appSettings.DayTicket, Replace = true },
             };
 
             foreach (var previewer in appSettings.Previewers)
@@ -90,6 +93,19 @@ namespace AnglingClubWebServices.Data
                     case "Previewers":
                         appSettings.Previewers.Add(Convert.ToInt32(attribute.Value));
                         break;
+
+                    case "DayTicketCost":
+                        appSettings.DayTicketCost = Decimal.Parse(attribute.Value);
+                        break;
+
+                    case "DayTicketStyle":
+                        appSettings.DayTicketStyle = attribute.Value;
+                        break;
+
+                    case "DayTicket":
+                        appSettings.DayTicket = attribute.Value;
+                        break;
+
 
                     default:
                         break;

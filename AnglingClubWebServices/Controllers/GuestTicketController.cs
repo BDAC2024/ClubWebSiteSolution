@@ -167,11 +167,11 @@ namespace AnglingClubWebServices.Controllers
                         "Tight lines!,<br/>" +
                         "Boroughbridge & District Angling Club",
                     null,
-                    new List<CanvasAttachment>
+                    new List<ImageAttachment>
                     {
-                        new CanvasAttachment
+                        new ImageAttachment
                         {
-                            Filename = $"Guest_Ticket_{ticket.TicketValidOn:yyyy_mm_dd}.png",
+                            Filename = $"Guest_Ticket_{ticket.TicketValidOn:yyyy_MM_dd}.png",
                             DataUrl = ticket.ImageData
                         }
                     }
