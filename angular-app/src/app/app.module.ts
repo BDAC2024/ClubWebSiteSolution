@@ -81,6 +81,8 @@ import { GuestTicketsComponent } from './components/guest-tickets/guest-tickets.
 import { CreateGuestTicketComponent } from './dialogs/create-guest-ticket/create-guest-ticket.component';
 import { BuyMembershipsComponent } from './components/buy-memberships/buy-memberships.component';
 import { PaymentsComponent } from './components/payments/payments.component';
+import { BuyDayTicketsComponent } from './components/buy-day-tickets/buy-day-tickets.component';
+import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-guest-tickets.component';
 
 @NgModule({
   declarations: [
@@ -125,6 +127,8 @@ import { PaymentsComponent } from './components/payments/payments.component';
     CreateGuestTicketComponent,
     BuyMembershipsComponent,
     PaymentsComponent,
+    BuyDayTicketsComponent,
+    BuyGuestTicketsComponent,
   ],
   imports: [
     BrowserModule,

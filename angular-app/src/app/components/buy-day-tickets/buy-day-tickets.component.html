@@ -1,0 +1,73 @@
+<h1>Purchase Day Tickets online</h1>
+
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+<mat-card class="rules-card">
+    <mat-card-header>
+        <mat-card-title>Notes</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <ul>
+            <li>Day tickets are only available for the River Ure on the Old Cricket Field or Aldborough stretches</li>
+            <li>Day tickets cost {{dayTicket.cost| currency:'GBP'}} and are non-refundable</li>
+            <li>Day tickets cannot be obtained (and are therefore invalid) for the coarse closed season</li>
+            <br/>
+            <li>No dogs, No fires; No camping; No loud music;</li>
+            <li>NO FISHING AFTER DUSK OR FROM BOATS</li>
+            <li>Ticket Holder ONLY permitted to fish and ONLY on the date chosen</li> 
+            <li>NO Live baiting, NO trolling & NO fish to be taken!</li>
+        </ul>
+    </mat-card-content>
+</mat-card> 
+
+
+<mat-card class="purchase-card">
+    <mat-card-header>
+        <mat-card-title>Ticket Details</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-form-field>
+            <mat-label>Ticket Holder's Name</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="dayTicket.holdersName">
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
+            <mat-label>Fishing Date</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="dayTicket.validOn" [min]="this.minDate" [matDatepickerFilter]="this.dateFilter">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <div class="errors" *ngIf="this.errorMessage != ''">
+            {{this.errorMessage}}
+        </div>
+        <div class="edit-button-panel">
+            <button 
+                class="edit-button" 
+                [disabled]="this.isBuying" 
+                mat-stroked-button 
+                color="primary" 
+                (click)="buy()">
+                    <mat-icon *ngIf="!isBuying" aria-hidden="false" aria-label="Buy now">shopping_cart</mat-icon>
+                    <mat-spinner diameter="20" class="button-spinner" *ngIf="isBuying" ></mat-spinner>
+                     Buy now
+            </button>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+    </mat-card-content>
+</mat-card> 
+
+<mat-card class="policy-card">
+    <mat-card-header>
+        <mat-card-subtitle>Payment Data Policy</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <p>
+            Boroughbridge & District Angling Club use the Stripe payment system for online purchases. This website (and its underlying database) does not collect or hold any data entered as part of a purchase.
+        </p>
+        <p>
+            Stripe's own Terms and Privacy statements can be viewed once you enter the payment portal accessible from the "Buy now" button above.
+        </p>
+    </mat-card-content>
+</mat-card>

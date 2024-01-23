@@ -29,6 +29,8 @@ import { GuestTicketCreateComponent } from './components/guest-ticket-create/gue
 import { GuestTicketsComponent } from './components/guest-tickets/guest-tickets.component';
 import { BuyMembershipsComponent } from './components/buy-memberships/buy-memberships.component';
 import { PaymentsComponent } from './components/payments/payments.component';
+import { BuyDayTicketsComponent } from './components/buy-day-tickets/buy-day-tickets.component';
+import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-guest-tickets.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -59,6 +61,8 @@ const routes: Routes = [
   { path: 'guestTicketCreate', component: GuestTicketCreateComponent, canActivate: [AuthGuard] },
   { path: 'buyMemberships', component: BuyMembershipsComponent, canActivate: [AuthGuard] },
   { path: 'payments', component: PaymentsComponent, canActivate: [AuthGuard] },
+  { path: 'buyDayTickets', component: BuyDayTicketsComponent, canActivate: [AuthGuard] },
+  { path: 'buyGuestTickets', component: BuyGuestTicketsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

@@ -46,7 +46,7 @@
   }
   
   .sidenav {
-    width: 150px;
+    width: 200px;
     box-shadow: 3px 0 6px rgba(0,0,0,0.24);
   }
   
@@ -84,7 +84,7 @@
     transition: transform 300ms ease;
     transform: scaleY(0);
     transform-origin: top;
-    padding-left: 30px;
+    padding-left: 16px;
   }
   .submenu.expanded {
     transform: scaleY(1);
@@ -112,4 +112,10 @@
       padding-right: 3px;
       font-weight: 400;
     }
+  }
+
+  .preview-option {
+    color: red;
+    background-color: yellow;
+    font-weight: bold;
   }

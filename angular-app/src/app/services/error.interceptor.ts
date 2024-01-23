@@ -61,6 +61,7 @@ export class ErrorIntercept implements HttpInterceptor {
                         }
                     });
 
+                    console.log("ErrorIntercept about to throwError");
                     return throwError(errorMessage);
                 })
             )

@@ -17,5 +17,6 @@ export class Season {
 
 export class AppSettings {
     guestTicketCost!: number;
+    dayTicketCost!: number;
     previewers!: number[];
 }
