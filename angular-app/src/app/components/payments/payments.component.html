@@ -21,6 +21,16 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Members Name </th>
         <td mat-cell *matCellDef="let element"> {{element.membersName}} </td>
     </ng-container>
+    
+    <ng-container matColumnDef="holdersName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Holders Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.holdersName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="validOn">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Valid on </th>
+        <td mat-cell *matCellDef="let element"> {{element.validOn | date:'dd MMM YY'}} </td>
+    </ng-container>
 
     <ng-container matColumnDef="purchase">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchased </th>

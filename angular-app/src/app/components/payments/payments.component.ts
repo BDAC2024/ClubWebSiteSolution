@@ -62,9 +62,36 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
   private setDisplayedColumns(isHandsetPortait: boolean) {
 
     if (isHandsetPortait) {
-      this.displayedColumns = ["purchase", "membersName", "amount", "paidOn", "status"];
+      switch (this.selectedPaymentType)
+      {
+        case PaymentType.DayTicket:
+          this.displayedColumns = ["holdersName", "validOn", "amount", "paidOn", "status"];
+          break;
+
+        case PaymentType.Membership:
+          this.displayedColumns = ["purchase", "membersName", "amount", "paidOn", "status"];
+          break;
+
+        default:
+          this.displayedColumns = ["purchase", "membersName", "amount", "paidOn", "status"];
+      }
+      
     } else {
-      this.displayedColumns = ["purchase", "membersName", "email", "address", "amount", "paidOn", "status"];
+      switch (this.selectedPaymentType)
+      {
+        case PaymentType.DayTicket:
+          this.displayedColumns = ["holdersName", "validOn", "amount", "paidOn", "status"];
+          break;
+
+        case PaymentType.Membership:
+          this.displayedColumns = ["purchase", "membersName", "email", "address", "amount", "paidOn", "status"];;
+          break;
+
+        default:
+          this.displayedColumns = ["purchase", "membersName", "holdersName", "validOn", "email", "address", "amount", "paidOn", "status"];;
+
+      }
+      
     }
   }
 
