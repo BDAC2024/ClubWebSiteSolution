@@ -3,6 +3,7 @@ using AnglingClubWebServices.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace AnglingClubWebServices.Controllers
@@ -11,15 +12,15 @@ namespace AnglingClubWebServices.Controllers
     public class AppSettingsController : AnglingClubControllerBase
     {
         private readonly ILogger<AppSettingsController> _logger;
-        private readonly IAppSettingsRepository _appSettingsRepository;
+        private readonly IAppSettingRepository _appSettingRepository;
         private readonly IMapper _mapper;
 
         public AppSettingsController(
-            IAppSettingsRepository appSettingsRepository,
+            IAppSettingRepository appSettingRepository,
             IMapper mapper,
             ILoggerFactory loggerFactory)
         {
-            _appSettingsRepository = appSettingsRepository;
+            _appSettingRepository = appSettingRepository;
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<AppSettingsController>();
             base.Logger = _logger;
@@ -54,7 +55,7 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            _appSettingsRepository.AddOrUpdateAppSettings(appSettings);
+            _appSettingRepository.AddOrUpdateAppSettings(appSettings);
 
             ReportTimer("Posting app settings");
         }
@@ -66,7 +67,7 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                _appSettingsRepository.DeleteAppSettings(id).Wait();
+                _appSettingRepository.DeleteAppSetting(id).Wait();
             }
             catch (System.Exception)
             {

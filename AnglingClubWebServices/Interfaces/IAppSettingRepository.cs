@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Interfaces
 {
-    public interface IAppSettingsRepository
+    public interface IAppSettingRepository
     {
         Task AddOrUpdateAppSettings(AppSettings appSettings);
+        Task AddOrUpdateAppSetting(AppSetting appSetting);
         Task<AppSettings> GetAppSettings();
-        Task DeleteAppSettings(string id);
+        Task DeleteAppSetting(string id);
     }
 }
