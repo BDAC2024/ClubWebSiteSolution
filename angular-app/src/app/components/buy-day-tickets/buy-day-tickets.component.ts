@@ -4,6 +4,7 @@ import { RefData } from 'src/app/models/refData';
 import { PaymentsService } from 'src/app/services/payments.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { Router } from '@angular/router';
+import { TicketService } from 'src/app/services/ticket.service';
 
 @Component({
   selector: 'app-buy-day-tickets',
@@ -25,44 +26,42 @@ export class BuyDayTicketsComponent implements OnInit {
   constructor(
     private refDataService: RefDataService,
     private paymentsService: PaymentsService,
+    private ticketService: TicketService,
     private router: Router) { }
 
   ngOnInit(): void {
     this.getRefData();
-    this.isLoading = false;
 
     this.baseUrl = window.location.href.replace(this.router.url, "");
-    this.dayTicket.successUrl = this.baseUrl;
+
+    this.dayTicket = new DayTicket();
+    this.dayTicket.successUrl = this.baseUrl + "/buySuccess/dayTicket";
     this.dayTicket.cancelUrl = this.baseUrl;
+
   }
 
   public getRefData() {
+    this.isLoading = true;
     this.refDataService.getRefData()
     .subscribe(data => {
       this.refData = data;
       this.dayTicket.cost = this.refData.appSettings.dayTicketCost;
+      this.isLoading = false;
     });
   }
 
   public dateFilter = (d: Date | null): boolean => {
 
-    const month = (d || new Date()).getMonth();
-    const day = (d || new Date()).getDate();
-
-    // console.log("-------------");
-    // console.log(d);
-    // console.log(day);
-    // console.log(month);
-
     // Prevent closed season being selected
 
-    var closedSeason = (month === 2 && day > 14) || // March
-                        month === 3 ||              // April
-                        month === 4 ||              // May
-                        (month === 5 && day < 16);  // June
+    var closedSeason = this.ticketService.isClosedSeason(d || new Date());
 
     return !closedSeason; 
   };
+
+  public dayTicketsAvailable(): boolean {
+    return this.ticketService.dayTicketsAvailable(new Date());
+  }
 
   public async buy() {
     
@@ -85,6 +84,8 @@ export class BuyDayTicketsComponent implements OnInit {
     console.log("About to buyDayTicket...");
     this.paymentsService.buyDayTicket(this.dayTicket)
     .then(() => {
+      // Under normal circumstances this would not be executed.
+      // Instead user would have been redirected to stripe checkout
       console.log("then success");
     })
     .catch(() => {
@@ -92,5 +93,10 @@ export class BuyDayTicketsComponent implements OnInit {
       this.isBuying = false;
     });
     
+  }
+
+  formComplete(): boolean {
+    return this.dayTicket.validOn != null &&
+          this.dayTicket.holdersName != null;
   }
 }

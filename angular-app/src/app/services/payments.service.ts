@@ -10,6 +10,7 @@ import { CreateCheckoutSessionResponse } from '../models/create-checkout-session
 
 import {Stripe, loadStripe} from '@stripe/stripe-js';
 import { environment } from 'src/environments/environment';
+import { GuestTicket } from '../models/guest-ticket';
 
 
 @Injectable({
@@ -54,6 +55,34 @@ export class PaymentsService {
         }),
         (() => { 
           //console.log("buyDayTicket: subscribe finally...");
+        })
+      )}
+    );
+  }
+
+  /*
+    Note that this method should not return when all succeeds. It should redirect the user to Stripe.
+    However, if stripe is unable to create the checkout session for any reason then we need to
+    return false so that the caller can react appropriately.
+  */
+  public async buyGuestTicket(guestTicket: GuestTicket): Promise<boolean> {
+
+    return new Promise((resolve, reject) => { 
+      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/guestTicket`, guestTicket)
+      .pipe(map(res => res),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(error);
+      }))
+      .subscribe(
+        (async (data) => {
+          await this.redirectToCheckout(data.sessionId);  
+        }),
+        ((err) => {
+          //console.log("buyGuestTicket: subscribe err...");
+          reject(err);
+        }),
+        (() => { 
+          //console.log("buyGuestTicket: subscribe finally...");
         })
       )}
     );

@@ -6,7 +6,7 @@ import { Member } from 'src/app/models/member';
 import { MembersService } from 'src/app/services/members.service';
 import { RefData } from 'src/app/models/refData';
 import { RefDataService } from 'src/app/services/ref-data.service';
-import { GuestTicket } from 'src/app/models/guest-ticket';
+import { OLDGuestTicket } from 'src/app/models/guest-ticket';
 import { ScreenService } from 'src/app/services/screen.service';
 import { ThrowStmt } from '@angular/compiler';
 import { GuestTicketService } from 'src/app/services/guest-ticket.service';
@@ -78,7 +78,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
   filteredOptions!: Observable<Member[]>;
   editMode: boolean = false;
 
-  //public guestTicket!: GuestTicket;
+  //public guestTicket!: OLDGuestTicket;
 
   @ViewChild('viewingCanvasEl', { static: false }) viewingCanvas!: ElementRef<HTMLCanvasElement>; 
   @ViewChild('printingCanvasEl', { static: false }) printingCanvas!: ElementRef<HTMLCanvasElement>; 
@@ -99,7 +99,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     private readonly viewportRuler: ViewportRuler,
     private readonly ngZone: NgZone,
     
-    @Inject(MAT_DIALOG_DATA) public guestTicket: GuestTicket) {
+    @Inject(MAT_DIALOG_DATA) public guestTicket: OLDGuestTicket) {
       if (guestTicket.dbKey != "") {
         this.title = "Edit Guest Ticket";
         this.editMode = true;
@@ -189,7 +189,7 @@ export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewI
     this.isLoading = true;
     this.getRefData();
 
-    //this.guestTicket = new GuestTicket();
+    //this.guestTicket = new OLDGuestTicket();
     this.filteredOptions = this.myControl.valueChanges
     .pipe(
     startWith(''),

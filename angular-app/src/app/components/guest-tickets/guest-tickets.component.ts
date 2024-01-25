@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CreateGuestTicketComponent } from 'src/app/dialogs/create-guest-ticket/create-guest-ticket.component';
-import { GuestTicket } from 'src/app/models/guest-ticket';
+import { GuestTicket, OLDGuestTicket } from 'src/app/models/guest-ticket';
 import { RefData } from 'src/app/models/refData';
 import { GlobalService } from 'src/app/services/global.service';
 import { GuestTicketService } from 'src/app/services/guest-ticket.service';
@@ -19,7 +19,7 @@ import { GuestTicketCreateComponent } from '../guest-ticket-create/guest-ticket-
 })
 export class GuestTicketsComponent implements OnInit, AfterViewInit {
 
-  public tickets = new MatTableDataSource<GuestTicket>();
+  public tickets = new MatTableDataSource<OLDGuestTicket>();
 
   public refData!: RefData;
   public selectedSeason!: number;
@@ -65,12 +65,12 @@ export class GuestTicketsComponent implements OnInit, AfterViewInit {
     this.globalService.setStoredSeason(this.selectedSeason);
     this.guestTicketService.readTickets(this.selectedSeason)
      .subscribe(data => {
-       this.tickets.data = data as GuestTicket[];
+       this.tickets.data = data as OLDGuestTicket[];
        this.isLoading = false;
      });
   }
 
-  public edit(ticket: GuestTicket) {
+  public edit(ticket: OLDGuestTicket) {
 
     const dialogRef = this.dialog.open(CreateGuestTicketComponent, {
       width: '25%',
@@ -91,7 +91,7 @@ export class GuestTicketsComponent implements OnInit, AfterViewInit {
   }
 
   public issueTicket() {
-    var ticketData: GuestTicket = { 
+    var ticketData: OLDGuestTicket = { 
       dbKey: "", 
       ticketNumber: 0, 
       cost: 0, 

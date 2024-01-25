@@ -1,4 +1,15 @@
 export class GuestTicket {
+
+  cost!: number;
+  validOn!: Date | null;
+  membersName!: string;
+  membershipNumber!: number;
+  guestsName!: string;
+  successUrl!: string;
+  cancelUrl!: string;
+}
+
+export class OLDGuestTicket {
   dbKey!: string;
   ticketNumber!: number;
   cost!: number;
@@ -13,5 +24,4 @@ export class GuestTicket {
   season!: number;
   imageData!: string;
 }
-
 

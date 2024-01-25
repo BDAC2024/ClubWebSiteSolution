@@ -73,6 +73,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     background-color: white;
 }
 
+.warning-card {
+    background-color: orange;
+}
+
 .rules-card {
     background-color: lightgreen;
     margin-bottom: 6px;
@@ -121,4 +125,28 @@ mat-form-field {
 
 .button-spinner.mat-progress-spinner circle {
     stroke: white;
+}
+
+.centered-title-card {
+    background-color: lightgreen;
+    margin-bottom: 6px;
+}
+
+.centered-title-card mat-card-title {
+    margin: 0;
+}
+
+.centered-title-card table {
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.centered-title-card table td {
+    padding-left: 6px; 
+    padding-right: 6px; 
+    font-size: 20px;
+}
+
+.edit-button-disabled {
+    background-color: lightgray !important;
 }

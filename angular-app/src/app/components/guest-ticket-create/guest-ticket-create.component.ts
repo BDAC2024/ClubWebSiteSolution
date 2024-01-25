@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { GuestTicket } from 'src/app/models/guest-ticket';
+import { GuestTicket, OLDGuestTicket } from 'src/app/models/guest-ticket';
 
 const SCALE = 3.5;
 
@@ -25,7 +25,7 @@ export class GuestTicketCreateComponent implements OnInit, AfterViewInit {
 
   private context!: CanvasRenderingContext2D;
 
-  private guestTicket!: GuestTicket;
+  private guestTicket!: OLDGuestTicket;
 
   constructor() { }
 
@@ -44,7 +44,7 @@ export class GuestTicketCreateComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     
-    this.guestTicket = new GuestTicket();
+    this.guestTicket = new OLDGuestTicket();
 
     this.guestTicket.cost = 5;
     this.guestTicket.ticketNumber = 1;

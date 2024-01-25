@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { plainToClass } from 'class-transformer';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { GuestTicket } from '../models/guest-ticket';
+import { OLDGuestTicket } from '../models/guest-ticket';
 import { GlobalService } from './global.service';
 
 @Injectable({
@@ -16,20 +16,20 @@ export class GuestTicketService {
     private globalService: GlobalService 
   ) { }
 
-  public readTickets(season: number): Observable<GuestTicket[]> {
-    return this.http.get<GuestTicket[]>(`${this.globalService.ApiUrl}/api/guestTicket/${season}`)
+  public readTickets(season: number): Observable<OLDGuestTicket[]> {
+    return this.http.get<OLDGuestTicket[]>(`${this.globalService.ApiUrl}/api/guestTicket/${season}`)
               .pipe(map(res => 
-                plainToClass(GuestTicket, res)
+                plainToClass(OLDGuestTicket, res)
             ));
   }
 
-  public addOrUpdateGuestTicket(guestTicket: GuestTicket): Observable<GuestTicket> {
+  public addOrUpdateGuestTicket(guestTicket: OLDGuestTicket): Observable<OLDGuestTicket> {
 
-    return this.http.post<GuestTicket>(`${this.globalService.ApiUrl}/api/guestTicket`, guestTicket)
+    return this.http.post<OLDGuestTicket>(`${this.globalService.ApiUrl}/api/guestTicket`, guestTicket)
               .pipe();
   }
 
-  public issueGuestTicket(guestTicket: GuestTicket): Observable<void> {
+  public issueGuestTicket(guestTicket: OLDGuestTicket): Observable<void> {
 
     return this.http.post<void>(`${this.globalService.ApiUrl}/api/guestTicket/issue`, guestTicket)
               .pipe();

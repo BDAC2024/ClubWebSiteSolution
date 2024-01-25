@@ -83,6 +83,7 @@ import { BuyMembershipsComponent } from './components/buy-memberships/buy-member
 import { PaymentsComponent } from './components/payments/payments.component';
 import { BuyDayTicketsComponent } from './components/buy-day-tickets/buy-day-tickets.component';
 import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-guest-tickets.component';
+import { BuySuccessComponent } from './components/buy-success/buy-success.component';
 
 @NgModule({
   declarations: [
@@ -129,6 +130,7 @@ import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-gue
     PaymentsComponent,
     BuyDayTicketsComponent,
     BuyGuestTicketsComponent,
+    BuySuccessComponent,
   ],
   imports: [
     BrowserModule,
