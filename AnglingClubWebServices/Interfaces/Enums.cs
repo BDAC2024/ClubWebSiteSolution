@@ -189,4 +189,16 @@ namespace AnglingClubWebServices.Interfaces
         GuestTicket,
         DayTicket,
     }
+
+    public enum CheckoutType
+    {
+        [Description("payment")]
+        Payment,
+
+        [Description("setup")]
+        Setup,
+
+        [Description("subscription")]
+        Subscription
+    }
 }

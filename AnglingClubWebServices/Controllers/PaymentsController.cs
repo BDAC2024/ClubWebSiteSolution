@@ -39,11 +39,18 @@ namespace AnglingClubWebServices.Controllers
                 return BadRequest("Only administrators can access this.");
             }
 
-            var payments = _paymentsService.GetPayments();
+            try
+            {
+                var payments = _paymentsService.GetPayments();
 
-            ReportTimer("Getting payments");
+                ReportTimer("Getting payments");
 
-            return Ok(payments);
+                return Ok(payments);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -1,13 +1,17 @@
 using AnglingClubWebServices.Data;
+using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using AnglingClubWebServices.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -19,21 +23,24 @@ namespace AnglingClubWebServices.Controllers
         private readonly IMemberRepository _memberRepository;
         private readonly ILogger<GuestTicketController> _logger;
         private readonly IEmailService _emailService;
-        private readonly IAppSettingsRepository _appSettingsRepository;
+        private readonly IAppSettingRepository _appSettingRepository;
+        private readonly IPaymentsService _paymentsService;
 
         public GuestTicketController(
             IGuestTicketRepository guestTicketRepository,
             IMemberRepository memberRepository,
             IEmailService emailService,
-            IAppSettingsRepository appSettingsRepository,
-            ILoggerFactory loggerFactory)
+            IAppSettingRepository appSettingRepository,
+            ILoggerFactory loggerFactory,
+            IPaymentsService paymentsService)
         {
             _guestTicketRepository = guestTicketRepository;
             _memberRepository = memberRepository;
             _emailService = emailService;
-            _appSettingsRepository = appSettingsRepository;
+            _appSettingRepository = appSettingRepository;
             _logger = loggerFactory.CreateLogger<GuestTicketController>();
             base.Logger = _logger;
+            _paymentsService = paymentsService;
         }
 
         // GET api/values
@@ -75,7 +82,65 @@ namespace AnglingClubWebServices.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] GuestTicket ticket)
+        public async Task<IActionResult> Post([FromBody] GuestTicketDto ticket)
+        {
+            StartTimer();
+
+            ticket.ValidOn = ticket.ValidOn.AddHours(12); // Ensure we don't get caught out by daylight savings!
+
+            var appSettings = await _appSettingRepository.GetAppSettings();
+
+            try
+            {
+                try
+                {
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest
+                    {
+                        SuccessUrl = ticket.SuccessUrl,
+                        CancelUrl = ticket.CancelUrl,
+                        PriceId = appSettings.ProductGuestTicket,
+                        Mode = CheckoutType.Payment,
+                        MetaData = new Dictionary<string, string> {
+                            { "MembersName", ticket.MembersName },
+                            { "MembershipNumber", CurrentUser.MembershipNumber.ToString() },
+                            { "GuestsName", ticket.GuestsName },
+                            { "ValidOn", ticket.ValidOn.ToString("yyyy-MM-dd") },
+                        }
+
+                    });
+
+                    return Ok(new CreateCheckoutSessionResponse
+                    {
+                        SessionId = sessionId
+                    });
+                }
+                catch (StripeException e)
+                {
+                    return BadRequest(e.StripeError.Message);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    return BadRequest(ex.InnerException.Message);
+                }
+                else
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            finally
+            {
+                ReportTimer("Buying day ticket");
+            }
+
+        }
+
+        [HttpPost]
+        [Route("OLDPost")]
+        public IActionResult OLDPost([FromBody] GuestTicket ticket)
         {
             StartTimer();
 
@@ -94,7 +159,7 @@ namespace AnglingClubWebServices.Controllers
             try
             {
                 ticket.IssuedOn = DateTime.Now;
-                ticket.Cost = _appSettingsRepository.GetAppSettings().Result.GuestTicketCost;
+                ticket.Cost = _appSettingRepository.GetAppSettings().Result.GuestTicketCost;
 
                 var issuer = _memberRepository.GetMembers(EnumUtils.SeasonForDate(ticket.IssuedOn).Value).Result.FirstOrDefault(x => x.MembershipNumber == CurrentUser.MembershipNumber);
 

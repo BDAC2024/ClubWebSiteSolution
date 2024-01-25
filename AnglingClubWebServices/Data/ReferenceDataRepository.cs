@@ -7,14 +7,14 @@ namespace AnglingClubWebServices.Data
 {
     public class ReferenceDataRepository : IReferenceDataRepository
     {
-        private readonly IAppSettingsRepository _appSettingsRepository;
+        private readonly IAppSettingRepository _appSettingRepository;
         private readonly ILogger<ReferenceDataRepository> _logger;
 
         public ReferenceDataRepository(
-            IAppSettingsRepository appSettingsRepository,
+            IAppSettingRepository appSettingRepository,
             ILoggerFactory loggerFactory)
         {
-            _appSettingsRepository = appSettingsRepository;
+            _appSettingRepository = appSettingRepository;
             _logger = loggerFactory.CreateLogger<ReferenceDataRepository>();
         }
 
@@ -36,7 +36,7 @@ namespace AnglingClubWebServices.Data
 
             refData.CurrentSeason = EnumUtils.CurrentSeason();
 
-            refData.AppSettings = _appSettingsRepository.GetAppSettings().Result;
+            refData.AppSettings = _appSettingRepository.GetAppSettings().Result;
 
             return refData;
 
