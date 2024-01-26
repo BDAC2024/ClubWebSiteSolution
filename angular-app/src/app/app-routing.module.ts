@@ -32,6 +32,8 @@ import { PaymentsComponent } from './components/payments/payments.component';
 import { BuyDayTicketsComponent } from './components/buy-day-tickets/buy-day-tickets.component';
 import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-guest-tickets.component';
 import { BuySuccessComponent } from './components/buy-success/buy-success.component';
+import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
+import { DataPolicyComponent } from './components/data-policy/data-policy.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -54,10 +56,12 @@ const routes: Routes = [
   { path: 'members', component: MembersComponent, canActivate: [AuthGuard] },
   { path: 'myDetails', component: MyDetailsComponent, canActivate: [AuthGuard] },
   { path: 'userAdmins', component: UserAdminsComponent, canActivate: [AuthGuard] },
-  { path: 'rulesGeneral', component: RulesGeneralComponent, canActivate: [AuthGuard] },
-  { path: 'rulesMatch', component: RulesMatchComponent, canActivate: [AuthGuard] },
-  { path: 'rulesJnrGeneral', component: RulesJnrGeneralComponent, canActivate: [AuthGuard] },
-  { path: 'rulesJnrMatch', component: RulesJnrMatchComponent, canActivate: [AuthGuard] },
+  { path: 'termsAndConditions', component: TermsAndConditionsComponent},
+  { path: 'dataPolicy', component: DataPolicyComponent},
+  { path: 'rulesGeneral', component: RulesGeneralComponent},
+  { path: 'rulesMatch', component: RulesMatchComponent},
+  { path: 'rulesJnrGeneral', component: RulesJnrGeneralComponent},
+  { path: 'rulesJnrMatch', component: RulesJnrMatchComponent},
   { path: 'guestTickets', component: GuestTicketsComponent, canActivate: [AuthGuard] },
   { path: 'guestTicketCreate', component: GuestTicketCreateComponent, canActivate: [AuthGuard] },
   { path: 'buyMemberships', component: BuyMembershipsComponent, canActivate: [AuthGuard] },

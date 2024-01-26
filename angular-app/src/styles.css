@@ -150,3 +150,20 @@ mat-form-field {
 .edit-button-disabled {
     background-color: lightgray !important;
 }
+
+.checkbox-wrapper {
+    min-height: 50px;
+    display: flex;
+}
+
+.checkbox-wrapper.mat-checkbox.mat-checkbox-layout.mat-checkbox-label {
+    white-space: unset !important;
+}
+
+.mat-checkbox-layout {
+    white-space: unset !important;
+}
+
+.mat-checkbox-label {
+    line-height: unset !important;
+}

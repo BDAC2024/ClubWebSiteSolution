@@ -23,6 +23,17 @@
     </mat-card-content>
 </mat-card>
 
+<mat-card class="rules-card" *ngIf="this.isMembership">
+    <mat-card-header>
+        <mat-card-title>Thank You!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        You will shortly receive an email confirming your purchase.. 
+        <br/>
+        <br/>
+        Your membership book will soon be prepared and will be sent to you when ready. 
+    </mat-card-content>
+</mat-card>
 
 <mat-card class="rules-card" *ngIf="this.isGuestTicket">
     <mat-card-header>

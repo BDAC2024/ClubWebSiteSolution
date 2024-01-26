@@ -1,20 +1,168 @@
 <h1>Purchase membership online</h1>
 
-<h3>Notes: - 
-    <ul>
-        <li>All online membership purchases include a £2 postage and handling charge</li>
-        <li>To avoid the £2 handling charge, <a href="/forms">use the postal version (including a self-addressed envelope)</a></li>
-    </ul>
-<h3>
 <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
 
-<mat-card class="example-card" *ngFor="let membership of obs | async">
-    <mat-card-header>
-        <mat-card-title>{{membership.type}}</mat-card-title>
-        <mat-card-subtitle>Term: {{membership.term}}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-        <div *ngIf="membership.notes != ''">Note: {{membership.notes}}</div>
-        Cost: {{membership.cost | currency:'GBP'}} <button class="edit-button" mat-stroked-button color="primary" (click)="buy(membership)"><mat-icon aria-hidden="false" aria-label="Buy now">shopping_cart</mat-icon> Buy now</button>
-    </mat-card-content>
-</mat-card>
+<div *ngIf="!isLoading">
+    <mat-card class="rules-card">
+        <mat-card-header>
+            <mat-card-title>Notes</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <ul>
+                <li>All online membership purchases include a £2 postage and handling charge</li>
+                <li>To avoid the £2 handling charge, <a href="/forms">use the postal version (including a self-addressed
+                        envelope)</a></li>
+            </ul>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="purchase-card">
+        <mat-card-header>
+            <mat-card-title>Membership Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+            <mat-form-field>
+                <mat-label>Membership Type</mat-label>
+                <mat-select [(ngModel)]="selectedMembership" >
+                    <mat-option *ngFor="let sel of this.membershipList" [value]="sel" (onSelectionChange)="resetNewMembership(sel)">
+                        {{sel.description}} - {{sel.term}}
+                      </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div *ngIf="this.selectedMembership != null">
+                <p>Cost: <b>{{selectedMembership.cost | currency:'GBP'}}</b>, Term: <b>{{selectedMembership.term}}</b> - Runs from {{selectedMembership.runs}}
+                </p>
+                <div *ngIf="membershipAvailable()">
+                    <mat-form-field>
+                        <mat-label>Name</mat-label>
+                        <input class="title-form-field" matInput [(ngModel)]="newMembership.name">
+                    </mat-form-field>
+                    <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
+                        <mat-label>Date of Birth</mat-label>
+                        <input matInput [matDatepicker]="picker" [min]="this.minDate()" [max]="this.maxDate()" [(ngModel)]="newMembership.dob" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="!isUnderAge()">
+                        <mat-label>Phone number</mat-label>
+                        <input class="title-form-field" matInput [(ngModel)]="newMembership.phoneNumber">
+                    </mat-form-field>
+
+                    <div *ngIf="isUnderAge()">
+                        <b>Parental Consent/Disclosure</b>
+                        <br/>
+                        <mat-form-field>
+                            <mat-label>{{newMembership.name}} can swim</mat-label>
+                            <mat-select [(ngModel)]="newMembership.childCanSwim">
+                                <mat-option value="0 metres">0 metres</mat-option>
+                                <mat-option value="25 metres">25 metres</mat-option>
+                                <mat-option value="50 metres">50 metres</mat-option>
+                                <mat-option value="100 metres or more">100 metres or more</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <br/>
+                        Whilst fishing <b>any club matches</b> or <b>pleasure fishing</b> on the Ellenthorpe waters and Roecliffe ponds {{newMembership.name}} must be under the direct guidance of one of the following nominated responsible persons, who must have ID available on request.
+                        <br/>
+                        <br/>
+                        <b>Responsible Persons</b> (please nominate at least one)
+                        <mat-form-field>
+                            <mat-label>Name of 1st responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible1st">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Name of 2nd responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible2nd">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Name of 3rd responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible3rd">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Name of 4th responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible4th">
+                        </mat-form-field>
+                        <b>Emergency Contact Details</b> (please provide at least one phone number)
+                        <mat-form-field>
+                            <mat-label>Name</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContact">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Home phone number</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContactPhoneHome">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Work phone number</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContactPhoneWork">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Mobile phone number</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContactPhoneMobile">
+                        </mat-form-field>
+    
+                        <br/>
+                        <b>Declaration</b>
+                        <p>I agree to {{newMembership.name}} attending the Angling Matches run by Boroughbridge & District Angling Club and agree to the club rules for those under age (below 18).
+                            <br/>
+                            <br/>
+                            I hereby apply for {{newMembership.name}}'s membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.
+                            <br/>
+                            <br/>
+                            In the event of any misconduct on {{newMembership.name}}'s part, the club hold the sole right to withdraw their membership and that the committee decision will be final.
+                        </p>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.parentalConsent">I acknowledge that {{newMembership.name}} will behave responsibly at all times whilst using the club's waters and fishing matches.</mat-checkbox>
+                        </div>
+
+                    </div>
+
+                    <div *ngIf="!isUnderAge()">
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.allowNameToBeUsed">Allow my name to be used in match results</mat-checkbox>
+                        </div>
+                        <br/>    
+                        <b>Declaration</b>
+                        <p>I hereby apply for membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.
+                            <br/>
+                            <br/>
+                            In the event of any misconduct on my part, the club hold the sole right to withdraw my membership and that the committee decision will be final.
+                        </p>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <mat-checkbox [(ngModel)]="newMembership.acceptPolicies">I have read and accept the clubs <a href="termsAndConditions" target="_blank">terms and conditions</a> (opens in a new window)</mat-checkbox>
+                    </div>
+                    <br />
+                    <div class="edit-button-panel">
+                        <button class="edit-button" [ngClass]="[!formComplete() ? 'edit-button-disabled' : '']"
+                            [disabled]="this.isBuying || !formComplete()"
+                            [attr.title]="!formComplete() ? 'Please complete ALL form fields' : ''" mat-stroked-button
+                            color="primary" (click)="buy()">
+                            <mat-icon *ngIf="!isBuying" aria-hidden="false" aria-label="Buy now">shopping_cart</mat-icon>
+                            <mat-spinner diameter="20" class="button-spinner" *ngIf="isBuying"></mat-spinner>
+                            Buy now
+                        </button>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                </div>
+
+                <mat-card class="warning-card" *ngIf="!this.membershipAvailable()">
+                    <mat-card-header>
+                        <mat-card-title>Unavailable</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        Sorry, 6 month memberships are only available in the last 6 months of the season. Therefore they are unavailable for purchase until 1 week before the start of October.
+                        <br/>
+                        <br/>
+                        Please come back then.
+                    </mat-card-content>
+                </mat-card>
+                
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <app-policy-panel></app-policy-panel>
+</div>

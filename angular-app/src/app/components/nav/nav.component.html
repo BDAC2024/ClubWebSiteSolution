@@ -68,6 +68,7 @@
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showClubInfoSubMenu}" >expand_more</mat-icon>
 				</mat-list-item>
 				<div class="submenu" [ngClass]="{'expanded' : showClubInfoSubMenu}" *ngIf="showClubInfoSubMenu">
+					<a mat-list-item routerLink="/termsAndConditions">Terms and Conditions</a>
 					<a mat-list-item routerLink="/officers">Club Officers</a>
           <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" class="parent">
             <span class="full-width" >Rules</span>
@@ -80,6 +81,7 @@
             <a mat-list-item routerLink="/rulesJnrMatch">Jnr Match</a>
           </div>
           <a mat-list-item routerLink="/forms">Club Forms</a>
+          <a mat-list-item routerLink="/dataPolicy">Data Policy</a>
 					<a mat-list-item routerLink="/environmental">Environmental</a>
 					<a mat-list-item routerLink="/anglingTrust">Angling Trust</a>
 				</div>

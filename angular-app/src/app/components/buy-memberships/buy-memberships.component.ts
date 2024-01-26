@@ -1,82 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { MembershipPayment } from 'src/app/models/membership-payment';
+import { MembershipPaymentRequest, ProductMembership } from 'src/app/models/membership-payment';
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
+import { map, startWith } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { PaymentsService } from 'src/app/services/payments.service';
+import { Router } from '@angular/router';
 
-const DATA: MembershipPayment[] = [
-  {
-    type: "Adult",
-    term: "12 months",
-    cost: 52,
-    buttonId: "buy_btn_1N82AyI81Rrb3iDAUF7vAG18",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_14k9Cr7vTfs3eSAeUU",
-    notes: ""
-  },
-  {
-    type: "Junior - 12 to 15 years of age (at 1st of April)",
-    term: "12 months",
-    cost: 12,
-    buttonId: "buy_btn_1N82VbI81Rrb3iDAynfehWtM",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_fZeaGv8zX6VxdOwaEF",
-    notes: "11 and under are FREE"
-  },
-  {
-    type: "Intermediate - 16 to 18 years of age (at 1st of April)",
-    term: "12 months",
-    cost: 27,
-    buttonId: "buy_btn_1N83JII81Rrb3iDAY7x7Zkzt",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_7sIdSHbM95Rt11K147",
-    notes: ""
-  },
-  {
-    type: "Senior Citizen",
-    term: "12 months",
-    cost: 32,
-    buttonId: "buy_btn_1N82N8I81Rrb3iDAvgrQwa6n",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_4gw5mbdUha7J25O3ce",
-    notes: ""
-  },
-  {
-    type: "Disabled",
-    term: "12 months",
-    cost: 27,
-    buttonId: "buy_btn_1N83KcI81Rrb3iDAP4ZYeJlP",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_6oEdSH3fDcfR8uc148",
-    notes: ""
-  },
-  {
-    type: "Adult",
-    term: "6 months",
-    cost: 32,
-    buttonId: "buy_btn_1N83LXI81Rrb3iDAcXr8ljbJ",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_5kAeWL7vT2Fh8uc3ch",
-    notes: ""
-  },
-  {
-    type: "Juniors - 12 to 18 years of age (at 1st of April)",
-    term: "6 months",
-    cost: 7,
-    buttonId: "buy_btn_1N83MjI81Rrb3iDAMed02IhU",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_fZedSH03r6Vx8ucfZ4",
-    notes: "11 and under are FREE"
-  },
-  {
-    type: "Disabled",
-    term: "6 months",
-    cost: 27,
-    buttonId: "buy_btn_1N83NfI81Rrb3iDAN86Iyyt6",
-    key: "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx",
-    link: "https://buy.stripe.com/test_dR67uj03r6Vx6m4eV1",
-    notes: ""
-  }
-];
 
 @Component({
   selector: 'app-buy-memberships',
@@ -85,22 +15,190 @@ const DATA: MembershipPayment[] = [
 })
 export class BuyMembershipsComponent implements OnInit {
 
-  obs!: Observable<any>;
-  dataSource: MatTableDataSource<MembershipPayment> = new MatTableDataSource<MembershipPayment>(DATA);
+  myControl: FormControl = new FormControl();
 
-  public displayedColumns: string[] = ["type", "term", "cost", "action"];
-  public memberships: MembershipPayment[] = [];
+  public membershipList: ProductMembership[] = [];
+
   public isLoading: boolean = true;
+  public isBuying: boolean = false;
+  public selectedMembership!: ProductMembership;
+  public newMembership: MembershipPaymentRequest = new MembershipPaymentRequest();
+  private baseUrl: string = "";
 
-  constructor() { }
+  constructor(
+    public paymentsService: PaymentsService,
+    private router: Router) {
 
-  ngOnInit(): void {
-    this.obs = this.dataSource.connect();
-
-    this.isLoading = false;
   }
 
-  public buy(membership: MembershipPayment): void {
-    window.open(membership.link, '_blank');
+  ngOnInit(): void {
+
+    this.getProductMemberships();
+
+    this.baseUrl = window.location.href.replace(this.router.url, "");
+
+  }
+
+  public resetNewMembership(selected: ProductMembership): void {
+    this.newMembership = new MembershipPaymentRequest();
+    this.newMembership.dbKey = selected.dbKey;
+    this.newMembership.successUrl = this.baseUrl + "/buySuccess/membership";
+    this.newMembership.cancelUrl = this.baseUrl;
+
+  }
+
+  public minDate(): Date {
+
+    var nextApril = this.nextApril();
+
+    var minimumDate: Date = nextApril;
+
+    if (this.selectedMembership.description == "Junior")
+    {
+      minimumDate.setFullYear(nextApril.getFullYear() - 16);
+
+    } else if (this.selectedMembership.description == "Intermediate") {
+
+      minimumDate.setFullYear(nextApril.getFullYear() - 18);
+
+    } else {
+      minimumDate.setFullYear(1);
+    }
+
+    console.log("minimumDate");
+    console.log(minimumDate);
+
+    return minimumDate;
+  }
+
+  public maxDate(): Date {
+
+    var nextApril = this.nextApril();
+
+    var maximumDate: Date = nextApril;
+
+    if (this.selectedMembership.description == "Junior")
+    {
+      maximumDate.setFullYear(nextApril.getFullYear() - 11);
+
+    } else if (this.selectedMembership.description == "Intermediate") {
+
+      maximumDate.setFullYear(nextApril.getFullYear() - 16);
+
+    } else {
+      maximumDate.setFullYear(nextApril.getFullYear() - 18);
+    }
+
+    console.log("maximumDate");
+    console.log(maximumDate);
+
+    return maximumDate;
+  }
+
+  private nextApril(): Date {
+
+    // var now = new Date("2024-06-06");
+    // var current = new Date("2024-06-06");
+    var now = new Date();
+    var current = new Date();
+
+    var nextApril = now;
+    nextApril.setMonth(3);
+    nextApril.setDate(1);
+    if (nextApril < current) {
+      nextApril.setFullYear(nextApril.getFullYear() + 1);
+    }
+
+    console.log("nextApril");
+    console.log(nextApril);
+    
+    return nextApril;
+  }
+
+  public getProductMemberships() {
+    this.paymentsService.readProductMemberships()
+      .subscribe(data => {
+        this.isLoading = false;
+        this.membershipList = data;
+      });
+  }
+
+  public membershipAvailable(): boolean {
+    
+    var d: Date = new Date();
+
+    const month = (d).getMonth();
+    const day = (d).getDate();
+
+    var unavailable = (month === 2 && day > 14) || // March
+      month === 3 ||             // April
+      month === 4 ||             // May
+      month === 5 ||             // June
+      month === 6 ||             // July
+      month === 7 ||             // August
+      (month === 8 && day < 23); // September
+
+    return !unavailable;
+  }
+
+  public isUnderAge(): boolean {
+    return this.selectedMembership.description == "Junior" || this.selectedMembership.description == "Intermediate";
+  }
+
+  public async buy() {
+    this.isBuying = true;
+    this.newMembership.underAge = this.isUnderAge();
+
+    // console.log("About to buyGuestTicket...");
+    this.paymentsService.buyMembership(this.newMembership)
+    .then(() => {
+      // Under normal circumstances this would not be executed.
+      // Instead user would have been redirected to stripe checkout
+      console.log("then success");
+    })
+    .catch(() => {
+      //console.log("then catch");
+      this.isBuying = false;
+    });
+      
+  }
+
+  formComplete(): boolean {
+    var valid = this.newMembership.name != null && 
+           this.newMembership.name.trim() != "" &&
+           this.newMembership.dob != null &&
+           this.newMembership.acceptPolicies;
+           
+    var validUnderAge: boolean = !this.isUnderAge();
+
+    if (this.isUnderAge())
+    {
+      validUnderAge = this.newMembership.childCanSwim != null && 
+      this.newMembership.childCanSwim.trim() != "" &&
+      (
+        (this.newMembership.responsible1st != null && this.newMembership.responsible1st.trim() != "") ||
+        (this.newMembership.responsible2nd != null && this.newMembership.responsible2nd.trim() != "") ||
+        (this.newMembership.responsible3rd != null && this.newMembership.responsible3rd.trim() != "") ||
+        (this.newMembership.responsible4th != null && this.newMembership.responsible4th.trim() != "")
+      ) &&
+      this.newMembership.parentalConsent &&
+      this.newMembership.emergencyContact != null && 
+      this.newMembership.emergencyContact.trim() != ""  &&
+      (
+        (this.newMembership.emergencyContactPhoneHome != null && this.newMembership.emergencyContactPhoneHome.trim() != "") ||
+        (this.newMembership.emergencyContactPhoneMobile != null && this.newMembership.emergencyContactPhoneMobile.trim() != "") ||
+        (this.newMembership.emergencyContactPhoneWork != null && this.newMembership.emergencyContactPhoneWork.trim() != "")
+      );
+
+    }
+    else
+    {
+      valid = valid &&
+        this.newMembership.phoneNumber != null && 
+        this.newMembership.phoneNumber.trim() != "";
+    }
+
+    return valid && validUnderAge;
+
   }
 }

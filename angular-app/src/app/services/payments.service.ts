@@ -11,6 +11,7 @@ import { CreateCheckoutSessionResponse } from '../models/create-checkout-session
 import {Stripe, loadStripe} from '@stripe/stripe-js';
 import { environment } from 'src/environments/environment';
 import { GuestTicket } from '../models/guest-ticket';
+import { MembershipPaymentRequest, ProductMembership } from '../models/membership-payment';
 
 
 @Injectable({
@@ -29,6 +30,13 @@ export class PaymentsService {
     return this.http.get<Payment[]>(`${this.globalService.ApiUrl}/api/payments`)
               .pipe(map(res => 
                 plainToClass(Payment, res)
+            ));
+  }
+
+  public readProductMemberships(): Observable<ProductMembership[]> {
+    return this.http.get<ProductMembership[]>(`${this.globalService.ApiUrl}/api/ProductMemberships`)
+              .pipe(map(res => 
+                plainToClass(ProductMembership, res)
             ));
   }
 
@@ -65,30 +73,58 @@ export class PaymentsService {
     However, if stripe is unable to create the checkout session for any reason then we need to
     return false so that the caller can react appropriately.
   */
-  public async buyGuestTicket(guestTicket: GuestTicket): Promise<boolean> {
+    public async buyGuestTicket(guestTicket: GuestTicket): Promise<boolean> {
 
-    return new Promise((resolve, reject) => { 
-      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/guestTicket`, guestTicket)
-      .pipe(map(res => res),
-        catchError((error: HttpErrorResponse) => {
-          return throwError(error);
-      }))
-      .subscribe(
-        (async (data) => {
-          await this.redirectToCheckout(data.sessionId);  
-        }),
-        ((err) => {
-          //console.log("buyGuestTicket: subscribe err...");
-          reject(err);
-        }),
-        (() => { 
-          //console.log("buyGuestTicket: subscribe finally...");
-        })
-      )}
-    );
-  }
+      return new Promise((resolve, reject) => { 
+        this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/guestTicket`, guestTicket)
+        .pipe(map(res => res),
+          catchError((error: HttpErrorResponse) => {
+            return throwError(error);
+        }))
+        .subscribe(
+          (async (data) => {
+            await this.redirectToCheckout(data.sessionId);  
+          }),
+          ((err) => {
+            //console.log("buyGuestTicket: subscribe err...");
+            reject(err);
+          }),
+          (() => { 
+            //console.log("buyGuestTicket: subscribe finally...");
+          })
+        )}
+      );
+    }
+  
+  /*
+    Note that this method should not return when all succeeds. It should redirect the user to Stripe.
+    However, if stripe is unable to create the checkout session for any reason then we need to
+    return false so that the caller can react appropriately.
+  */
+    public async buyMembership(membership: MembershipPaymentRequest): Promise<boolean> {
 
-  private async redirectToCheckout(sessionId: string) {
+      return new Promise((resolve, reject) => { 
+        this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/buy/membership`, membership)
+        .pipe(map(res => res),
+          catchError((error: HttpErrorResponse) => {
+            return throwError(error);
+        }))
+        .subscribe(
+          (async (data) => {
+            await this.redirectToCheckout(data.sessionId);  
+          }),
+          ((err) => {
+            //console.log("buyGuestTicket: subscribe err...");
+            reject(err);
+          }),
+          (() => { 
+            //console.log("buyGuestTicket: subscribe finally...");
+          })
+        )}
+      );
+    }
+  
+    private async redirectToCheckout(sessionId: string) {
 
     const stripe = await this.stripePromise;
 

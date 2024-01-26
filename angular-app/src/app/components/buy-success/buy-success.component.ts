@@ -10,10 +10,11 @@ export class BuySuccessComponent implements OnInit {
 
   public isDayTicket: boolean = false;
   public isGuestTicket: boolean = false;
+  public isMembership: boolean = false;
 
-  constructor(    
+  constructor(
     private route: ActivatedRoute,
-    ) {
+  ) {
     this.route.params.subscribe(params => {
       console.log("Product type: " + params.productType);
 
@@ -22,18 +23,22 @@ export class BuySuccessComponent implements OnInit {
       switch (productType.toLowerCase()) {
 
         case "dayticket":
-          this.isDayTicket = true;  
+          this.isDayTicket = true;
           break;
 
-          case "guestticket":
-            this.isGuestTicket = true;  
-            break;
-  
-          default:
+        case "guestticket":
+          this.isGuestTicket = true;
+          break;
+
+        case "membership":
+          this.isMembership = true;
+          break;
+
+        default:
       }
 
     });
-   }
+  }
 
   ngOnInit(): void {
   }

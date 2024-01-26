@@ -84,6 +84,9 @@ import { PaymentsComponent } from './components/payments/payments.component';
 import { BuyDayTicketsComponent } from './components/buy-day-tickets/buy-day-tickets.component';
 import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-guest-tickets.component';
 import { BuySuccessComponent } from './components/buy-success/buy-success.component';
+import { PolicyPanelComponent } from './components/shared/policy-panel/policy-panel.component';
+import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
+import { DataPolicyComponent } from './components/data-policy/data-policy.component';
 
 @NgModule({
   declarations: [
@@ -131,6 +134,9 @@ import { BuySuccessComponent } from './components/buy-success/buy-success.compon
     BuyDayTicketsComponent,
     BuyGuestTicketsComponent,
     BuySuccessComponent,
+    PolicyPanelComponent,
+    TermsAndConditionsComponent,
+    DataPolicyComponent,
   ],
   imports: [
     BrowserModule,
