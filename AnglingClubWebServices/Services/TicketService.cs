@@ -8,6 +8,12 @@ using System.Linq;
 using AnglingClubWebServices.Helpers;
 using HtmlRenderer.NetCore.PdfSharp;
 using System.Net.Mail;
+using System.IO;
+using QuestPDF.Fluent;
+using HTMLQuestPDF.Extensions;
+using QuestPDF.Infrastructure;
+using QuestPDF.Helpers;
+using QuestPDF.Drawing;
 
 
 namespace AnglingClubWebServices.Services
@@ -27,6 +33,8 @@ namespace AnglingClubWebServices.Services
             _emailService = emailService;
             _logger = loggerFactory.CreateLogger<TicketService>();
             _ticketRepository = ticketRepository;
+
+            QuestPDF.Settings.License = LicenseType.Community;
         }
 
         public void IssueDayTicket(DateTime validOn, string holdersName, string emailAddress, string paymentId)
@@ -63,6 +71,80 @@ namespace AnglingClubWebServices.Services
 
             try
             {
+                string fontFilename = "arial.ttf";
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+
+                using (Stream resFilestream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".Fonts." + fontFilename))
+                {
+                    if (resFilestream != null)
+                    {
+                        FontManager.RegisterFont(resFilestream);
+                    }
+                }
+
+                
+                using (var pdfStream = new System.IO.MemoryStream())
+                {
+                    Document.Create(container =>
+                    {
+                        container.Page(page =>
+                        {
+                            page.Size(PageSizes.A4);
+                            page.MarginHorizontal(0.5f, Unit.Centimetre);
+                            page.MarginVertical(1f, Unit.Centimetre);
+
+                            page.DefaultTextStyle(y => y.FontFamily("Arial"));
+
+                            page.Content().Column(col =>
+                            {
+                                col.Item().HTML(handler =>
+                                {
+                                    handler.SetContainerStyleForHtmlElement("thead", c => c.Background(Colors.Blue.Lighten3));
+                                    
+                                    handler.SetTextStyleForHtmlElement("th", TextStyle.Default.FontSize(20));
+                                    handler.SetContainerStyleForHtmlElement("th", c => c.AlignCenter());
+                                    handler.SetContainerStyleForHtmlElement("th", c => c.Background(Colors.Blue.Lighten3));
+
+                                    handler.SetTextStyleForHtmlElement("b", TextStyle.Default.Bold());
+
+                                    handler.SetTextStyleForHtmlElement("td", TextStyle.Default.FontSize(16)); 
+                                    handler.SetContainerStyleForHtmlElement("td", c => c.AlignCenter());
+
+                                    handler.SetHtml(ticketHtml);
+                                });
+                            });
+                        });
+                    }).GeneratePdf(pdfStream);
+
+                    using (var imgStream = new System.IO.MemoryStream())
+                    {
+                        PDFtoImage.Conversion.SavePng(imgStream, pdfStream);
+
+                        _emailService.SendEmail(
+                            new List<string> { emailAddress },
+                            "Your Day Ticket",
+                            $"Please find attached, your day ticket valid for fishing on {validOn.PrettyDate()}.<br/>" +
+                                "Make sure you have your ticket with you when fishing. Either on your phone or printed.<br/><br/>" +
+                                "Tight lines!,<br/>" +
+                                "Boroughbridge & District Angling Club",
+                            null,
+                            new List<ImageAttachment>
+                            {
+                                    new ImageAttachment
+                                    {
+                                        Filename = $"Day_Ticket_{validOn:yyyy_MM_dd}.png",
+                                        DataUrl = "data:image/png;base64," + Convert.ToBase64String(imgStream.ToArray())
+                                    }
+                            }
+                        );
+
+                        ticket.IssuedOn = DateTime.Now;
+                        _ticketRepository.AddOrUpdateTicket(ticket).Wait();
+
+                    }
+                }
+
+                /*
                 var pdfConfig = new PdfGenerateConfig();
                 pdfConfig.PageOrientation = PageOrientation.Portrait;
                 pdfConfig.PageSize = PageSize.A5;
@@ -103,6 +185,7 @@ namespace AnglingClubWebServices.Services
 
                     }
                 }
+                */
                 
             }
             catch (Exception ex)
@@ -152,7 +235,7 @@ namespace AnglingClubWebServices.Services
             {
                 var pdfConfig = new PdfGenerateConfig();
                 pdfConfig.PageOrientation = PageOrientation.Portrait;
-                pdfConfig.PageSize = PageSize.A5;
+                pdfConfig.PageSize = PdfSharpCore.PageSize.A5;
                 pdfConfig.MarginTop = 20;
 
                 using (var pdf = PdfGenerator.GeneratePdf(ticketHtml, pdfConfig))
