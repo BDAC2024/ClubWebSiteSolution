@@ -201,4 +201,16 @@ namespace AnglingClubWebServices.Interfaces
         [Description("subscription")]
         Subscription
     }
+
+    public enum MembershipType
+    {
+        Adult12Months,
+        Adult6Months,
+        Junior12Months,
+        Junior6Months,
+        Intermediate12Months,
+        SeniorCitizen12Months,
+        Disabled12Months,
+        Disabled6Months
+    }
 }
