@@ -106,6 +106,8 @@ namespace AnglingClubWebServices.Controllers
 
                     _logger.LogWarning($"Inside Index for WebHookController - 5");
 
+                    var paymentMetaData = new PaymentMetaData(paymentIntent.Metadata);
+
                     switch (paymentType)
                     {
                         case PaymentType.Membership:
@@ -114,10 +116,7 @@ namespace AnglingClubWebServices.Controllers
                             _logger.LogWarning($"Sending guest ticket...");
                             try
                             {
-                                DateTime validOn = DateTime.Parse(paymentIntent.Metadata["ValidOn"]);
-                                int membershipNumber = Convert.ToInt32(paymentIntent.Metadata["MembershipNumber"]);
-
-                                _ticketService.IssueGuestTicket(validOn, paymentIntent.Metadata["MembersName"], paymentIntent.Metadata["GuestsName"], membershipNumber, paymentIntent.ReceiptEmail, paymentIntent.Id);
+                                _ticketService.IssueGuestTicket(paymentMetaData.ValidOn, paymentMetaData.MembersName, paymentMetaData.GuestsName, paymentMetaData.MembershipNumber, paymentIntent.ReceiptEmail, paymentIntent.Id);
                             }
                             catch (Exception ex)
                             {
@@ -131,14 +130,13 @@ namespace AnglingClubWebServices.Controllers
                             _logger.LogWarning($"Sending day ticket...");
                             try
                             {
-                                DateTime validOn = DateTime.Parse(paymentIntent.Metadata["ValidOn"]);
-                                _ticketService.IssueDayTicket(validOn, paymentIntent.Metadata["HoldersName"], paymentIntent.ReceiptEmail, paymentIntent.Id);
+                                _ticketService.IssueDayTicket(paymentMetaData.ValidOn, paymentMetaData.TicketHoldersName, paymentIntent.ReceiptEmail, paymentIntent.Id);
 
                             }
                             catch (Exception ex)
                             {
-                                _logger.LogError(ex, $"Failed to send a guest ticket for payment intent id: {paymentIntent.Id}");
-                                _emailService.SendEmailToSupport("Failed to send a guest ticket - PLEASE INVESTIGATE ASAP", $"For payment id: {paymentIntent.Id}. Reason: {ex.Message}. PLEASE INVESTIGATE ASAP");
+                                _logger.LogError(ex, $"Failed to send a day ticket for payment intent id: {paymentIntent.Id}");
+                                _emailService.SendEmailToSupport("Failed to send a day ticket - PLEASE INVESTIGATE ASAP", $"For payment id: {paymentIntent.Id}. Reason: {ex.Message}. PLEASE INVESTIGATE ASAP");
                                 throw;
                             }
                             break;

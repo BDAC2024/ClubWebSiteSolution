@@ -65,26 +65,17 @@ namespace AnglingClubWebServices.Services
                 var address = charge == null ? null : (charge.Shipping != null ? charge.Shipping.Address : charge.BillingDetails.Address);
 
                 var paymentType = category.GetValueFromDescription<PaymentType>();
-                var holdersName = "";
-                var validOn = DateTime.MinValue;
-                if (paymentType == PaymentType.DayTicket)
-                {
-                    if (charge.Metadata.Any(m => m.Key == "HoldersName"))
-                    {
-                        holdersName = charge.Metadata.Where(m => m.Key == "HoldersName").First().Value;
-                    }
-                    if (charge.Metadata.Any(m => m.Key == "ValidOn"))
-                    {
-                        DateTime.TryParse(charge.Metadata.Where(m => m.Key == "ValidOn").First().Value, out validOn);
-                    }
-                }
+
+                var paymentMetaData = new PaymentMetaData(charge.Metadata);
 
                 payments.Add(new Payment
                 {
                     SessionId = session.Id,
-                    MembersName = session.Name,
-                    HoldersName = holdersName,
-                    ValidOn = validOn,
+                    MembersName = string.IsNullOrEmpty(session.Name) ? paymentMetaData.MembersName : session.Name,
+                    MembershipNumber = paymentMetaData.MembershipNumber,
+                    HoldersName = paymentMetaData.TicketHoldersName,
+                    GuestsName = paymentMetaData.GuestsName,
+                    ValidOn = paymentMetaData.ValidOn,
                     Email = session.CustomerDetails.Email,
                     Category = paymentType,
                     Purchase = purchase,

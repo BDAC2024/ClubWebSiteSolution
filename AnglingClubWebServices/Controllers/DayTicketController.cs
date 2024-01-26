@@ -54,7 +54,7 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            _ticketService.IssueDayTicket(DateTime.Now, "Steve API Test", "steve@townendmail.co.uk", "dummy6");
+            _ticketService.IssueDayTicket(DateTime.Now, "Steve API Test", "steve@townendmail.co.uk", DateTime.Now.Ticks.ToString());
 
             ReportTimer("Getting Day ticket image");
 
