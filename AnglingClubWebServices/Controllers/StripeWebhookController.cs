@@ -103,7 +103,7 @@ namespace AnglingClubWebServices.Controllers
                     order.OrderId = latestOrderId + 1;
                     order.Description = purchaseItem;
                     order.Amount = paymentIntent.Amount / 100.0m;
-                    order.CreatedOn = paymentIntent.Created;
+                    order.PaidOn = paymentIntent.Created;
                     order.PaymentId = paymentIntent.Id;
                     order.Status = charge.Paid ? "Paid" : "Failed";
 

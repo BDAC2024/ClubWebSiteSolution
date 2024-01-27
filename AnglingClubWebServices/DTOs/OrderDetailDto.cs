@@ -1,13 +1,16 @@
-﻿using System;
+﻿using AnglingClubWebServices.Interfaces;
+using System;
 
 namespace AnglingClubWebServices.DTOs
 {
     public class OrderDetailDto
     {
+        public int OrderId { get; set; }
+        public PaymentType OrderType { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }
 
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? PaidOn { get; set; }
 
         public decimal Amount { get; set; }
         public string Status { get; set; }
@@ -15,6 +18,7 @@ namespace AnglingClubWebServices.DTOs
         public DateTime? ValidOn { get; set; }
         public int MembershipNumber { get; set; }
         public int TicketNumber { get; set; }
+        public string Email { get; set; }
         public string TicketHoldersName { get; set; }
         public string MembersName { get; set; }
         public string GuestsName { get; set; }

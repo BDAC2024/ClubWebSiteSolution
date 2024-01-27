@@ -51,7 +51,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "TicketHoldersName", Value = order.TicketHoldersName, Replace = true },
                 new ReplaceableAttribute { Name = "Amount", Value = order.Amount.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "ValidOn", Value = order.ValidOn.HasValue ? dateToString(order.ValidOn.Value) : "", Replace = true },
-                new ReplaceableAttribute { Name = "CreatedOn", Value = order.CreatedOn.HasValue ? dateToString(order.CreatedOn.Value) : "", Replace = true },
+                new ReplaceableAttribute { Name = "PaidOn", Value = order.PaidOn.HasValue ? dateToString(order.PaidOn.Value) : "", Replace = true },
                 new ReplaceableAttribute { Name = "PaymentId", Value = order.PaymentId, Replace = true },
                 new ReplaceableAttribute { Name = "Status", Value = order.Status, Replace = true },
             };
@@ -85,73 +85,13 @@ namespace AnglingClubWebServices.Data
 
             var orders = new List<Order>();
 
-            var items = await GetData(IdPrefix, "AND CreatedOn > ''", "ORDER BY CreatedOn DESC");
+            var items = await GetData(IdPrefix, "AND PaidOn > ''", "ORDER BY PaidOn DESC");
 
             foreach (var item in items)
             {
                 var order = new Order();
 
-                order.DbKey = item.Name;
-
-                foreach (var attribute in item.Attributes)
-                {
-                    switch (attribute.Name)
-                    {
-                        case "OrderId":
-                            order.OrderId = Convert.ToInt32(attribute.Value);
-                            break;
-
-                        case "OrderType":
-                            order.OrderType = (PaymentType)(Convert.ToInt32(attribute.Value));
-                            break;
-
-                        case "Description":
-                            order.Description = attribute.Value;
-                            break;
-
-                        case "TicketNumber":
-                            order.TicketNumber = Convert.ToInt32(attribute.Value);
-                            break;
-
-                        case "MembersName":
-                            order.MembersName = attribute.Value;
-                            break;
-
-                        case "GuestsName":
-                            order.GuestsName = attribute.Value;
-                            break;
-
-                        case "TicketHoldersName":
-                            order.TicketHoldersName = attribute.Value;
-                            break;
-
-                        case "Amount":
-                            order.Amount = decimal.Parse(attribute.Value);
-                            break;
-
-                        case "ValidOn":
-                            order.ValidOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
-                            break;
-
-                        case "CreatedOn":
-                            order.CreatedOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
-                            break;
-
-                        case "PaymentId":
-                            order.PaymentId = attribute.Value;
-                            break;
-
-                        case "Status":
-                            order.Status = attribute.Value;
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-
-
-                orders.Add(order);
+                orders.Add(getOrderFromDbItem(item));
             }
 
             if (season.HasValue)
@@ -165,6 +105,84 @@ namespace AnglingClubWebServices.Data
 
         }
 
+        public async Task<Order> GetOrder(string dbKey)
+        {
+            var orderItems = await GetData(IdPrefix, $"AND ItemName() = '{dbKey}'");
+
+            if (orderItems.Count() != 1)
+            {
+                throw new Exception($"Could not locate order: {dbKey}");
+            }
+
+            return getOrderFromDbItem(orderItems.First());
+        }
+
+        private Order getOrderFromDbItem(Item item)
+        {
+            var order = new Order();
+
+            order.DbKey = item.Name;
+
+            foreach (var attribute in item.Attributes)
+            {
+                switch (attribute.Name)
+                {
+                    case "OrderId":
+                        order.OrderId = Convert.ToInt32(attribute.Value);
+                        break;
+
+                    case "OrderType":
+                        order.OrderType = (PaymentType)(Convert.ToInt32(attribute.Value));
+                        break;
+
+                    case "Description":
+                        order.Description = attribute.Value;
+                        break;
+
+                    case "TicketNumber":
+                        order.TicketNumber = Convert.ToInt32(attribute.Value);
+                        break;
+
+                    case "MembersName":
+                        order.MembersName = attribute.Value;
+                        break;
+
+                    case "GuestsName":
+                        order.GuestsName = attribute.Value;
+                        break;
+
+                    case "TicketHoldersName":
+                        order.TicketHoldersName = attribute.Value;
+                        break;
+
+                    case "Amount":
+                        order.Amount = decimal.Parse(attribute.Value);
+                        break;
+
+                    case "ValidOn":
+                        order.ValidOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
+                        break;
+
+                    case "PaidOn":
+                        order.PaidOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
+                        break;
+
+                    case "PaymentId":
+                        order.PaymentId = attribute.Value;
+                        break;
+
+                    case "Status":
+                        order.Status = attribute.Value;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            return order;
+
+        }
 
     }
 

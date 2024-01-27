@@ -35,23 +35,17 @@ namespace AnglingClubWebServices.Services
             _mapper = mapper;
         }
 
-        public async Task<OrderDetailDto> GetDetail(int orderId)
+        public async Task<OrderDetailDto> GetDetail(string dbKey)
         {
             var detail = new OrderDetailDto();
 
-            var order = (await _orderRepository.GetOrders()).FirstOrDefault(x => x.OrderId == orderId);
-
-            if (order == null)
-            {
-                throw new Exception($"Cannot locate order: {orderId}");
-            }
+            var order = (await _orderRepository.GetOrder(dbKey));
 
             var paymentIntentService = new PaymentIntentService();
             var paymentIntent = paymentIntentService.Get(order.PaymentId);
 
             var chargeService = new ChargeService();
-            var chargeOptions = new ChargeListOptions { Limit = 1 };
-            var charge =chargeService.Get(paymentIntent.LatestChargeId);
+            var charge = chargeService.Get(paymentIntent.LatestChargeId);
             var paymentMetaData = new PaymentMetaData(charge.Metadata);
 
             _mapper.Map(paymentMetaData, detail);
@@ -62,7 +56,8 @@ namespace AnglingClubWebServices.Services
             var address = charge == null ? null : (charge.Shipping != null ? charge.Shipping.Address : charge.BillingDetails.Address);
             detail.Address = address == null ? "Unknown" : $"{address.Line1}, {(address.Line2 != null ? address.Line2 + ", " : "")}{address.City}, {address.PostalCode}";
 
-            detail.CreatedOn = order.CreatedOn;
+            detail.PaidOn = order.PaidOn;
+            detail.Email = paymentIntent.ReceiptEmail;
 
             return detail;
         }

@@ -16,8 +16,10 @@ namespace AnglingClubWebServices.Models
         public DateTime? ValidOn { get; set; } = null;
         public decimal Amount { get; set; }
 
-        public DateTime? CreatedOn { get; set; } = null;
-        public string PaymentId { get; set; }
+        public DateTime? PaidOn { get; set; } = null;
+
+        // Note: Internal get means this wont be sent back from API call to clientpublic string PaymentId { get; set; }
+        public string PaymentId { internal get; set; }
         public string Status { get; set; }
 
         public Season Season 
@@ -29,7 +31,7 @@ namespace AnglingClubWebServices.Models
                 switch (OrderType)
                 {
                     case PaymentType.Membership:
-                        dateToUse = CreatedOn;
+                        dateToUse = PaidOn;
                         break;
                     case PaymentType.GuestTicket:
                         dateToUse = ValidOn;
@@ -38,7 +40,7 @@ namespace AnglingClubWebServices.Models
                         dateToUse = ValidOn;
                         break;
                     default:
-                        dateToUse = CreatedOn;
+                        dateToUse = PaidOn;
                         break;
                 }
 

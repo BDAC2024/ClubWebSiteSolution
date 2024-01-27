@@ -71,6 +71,7 @@ namespace AnglingClubWebServices.Controllers
                     if (membership.UnderAge)
                     {
                         metaData["ParentalConsent"] = membership.ParentalConsent.ToString();
+                        metaData["UnderAge"] = membership.UnderAge.ToString();
                         metaData["ChildCanSwim"] = membership.ChildCanSwim;
                         if (!string.IsNullOrEmpty(membership.Responsible1st)) { metaData["Responsible1st"] = membership.Responsible1st; }
                         if (!string.IsNullOrEmpty(membership.Responsible2nd)) { metaData["Responsible2nd"] = membership.Responsible2nd; }
@@ -84,6 +85,7 @@ namespace AnglingClubWebServices.Controllers
                     else
                     {
                         metaData["PhoneNumber"] = membership.PhoneNumber;
+                        metaData["AllowNameToBeUsed"] = membership.AllowNameToBeUsed.ToString();
                     }
 
 
