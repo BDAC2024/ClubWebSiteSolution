@@ -54,13 +54,13 @@ namespace AnglingClubWebServices.Controllers
 
             ReportTimer("Getting payments");
 
-            return Ok(orders.OrderByDescending(m => m.CreatedOn).ToList());
+            return Ok(orders.OrderByDescending(m => m.PaidOn).ToList());
         }
 
-        [HttpGet("GetDetail/{orderId:int}")]
+        [HttpGet("GetDetail/{dbKey}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDetailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public IActionResult GetDetail(int orderId)
+        public IActionResult GetDetail(string dbKey)
         {
             StartTimer();
 
@@ -71,7 +71,7 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                var detail = _paymentsService.GetDetail(orderId).Result;
+                var detail = _paymentsService.GetDetail(dbKey).Result;
 
                 ReportTimer("Getting payment detail");
 
