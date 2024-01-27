@@ -93,7 +93,7 @@ namespace AnglingClubWebServices.Data
                     switch (attribute.Name)
                     {
                         case "Type":
-                            membership.Type = (MembershipType)(Convert.ToInt32(attribute.Value)); ;
+                            membership.Type = (MembershipType)(Convert.ToInt32(attribute.Value));
                             break;
 
                         case "Description":

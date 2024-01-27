@@ -1,0 +1,171 @@
+﻿using Amazon.SimpleDB;
+using Amazon.SimpleDB.Model;
+using AnglingClubWebServices.Interfaces;
+using AnglingClubWebServices.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace AnglingClubWebServices.Data
+{
+    public class OrderRepository : RepositoryBase, IOrderRepository
+    {
+        private const string IdPrefix = "Order";
+        private readonly ILogger<OrderRepository> _logger;
+
+
+        public OrderRepository(
+            IOptions<RepositoryOptions> opts,
+            ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger<OrderRepository>();
+            SiteUrl = opts.Value.SiteUrl;
+        }
+
+        public string SiteUrl { get;  }
+
+        public async Task AddOrUpdateOrder(Order order)
+        {
+            var client = GetClient();
+
+            if (order.IsNewItem)
+            {
+                order.DbKey = order.GenerateDbKey(IdPrefix);
+            }
+
+            BatchPutAttributesRequest request = new BatchPutAttributesRequest();
+            request.DomainName = Domain;
+
+            // Mandatory properties
+            var attributes = new List<ReplaceableAttribute>
+            {
+                new ReplaceableAttribute { Name = "OrderId", Value = order.OrderId.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "OrderType", Value = ((int)order.OrderType).ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "Description", Value = order.Description, Replace = true },
+                new ReplaceableAttribute { Name = "TicketNumber", Value = order.TicketNumber.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "MembersName", Value = order.MembersName, Replace = true },
+                new ReplaceableAttribute { Name = "GuestsName", Value = order.GuestsName, Replace = true },
+                new ReplaceableAttribute { Name = "TicketHoldersName", Value = order.TicketHoldersName, Replace = true },
+                new ReplaceableAttribute { Name = "Amount", Value = order.Amount.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "ValidOn", Value = order.ValidOn.HasValue ? dateToString(order.ValidOn.Value) : "", Replace = true },
+                new ReplaceableAttribute { Name = "CreatedOn", Value = order.CreatedOn.HasValue ? dateToString(order.CreatedOn.Value) : "", Replace = true },
+                new ReplaceableAttribute { Name = "PaymentId", Value = order.PaymentId, Replace = true },
+                new ReplaceableAttribute { Name = "Status", Value = order.Status, Replace = true },
+            };
+
+            request.Items.Add(
+                new ReplaceableItem
+                {
+                    Name = order.DbKey,
+                    Attributes = attributes
+                }
+            ); 
+
+            try
+            {
+                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                await WriteInBatches(request, client);
+                _logger.LogDebug($"Order added: {order.DbKey} - {order.OrderId}");
+
+            }
+            catch (AmazonSimpleDBException ex)
+            {
+                _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                throw;
+            }
+
+        }
+
+        public async Task<List<Order>> GetOrders(Season? season = null)
+        {
+            _logger.LogWarning($"Getting Orders at : {DateTime.Now.ToString("HH:mm:ss.000")}");
+
+            var orders = new List<Order>();
+
+            var items = await GetData(IdPrefix, "AND CreatedOn > ''", "ORDER BY CreatedOn DESC");
+
+            foreach (var item in items)
+            {
+                var order = new Order();
+
+                order.DbKey = item.Name;
+
+                foreach (var attribute in item.Attributes)
+                {
+                    switch (attribute.Name)
+                    {
+                        case "OrderId":
+                            order.OrderId = Convert.ToInt32(attribute.Value);
+                            break;
+
+                        case "OrderType":
+                            order.OrderType = (PaymentType)(Convert.ToInt32(attribute.Value));
+                            break;
+
+                        case "Description":
+                            order.Description = attribute.Value;
+                            break;
+
+                        case "TicketNumber":
+                            order.TicketNumber = Convert.ToInt32(attribute.Value);
+                            break;
+
+                        case "MembersName":
+                            order.MembersName = attribute.Value;
+                            break;
+
+                        case "GuestsName":
+                            order.GuestsName = attribute.Value;
+                            break;
+
+                        case "TicketHoldersName":
+                            order.TicketHoldersName = attribute.Value;
+                            break;
+
+                        case "Amount":
+                            order.Amount = decimal.Parse(attribute.Value);
+                            break;
+
+                        case "ValidOn":
+                            order.ValidOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
+                            break;
+
+                        case "CreatedOn":
+                            order.CreatedOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
+                            break;
+
+                        case "PaymentId":
+                            order.PaymentId = attribute.Value;
+                            break;
+
+                        case "Status":
+                            order.Status = attribute.Value;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
+
+                orders.Add(order);
+            }
+
+            if (season.HasValue)
+            {
+                return orders.Where(x => x.Season == season.Value).ToList();
+            }
+            else
+            {
+                return orders;
+            }
+
+        }
+
+
+    }
+
+}

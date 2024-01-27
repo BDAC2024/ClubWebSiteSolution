@@ -23,8 +23,14 @@ namespace AnglingClubWebServices.Controllers
         private readonly string _endpointSecret;
         private readonly ILogger<WebHookController> _logger;
         private readonly ITicketService _ticketService;
-
-        public WebHookController(IOptions<StripeOptions> opts, IEmailService emailService, ILoggerFactory loggerFactory, ITicketService ticketService)
+        private readonly IOrderRepository _orderRepository;
+        public WebHookController(
+            IOptions<StripeOptions> opts, 
+            IEmailService emailService, 
+            ILoggerFactory loggerFactory, 
+            ITicketService ticketService, 
+            IOrderRepository orderRepository
+            )
         {
             _emailService = emailService;
 
@@ -37,6 +43,7 @@ namespace AnglingClubWebServices.Controllers
             _logger.LogWarning($"Inside CTOR for WebHookController");
             _ticketService = ticketService;
             _logger.LogWarning($"Finished CTOR for WebHookController");
+            _orderRepository = orderRepository;
         }
 
         [AllowAnonymous]
@@ -47,23 +54,17 @@ namespace AnglingClubWebServices.Controllers
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
             try
             {
-                _logger.LogWarning($"Inside Index for WebHookController - 2");
-
                 var stripeEvent = EventUtility.ConstructEvent(json,
                     Request.Headers["Stripe-Signature"], _endpointSecret);
 
                 // Handle the event
                 if (stripeEvent.Type == Events.PaymentIntentSucceeded)
                 {
-                    _logger.LogWarning($"Inside Index for WebHookController - 3");
-
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
 
                     var sessionService = new SessionService();
                     var sessionOptions = new Stripe.Checkout.SessionListOptions { Limit = 1, PaymentIntent = paymentIntent.Id };
                     StripeList<Session> sessions = sessionService.List(sessionOptions);
-
-                    _logger.LogWarning($"Inside Index for WebHookController - 4.1");
 
                     StripeList<LineItem> lineItems = sessionService.ListLineItems(sessions.First().Id);
 
@@ -72,46 +73,75 @@ namespace AnglingClubWebServices.Controllers
                     var category = product.Metadata.Where(m => m.Key == "Category").First().Value;
                     var paymentType = category.GetValueFromDescription<PaymentType>();
 
-
-                    _logger.LogWarning($"Inside Index for WebHookController - 3.5");
-
-
-                    _logger.LogWarning($"Inside Index for WebHookController - 4");
-
-
                     var purchaseItem = lineItems.First().Description;
-
-                    _logger.LogWarning($"Inside Index for WebHookController - 4.2");
 
                     var chargeService = new ChargeService();
                     var charge = chargeService.Get(paymentIntent.LatestChargeId);
 
-                    _logger.LogWarning($"Inside Index for WebHookController - 4.25");
-
-                    var name = paymentIntent.Shipping != null ? paymentIntent.Shipping.Name + " from Shipping" :
-                        (paymentIntent.CustomerId != null ? paymentIntent.CustomerId + " from Customer" : 
-                        (charge != null ? charge.BillingDetails.Name + " from Charge" : "Unknown" ));
-
-                    //_logger.LogWarning($"A successful payment for {paymentIntent.Amount} was made");
-                    //                    var msg = $"A successful payment for £{paymentIntent.Amount / 100.0} for '{purchaseItem}' was made by {paymentIntent.Shipping.Name} at {paymentIntent.ReceiptEmail}";
-                    var msg = $"A successful payment for £{paymentIntent.Amount / 100.0} for '{purchaseItem}' was made by {name} at {paymentIntent.ReceiptEmail}<br/><br/>{JsonSerializer.Serialize(paymentIntent)}";
-
-                    _logger.LogWarning($"Inside Index for WebHookController - 4.3");
-                    _logger.LogWarning(msg);
-
-                    _logger.LogWarning($"Inside Index for WebHookController - 4.4");
-
-                    //Console.WriteLine("A successful payment for {0} was made.", paymentIntent.Amount);
-                    _emailService.SendEmailToSupport("Payment received", msg);
-
-                    _logger.LogWarning($"Inside Index for WebHookController - 5");
-
                     var paymentMetaData = new PaymentMetaData(paymentIntent.Metadata);
+
+                    var order = new Order();
+                    var existingOrderForThisPayment = _orderRepository.GetOrders().Result.FirstOrDefault(x => x.PaymentId == paymentIntent.Id);
+
+                    if (existingOrderForThisPayment != null)
+                    {
+                        order = existingOrderForThisPayment;
+                    }
+                    else
+                    {
+                        order = new Order();
+                    }
+
+                    order.OrderType = paymentType;
+
+                    var existingOrders = _orderRepository.GetOrders().Result;
+                    var latestOrderId = existingOrders.Any() ? existingOrders.Max(x => x.OrderId) : 0;
+
+                    var existingOrdersOfThisType = existingOrders.Where(x => x.OrderType == order.OrderType);
+                    var latestTicketNumber = existingOrdersOfThisType.Any() ? existingOrdersOfThisType.Max(x => x.TicketNumber) : 0;
+
+                    order.OrderId = latestOrderId + 1;
+                    order.Description = purchaseItem;
+                    order.Amount = paymentIntent.Amount / 100.0m;
+                    order.CreatedOn = paymentIntent.Created;
+                    order.PaymentId = paymentIntent.Id;
+                    order.Status = charge.Paid ? "Paid" : "Failed";
 
                     switch (paymentType)
                     {
                         case PaymentType.Membership:
+                            order.MembersName = paymentMetaData.Name;
                             break;
+
+                        case PaymentType.GuestTicket:
+                            order.TicketNumber = latestTicketNumber + 1;
+                            order.MembersName = paymentMetaData.MembersName;
+                            order.GuestsName = paymentMetaData.GuestsName;
+                            order.ValidOn = paymentMetaData.ValidOn.AddHours(12); // Ensure we don't get caught out by daylight savings!
+                            break;
+
+                        case PaymentType.DayTicket:
+                            order.TicketNumber = latestTicketNumber + 1;
+                            order.TicketHoldersName = paymentMetaData.TicketHoldersName;
+                            order.ValidOn = paymentMetaData.ValidOn.AddHours(12); // Ensure we don't get caught out by daylight savings!
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    _orderRepository.AddOrUpdateOrder(order).Wait();
+
+                    var msg = $"A successful payment of £{order.Amount} for '{order.Description}' was made by {(order.OrderType == PaymentType.DayTicket ? order.TicketHoldersName : order.MembersName)} at {paymentIntent.ReceiptEmail}<br/><br/>";
+                    _emailService.SendEmailToSupport("Payment received", msg);
+
+                    /*
+                    switch (paymentType)
+                    {
+                        case PaymentType.Membership:
+
+                            break;
+
                         case PaymentType.GuestTicket:
                             _logger.LogWarning($"Sending guest ticket...");
                             try
@@ -144,6 +174,20 @@ namespace AnglingClubWebServices.Controllers
                         default:
                             break;
                     }
+                    */
+                }
+                if (stripeEvent.Type == Events.ChargeRefunded)
+                {
+                    var charge = stripeEvent.Data.Object as Charge;
+
+                    var existingOrder = _orderRepository.GetOrders().Result.FirstOrDefault(x => x.PaymentId == charge.PaymentIntentId);
+
+                    if (existingOrder != null) 
+                    {
+                        existingOrder.Status = "Refunded";
+                    }
+
+                    _orderRepository.AddOrUpdateOrder(existingOrder).Wait();
 
                 }
                 // ... handle other event types
