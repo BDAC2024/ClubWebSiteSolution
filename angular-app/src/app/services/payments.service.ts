@@ -4,7 +4,7 @@ import { plainToClass } from 'class-transformer';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { GlobalService } from './global.service';
-import { Payment } from '../models/payment';
+import { Payment, PaymentDetail } from '../models/payment';
 import { DayTicket } from '../models/day-ticket';
 import { CreateCheckoutSessionResponse } from '../models/create-checkout-session-response';
 
@@ -27,9 +27,16 @@ export class PaymentsService {
   ) { }
 
   public readPayments(): Observable<Payment[]> {
-    return this.http.get<Payment[]>(`${this.globalService.ApiUrl}/api/payments`)
+    return this.http.get<Payment[]>(`${this.globalService.ApiUrl}/api/payments/getForSeason`)
               .pipe(map(res => 
                 plainToClass(Payment, res)
+            ));
+  }
+
+  public readPaymentDetail(dbKey: string): Observable<PaymentDetail> {
+    return this.http.get<PaymentDetail>(`${this.globalService.ApiUrl}/api/payments/getDetail/` + dbKey)
+              .pipe(map(res => 
+                plainToClass(PaymentDetail, res)
             ));
   }
 

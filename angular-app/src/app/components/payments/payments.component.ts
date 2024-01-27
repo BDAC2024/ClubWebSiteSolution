@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { Payment } from 'src/app/models/payment';
+import { ViewPaymentDialogComponent } from 'src/app/dialogs/view-payment-dialog/view-payment-dialog.component';
+import { Payment, PaymentDetail } from 'src/app/models/payment';
 import { PaymentType } from 'src/app/models/payment-enum';
 import { GlobalService } from 'src/app/services/global.service';
 import { PaymentsService } from 'src/app/services/payments.service';
@@ -19,20 +21,21 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
   public selectedPaymentType: PaymentType = PaymentType.Membership;
   public allPayments!: Payment[];
   public payments = new MatTableDataSource<Payment>();
-  
   public displayedColumns: string[] = [];
+  public paymentDetails!: PaymentDetail;
 
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     public screenService: ScreenService,
     public paymentsService: PaymentsService,
-    public globalService: GlobalService) {
-  
-      screenService.OrientationChange.on(() => {
-        this.globalService.log("payments - orientation has changed IsHandsetPortrait = " + screenService.IsHandsetPortrait);
-        this.setDisplayedColumns(screenService.IsHandsetPortrait);
-      });
+    public globalService: GlobalService,
+    private dialog: MatDialog) {
+
+    screenService.OrientationChange.on(() => {
+      this.globalService.log("payments - orientation has changed IsHandsetPortrait = " + screenService.IsHandsetPortrait);
+      this.setDisplayedColumns(screenService.IsHandsetPortrait);
+    });
   }
 
   ngOnInit(): void {
@@ -49,10 +52,9 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
     this.loadPayments();
   }
 
-  private loadPayments(): void
-  {
-      
-    this.payments.data = this.allPayments.filter(m => m.category === this.selectedPaymentType);
+  private loadPayments(): void {
+
+    this.payments.data = this.allPayments.filter(m => m.orderType === this.selectedPaymentType);
 
     this.globalService.log("Payments loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
@@ -62,46 +64,64 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
   private setDisplayedColumns(isHandsetPortait: boolean) {
 
     if (isHandsetPortait) {
-      switch (this.selectedPaymentType)
-      {
+      switch (this.selectedPaymentType) {
         case PaymentType.DayTicket:
-          this.displayedColumns = ["holdersName", "validOn", "amount", "paidOn", "status"];
+          this.displayedColumns = ["ticketHoldersName", "validOn", "paidOn", "status", "view"];
+          break;
+
+        case PaymentType.GuestTicket:
+          this.displayedColumns = ["membersName", "guestsName", "validOn", "paidOn", "view"];
           break;
 
         case PaymentType.Membership:
-          this.displayedColumns = ["purchase", "membersName", "amount", "paidOn", "status"];
+          this.displayedColumns = ["description", "membersName", "paidOn", "view"];
           break;
 
         default:
-          this.displayedColumns = ["purchase", "membersName", "amount", "paidOn", "status"];
+          this.displayedColumns = ["description", "membersName", "amount", "paidOn", "status", "view"];
       }
-      
+
     } else {
-      switch (this.selectedPaymentType)
-      {
+      switch (this.selectedPaymentType) {
         case PaymentType.DayTicket:
-          this.displayedColumns = ["holdersName", "validOn", "amount", "paidOn", "status"];
+          this.displayedColumns = ["ticketNumber", "ticketHoldersName", "validOn", "amount", "paidOn", "status", "view"];
+          break;
+
+        case PaymentType.GuestTicket:
+          this.displayedColumns = ["ticketNumber", "membersName", "guestsName", "validOn", "amount", "paidOn", "status", "view"];
           break;
 
         case PaymentType.Membership:
-          this.displayedColumns = ["purchase", "membersName", "email", "address", "amount", "paidOn", "status"];;
+          this.displayedColumns = ["description", "membersName", "amount", "paidOn", "status", "view"];
           break;
 
         default:
-          this.displayedColumns = ["purchase", "membersName", "holdersName", "validOn", "email", "address", "amount", "paidOn", "status"];;
+          this.displayedColumns = ["description", "membersName", "amount", "paidOn", "status", "view"];
 
       }
-      
+
     }
   }
 
   public getPayments() {
     this.paymentsService.readPayments()
-    .subscribe(data => {
-      this.isLoading = false;
-      this.allPayments = data;
-      this.loadPayments();
-    });
+      .subscribe(data => {
+        this.isLoading = false;
+        this.allPayments = data;
+        this.loadPayments();
+      });
   }
 
+  public viewDetail(selectedPayment: Payment) {
+    this.paymentsService.readPaymentDetail(selectedPayment.dbKey)
+      .subscribe(data => {
+        this.paymentDetails = data;
+
+        const dialogRef = this.dialog.open(ViewPaymentDialogComponent, {
+          width: '90vw',
+          data: this.paymentDetails
+        });
+    
+      });
+  }
 }

@@ -1,30 +1,52 @@
 <div>
     <div style="display: flex;">
         <h1 class="left-header">Payments</h1>
-    </div>  
+    </div>
 
     <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
         <mat-tab label="Memberships"></mat-tab>
         <mat-tab label="Guest Tickets"></mat-tab>
         <mat-tab label="Day Tickets"></mat-tab>
     </mat-tab-group>
-    <br/>
+    <br />
     <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+    <p *ngIf="!isLoading && payments.data.length == 0">No payments of this type have been made</p>
 </div>
+
 
 <table mat-table [dataSource]="payments" matSort [hidden]="payments.data.length == 0" class="mat-elevation-z8">
 
     <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
 
+    <ng-container matColumnDef="orderId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Order Id </th>
+        <td mat-cell *matCellDef="let element"> {{element.orderId}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+        <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+    </ng-container>
+
     <ng-container matColumnDef="membersName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Members Name </th>
         <td mat-cell *matCellDef="let element"> {{element.membersName}} </td>
     </ng-container>
-    
-    <ng-container matColumnDef="holdersName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Holders Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.holdersName}} </td>
+
+    <ng-container matColumnDef="guestsName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Guests Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.guestsName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ticketHoldersName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Ticket Holders Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.ticketHoldersName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ticketNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Ticket No.</th>
+        <td mat-cell *matCellDef="let element"> {{element.ticketNumber}} </td>
     </ng-container>
 
     <ng-container matColumnDef="validOn">
@@ -32,39 +54,27 @@
         <td mat-cell *matCellDef="let element"> {{element.validOn | date:'dd MMM YY'}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="purchase">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchased </th>
-        <td mat-cell *matCellDef="let element"> {{element.purchase}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="cardHoldersName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Card Holder </th>
-        <td mat-cell *matCellDef="let element"> {{element.cardHoldersName}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="address">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Shipping Address </th>
-        <td mat-cell *matCellDef="let element"> {{element.shippingAddress}} </td>
-    </ng-container>
-    
     <ng-container matColumnDef="amount">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
         <td mat-cell *matCellDef="let element"> {{element.amount | currency:'GBP'}} </td>
     </ng-container>
-    
+
     <ng-container matColumnDef="paidOn">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Paid on </th>
         <td mat-cell *matCellDef="let element"> {{element.paidOn | date:'dd MMM YY'}} </td>
     </ng-container>
-    
+
     <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
         <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="view">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let element" class="last-col">
+            <button class="edit-button" mat-stroked-button color="primary" (click)="viewDetail(element)" ><mat-icon aria-hidden="false" aria-label="View Detail">visibility</mat-icon> View</button>
+        </td>
     </ng-container>
     
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
