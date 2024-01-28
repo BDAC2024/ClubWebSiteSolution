@@ -55,7 +55,7 @@ export class PaymentsService {
   public async buyDayTicket(dayTicket: DayTicket): Promise<boolean> {
 
     return new Promise((resolve, reject) => { 
-      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/dayTicket`, dayTicket)
+      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/buy/dayTicket`, dayTicket)
       .pipe(map(res => res),
         catchError((error: HttpErrorResponse) => {
           return throwError(error);
@@ -83,7 +83,7 @@ export class PaymentsService {
     public async buyGuestTicket(guestTicket: GuestTicket): Promise<boolean> {
 
       return new Promise((resolve, reject) => { 
-        this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/guestTicket`, guestTicket)
+        this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/buy/guestTicket`, guestTicket)
         .pipe(map(res => res),
           catchError((error: HttpErrorResponse) => {
             return throwError(error);

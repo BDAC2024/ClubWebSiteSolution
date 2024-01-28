@@ -24,6 +24,7 @@ export class PaymentDetail {
     address!: string;
     @Type(() => Date)
     paidOn!: Date;
+    issuedOn!: Date;
     amount!: number;
     status!: string;
     validOn!: Date;

@@ -66,15 +66,15 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
     if (isHandsetPortait) {
       switch (this.selectedPaymentType) {
         case PaymentType.DayTicket:
-          this.displayedColumns = ["ticketHoldersName", "validOn", "paidOn", "status", "view"];
+          this.displayedColumns = ["ticketHoldersName", "validOnShort", "issuedOnShort", "status", "view"];
           break;
 
         case PaymentType.GuestTicket:
-          this.displayedColumns = ["membersName", "guestsName", "validOn", "paidOn", "view"];
+          this.displayedColumns = ["membersName", "guestsName", "validOnShort", "issuedOnShort", "view"];
           break;
 
         case PaymentType.Membership:
-          this.displayedColumns = ["description", "membersName", "paidOn", "view"];
+          this.displayedColumns = ["description", "membersName", "paidOnShort", "view"];
           break;
 
         default:
