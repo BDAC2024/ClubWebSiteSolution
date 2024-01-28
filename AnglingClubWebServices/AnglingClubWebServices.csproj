@@ -11,10 +11,12 @@
 
   <ItemGroup>
     <None Remove="Fonts\arial.ttf" />
+    <None Remove="Fonts\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Fonts\arial.ttf" />
+    <EmbeddedResource Include="Fonts\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
