@@ -135,7 +135,7 @@ namespace AnglingClubWebServices.Controllers
                     var msg = $"A successful payment of £{order.Amount} for '{order.Description}' was made by {(order.OrderType == PaymentType.DayTicket ? order.TicketHoldersName : order.MembersName)} at {paymentIntent.ReceiptEmail}<br/><br/>";
                     _emailService.SendEmailToSupport("Payment received", msg);
 
-                    /*
+                    
                     switch (paymentType)
                     {
                         case PaymentType.Membership:
@@ -146,7 +146,7 @@ namespace AnglingClubWebServices.Controllers
                             _logger.LogWarning($"Sending guest ticket...");
                             try
                             {
-                                _ticketService.IssueGuestTicket(paymentMetaData.ValidOn, paymentMetaData.MembersName, paymentMetaData.GuestsName, paymentMetaData.MembershipNumber, paymentIntent.ReceiptEmail, paymentIntent.Id);
+                                _ticketService.IssueGuestTicket(order.ValidOn.Value, order.PaidOn.Value, order.MembersName, order.GuestsName, paymentMetaData.MembershipNumber, paymentIntent.ReceiptEmail, order.PaymentId);
                             }
                             catch (Exception ex)
                             {
@@ -160,7 +160,7 @@ namespace AnglingClubWebServices.Controllers
                             _logger.LogWarning($"Sending day ticket...");
                             try
                             {
-                                _ticketService.IssueDayTicket(paymentMetaData.ValidOn, paymentMetaData.TicketHoldersName, paymentIntent.ReceiptEmail, paymentIntent.Id);
+                                _ticketService.IssueDayTicket(order.ValidOn.Value, order.TicketHoldersName, paymentIntent.ReceiptEmail, order.PaymentId);
 
                             }
                             catch (Exception ex)
@@ -174,7 +174,7 @@ namespace AnglingClubWebServices.Controllers
                         default:
                             break;
                     }
-                    */
+                    
                 }
                 if (stripeEvent.Type == Events.ChargeRefunded)
                 {
