@@ -52,6 +52,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Amount", Value = order.Amount.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "ValidOn", Value = order.ValidOn.HasValue ? dateToString(order.ValidOn.Value) : "", Replace = true },
                 new ReplaceableAttribute { Name = "PaidOn", Value = order.PaidOn.HasValue ? dateToString(order.PaidOn.Value) : "", Replace = true },
+                new ReplaceableAttribute { Name = "IssuedOn", Value = order.IssuedOn.HasValue ? dateToString(order.IssuedOn.Value) : "", Replace = true },
                 new ReplaceableAttribute { Name = "PaymentId", Value = order.PaymentId, Replace = true },
                 new ReplaceableAttribute { Name = "Status", Value = order.Status, Replace = true },
             };
@@ -167,6 +168,10 @@ namespace AnglingClubWebServices.Data
                         order.PaidOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
                         break;
 
+                    case "IssuedOn":
+                        order.IssuedOn = attribute.Value != "" ? DateTime.Parse(attribute.Value) : null;
+                        break;
+                        
                     case "PaymentId":
                         order.PaymentId = attribute.Value;
                         break;
@@ -184,6 +189,28 @@ namespace AnglingClubWebServices.Data
 
         }
 
+        public async Task DeleteOrder(string id)
+        {
+            var client = GetClient();
+
+            DeleteAttributesRequest request = new DeleteAttributesRequest();
+
+            //request.Attributes.Add(new Amazon.SimpleDB.Model.Attribute { Name = id });
+            request.DomainName = Domain;
+            request.ItemName = id;
+
+            try
+            {
+                DeleteAttributesResponse response = await client.DeleteAttributesAsync(request);
+            }
+            catch (AmazonSimpleDBException ex)
+            {
+                _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                throw;
+            }
+
+
+        }
     }
 
 }

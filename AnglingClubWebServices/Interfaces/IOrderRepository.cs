@@ -10,5 +10,6 @@ namespace AnglingClubWebServices.Interfaces
         Task AddOrUpdateOrder(Order order);
         Task<List<Order>> GetOrders(Season? season = null);
         Task<Order> GetOrder(string dbKey);
+        Task DeleteOrder(string id);
     }
 }

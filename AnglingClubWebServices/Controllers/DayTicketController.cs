@@ -47,76 +47,21 @@ namespace AnglingClubWebServices.Controllers
             _paymentsService = paymentsService;
         }
 
-        // Test returning the image file of the ticket
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Get()
-        {
-            StartTimer();
+        //// Test returning the image file of the ticket
+        //[AllowAnonymous]
+        //[HttpGet]
+        //public IActionResult Get()
+        //{
+        //    StartTimer();
 
-            _ticketService.IssueDayTicket(DateTime.Now, "Steve API Test", "steve@townendmail.co.uk", DateTime.Now.Ticks.ToString());
+        //    _ticketService.IssueDayTicket(DateTime.Now, "Steve API Test", "steve@townendmail.co.uk", DateTime.Now.Ticks.ToString());
 
-            ReportTimer("Getting Day ticket image");
+        //    ReportTimer("Getting Day ticket image");
 
-            return Ok();
+        //    return Ok();
 
-        }
+        //}
 
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] DayTicketDto ticket)
-        {
-            StartTimer();
-
-            ticket.ValidOn = ticket.ValidOn.AddHours(12); // Ensure we don't get caught out by daylight savings!
-
-            var appSettings = await _appSettingRepository.GetAppSettings();
-
-            try
-            {
-                try
-                {
-                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest 
-                    {
-                        SuccessUrl = ticket.SuccessUrl,
-                        CancelUrl = ticket.CancelUrl,
-                        PriceId = appSettings.ProductDayTicket,
-                        Mode = CheckoutType.Payment,
-                        MetaData = new Dictionary<string, string> {
-                            { "HoldersName", ticket.HoldersName },
-                            { "ValidOn", ticket.ValidOn.ToString("yyyy-MM-dd") },
-                        }
-                        
-                    });
-
-                    return Ok(new CreateCheckoutSessionResponse
-                    {
-                        SessionId = sessionId
-                    });
-                }
-                catch (StripeException e)
-                {
-                    return BadRequest(e.StripeError.Message);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                if (ex.InnerException != null)
-                {
-                    return BadRequest(ex.InnerException.Message);
-                }
-                else
-                {
-                    return BadRequest(ex.Message);
-                }
-            }
-            finally
-            {
-                ReportTimer("Buying day ticket");
-            }
-
-        }
 
 
     }
