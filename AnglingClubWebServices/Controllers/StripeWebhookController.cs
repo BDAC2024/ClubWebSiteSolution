@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Stripe;
 using Stripe.Checkout;
 
@@ -146,30 +147,9 @@ namespace AnglingClubWebServices.Controllers
                         _logger.LogWarning($"WebHookTimer - sending support email took : {sw.ElapsedMilliseconds} ms");
                         sw.Restart();
 
-
-                        var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
-                        var url = location.AbsoluteUri;
-                        _logger.LogWarning($"WebHookTimer - using url 2 : {url}");
-                        var baseUrl = url.ToLower().Replace("webhook", "");
-                        if (baseUrl.Contains("amazonaws"))
-                        {
-                            baseUrl = baseUrl.Replace("api/", "Prod/api/");
-                        }
-                        _logger.LogWarning($"WebHookTimer - using baseUrl 2 : {baseUrl}");
-                        HttpClient sharedClient = new()
-                        {
-                            BaseAddress = new Uri(baseUrl),
-                        };
-                        var healthResp = await sharedClient.PostAsJsonAsync("buy/HealthCheck", new { });
-
-                        if (!healthResp.IsSuccessStatusCode)
-                        { 
-                            _logger.LogWarning($"WebHookTimer - ticket API call failed: {healthResp.StatusCode} - {healthResp.ReasonPhrase}");
-                            _logger.LogWarning($"WebHookTimer - resp uri: {healthResp.RequestMessage.RequestUri}");
-                            _logger.LogWarning($"WebHookTimer - resp method: {healthResp.RequestMessage.Method}");
-
-                            throw new Exception($"Ticket API health check failed: {healthResp.StatusCode} - {healthResp.ReasonPhrase}");
-                        }
+                        // This will do a health check on the API and throw an exception if it fails. Therefore
+                        // order won't be created and the webhook will fail. It should then try again automatically later.
+                        var sharedClient = await getHttpClient();
 
                         _orderRepository.AddOrUpdateOrder(order).Wait();
 
@@ -285,7 +265,39 @@ namespace AnglingClubWebServices.Controllers
                 return BadRequest(e);
             }
         }
+
+        private async Task<HttpClient> getHttpClient()
+        {
+            var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+            var url = location.AbsoluteUri;
+            _logger.LogWarning($"WebHookTimer - using url 2 : {url}");
+            var baseUrl = url.ToLower().Replace("webhook", "");
+            if (baseUrl.Contains("amazonaws"))
+            {
+                baseUrl = baseUrl.Replace("api/", "Prod/api/");
+            }
+            _logger.LogWarning($"WebHookTimer - using baseUrl 2 : {baseUrl}");
+
+            HttpClient sharedClient = new()
+            {
+                BaseAddress = new Uri(baseUrl),
+            };
+            var healthResp = await sharedClient.PostAsJsonAsync("buy/HealthCheck", new { });
+
+            if (!healthResp.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"WebHookTimer - ticket API call failed: {healthResp.StatusCode} - {healthResp.ReasonPhrase}");
+                _logger.LogWarning($"WebHookTimer - resp uri: {healthResp.RequestMessage.RequestUri}");
+                _logger.LogWarning($"WebHookTimer - resp method: {healthResp.RequestMessage.Method}");
+
+                throw new Exception($"Ticket API health check failed: {healthResp.StatusCode} - {healthResp.ReasonPhrase}");
+            }
+
+            return sharedClient;
+        }
     }
+
+
     /*
     [Route("api/[controller]")]
     public class WebHook : Controller
