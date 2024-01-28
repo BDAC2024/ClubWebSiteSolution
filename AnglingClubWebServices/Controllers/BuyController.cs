@@ -1,4 +1,5 @@
 using AnglingClubWebServices.DTOs;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,7 @@ namespace AnglingClubWebServices.Controllers
         private readonly ITicketService _ticketService;
         private readonly IAppSettingRepository _appSettingRepository;
         private readonly IProductMembershipRepository _productMembershipRepository;
+        private readonly IOrderRepository _orderRepository;
 
         public BuyController(
             IOptions<StripeOptions> opts,
@@ -31,7 +33,8 @@ namespace AnglingClubWebServices.Controllers
             ILoggerFactory loggerFactory,
             ITicketService ticketService,
             IPaymentsService paymentsService,
-            IProductMembershipRepository productMembershipRepository)
+            IProductMembershipRepository productMembershipRepository,
+            IOrderRepository orderRepository)
         {
             StripeConfiguration.ApiKey = opts.Value.StripeApiKey;
 
@@ -42,6 +45,7 @@ namespace AnglingClubWebServices.Controllers
             _ticketService = ticketService;
             _paymentsService = paymentsService;
             _productMembershipRepository = productMembershipRepository;
+            _orderRepository = orderRepository;
         }
 
         [AllowAnonymous]
@@ -127,6 +131,217 @@ namespace AnglingClubWebServices.Controllers
 
         }
 
+        [AllowAnonymous]
+        [HttpPost("DayTicket")]
+        [HttpPost]
+        public async Task<IActionResult> DayTicket([FromBody] DayTicketDto ticket)
+        {
+            StartTimer();
 
+            ticket.ValidOn = ticket.ValidOn.AddHours(12); // Ensure we don't get caught out by daylight savings!
+
+            var appSettings = await _appSettingRepository.GetAppSettings();
+
+            try
+            {
+                try
+                {
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest
+                    {
+                        SuccessUrl = ticket.SuccessUrl,
+                        CancelUrl = ticket.CancelUrl,
+                        PriceId = appSettings.ProductDayTicket,
+                        Mode = CheckoutType.Payment,
+                        MetaData = new Dictionary<string, string> {
+                            { "HoldersName", ticket.HoldersName },
+                            { "ValidOn", ticket.ValidOn.ToString("yyyy-MM-dd") },
+                        }
+
+                    });
+
+                    return Ok(new CreateCheckoutSessionResponse
+                    {
+                        SessionId = sessionId
+                    });
+                }
+                catch (StripeException e)
+                {
+                    return BadRequest(e.StripeError.Message);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    return BadRequest(ex.InnerException.Message);
+                }
+                else
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            finally
+            {
+                ReportTimer("Buying day ticket");
+            }
+
+        }
+
+        [HttpPost]
+        [HttpPost("GuestTicket")]
+        public async Task<IActionResult> GuestTicket([FromBody] GuestTicketDto ticket)
+        {
+            StartTimer();
+
+            ticket.ValidOn = ticket.ValidOn.AddHours(12); // Ensure we don't get caught out by daylight savings!
+
+            var appSettings = await _appSettingRepository.GetAppSettings();
+
+            try
+            {
+                try
+                {
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest
+                    {
+                        SuccessUrl = ticket.SuccessUrl,
+                        CancelUrl = ticket.CancelUrl,
+                        PriceId = appSettings.ProductGuestTicket,
+                        Mode = CheckoutType.Payment,
+                        MetaData = new Dictionary<string, string> {
+                            { "MembersName", ticket.MembersName },
+                            { "MembershipNumber", CurrentUser.MembershipNumber.ToString() },
+                            { "GuestsName", ticket.GuestsName },
+                            { "ValidOn", ticket.ValidOn.ToString("yyyy-MM-dd") },
+                        }
+
+                    });
+
+                    return Ok(new CreateCheckoutSessionResponse
+                    {
+                        SessionId = sessionId
+                    });
+                }
+                catch (StripeException e)
+                {
+                    return BadRequest(e.StripeError.Message);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    return BadRequest(ex.InnerException.Message);
+                }
+                else
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            finally
+            {
+                ReportTimer("Buying day ticket");
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost("SendTicket")]
+        [HttpPost]
+        public IActionResult SendTicket([FromBody] OrderDto orderDto)
+        {
+            StartTimer();
+            _logger.LogWarning("WebHookTimer - Starting to send ticket");
+
+            try
+            {
+                var order = _orderRepository.GetOrder(orderDto.Id).Result;
+
+                if (order.IssuedOn != null)
+                {
+                    return BadRequest($"This ticket was already issued on: {order.IssuedOn.Value.PrettyDate()}");
+                }
+
+                try
+                {
+                    if (order.PaymentId != orderDto.Key)
+                    {
+                        throw new Exception("SendTicket - unauthorised");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"SendTicket failed - key did not match. Was [{orderDto.Id}/{orderDto.Key}], expected [{order.DbKey}/{order.PaymentId}]");
+                    _emailService.SendEmailToSupport("Failed to send a ticket - PLEASE INVESTIGATE ASAP", $"Key did not match expected value - see logs for detail. PLEASE INVESTIGATE ASAP");
+                    throw;
+                }
+
+                order.IssuedOn = DateTime.Now; // Won't be committed unless send succeeds
+
+                switch (order.OrderType)
+                {
+                    case PaymentType.GuestTicket:
+                        _logger.LogWarning($"Sending guest ticket...");
+                        try
+                        {
+                            _ticketService.IssueGuestTicket(order.TicketNumber, order.ValidOn.Value, order.IssuedOn.Value, order.MembersName, order.GuestsName, orderDto.MembershipNumber, orderDto.Email, order.PaymentId);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Failed to send a guest ticket for payment intent id: {order.PaymentId}");
+                            _emailService.SendEmailToSupport("Failed to send a guest ticket - PLEASE INVESTIGATE ASAP", $"For payment id: {order.PaymentId}. Reason: {ex.Message}. PLEASE INVESTIGATE ASAP");
+                            throw;
+                        }
+                        break;
+
+                    case PaymentType.DayTicket:
+                        _logger.LogWarning($"Sending day ticket...");
+                        try
+                        {
+                            _ticketService.IssueDayTicket(order.TicketNumber, order.ValidOn.Value, order.TicketHoldersName, orderDto.Email, order.PaymentId);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Failed to send a day ticket for payment intent id: {order.PaymentId}");
+                            _emailService.SendEmailToSupport("Failed to send a day ticket - PLEASE INVESTIGATE ASAP", $"For payment id: {order.PaymentId}. Reason: {ex.Message}. PLEASE INVESTIGATE ASAP");
+                            throw;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+                _orderRepository.AddOrUpdateOrder(order).Wait();
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    return BadRequest(ex.InnerException.Message);
+                }
+                else
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            finally
+            {
+                ReportTimer("WebHookTimer - Sending ticket");
+            }
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("HealthCheck")]
+        [HttpPost]
+        public IActionResult HealthCheck()
+        {
+            return Ok();
+        }
     }
 }

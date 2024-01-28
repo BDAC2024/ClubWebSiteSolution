@@ -17,6 +17,7 @@ namespace AnglingClubWebServices.Models
         public decimal Amount { get; set; }
 
         public DateTime? PaidOn { get; set; } = null;
+        public DateTime? IssuedOn { get; set; } = null;
 
         // Note: Internal get means this wont be sent back from API call to clientpublic string PaymentId { get; set; }
         public string PaymentId { internal get; set; }

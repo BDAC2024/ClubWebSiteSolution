@@ -11,6 +11,7 @@ namespace AnglingClubWebServices.DTOs
         public string Address { get; set; }
 
         public DateTime? PaidOn { get; set; }
+        public DateTime? IssuedOn { get; set; }
 
         public decimal Amount { get; set; }
         public string Status { get; set; }

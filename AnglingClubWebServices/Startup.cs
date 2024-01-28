@@ -110,9 +110,7 @@ namespace AnglingClubWebServices
             services.AddTransient<IRulesRepository, RulesRepository>();
             services.AddTransient<IUserAdminRepository, UserAdminRepository>();
             services.AddTransient<IBackupRepository, BackupRepository>();
-            services.AddTransient<IGuestTicketRepository, GuestTicketRepository>();
             services.AddTransient<IAppSettingRepository, AppSettingRepository>();
-            services.AddTransient<IDayTicketRepository, DayTicketRepository>();
             services.AddTransient<IProductMembershipRepository, ProductMembershipRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
 
