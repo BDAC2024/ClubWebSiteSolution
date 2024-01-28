@@ -20,3 +20,8 @@
     padding: 3px!important;
     margin: 3px!important;
 }
+
+.cell-refunded {
+    color: red; 
+    font-weight: bold;
+}
