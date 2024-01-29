@@ -64,6 +64,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
 
 .members-only-card {
+    margin-top: 0 !important;
     background-color: rgb(247, 88, 88);
     color: white;
     /* text-align: center; */
@@ -92,6 +93,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .policy-card p {
+    font-size: smaller;
+}
+
+.small-notes {
     font-size: smaller;
 }
 

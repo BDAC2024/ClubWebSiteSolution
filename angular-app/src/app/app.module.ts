@@ -89,6 +89,7 @@ import { TermsAndConditionsComponent } from './components/terms-and-conditions/t
 import { DataPolicyComponent } from './components/data-policy/data-policy.component';
 import { ViewPaymentDialogComponent } from './dialogs/view-payment-dialog/view-payment-dialog.component';
 import { FeatureDisabledPanelComponent } from './components/shared/feature-disabled-panel/feature-disabled-panel.component';
+import { PolicyPanelNoPurchasesComponent } from './components/shared/policy-panel-no-purchases/policy-panel-no-purchases.component';
 
 @NgModule({
   declarations: [
@@ -141,6 +142,7 @@ import { FeatureDisabledPanelComponent } from './components/shared/feature-disab
     DataPolicyComponent,
     ViewPaymentDialogComponent,
     FeatureDisabledPanelComponent,
+    PolicyPanelNoPurchasesComponent,
   ],
   imports: [
     BrowserModule,

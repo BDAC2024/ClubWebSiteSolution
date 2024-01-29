@@ -3,7 +3,10 @@
     margin-left: 0 !important;
 }
 
-mat-card {
+/* mat-card {
     width: fit-content;
-}
+} */
 
+.nav-content {
+    padding-top: 0 !important;
+}
