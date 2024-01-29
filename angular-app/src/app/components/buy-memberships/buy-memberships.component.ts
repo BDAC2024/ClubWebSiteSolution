@@ -6,6 +6,10 @@ import { map, startWith } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { PaymentsService } from 'src/app/services/payments.service';
 import { Router } from '@angular/router';
+import { RefDataService } from 'src/app/services/ref-data.service';
+import { PaymentType } from 'src/app/models/payment-enum';
+import { RefData } from 'src/app/models/refData';
+import { FateMaterialIconService } from 'fate-editor';
 
 
 @Component({
@@ -19,24 +23,42 @@ export class BuyMembershipsComponent implements OnInit {
 
   public membershipList: ProductMembership[] = [];
 
+  public refData!: RefData;
   public isLoading: boolean = true;
   public isBuying: boolean = false;
   public selectedMembership!: ProductMembership;
   public newMembership: MembershipPaymentRequest = new MembershipPaymentRequest();
   private baseUrl: string = "";
 
+  public isEnabled: boolean = true;
+  public isEnabling: boolean = false;
+
+  public confirmCertificate: boolean = false;
+
   constructor(
+    public refDataService: RefDataService,
     public paymentsService: PaymentsService,
     private router: Router) {
 
   }
 
   ngOnInit(): void {
-
+    this.getRefData();
     this.getProductMemberships();
 
     this.baseUrl = window.location.href.replace(this.router.url, "");
 
+  }
+
+  public getRefData() {
+    this.isLoading = true;
+    this.refDataService.getRefData()
+    .subscribe(data => {
+      this.refData = data;
+      this.isEnabled = this.refData.appSettings.membershipsEnabled;
+
+      this.isLoading = false;
+    });
   }
 
   public resetNewMembership(selected: ProductMembership): void {
@@ -44,7 +66,7 @@ export class BuyMembershipsComponent implements OnInit {
     this.newMembership.dbKey = selected.dbKey;
     this.newMembership.successUrl = this.baseUrl + "/buySuccess/membership";
     this.newMembership.cancelUrl = this.baseUrl;
-
+    this.confirmCertificate = false;
   }
 
   public minDate(): Date {
@@ -65,8 +87,8 @@ export class BuyMembershipsComponent implements OnInit {
       minimumDate.setFullYear(1);
     }
 
-    console.log("minimumDate");
-    console.log(minimumDate);
+    // console.log("minimumDate");
+    // console.log(minimumDate);
 
     return minimumDate;
   }
@@ -89,8 +111,8 @@ export class BuyMembershipsComponent implements OnInit {
       maximumDate.setFullYear(nextApril.getFullYear() - 18);
     }
 
-    console.log("maximumDate");
-    console.log(maximumDate);
+    // console.log("maximumDate");
+    // console.log(maximumDate);
 
     return maximumDate;
   }
@@ -109,8 +131,8 @@ export class BuyMembershipsComponent implements OnInit {
       nextApril.setFullYear(nextApril.getFullYear() + 1);
     }
 
-    console.log("nextApril");
-    console.log(nextApril);
+    // console.log("nextApril");
+    // console.log(nextApril);
     
     return nextApril;
   }
@@ -145,6 +167,10 @@ export class BuyMembershipsComponent implements OnInit {
     return this.selectedMembership.description == "Junior" || this.selectedMembership.description == "Intermediate";
   }
 
+  public isDisabled(): boolean {
+    return this.selectedMembership.description == "Disabled";
+  }
+
   public async buy() {
     this.isBuying = true;
     this.newMembership.underAge = this.isUnderAge();
@@ -167,7 +193,8 @@ export class BuyMembershipsComponent implements OnInit {
     var valid = this.newMembership.name != null && 
            this.newMembership.name.trim() != "" &&
            this.newMembership.dob != null &&
-           this.newMembership.acceptPolicies;
+           this.newMembership.acceptPolicies && 
+           (this.isDisabled() && this.confirmCertificate);
            
     var validUnderAge: boolean = !this.isUnderAge();
 
@@ -200,5 +227,14 @@ export class BuyMembershipsComponent implements OnInit {
 
     return valid && validUnderAge;
 
+  }
+
+  public enable(enabled: boolean): void {
+    this.isEnabling = true;
+    this.paymentsService.enableFeature(PaymentType.Membership, enabled)
+    .subscribe(result => {
+      this.isEnabling = false;
+      this.isEnabled = result;
+    });
   }
 }

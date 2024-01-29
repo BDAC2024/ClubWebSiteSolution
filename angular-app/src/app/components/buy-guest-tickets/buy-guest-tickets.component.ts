@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GuestTicket } from 'src/app/models/guest-ticket';
+import { PaymentType } from 'src/app/models/payment-enum';
 import { RefData } from 'src/app/models/refData';
 import { MembersService } from 'src/app/services/members.service';
 import { PaymentsService } from 'src/app/services/payments.service';
@@ -23,9 +24,12 @@ export class BuyGuestTicketsComponent implements OnInit {
   public minDate: Date = new Date();
   private baseUrl: string = "";
   public isBuying: boolean = false;
+
+  public isEnabled: boolean = true;
+  public isEnabling: boolean = false;
   
   constructor(    
-    private refDataService: RefDataService,
+    public refDataService: RefDataService,
     private paymentsService: PaymentsService,
     private membersService: MembersService,
     private router: Router) { 
@@ -53,7 +57,9 @@ export class BuyGuestTicketsComponent implements OnInit {
       this.refDataService.getRefData()
       .subscribe(data => {
         this.refData = data;
-        this.guestTicket.cost = this.refData.appSettings.dayTicketCost;
+        this.guestTicket.cost = this.refData.appSettings.guestTicketCost;
+        this.isEnabled = this.refData.appSettings.guestTicketsEnabled;
+
         this.isLoading = false;
       });
     }
@@ -85,6 +91,15 @@ export class BuyGuestTicketsComponent implements OnInit {
             this.guestTicket.membersName.trim() != "" &&
             this.guestTicket.guestsName != null && 
             this.guestTicket.guestsName.trim() != "";
+    }
+
+    public enable(enabled: boolean): void {
+      this.isEnabling = true;
+      this.paymentsService.enableFeature(PaymentType.GuestTicket, enabled)
+      .subscribe(result => {
+        this.isEnabling = false;
+        this.isEnabled = result;
+      });
     }
 
 }

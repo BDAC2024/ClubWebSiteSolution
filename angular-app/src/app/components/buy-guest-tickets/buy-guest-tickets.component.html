@@ -1,8 +1,36 @@
 <h1>Purchase Guest Tickets online</h1>
+<div *ngIf="this.refDataService.isTreasurer() && !isLoading">
+    <div >
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="isEnabled" 
+            (click)="enable(false)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility_off</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Disable this Feature
+        </button>
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="!isEnabled" 
+            (click)="enable(true)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Enable this Feature
+        </button>
+    </div>
+</div>
 
 <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
 
-<div *ngIf="!isLoading">
+<app-feature-disabled-panel *ngIf="!isEnabled"></app-feature-disabled-panel>
+
+<div *ngIf="!isLoading && isEnabled">
 
     <mat-card class="rules-card">
         <mat-card-header>

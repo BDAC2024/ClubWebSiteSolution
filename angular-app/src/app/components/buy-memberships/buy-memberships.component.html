@@ -1,8 +1,36 @@
 <h1>Purchase membership online</h1>
+<div *ngIf="this.refDataService.isTreasurer() && !isLoading">
+    <div >
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="isEnabled" 
+            (click)="enable(false)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility_off</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Disable this Feature
+        </button>
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="!isEnabled" 
+            (click)="enable(true)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Enable this Feature
+        </button>
+    </div>
+</div>
 
 <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
 
-<div *ngIf="!isLoading">
+<app-feature-disabled-panel *ngIf="!isEnabled"></app-feature-disabled-panel>
+
+<div *ngIf="!isLoading && isEnabled">
     <mat-card class="rules-card">
         <mat-card-header>
             <mat-card-title>Notes</mat-card-title>
@@ -129,6 +157,10 @@
                             In the event of any misconduct on my part, the club hold the sole right to withdraw my membership and that the committee decision will be final.
                         </p>
                     </div>
+                    <div *ngIf="isDisabled()" class="checkbox-wrapper">
+                        <mat-checkbox [(ngModel)]="this.confirmCertificate">Please confirm that you have your Disability Certificate because you will be contacted to view this before membership is issued. <b>Please do not pay if you do not have this</b></mat-checkbox>
+                    </div>
+                    <br *ngIf="isDisabled()" />
                     <div class="checkbox-wrapper">
                         <mat-checkbox [(ngModel)]="newMembership.acceptPolicies">I have read and accept the clubs <a href="termsAndConditions" target="_blank">terms and conditions</a> (opens in a new window)</mat-checkbox>
                     </div>

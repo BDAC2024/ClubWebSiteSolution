@@ -57,6 +57,30 @@ export class AuthenticationService {
 
    }
 
+   public isTreasurer(treasurers: number[]): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+
+      return treasurers.includes(parseInt(tokenDecoded.MembershipNumber));
+
+    } else {
+      return false;
+    }
+
+   }
+
+   public isMemberSecretary(memberSecretaries: number[]): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+
+      return memberSecretaries.includes(parseInt(tokenDecoded.MembershipNumber));
+
+    } else {
+      return false;
+    }
+
+   }
+
    public get isDeveloper(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");

@@ -5,6 +5,8 @@ import { PaymentsService } from 'src/app/services/payments.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { Router } from '@angular/router';
 import { TicketService } from 'src/app/services/ticket.service';
+import { PaymentType } from 'src/app/models/payment-enum';
+import { FateLegacyBrowserService } from 'fate-editor';
 
 @Component({
   selector: 'app-buy-day-tickets',
@@ -23,8 +25,11 @@ export class BuyDayTicketsComponent implements OnInit {
 
   public isBuying: boolean = false;
 
+  public isEnabled: boolean = true;
+  public isEnabling: boolean = false;
+
   constructor(
-    private refDataService: RefDataService,
+    public refDataService: RefDataService,
     private paymentsService: PaymentsService,
     private ticketService: TicketService,
     private router: Router) { }
@@ -46,6 +51,7 @@ export class BuyDayTicketsComponent implements OnInit {
     .subscribe(data => {
       this.refData = data;
       this.dayTicket.cost = this.refData.appSettings.dayTicketCost;
+      this.isEnabled = this.refData.appSettings.dayTicketsEnabled;
       this.isLoading = false;
     });
   }
@@ -99,4 +105,14 @@ export class BuyDayTicketsComponent implements OnInit {
     return this.dayTicket.validOn != null &&
           this.dayTicket.holdersName != null;
   }
+
+  public enable(enabled: boolean): void {
+    this.isEnabling = true;
+    this.paymentsService.enableFeature(PaymentType.DayTicket, enabled)
+    .subscribe(result => {
+      this.isEnabling = false;
+      this.isEnabled = result;
+    });
+  }
+
 }

@@ -12,6 +12,7 @@ import {Stripe, loadStripe} from '@stripe/stripe-js';
 import { environment } from 'src/environments/environment';
 import { GuestTicket } from '../models/guest-ticket';
 import { MembershipPaymentRequest, ProductMembership } from '../models/membership-payment';
+import { PaymentType } from '../models/payment-enum';
 
 
 @Injectable({
@@ -47,17 +48,17 @@ export class PaymentsService {
             ));
   }
 
-  public reIssueTicketOLD(orderNo: number): Observable<boolean[]> {
-    return this.http.post<boolean[]>(`${this.globalService.ApiUrl}/api/buy/ReSendTicket/${orderNo}`, null)
-              .pipe(map(res => 
-                res
-            ));
-  }
-
   public reIssueTicket(orderNo: number): Observable<PaymentDetail> {
     return this.http.post<PaymentDetail>(`${this.globalService.ApiUrl}/api/buy/ReSendTicket/${orderNo}`, null)
               .pipe(map(res => 
                 plainToClass(PaymentDetail, res)
+            ));
+  }
+
+  public enableFeature(featureType: PaymentType, enabled: boolean): Observable<boolean> {
+    return this.http.post<boolean>(`${this.globalService.ApiUrl}/api/buy/EnableFeature/${featureType}/${enabled}`, null)
+              .pipe(map(res => 
+                res
             ));
   }
 
