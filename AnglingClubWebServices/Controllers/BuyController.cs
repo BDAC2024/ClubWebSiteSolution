@@ -277,45 +277,9 @@ namespace AnglingClubWebServices.Controllers
                     throw;
                 }
 
-                order.IssuedOn = DateTime.Now; // Won't be committed unless send succeeds
+                var orderDetail = _paymentsService.GetDetail(order.DbKey).Result;
 
-                switch (order.OrderType)
-                {
-                    case PaymentType.GuestTicket:
-                        _logger.LogWarning($"Sending guest ticket...");
-                        try
-                        {
-                            _ticketService.IssueGuestTicket(order.TicketNumber, order.ValidOn.Value, order.IssuedOn.Value, order.MembersName, order.GuestsName, orderDto.MembershipNumber, orderDto.Email, order.PaymentId);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, $"Failed to send a guest ticket for payment intent id: {order.PaymentId}");
-                            _emailService.SendEmailToSupport("Failed to send a guest ticket - PLEASE INVESTIGATE ASAP", $"For payment id: {order.PaymentId}. Reason: {ex.Message}. PLEASE INVESTIGATE ASAP");
-                            throw;
-                        }
-                        break;
-
-                    case PaymentType.DayTicket:
-                        _logger.LogWarning($"Sending day ticket...");
-                        try
-                        {
-                            _ticketService.IssueDayTicket(order.TicketNumber, order.ValidOn.Value, order.TicketHoldersName, orderDto.Email, order.PaymentId);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, $"Failed to send a day ticket for payment intent id: {order.PaymentId}");
-                            _emailService.SendEmailToSupport("Failed to send a day ticket - PLEASE INVESTIGATE ASAP", $"For payment id: {order.PaymentId}. Reason: {ex.Message}. PLEASE INVESTIGATE ASAP");
-                            throw;
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
-
-                _orderRepository.AddOrUpdateOrder(order).Wait();
-
+                sendOrderAsTicket(order, orderDetail);
             }
             catch (Exception ex)
             {
@@ -342,6 +306,92 @@ namespace AnglingClubWebServices.Controllers
         public IActionResult HealthCheck()
         {
             return Ok();
+        }
+
+        [HttpPost("ReSendTicket/{orderId}")]
+        [HttpPost]
+        public IActionResult ReSendTicket(int orderId)
+        {
+            StartTimer();
+            _logger.LogWarning("WebHookTimer - Starting to re-send ticket");
+
+            if (!CurrentUser.Admin)
+            {
+                return BadRequest("Only administrators can access this.");
+            }
+
+            Order order;
+
+            try
+            {
+                order = _orderRepository.GetOrders().Result.FirstOrDefault(x => x.OrderId == orderId);
+
+                if (order == null)
+                {
+                    var ex = new Exception("Cannot locate this ticket");
+                    _logger.LogError(ex, $"Order id: {orderId} cannot be found so cannot re-send ticket");
+                    throw ex;
+                }
+
+                var orderDetail = _paymentsService.GetDetail(order.DbKey).Result;
+
+                sendOrderAsTicket(order, orderDetail);
+
+                return Ok(_paymentsService.GetDetail(order.DbKey).Result);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            finally
+            {
+                ReportTimer("WebHookTimer - Re-Sending ticket");
+            }
+
+        }
+
+        private void sendOrderAsTicket(Order order, OrderDetailDto orderDetails)
+        {
+            order.IssuedOn = DateTime.Now; // Won't be committed unless send succeeds
+
+            switch (order.OrderType)
+            {
+                case PaymentType.GuestTicket:
+                    _logger.LogWarning($"Sending guest ticket...");
+                    try
+                    {
+                        _ticketService.IssueGuestTicket(order.TicketNumber, order.ValidOn.Value, order.IssuedOn.Value, order.MembersName, order.GuestsName, orderDetails.MembershipNumber, orderDetails.Email, order.PaymentId);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Failed to send a guest ticket for payment intent id: {order.PaymentId}");
+                        _emailService.SendEmailToSupport("Failed to send a guest ticket - PLEASE INVESTIGATE ASAP", $"For ticket id: {order.TicketNumber}. Reason: {ex.Message}.<br/><br/>Ticket can be re-sent using the Payment Details view of this un-issued ticket.<br/><br/>PLEASE INVESTIGATE ASAP");
+                        throw;
+                    }
+                    break;
+
+                case PaymentType.DayTicket:
+                    _logger.LogWarning($"Sending day ticket...");
+                    try
+                    {
+                        _ticketService.IssueDayTicket(order.TicketNumber, order.ValidOn.Value, order.TicketHoldersName, orderDetails.Email, order.PaymentId);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Failed to send a day ticket for payment intent id: {order.PaymentId}");
+                        _emailService.SendEmailToSupport("Failed to send a day ticket - PLEASE INVESTIGATE ASAP", $"For ticket id: {order.TicketNumber}. Reason: {ex.Message}.<br/><br/>Ticket can be re-sent using the Payment Details view of this un-issued ticket.<br/><br/>PLEASE INVESTIGATE ASAP");
+                        throw;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            _orderRepository.AddOrUpdateOrder(order).Wait();
+
         }
     }
 }
