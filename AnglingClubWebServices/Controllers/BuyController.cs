@@ -351,6 +351,55 @@ namespace AnglingClubWebServices.Controllers
 
         }
 
+        [HttpPost("EnableFeature/{featureType}/{enabled}")]
+        [HttpPost]
+        public IActionResult EnableFeature(PaymentType featureType, bool enabled)
+        {
+            StartTimer();
+
+            if (!CurrentUser.Admin)
+            {
+                return BadRequest("Only administrators can access this.");
+            }
+
+            try
+            {
+                var appSettings = _appSettingRepository.GetAppSettings().Result;
+
+                switch (featureType)
+                {
+                    case PaymentType.Membership:
+                        appSettings.MembershipsEnabled = enabled;
+                        break;
+
+                    case PaymentType.GuestTicket:
+                        appSettings.GuestTicketsEnabled = enabled;
+                        break;
+
+                    case PaymentType.DayTicket:
+                        appSettings.DayTicketsEnabled = enabled;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                _appSettingRepository.AddOrUpdateAppSettings(appSettings).Wait();
+
+                return Ok(enabled);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            finally
+            {
+                ReportTimer("Enable/disable feature");
+            }
+
+        }
+
         private void sendOrderAsTicket(Order order, OrderDetailDto orderDetails)
         {
             order.IssuedOn = DateTime.Now; // Won't be committed unless send succeeds
