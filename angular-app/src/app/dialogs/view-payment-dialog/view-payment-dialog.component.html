@@ -9,8 +9,8 @@
         <span><b>Description</b><br/>{{data.description}}<br/></span>
 
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Ticket No:</b><br/>{{data.ticketNumber}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership || data.orderType == paymentType.GuestTicket"><b>Issued On:</b><br/>{{data.issuedOn | date:'dd MMM YY'}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Valid On:</b><br/>{{data.validOn | date:'dd MMM YY'}}</span>
+        <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Issued On:</b><br/>{{data.issuedOn | date:'dd MMM YY'}}</span>
         <span *ngIf="data.orderType == paymentType.Membership || data.orderType == paymentType.GuestTicket"><b>Members Name:</b><br/>{{data.membersName}}</span>
         <span *ngIf="data.orderType == paymentType.GuestTicket"><b>Membership No:</b><br/>{{data.membershipNumber}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket"><b>Ticket Holder:</b><br/>{{data.ticketHoldersName}}</span>
@@ -35,39 +35,19 @@
         <span *ngIf="data.orderType == paymentType.Membership"><b>Accepted Policies:</b><br/>{{data.acceptPolicies}}</span>
 
     </div>
-<!--
-    <table *ngIf="false">
-        <tr><td><b>Order Id:</b></td><td>{{data.orderId}}</td></tr>
-        <tr><td><b>Amount:</b></td><td>{{data.amount | currency:'GBP'}}</td></tr>
-        <tr><td><b>Paid On:</b></td><td>{{data.paidOn | date:'dd MMM YY'}}</td></tr>
-        <tr><td><b>Status:</b></td><td>{{data.status}}</td></tr>
-        <tr><td><b>Description:</b></td><td>{{data.description}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><td><b>Ticket No:</b></td><td>{{data.ticketNumber}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><td><b>Valid On:</b></td><td>{{data.validOn | date:'dd MMM YY'}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership || data.orderType == paymentType.GuestTicket"><td><b>Members Name:</b></td><td>{{data.membersName}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.GuestTicket"><td><b>Membership No:</b></td><td>{{data.membershipNumber}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.DayTicket"><td><b>Ticket Holder:</b></td><td>{{data.ticketHoldersName}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.GuestTicket"><td><b>Guest:</b></td><td>{{data.guestsName}}</td></tr>
-        <tr><td><b>Billing Address:</b></td><td>{{data.address}}</td></tr>
-        <tr><td><b>Billing Email:</b></td><td>{{data.email}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership"><td><b>Date of Birth:</b></td><td>{{data.doB | date:'dd MMM YYYY'}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && !data.underAge"><td><b>Phone No:</b></td><td>{{data.phoneNumber}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && !data.underAge"><td><b>Allow Name in Match Results:</b></td><td>{{data.allowNameToBeUsed}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>Parental Consent:</b></td><td>{{data.parentalConsent}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>Can Swim:</b></td><td>{{data.childCanSwim}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>1st Responsible:</b></td><td>{{data.responsible1st}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>2nd Responsible:</b></td><td>{{data.responsible2nd}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>3rd Responsible:</b></td><td>{{data.responsible3rd}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>4th Responsible:</b></td><td>{{data.responsible4th}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>Emergency Contact:</b></td><td>{{data.emergencyContact}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>Contact Home:</b></td><td>{{data.emergencyContactPhoneHome}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>Contact Work:</b></td><td>{{data.emergencyContactPhoneWork}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership && data.underAge"><td><b>Contact Mobile:</b></td><td>{{data.emergencyContactPhoneMobile}}</td></tr>
-        <tr *ngIf="data.orderType == paymentType.Membership"><td><b>Accepted Policies:</b></td><td>{{data.acceptPolicies}}</td></tr>
-    </table>
--->
     <br/>
 </div>
 <div mat-dialog-actions class="edit-button-panel">
+    <div *ngIf="message != ''">{{message}}</div>
+    <button 
+        *ngIf="(data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket) && !data.issuedOn" 
+        [disabled]="this.isReIssuing" 
+        class="edit-button" 
+        mat-raised-button color="primary" 
+        (click)="reIssue()">
+            <mat-icon *ngIf="!isReIssuing" aria-hidden="false" aria-label="Re-Issue">forward_to_inbox</mat-icon>
+            <mat-spinner diameter="20" class="button-spinner" *ngIf="isReIssuing" ></mat-spinner>
+            Re-Issue
+    </button>
     <button class="edit-button" mat-raised-button color="primary" (click)="close()">Close</button>
 </div>

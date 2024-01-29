@@ -84,11 +84,11 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
     } else {
       switch (this.selectedPaymentType) {
         case PaymentType.DayTicket:
-          this.displayedColumns = ["ticketNumber", "ticketHoldersName", "validOn", "amount", "paidOn", "status", "view"];
+          this.displayedColumns = ["ticketNumber", "ticketHoldersName", "validOn", "issuedOn", "amount", "paidOn", "status", "view"];
           break;
 
         case PaymentType.GuestTicket:
-          this.displayedColumns = ["ticketNumber", "membersName", "guestsName", "validOn", "amount", "paidOn", "status", "view"];
+          this.displayedColumns = ["ticketNumber", "membersName", "guestsName", "validOn", "issuedOn", "amount", "paidOn", "status", "view"];
           break;
 
         case PaymentType.Membership:
@@ -121,7 +121,15 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
           width: '90vw',
           data: this.paymentDetails
         });
-    
+
+        dialogRef.afterClosed().subscribe(result => {
+      
+          if (result) {
+            selectedPayment.issuedOn = result.issuedOn;
+          }
+        });
+              
       });
   }
+
 }

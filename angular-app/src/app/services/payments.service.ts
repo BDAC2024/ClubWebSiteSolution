@@ -47,6 +47,20 @@ export class PaymentsService {
             ));
   }
 
+  public reIssueTicketOLD(orderNo: number): Observable<boolean[]> {
+    return this.http.post<boolean[]>(`${this.globalService.ApiUrl}/api/buy/ReSendTicket/${orderNo}`, null)
+              .pipe(map(res => 
+                res
+            ));
+  }
+
+  public reIssueTicket(orderNo: number): Observable<PaymentDetail> {
+    return this.http.post<PaymentDetail>(`${this.globalService.ApiUrl}/api/buy/ReSendTicket/${orderNo}`, null)
+              .pipe(map(res => 
+                plainToClass(PaymentDetail, res)
+            ));
+  }
+
   /*
     Note that this method should not return when all succeeds. It should redirect the user to Stripe.
     However, if stripe is unable to create the checkout session for any reason then we need to

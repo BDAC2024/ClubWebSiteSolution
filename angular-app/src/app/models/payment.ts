@@ -13,6 +13,7 @@ export class Payment {
     @Type(() => Date)
     paidOn!: Date;
     validOn!: Date;
+    issuedOn!: Date;
     amount!: number;
     status!: string;
 }
