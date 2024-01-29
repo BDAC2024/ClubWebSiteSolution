@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -20,6 +22,7 @@ using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Stripe;
 using Stripe.Checkout;
+using static AutoMapper.Internal.ExpressionFactory;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -31,13 +34,17 @@ namespace AnglingClubWebServices.Controllers
         private readonly ILogger<WebHookController> _logger;
         private readonly ITicketService _ticketService;
         private readonly IOrderRepository _orderRepository;
+        private readonly IAppSettingRepository _appSettingRepository;
+        private readonly IMemberRepository _memberRepository;
+
         public WebHookController(
-            IOptions<StripeOptions> opts, 
-            IEmailService emailService, 
-            ILoggerFactory loggerFactory, 
-            ITicketService ticketService, 
-            IOrderRepository orderRepository
-            )
+            IOptions<StripeOptions> opts,
+            IEmailService emailService,
+            ILoggerFactory loggerFactory,
+            ITicketService ticketService,
+            IOrderRepository orderRepository,
+            IAppSettingRepository appSettingRepository,
+            IMemberRepository memberRepository)
         {
             _emailService = emailService;
 
@@ -51,6 +58,8 @@ namespace AnglingClubWebServices.Controllers
             _ticketService = ticketService;
             _logger.LogWarning($"Finished CTOR for WebHookController");
             _orderRepository = orderRepository;
+            _appSettingRepository = appSettingRepository;
+            _memberRepository = memberRepository;
         }
 
         [AllowAnonymous]
@@ -119,6 +128,47 @@ namespace AnglingClubWebServices.Controllers
                         {
                             case PaymentType.Membership:
                                 order.MembersName = paymentMetaData.Name;
+
+                                var appSettings = _appSettingRepository.GetAppSettings().Result;
+                                var notificationSent = false;
+
+                                if (appSettings.MembershipSecretaries.Any())
+                                {
+                                    var members = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => appSettings.MembershipSecretaries.Contains(x.MembershipNumber));
+
+                                    if (members.Any())
+                                    {
+                                        var emails = members.Select(x => x.Email).ToList();
+
+                                        _emailService.SendEmail(
+                                            emails,
+                                            $"New membership has been purchased",
+                                            $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
+                                                "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
+                                                "Boroughbridge & District Angling Club"
+                                        );
+
+                                        _emailService.SendEmail(
+                                            new List<string> { paymentIntent.ReceiptEmail },
+                                            $"Confirmation of membership purchase",
+                                            $"Thank you for purchasing <b>{order.Description}</b> .<br/>" +
+                                                "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
+                                                "Tight lines!,<br/>" +
+                                                "Boroughbridge & District Angling Club"
+                                        );
+
+                                        notificationSent = true;
+                                    }
+                                }
+
+                                if (!notificationSent)
+                                {
+                                    var exMsg = $"Failed to send an email to any member secretaries for payment intent: {paymentIntent.Id}";
+                                    var ex = new Exception(exMsg);
+                                    _logger.LogError(ex, exMsg);
+                                    _emailService.SendEmailToSupport("Failed to notify new membership payment", $"For payment id: {paymentIntent.Id}, for {order.MembersName}. PLEASE INVESTIGATE ASAP");
+                                    throw ex;
+                                }
                                 break;
 
                             case PaymentType.GuestTicket:
@@ -141,8 +191,8 @@ namespace AnglingClubWebServices.Controllers
                         _logger.LogWarning($"WebHookTimer - creating order took : {sw.ElapsedMilliseconds} ms");
                         sw.Restart();
 
-                        var msg = $"A successful payment of £{order.Amount} for '{order.Description}' was made by {(order.OrderType == PaymentType.DayTicket ? order.TicketHoldersName : order.MembersName)} at {paymentIntent.ReceiptEmail}<br/><br/>";
-                        _emailService.SendEmailToSupport("Payment received", msg);
+                        //var msg = $"A successful payment of £{order.Amount} for '{order.Description}' was made by {(order.OrderType == PaymentType.DayTicket ? order.TicketHoldersName : order.MembersName)} at {paymentIntent.ReceiptEmail}<br/><br/>";
+                        //_emailService.SendEmailToSupport("Payment received", msg);
 
                         _logger.LogWarning($"WebHookTimer - sending support email took : {sw.ElapsedMilliseconds} ms");
                         sw.Restart();

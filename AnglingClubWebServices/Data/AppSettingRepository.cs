@@ -27,14 +27,17 @@ namespace AnglingClubWebServices.Data
 
         public async Task AddOrUpdateAppSettings(AppSettings appSettings)
         {
+            await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipsEnabled", Value = appSettings.MembershipsEnabled.ToString() });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "GuestTicketsEnabled", Value = appSettings.GuestTicketsEnabled.ToString() });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketsEnabled", Value = appSettings.DayTicketsEnabled.ToString() });
             await AddOrUpdateAppSetting(new AppSetting { Name = "GuestTicketCost", Value = appSettings.GuestTicketCost.ToString() });
             await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketCost", Value = appSettings.DayTicketCost.ToString() });
-            await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketStyle", Value = appSettings.DayTicketStyle });
-            await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicket", Value = appSettings.DayTicket });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductDayTicket", Value = appSettings.ProductDayTicket });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductGuestTicket", Value = appSettings.ProductGuestTicket });
 
             await AddOrUpdateAppSetting(new AppSetting { Name = "Previewers", Value = String.Join(",", appSettings.Previewers.ToArray()) });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipSecretaries", Value = String.Join(",", appSettings.MembershipSecretaries.ToArray()) });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "Treasurers", Value = String.Join(",", appSettings.Treasurers.ToArray()) });
 
         }
 
@@ -118,20 +121,24 @@ namespace AnglingClubWebServices.Data
 
                 switch (settingName.ToLower())
                 {
+                    case "membershipsenabled":
+                        appSettings.MembershipsEnabled = Convert.ToBoolean(settingValue);
+                        break;
+
+                    case "guestticketsenabled":
+                        appSettings.GuestTicketsEnabled = Convert.ToBoolean(settingValue);
+                        break;
+
+                    case "dayticketsenabled":
+                        appSettings.DayTicketsEnabled = Convert.ToBoolean(settingValue);
+                        break;
+
                     case "guestticketcost":
                         appSettings.GuestTicketCost = Convert.ToDecimal(settingValue);
                         break;
 
                     case "dayticketcost":
                         appSettings.DayTicketCost = Convert.ToDecimal(settingValue);
-                        break;
-
-                    case "dayticketstyle":
-                        appSettings.DayTicketStyle = settingValue;
-                        break;
-
-                    case "dayticket":
-                        appSettings.DayTicket = settingValue;
                         break;
 
                     case "productdayticket":
@@ -143,11 +150,33 @@ namespace AnglingClubWebServices.Data
                         break;
 
                     case "previewers":
-                        foreach (var previewer in settingValue.Split(","))
+                        if (settingValue != "")
                         {
-                            appSettings.Previewers.Add(Convert.ToInt32(previewer));
+                            foreach (var previewer in settingValue.Split(","))
+                            {
+                                appSettings.Previewers.Add(Convert.ToInt32(previewer));
+                            }
                         }
-                        
+                        break;
+
+                    case "membershipsecretaries":
+                        if (settingValue != "")
+                        {
+                            foreach (var membershipSecretary in settingValue.Split(","))
+                            {
+                                appSettings.MembershipSecretaries.Add(Convert.ToInt32(membershipSecretary));
+                            }
+                        }
+                        break;
+
+                    case "treasurers":
+                        if (settingValue != "")
+                        {
+                            foreach (var treasurer in settingValue.Split(","))
+                            {
+                                appSettings.Treasurers.Add(Convert.ToInt32(treasurer));
+                            }
+                        }
                         break;
 
                     default:
