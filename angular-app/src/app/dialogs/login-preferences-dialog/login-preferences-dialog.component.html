@@ -1,12 +1,8 @@
 <h2  mat-dialog-title>Preferences</h2>
 <mat-dialog-content class="mat-typography">
     <br/>
-    Are you are happy for your name to be used in match results, league standings etc. If not, you will appear as "Anonymous" instead. 
-    <br/>
-    <br/>
-    <b>Note:</b> This will only ever be visible to other club members and never shared.
-    <br/>
-    <br/>
+    <p class="small-notes">Are you are happy for your name to be used in match results, league standings etc. If not, you will appear as "Anonymous" instead.</p>
+    <p class="small-notes"><b>Note:</b> This will only ever be visible to other club members and never shared.</p>
     <div class="checkbox-wrapper">
         <mat-checkbox [(ngModel)]="this.prefs.allowNameToBeUsed">&nbsp;Allow my name to be stored and used</mat-checkbox>
     </div>
@@ -18,15 +14,13 @@
         </div>
 </mat-form-field>
     <br/>
-    Your email will simplify PIN resets and may be used for important club notifications.
-    <br/>
-    <br/>
-    You can change these anytime using "My Details" from the menu.
-    <br/>
+    <p class="small-notes">Your email will simplify PIN resets and may be used for important club notifications.</p>
+    <p class="small-notes">You can change these anytime using "My Details" from the menu.</p>
 </mat-dialog-content>
 <div mat-dialog-actions class="edit-button-panel">
     <button mat-raised-button color="primary" [disabled]="emailControl.invalid" (click)="submit()">Save Preferences</button>
 </div>
+<br/>
 <br/>
 <br/>
 <app-policy-panel-no-purchases></app-policy-panel-no-purchases>

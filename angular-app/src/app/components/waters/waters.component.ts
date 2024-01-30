@@ -8,6 +8,8 @@ import { MembersService } from 'src/app/services/members.service';
 import { WatersService } from 'src/app/services/waters.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ScreenService } from 'src/app/services/screen.service';
+import { RefDataService } from 'src/app/services/ref-data.service';
+import { RefData } from 'src/app/models/refData';
 
 @Component({
   selector: 'app-waters',
@@ -26,8 +28,10 @@ export class WatersComponent implements OnInit {
   
   public isLoading: boolean = false;
   public isPageAdmin: boolean = false;
+  public refData!: RefData;
 
   constructor(
+    public refDataService: RefDataService,
     public watersService: WatersService,
     public membersService: MembersService,
     public authenticationService: AuthenticationService,
@@ -45,7 +49,7 @@ export class WatersComponent implements OnInit {
 
   ngOnInit(): void {
     this.getWaters();
-
+    this.getRefData();
     // this.path = this.watersService.PathOld(this.waters[2]);
 
     // this.path.forEach((p) => {console.log(`lat: ${p.lat}, long: ${p.long}`) });
@@ -86,6 +90,15 @@ export class WatersComponent implements OnInit {
       }
     });
 
+  }
+
+  public getRefData() {
+    this.isLoading = true;
+    this.refDataService.getRefData()
+    .subscribe(data => {
+      this.refData = data;
+      this.isLoading = false;
+    });
   }
 
   private getWaters(): void

@@ -14,15 +14,36 @@
 
     </div>
     <div class="col-md-6">
-        Welcome to the Boroughbridge & District Angling Club. The club has a selection of waters, some being members only and some having day or guest tickets available.
+        Welcome to the Boroughbridge & District Angling Club. The club has a selection of waters, some being members only (with guest tickets available) and some day ticket waters.
         <br/>
         <br/>
         Unrestricted access is available to: -
         <ul>
             <li>News</li>
             <li>Club waters having day ticket access</li>
-            <li>Club Officers</li>
-            <li>Club Forms (<a href="forms">available here</a>)</li>
+            <li>Club Info
+                <ul>
+                    <li>Club Officers</li>
+                    <li>Club Forms (<a href="forms">available here</a>)</li>
+                    <li>Rules</li>
+                    <li>Environmental Policy</li>
+                    <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
+                        <div class="preview-option">
+                            Privacy Notice
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
+                <div class="preview-option">
+                    <a mat-list-item routerLink="/buyMemberships">Memberships - buy online</a>
+                </div>
+            </li>
+            <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
+                <div class="preview-option">
+                    <a mat-list-item routerLink="/buyDayTickets">Day Tickets - buy online</a>
+                </div>
+            </li>
         </ul>
         Members get additional access to: -
         <ul>
@@ -36,7 +57,11 @@
                     <li>Aggregate weight standings</li>
                 </ul>
             </li>
-            <li>Rules</li>
+            <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
+                <div class="preview-option">
+                    <a mat-list-item routerLink="/buyGuestTickets">Guest Tickets - buy online</a>
+                </div>
+            </li>
         </ul>
         In addition to this website, the club also has a Facebook Group and a YouTube Channel (links to both available at the top of the page). 
         <br/>

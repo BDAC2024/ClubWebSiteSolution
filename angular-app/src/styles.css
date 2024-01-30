@@ -172,3 +172,36 @@ mat-form-field {
 .mat-checkbox-label {
     line-height: unset !important;
 }
+
+/* Danger Card */
+
+.centered-danger-card {
+    background-color: white;
+    color: red;
+    margin-bottom: 6px;
+    margin-top: 0 !important;
+}
+
+.centered-danger-card mat-card-title {
+    margin: 0;
+}
+
+.centered-danger-card table {
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.centered-danger-card table td {
+    padding-left: 6px; 
+    padding-right: 6px; 
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Preview styles */
+
+.preview-option {
+    color: red;
+    background-color: yellow;
+    font-weight: bold;
+  }

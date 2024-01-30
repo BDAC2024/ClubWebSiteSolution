@@ -1,0 +1,13 @@
+::ng-deep .mat-card-header-text {
+    margin-left: 0 !important;
+}
+
+::ng-deep .mat-card {
+    margin: 26px;
+    max-width: 550px;
+}
+
+.nav-content {
+    padding-top: 0 !important;
+}
+

@@ -64,9 +64,9 @@ const routes: Routes = [
   { path: 'rulesJnrMatch', component: RulesJnrMatchComponent},
   { path: 'guestTickets', component: GuestTicketsComponent, canActivate: [AuthGuard] },
   { path: 'guestTicketCreate', component: GuestTicketCreateComponent, canActivate: [AuthGuard] },
-  { path: 'buyMemberships', component: BuyMembershipsComponent, canActivate: [AuthGuard] },
+  { path: 'buyMemberships', component: BuyMembershipsComponent},
   { path: 'payments', component: PaymentsComponent, canActivate: [AuthGuard] },
-  { path: 'buyDayTickets', component: BuyDayTicketsComponent, canActivate: [AuthGuard] },
+  { path: 'buyDayTickets', component: BuyDayTicketsComponent },
   { path: 'buyGuestTickets', component: BuyGuestTicketsComponent, canActivate: [AuthGuard] },
   { path: 'buySuccess/:productType', component: BuySuccessComponent },
 ];
