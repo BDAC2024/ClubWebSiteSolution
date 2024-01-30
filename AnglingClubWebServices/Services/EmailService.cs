@@ -69,7 +69,7 @@ namespace AnglingClubWebServices.Services
 
                         builder.Attachments.Add(imageAtt);
 
-                        builder.HtmlBody += $"<img src='{att.DataUrl}'/>";
+                        //builder.HtmlBody += $"<img src='{att.DataUrl}'/>";
                     }
                 }
 
