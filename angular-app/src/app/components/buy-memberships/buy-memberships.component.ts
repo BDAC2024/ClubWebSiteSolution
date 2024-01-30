@@ -147,6 +147,9 @@ export class BuyMembershipsComponent implements OnInit {
 
   public membershipAvailable(): boolean {
     
+    if (!this.is6Month()) {
+      return true;
+    }
     var d: Date = new Date();
 
     const month = (d).getMonth();
@@ -158,9 +161,13 @@ export class BuyMembershipsComponent implements OnInit {
       month === 5 ||             // June
       month === 6 ||             // July
       month === 7 ||             // August
-      (month === 8 && day < 23); // September
+      (month === 8 && day < 9); // September
 
     return !unavailable;
+  }
+
+  public is6Month(): boolean {
+    return this.selectedMembership.term == "6 months - Winter";
   }
 
   public isUnderAge(): boolean {
@@ -193,10 +200,15 @@ export class BuyMembershipsComponent implements OnInit {
     var valid = this.newMembership.name != null && 
            this.newMembership.name.trim() != "" &&
            this.newMembership.dob != null &&
-           this.newMembership.acceptPolicies && 
-           (this.isDisabled() && this.confirmCertificate);
+           this.newMembership.acceptPolicies;
            
     var validUnderAge: boolean = !this.isUnderAge();
+    var validDisabled: boolean = !this.isDisabled();
+
+    if (this.isDisabled())
+    {
+      validDisabled = this.confirmCertificate;
+    }
 
     if (this.isUnderAge())
     {
@@ -225,7 +237,7 @@ export class BuyMembershipsComponent implements OnInit {
         this.newMembership.phoneNumber.trim() != "";
     }
 
-    return valid && validUnderAge;
+    return valid && validUnderAge && validDisabled;
 
   }
 

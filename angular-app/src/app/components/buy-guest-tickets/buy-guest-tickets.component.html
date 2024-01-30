@@ -38,6 +38,7 @@
         </mat-card-header>
         <mat-card-content>
             <ul>
+                <li>Guest tickets can only be obtained up to two weeks in advance of fishing</li>
                 <li>Guest tickets are available for the River Ure and Roecliffe Pond</li>
                 <li>Guest tickets cost {{guestTicket.cost| currency:'GBP'}} and are non-refundable</li>
                 <li>Members must fish with their guest and be responsible for them</li>
@@ -67,7 +68,7 @@
             <br/>
             <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
                 <mat-label>Fishing Date</mat-label>
-                <input matInput [matDatepicker]="picker" [(ngModel)]="guestTicket.validOn" [min]="this.minDate" readonly>
+                <input matInput [matDatepicker]="picker" [(ngModel)]="guestTicket.validOn" [min]="this.minDate" [max]="this.maxDate" readonly>
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>

@@ -54,6 +54,7 @@
                 <ul>
                     <li>Day tickets are only available for the River Ure on the Old Cricket Field or Aldborough stretches</li>
                     <li>Day tickets cost {{dayTicket.cost| currency:'GBP'}} and are non-refundable</li>
+                    <li>Day tickets can only be obtained up to two weeks in advance of fishing</li>
                     <li>Day tickets cannot be obtained (and are therefore invalid) for the coarse closed season</li>
                     <br/>
                     <li>No dogs, No fires; No camping; No loud music;</li>
@@ -76,7 +77,7 @@
                 <br/>
                 <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
                     <mat-label>Fishing Date</mat-label>
-                    <input matInput [matDatepicker]="picker" [(ngModel)]="dayTicket.validOn" [min]="this.minDate" [matDatepickerFilter]="this.dateFilter" readonly>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="dayTicket.validOn" [min]="this.minDate" [max]="this.maxDate" [matDatepickerFilter]="this.dateFilter" readonly>
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>

@@ -22,6 +22,7 @@ export class BuyGuestTicketsComponent implements OnInit {
   public errorMessage: string = "";
 
   public minDate: Date = new Date();
+  public maxDate: Date = new Date();
   private baseUrl: string = "";
   public isBuying: boolean = false;
 
@@ -50,6 +51,7 @@ export class BuyGuestTicketsComponent implements OnInit {
       this.guestTicket.successUrl = this.baseUrl + "/buySuccess/guestTicket";
       this.guestTicket.cancelUrl = this.baseUrl;
   
+      this.maxDate.setDate(this.maxDate.getDate() + 14);
     }
   
     public getRefData() {

@@ -21,6 +21,7 @@ export class BuyDayTicketsComponent implements OnInit {
   public errorMessage: string = "";
 
   public minDate: Date = new Date();
+  public maxDate: Date = new Date();
   private baseUrl: string = "";
 
   public isBuying: boolean = false;
@@ -43,6 +44,7 @@ export class BuyDayTicketsComponent implements OnInit {
     this.dayTicket.successUrl = this.baseUrl + "/buySuccess/dayTicket";
     this.dayTicket.cancelUrl = this.baseUrl;
 
+    this.maxDate.setDate(this.maxDate.getDate() + 14);
   }
 
   public getRefData() {

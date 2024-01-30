@@ -37,9 +37,9 @@
         </mat-card-header>
         <mat-card-content>
             <ul>
-                <li>All online membership purchases include a £2 postage and handling charge</li>
-                <li>To avoid the £2 handling charge, <a href="/forms">use the postal version (including a self-addressed
-                        envelope)</a></li>
+                <li>All online membership purchases include a £3 handling charge (covers postage and online payment processing charges)</li>
+                <li>To avoid the £3 handling charge, <a href="/forms">use the postal version (including a stamped, self-addressed
+                        A5 envelope)</a></li>
             </ul>
         </mat-card-content>
     </mat-card>
@@ -64,7 +64,8 @@
                 </p>
                 <div *ngIf="membershipAvailable()">
                     <mat-form-field>
-                        <mat-label>Name</mat-label>
+                        <mat-label *ngIf="!isUnderAge()">Name</mat-label>
+                        <mat-label *ngIf="isUnderAge()">Name of Junior</mat-label>
                         <input class="title-form-field" matInput [(ngModel)]="newMembership.name">
                     </mat-form-field>
                     <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
@@ -185,7 +186,7 @@
                         <mat-card-title>Unavailable</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
-                        Sorry, 6 month memberships are only available in the last 6 months of the season. Therefore they are unavailable for purchase until 1 week before the start of October.
+                        Sorry, 6 month memberships are only available in the last 6 months of the season. Therefore they are unavailable for purchase until 3 weeks before the start of October for use from October onward.
                         <br/>
                         <br/>
                         Please come back then.

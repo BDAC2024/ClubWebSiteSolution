@@ -75,7 +75,7 @@
           </a>
 					<a mat-list-item routerLink="/officers">Club Officers</a>
           <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" class="parent">
-            <span class="full-width" >Rules</span>
+            <span class="full-width" *ngIf="authenticationService.isLoggedIn">Rules</span>
             <mat-icon class="menu-button" [ngClass]="{'rotated' : showRulesSubMenu}" >expand_more</mat-icon>
           </mat-list-item>
           <div class="submenu" [ngClass]="{'expanded' : showRulesSubMenu}" *ngIf="showRulesSubMenu">
@@ -101,11 +101,12 @@
 				<div class="submenu" [ngClass]="{'expanded' : showAdminSubMenu}" *ngIf="showAdminSubMenu && authenticationService.isAdmin">
 					<a mat-list-item routerLink="/members">Members</a>
 					<a mat-list-item routerLink="/userAdmins">User Admins</a>
-					<a mat-list-item routerLink="/guestTickets" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC">
+					<!-- <a mat-list-item routerLink="/guestTickets" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC"> 
             <div class="preview-option">
               Guest Tickets
             </div>
           </a>
+          -->
 					<a mat-list-item routerLink="/payments" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC">
             <div class="preview-option">
               Payments
