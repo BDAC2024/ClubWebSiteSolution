@@ -104,11 +104,8 @@ namespace AnglingClubWebServices.Services
                 settings.RasterDpi = 800;
                 settings.ImageCompressionQuality = ImageCompressionQuality.Best;
 
-                var ticketImgPdf = generateGuestTicket(membersName, guestsName, ticketNumber, validOn, appSettings.DayTicketCost);
+                var ticketImgPdf = generateGuestTicket(membersName, guestsName, ticketNumber, validOn, appSettings.GuestTicketCost);
                 var ticketImages = ticketImgPdf.GenerateImages(settings);
-
-                var ticketImgPdfOrig = generateGuestTicketOriginal(membersName, guestsName, ticketNumber, issuedOn, validOn, appSettings.DayTicketCost);
-                var ticketImagesOrig = ticketImgPdfOrig.GenerateImages(settings);
 
                 _emailService.SendEmail(
                     new List<string> { emailAddress },
@@ -125,11 +122,6 @@ namespace AnglingClubWebServices.Services
                             {
                                 Filename = $"Day_Ticket_{validOn:yyyy_MM_dd}.png",
                                 DataUrl = "data:image/png;base64," + Convert.ToBase64String(ticketImages.First())
-                            },
-                            new ImageAttachment
-                            {
-                                Filename = $"Guest_Ticket_{validOn:yyyy_MM_dd}.png",
-                                DataUrl = "data:image/png;base64," + Convert.ToBase64String(ticketImagesOrig.First())
                             }
 
                     }
@@ -315,7 +307,7 @@ namespace AnglingClubWebServices.Services
                                 {
                                     text.Span("NO: ");
                                     text.Span($"online/{ticketNumber}   ").Bold();
-                                    text.Span("DATED: ");
+                                    text.Span("VALID FOR: ");
                                     text.Span(validOn.PrettyDate()).Bold();
                                 });
                             });
@@ -401,7 +393,7 @@ namespace AnglingClubWebServices.Services
                                 {
                                     text.Span("NO: ");
                                     text.Span($"online/{ticketNumber}   ").Bold();
-                                    text.Span("DATED: ");
+                                    text.Span("VALID FOR: ");
                                     text.Span(validOn.PrettyDate()).Bold();
                                 });
                             });

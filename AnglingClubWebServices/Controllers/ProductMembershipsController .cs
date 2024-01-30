@@ -39,7 +39,7 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            var data = _productMembershipRepository.GetProductMemberships().Result.OrderBy(x => x.Description).ThenBy(x => x.Term);
+            var data = _productMembershipRepository.GetProductMemberships().Result.OrderBy(x => x.Term).ThenBy(x => x.Description);
 
             ReportTimer("Getting ProductMemberships");
 

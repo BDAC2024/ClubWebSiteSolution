@@ -32,6 +32,16 @@ namespace AnglingClubWebServices.Data
         {
             var client = GetClient();
 
+            var existingItem = (await GetProductMemberships()).FirstOrDefault(x => x.Type == membership.Type);
+
+            if (existingItem == null)
+            {
+                membership.DbKey = membership.GenerateDbKey(IdPrefix);
+            }
+            else
+            {
+                membership.DbKey = existingItem.DbKey;
+            }
             if (membership.IsNewItem)
             {
                 membership.DbKey = membership.GenerateDbKey(IdPrefix);
