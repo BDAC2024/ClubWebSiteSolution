@@ -43,6 +43,11 @@
                     <a mat-list-item routerLink="/buyDayTickets">Day Tickets - buy online</a>
                 </div>
             </li>
+            <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
+                <div class="preview-option">
+                    <a mat-list-item routerLink="/buyPondGateKeys">Deposit for Roecliffe Pond key - buy online</a>
+                </div>
+            </li>
         </ul>
         Members get additional access to: -
         <ul>
