@@ -9,7 +9,8 @@ namespace AnglingClubWebServices.Interfaces
     {
 
         //List<Payment> GetPayments();
-        Task<string> CreateCheckoutSession(CreateCheckoutSessionRequest createCheckoutSessionRequest);
+        //Task<string> CreateCheckoutSession(CreateCheckoutSessionRequest createCheckoutSessionRequest);
+        Task<string> CreateCheckoutSession(CreateCustomCheckoutSessionRequest createCheckoutSessionRequest);
 
         Task<OrderDetailDto> GetDetail(string dbKey);
 
