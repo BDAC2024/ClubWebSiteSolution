@@ -93,11 +93,12 @@ namespace AnglingClubWebServices.Controllers
                     }
 
 
-                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest 
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest 
                     {
                         SuccessUrl = membership.SuccessUrl,
                         CancelUrl = membership.CancelUrl,
-                        PriceId = selectedMembership.PriceId,
+                        ProductPrice = selectedMembership.Cost,
+                        ProductId = selectedMembership.PriceId,
                         Mode = CheckoutType.Payment,
                         MetaData = metaData
                     });
@@ -146,11 +147,12 @@ namespace AnglingClubWebServices.Controllers
             {
                 try
                 {
-                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest
                     {
                         SuccessUrl = ticket.SuccessUrl,
                         CancelUrl = ticket.CancelUrl,
-                        PriceId = appSettings.ProductDayTicket,
+                        ProductPrice = appSettings.DayTicketCost,
+                        ProductId = appSettings.ProductDayTicket,
                         Mode = CheckoutType.Payment,
                         MetaData = new Dictionary<string, string> {
                             { "HoldersName", ticket.HoldersName },
@@ -202,11 +204,12 @@ namespace AnglingClubWebServices.Controllers
             {
                 try
                 {
-                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest
                     {
                         SuccessUrl = ticket.SuccessUrl,
                         CancelUrl = ticket.CancelUrl,
-                        PriceId = appSettings.ProductGuestTicket,
+                        ProductPrice = appSettings.GuestTicketCost,
+                        ProductId = appSettings.ProductGuestTicket,
                         Mode = CheckoutType.Payment,
                         MetaData = new Dictionary<string, string> {
                             { "MembersName", ticket.MembersName },
@@ -271,15 +274,16 @@ namespace AnglingClubWebServices.Controllers
                         metaData.Add("MembershipNumber", CurrentUser.MembershipNumber.ToString());
                     }
 
-                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest 
                     {
                         SuccessUrl = gateKey.SuccessUrl,
                         CancelUrl = gateKey.CancelUrl,
-                        PriceId = appSettings.ProductPondGateKey,
                         Mode = CheckoutType.Payment,
-                        MetaData = metaData
-                    });
+                        MetaData = metaData,
+                        ProductPrice = appSettings.PondGateKeyCost,
+                        ProductId = appSettings.ProductPondGateKey
 
+                    });
 
                     return Ok(new CreateCheckoutSessionResponse
                     {
@@ -309,7 +313,6 @@ namespace AnglingClubWebServices.Controllers
             }
 
         }
-
 
         [AllowAnonymous]
         [HttpPost("SendTicket")]

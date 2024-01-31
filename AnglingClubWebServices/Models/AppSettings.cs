@@ -9,7 +9,8 @@ namespace AnglingClubWebServices.Models
         public decimal GuestTicketCost { get; set; }
         public decimal DayTicketCost { get; set; }
         public decimal PondGateKeyCost { get; set; }
-        
+        public decimal HandlingCharge { get; set; }
+
         public List<int> Previewers { get; set; } = new List<int>();
         public List<int> MembershipSecretaries { get; set; } = new List<int>();
         public List<int> Treasurers { get; set; } = new List<int>();

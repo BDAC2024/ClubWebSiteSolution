@@ -35,7 +35,8 @@ namespace AnglingClubWebServices.Data
             await AddOrUpdateAppSetting(new AppSetting { Name = "GuestTicketCost", Value = appSettings.GuestTicketCost.ToString() });
             await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketCost", Value = appSettings.DayTicketCost.ToString() });
             await AddOrUpdateAppSetting(new AppSetting { Name = "PondGateKeyCost", Value = appSettings.PondGateKeyCost.ToString() });
-
+            await AddOrUpdateAppSetting(new AppSetting { Name = "HandlingCharge", Value = appSettings.HandlingCharge.ToString() });
+            
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductDayTicket", Value = appSettings.ProductDayTicket });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductGuestTicket", Value = appSettings.ProductGuestTicket });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductPondGateKey", Value = appSettings.ProductPondGateKey });
@@ -152,6 +153,10 @@ namespace AnglingClubWebServices.Data
 
                     case "pondgatekeycost":
                         appSettings.PondGateKeyCost = Convert.ToDecimal(settingValue);
+                        break;
+
+                    case "handlingcharge":
+                        appSettings.HandlingCharge = Convert.ToDecimal(settingValue);
                         break;
                         
                     case "productdayticket":

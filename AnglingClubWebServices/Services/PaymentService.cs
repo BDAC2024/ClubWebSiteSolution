@@ -35,6 +35,12 @@ namespace AnglingClubWebServices.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Returns the details of a payment by merging the minimal data held in the orders database entity with
+        /// the related data from the stripe data for this payment.
+        /// </summary>
+        /// <param name="dbKey"></param>
+        /// <returns></returns>
         public async Task<OrderDetailDto> GetDetail(string dbKey)
         {
             var detail = new OrderDetailDto();
@@ -60,6 +66,60 @@ namespace AnglingClubWebServices.Services
             detail.Email = paymentIntent.ReceiptEmail;
 
             return detail;
+        }
+
+
+        /// <summary>
+        /// Generates a checkout session in stripe for the requested product and returns the sessionId.
+        /// The client (browser) can then redirect to that session to show the checkout page.
+        /// </summary>
+        /// <param name="createCheckoutSessionRequest"></param>
+        /// <returns></returns>
+        public async Task<string> CreateCheckoutSession(CreateCustomCheckoutSessionRequest createCheckoutSessionRequest)
+        {
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = createCheckoutSessionRequest.SuccessUrl,
+                CancelUrl = createCheckoutSessionRequest.CancelUrl,
+                PaymentMethodTypes = new List<string>
+                {
+                    "card"
+                },
+                Mode = createCheckoutSessionRequest.Mode.EnumDescription(),
+                LineItems = new List<SessionLineItemOptions>
+                    {
+                        new SessionLineItemOptions
+                        {
+                            PriceData = new SessionLineItemPriceDataOptions
+                            {
+                                Currency = "gbp",
+                                UnitAmountDecimal = createCheckoutSessionRequest.ProductPrice * 100,
+                                Product = createCheckoutSessionRequest.ProductId
+                            },
+                            Quantity = 1
+                        }
+                    },
+                BillingAddressCollection = "required",
+                PaymentIntentData = new SessionPaymentIntentDataOptions
+                {
+                    Metadata = createCheckoutSessionRequest.MetaData
+                }
+            };
+
+            var service = new SessionService();
+
+            try
+            {
+                var session = await service.CreateAsync(options);
+
+                return session.Id;
+            }
+            catch (StripeException e)
+            {
+                _logger.LogError(e, "Failed to setup a Day Ticket purchase session");
+                throw;
+            }
+
         }
 
         //public List<Payment> GetPayments()
@@ -124,46 +184,46 @@ namespace AnglingClubWebServices.Services
         //    return payments;
         //}
 
-        public async Task<string> CreateCheckoutSession(CreateCheckoutSessionRequest createCheckoutSessionRequest)
-        {
-            var options = new SessionCreateOptions
-            {
-                SuccessUrl = createCheckoutSessionRequest.SuccessUrl,
-                CancelUrl = createCheckoutSessionRequest.CancelUrl,
-                PaymentMethodTypes = new List<string>
-                    {
-                        "card"
-                    },
-                Mode = createCheckoutSessionRequest.Mode.EnumDescription(),
-                LineItems = new List<SessionLineItemOptions>
-                    {
-                        new SessionLineItemOptions
-                        {
-                            Price = createCheckoutSessionRequest.PriceId,
-                            Quantity = 1
-                        }
-                    },
-                BillingAddressCollection = "required",
-                PaymentIntentData = new SessionPaymentIntentDataOptions
-                {
-                    Metadata = createCheckoutSessionRequest.MetaData
-                }
-            };
+        //public async Task<string> CreateCheckoutSession(CreateCheckoutSessionRequest createCheckoutSessionRequest)
+        //{
+        //    var options = new SessionCreateOptions
+        //    {
+        //        SuccessUrl = createCheckoutSessionRequest.SuccessUrl,
+        //        CancelUrl = createCheckoutSessionRequest.CancelUrl,
+        //        PaymentMethodTypes = new List<string>
+        //            {
+        //                "card"
+        //            },
+        //        Mode = createCheckoutSessionRequest.Mode.EnumDescription(),
+        //        LineItems = new List<SessionLineItemOptions>
+        //            {
+        //                new SessionLineItemOptions
+        //                {
+        //                    Price = createCheckoutSessionRequest.PriceId,
+        //                    Quantity = 1
+        //                }
+        //            },
+        //        BillingAddressCollection = "required",
+        //        PaymentIntentData = new SessionPaymentIntentDataOptions
+        //        {
+        //            Metadata = createCheckoutSessionRequest.MetaData
+        //        }
+        //    };
 
-            var service = new SessionService();
+        //    var service = new SessionService();
 
-            try
-            {
-                var session = await service.CreateAsync(options);
+        //    try
+        //    {
+        //        var session = await service.CreateAsync(options);
 
-                return session.Id;
-            }
-            catch (StripeException e)
-            {
-                _logger.LogError(e, "Failed to setup a Day Ticket purchase session");
-                throw;
-            }
+        //        return session.Id;
+        //    }
+        //    catch (StripeException e)
+        //    {
+        //        _logger.LogError(e, "Failed to setup a Day Ticket purchase session");
+        //        throw;
+        //    }
 
-        }
+        //}
     }
 }
