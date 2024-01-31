@@ -247,6 +247,71 @@ namespace AnglingClubWebServices.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("PondGateKey")]
+        [HttpPost]
+        public async Task<IActionResult> PondGateKey([FromBody] PondGateKeyDto gateKey)
+        {
+            StartTimer();
+
+            var appSettings = await _appSettingRepository.GetAppSettings();
+
+            try
+            {
+                try
+                {
+                    var metaData = new Dictionary<string, string> {
+                        { "Name", gateKey.Name },
+                        { "AcceptPolicies", gateKey.AcceptPolicies.ToString()},
+                        { "PotentialMember", gateKey.PotentialMember.ToString()},
+                        { "PhoneNumber", gateKey.PhoneNumber }
+                    };
+
+                    if (CurrentUser != null)
+                    {
+                        metaData.Add("MembershipNumber", CurrentUser.MembershipNumber.ToString());
+                    }
+
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCheckoutSessionRequest
+                    {
+                        SuccessUrl = gateKey.SuccessUrl,
+                        CancelUrl = gateKey.CancelUrl,
+                        PriceId = appSettings.ProductPondGateKey,
+                        Mode = CheckoutType.Payment,
+                        MetaData = metaData
+                    });
+
+
+                    return Ok(new CreateCheckoutSessionResponse
+                    {
+                        SessionId = sessionId
+                    });
+                }
+                catch (StripeException e)
+                {
+                    return BadRequest(e.StripeError.Message);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    return BadRequest(ex.InnerException.Message);
+                }
+                else
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            finally
+            {
+                ReportTimer("Buying pond gate key");
+            }
+
+        }
+
+
+        [AllowAnonymous]
         [HttpPost("SendTicket")]
         [HttpPost]
         public IActionResult SendTicket([FromBody] OrderDto orderDto)
@@ -378,6 +443,10 @@ namespace AnglingClubWebServices.Controllers
 
                     case PaymentType.DayTicket:
                         appSettings.DayTicketsEnabled = enabled;
+                        break;
+
+                    case PaymentType.PondGateKey:
+                        appSettings.PondGateKeysEnabled = enabled;
                         break;
 
                     default:

@@ -30,10 +30,15 @@ namespace AnglingClubWebServices.Data
             await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipsEnabled", Value = appSettings.MembershipsEnabled.ToString() });
             await AddOrUpdateAppSetting(new AppSetting { Name = "GuestTicketsEnabled", Value = appSettings.GuestTicketsEnabled.ToString() });
             await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketsEnabled", Value = appSettings.DayTicketsEnabled.ToString() });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "PondGateKeysEnabled", Value = appSettings.PondGateKeysEnabled.ToString() }); 
+
             await AddOrUpdateAppSetting(new AppSetting { Name = "GuestTicketCost", Value = appSettings.GuestTicketCost.ToString() });
             await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketCost", Value = appSettings.DayTicketCost.ToString() });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "PondGateKeyCost", Value = appSettings.PondGateKeyCost.ToString() });
+
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductDayTicket", Value = appSettings.ProductDayTicket });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductGuestTicket", Value = appSettings.ProductGuestTicket });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "ProductPondGateKey", Value = appSettings.ProductPondGateKey });
 
             await AddOrUpdateAppSetting(new AppSetting { Name = "Previewers", Value = String.Join(",", appSettings.Previewers.ToArray()) });
             await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipSecretaries", Value = String.Join(",", appSettings.MembershipSecretaries.ToArray()) });
@@ -130,7 +135,11 @@ namespace AnglingClubWebServices.Data
                         break;
 
                     case "dayticketsenabled":
-                        appSettings.DayTicketsEnabled = Convert.ToBoolean(settingValue);
+                        appSettings.DayTicketsEnabled = Convert.ToBoolean(settingValue); 
+                        break;
+
+                    case "pondgatekeysenabled":
+                        appSettings.PondGateKeysEnabled = Convert.ToBoolean(settingValue); 
                         break;
 
                     case "guestticketcost":
@@ -141,6 +150,10 @@ namespace AnglingClubWebServices.Data
                         appSettings.DayTicketCost = Convert.ToDecimal(settingValue);
                         break;
 
+                    case "pondgatekeycost":
+                        appSettings.PondGateKeyCost = Convert.ToDecimal(settingValue);
+                        break;
+                        
                     case "productdayticket":
                         appSettings.ProductDayTicket = settingValue;
                         break;
@@ -149,6 +162,10 @@ namespace AnglingClubWebServices.Data
                         appSettings.ProductGuestTicket = settingValue;
                         break;
 
+                    case "productpondgatekey":
+                        appSettings.ProductPondGateKey = settingValue;
+                        break;
+                        
                     case "previewers":
                         if (settingValue != "")
                         {
