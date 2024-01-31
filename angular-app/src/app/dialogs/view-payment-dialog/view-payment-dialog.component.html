@@ -12,7 +12,8 @@
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Valid On:</b><br/>{{data.validOn | date:'dd MMM YY'}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Issued On:</b><br/>{{data.issuedOn | date:'dd MMM YY'}}</span>
         <span *ngIf="data.orderType == paymentType.Membership || data.orderType == paymentType.GuestTicket"><b>Members Name:</b><br/>{{data.membersName}}</span>
-        <span *ngIf="data.orderType == paymentType.GuestTicket"><b>Membership No:</b><br/>{{data.membershipNumber}}</span>
+        <span *ngIf="data.orderType == paymentType.PondGateKey"><b>Name:</b><br/>{{data.membersName}}</span>
+        <span *ngIf="data.orderType == paymentType.GuestTicket || (paymentType.PondGateKey && data.membershipNumber)"><b>Membership No:</b><br/>{{data.membershipNumber}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket"><b>Ticket Holder:</b><br/>{{data.ticketHoldersName}}</span>
         <span *ngIf="data.orderType == paymentType.GuestTicket"><b>Guest:</b><br/>{{data.guestsName}}</span>
 
