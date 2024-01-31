@@ -23,7 +23,7 @@ export class WatersComponent implements OnInit {
   mapType: string = 'satellite';
 
   youTubeEmbedRoot: string = "https://www.youtube.com/embed/";
-  videoWidth: number = 560;
+  videoWidth: number = 500;
   videoHeight: number = 315;
   
   public isLoading: boolean = false;
@@ -40,8 +40,10 @@ export class WatersComponent implements OnInit {
     private router: Router,
     private sanitizer: DomSanitizer) { 
 
+      this.videoHeight = this.videoWidth / (16 / 9);
+
       screenService.OrientationChange.on(() => {
-        this.videoWidth = screenService.IsHandsetPortrait ? 300 : 560;
+        this.videoWidth = screenService.IsHandsetPortrait ? 260 : 500;
         this.videoHeight = this.videoWidth / (16 / 9);
       });
   
