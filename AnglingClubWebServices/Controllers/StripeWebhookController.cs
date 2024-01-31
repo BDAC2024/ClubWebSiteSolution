@@ -127,49 +127,98 @@ namespace AnglingClubWebServices.Controllers
                         switch (paymentType)
                         {
                             case PaymentType.Membership:
-                                order.MembersName = paymentMetaData.Name;
-
-                                var appSettings = _appSettingRepository.GetAppSettings().Result;
-                                var notificationSent = false;
-
-                                if (appSettings.MembershipSecretaries.Any())
                                 {
-                                    var members = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => appSettings.MembershipSecretaries.Contains(x.MembershipNumber));
+                                    order.MembersName = paymentMetaData.Name;
 
-                                    if (members.Any())
+                                    var appSettings = _appSettingRepository.GetAppSettings().Result;
+                                    var notificationSent = false;
+
+                                    if (appSettings.MembershipSecretaries.Any())
                                     {
-                                        var emails = members.Select(x => x.Email).ToList();
+                                        var members = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => appSettings.MembershipSecretaries.Contains(x.MembershipNumber));
 
-                                        _emailService.SendEmail(
-                                            emails,
-                                            $"New membership has been purchased",
-                                            $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
-                                                "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
-                                                "Boroughbridge & District Angling Club"
-                                        );
+                                        if (members.Any())
+                                        {
+                                            var emails = members.Select(x => x.Email).ToList();
 
-                                        _emailService.SendEmail(
-                                            new List<string> { paymentIntent.ReceiptEmail },
-                                            $"Confirmation of membership purchase",
-                                            $"Thank you for purchasing <b>{order.Description}</b> .<br/>" +
-                                                "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
-                                                "Tight lines!,<br/>" +
-                                                "Boroughbridge & District Angling Club"
-                                        );
+                                            _emailService.SendEmail(
+                                                emails,
+                                                $"New membership has been purchased",
+                                                $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
+                                                    "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
+                                                    "Boroughbridge & District Angling Club"
+                                            );
 
-                                        notificationSent = true;
+                                            _emailService.SendEmail(
+                                                new List<string> { paymentIntent.ReceiptEmail },
+                                                $"Confirmation of membership purchase",
+                                                $"Thank you for purchasing <b>{order.Description}</b> .<br/>" +
+                                                    "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
+                                                    "Tight lines!,<br/>" +
+                                                    "Boroughbridge & District Angling Club"
+                                            );
+
+                                            notificationSent = true;
+                                        }
                                     }
+
+                                    if (!notificationSent)
+                                    {
+                                        var exMsg = $"Failed to send an email to any member secretaries for payment intent: {paymentIntent.Id}";
+                                        var ex = new Exception(exMsg);
+                                        _logger.LogError(ex, exMsg);
+                                        _emailService.SendEmailToSupport("Failed to notify new membership payment", $"For payment id: {paymentIntent.Id}, for {order.MembersName}. PLEASE INVESTIGATE ASAP");
+                                        throw ex;
+                                    }
+                                    break;
                                 }
 
-                                if (!notificationSent)
+                            case PaymentType.PondGateKey:
                                 {
-                                    var exMsg = $"Failed to send an email to any member secretaries for payment intent: {paymentIntent.Id}";
-                                    var ex = new Exception(exMsg);
-                                    _logger.LogError(ex, exMsg);
-                                    _emailService.SendEmailToSupport("Failed to notify new membership payment", $"For payment id: {paymentIntent.Id}, for {order.MembersName}. PLEASE INVESTIGATE ASAP");
-                                    throw ex;
+                                    order.MembersName = paymentMetaData.Name;
+
+                                    var appSettings = _appSettingRepository.GetAppSettings().Result;
+                                    var notificationSent = false;
+
+                                    if (appSettings.MembershipSecretaries.Any())
+                                    {
+                                        var members = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => appSettings.MembershipSecretaries.Contains(x.MembershipNumber));
+
+                                        if (members.Any())
+                                        {
+                                            var emails = members.Select(x => x.Email).ToList();
+
+                                            _emailService.SendEmail(
+                                                emails,
+                                                $"New Pond Gate Key deposit has been purchased",
+                                                $"A new <b>Pond Gate Key deposit</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
+                                                    "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
+                                                    "Boroughbridge & District Angling Club"
+                                            );
+
+                                            _emailService.SendEmail(
+                                                new List<string> { paymentIntent.ReceiptEmail },
+                                                $"Confirmation of pond gate key deposit purchase",
+                                                $"Thank you for purchasing <b>Pond Gate Key deposit</b> .<br/>" +
+                                                    "Your key will be sent to you when ready.<br/><br/>" +
+                                                    "Tight lines!,<br/>" +
+                                                    "Boroughbridge & District Angling Club"
+                                            );
+
+                                            notificationSent = true;
+                                        }
+                                    }
+
+                                    if (!notificationSent)
+                                    {
+                                        var exMsg = $"Failed to send an email to any member secretaries for payment intent: {paymentIntent.Id}";
+                                        var ex = new Exception(exMsg);
+                                        _logger.LogError(ex, exMsg);
+                                        _emailService.SendEmailToSupport("Failed to notify new pond gate key deposit payment", $"For payment id: {paymentIntent.Id}, for {order.MembersName}. PLEASE INVESTIGATE ASAP");
+                                        throw ex;
+                                    }
+                                    break;
                                 }
-                                break;
 
                             case PaymentType.GuestTicket:
                                 order.TicketNumber = latestTicketNumber + 1;

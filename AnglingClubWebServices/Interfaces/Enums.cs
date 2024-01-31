@@ -188,6 +188,7 @@ namespace AnglingClubWebServices.Interfaces
         Membership = 0,
         GuestTicket,
         DayTicket,
+        PondGateKey
     }
 
     public enum CheckoutType
