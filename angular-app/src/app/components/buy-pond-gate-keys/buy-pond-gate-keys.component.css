@@ -1,0 +1,13 @@
+::ng-deep .mat-card-header-text {
+    margin-left: 0 !important;
+  }
+  
+  ::ng-deep .mat-card {
+    margin: 26px;
+    max-width: 550px;
+  }
+  
+  .edit-button {
+    background-color: #1976D2;
+    color: white;
+  }

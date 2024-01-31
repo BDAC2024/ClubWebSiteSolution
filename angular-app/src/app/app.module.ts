@@ -90,6 +90,7 @@ import { DataPolicyComponent } from './components/data-policy/data-policy.compon
 import { ViewPaymentDialogComponent } from './dialogs/view-payment-dialog/view-payment-dialog.component';
 import { FeatureDisabledPanelComponent } from './components/shared/feature-disabled-panel/feature-disabled-panel.component';
 import { PolicyPanelNoPurchasesComponent } from './components/shared/policy-panel-no-purchases/policy-panel-no-purchases.component';
+import { BuyPondGateKeysComponent } from './components/buy-pond-gate-keys/buy-pond-gate-keys.component';
 
 @NgModule({
   declarations: [
@@ -143,6 +144,7 @@ import { PolicyPanelNoPurchasesComponent } from './components/shared/policy-pane
     ViewPaymentDialogComponent,
     FeatureDisabledPanelComponent,
     PolicyPanelNoPurchasesComponent,
+    BuyPondGateKeysComponent,
   ],
   imports: [
     BrowserModule,

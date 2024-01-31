@@ -16,6 +16,7 @@ export class Season {
 }
 
 export class AppSettings {
+    pondGateKeyCost!: number;
     guestTicketCost!: number;
     dayTicketCost!: number;
     previewers!: number[];
@@ -24,4 +25,5 @@ export class AppSettings {
     dayTicketsEnabled!: boolean;
     guestTicketsEnabled!: boolean;
     membershipsEnabled!: boolean;
+    pondGateKeysEnabled!: boolean;
 }

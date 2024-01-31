@@ -31,10 +31,25 @@
         <mat-card-title>Thank You!</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        You will shortly receive an email confirming your purchase.. 
+        You will shortly receive an email confirming your purchase. 
         <br/>
         <br/>
         Your membership book will soon be prepared and will be sent to you when ready. 
+        <br/>
+        <br/>
+        <b>Note:</b> If required, you can obtain a key for Roecliffe Pond by <a href="/buyPondGateKeys">paying a deposit</a>.
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="rules-card" *ngIf="this.isPondGateKey">
+    <mat-card-header>
+        <mat-card-title>Thank You!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        You will shortly receive an email confirming your deposit. 
+        <br/>
+        <br/>
+        Your key will be sent to you when ready. 
     </mat-card-content>
 </mat-card>
 

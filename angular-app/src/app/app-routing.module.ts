@@ -34,6 +34,7 @@ import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-gue
 import { BuySuccessComponent } from './components/buy-success/buy-success.component';
 import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
 import { DataPolicyComponent } from './components/data-policy/data-policy.component';
+import { BuyPondGateKeysComponent } from './components/buy-pond-gate-keys/buy-pond-gate-keys.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -67,6 +68,7 @@ const routes: Routes = [
   { path: 'buyMemberships', component: BuyMembershipsComponent},
   { path: 'payments', component: PaymentsComponent, canActivate: [AuthGuard] },
   { path: 'buyDayTickets', component: BuyDayTicketsComponent },
+  { path: 'buyPondGateKeys', component: BuyPondGateKeysComponent },
   { path: 'buyGuestTickets', component: BuyGuestTicketsComponent, canActivate: [AuthGuard] },
   { path: 'buySuccess/:productType', component: BuySuccessComponent },
 ];

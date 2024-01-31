@@ -20,7 +20,7 @@
         <span><b>Billing Email</b><br/>{{data.email}}<br/></span>
 
         <span *ngIf="data.orderType == paymentType.Membership"><b>Date of Birth:</b><br/>{{data.doB | date:'dd MMM YYYY'}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && !data.underAge"><b>Phone No:</b><br/>{{data.phoneNumber}}</span>
+        <span *ngIf="data.orderType == (paymentType.Membership || paymentType.PondGateKey) && !data.underAge"><b>Phone No:</b><br/>{{data.phoneNumber}}</span>
         <span *ngIf="data.orderType == paymentType.Membership && !data.underAge"><b>Allow Name in Match Results:</b><br/>{{data.allowNameToBeUsed}}</span>
         <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Parental Consent:</b><br/>{{data.parentalConsent}}</span>
         <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Can Swim:</b><br/>{{data.childCanSwim}}</span>
