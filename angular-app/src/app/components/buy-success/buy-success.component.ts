@@ -11,6 +11,7 @@ export class BuySuccessComponent implements OnInit {
   public isDayTicket: boolean = false;
   public isGuestTicket: boolean = false;
   public isMembership: boolean = false;
+  public isUnderAgeMembership: boolean = false;
   public isPondGateKey: boolean = false;
 
   constructor(
@@ -33,6 +34,10 @@ export class BuySuccessComponent implements OnInit {
 
         case "membership":
           this.isMembership = true;
+          break;
+
+        case "underagemembership":
+          this.isUnderAgeMembership = true;
           break;
 
         case "pondgatekey":

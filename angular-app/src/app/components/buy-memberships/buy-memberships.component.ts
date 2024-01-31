@@ -44,7 +44,7 @@ export class BuyMembershipsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getRefData();
-    this.getProductMemberships();
+    
 
     this.baseUrl = window.location.href.replace(this.router.url, "");
 
@@ -58,15 +58,17 @@ export class BuyMembershipsComponent implements OnInit {
       this.isEnabled = this.refData.appSettings.membershipsEnabled;
 
       this.isLoading = false;
+
+      this.getProductMemberships();
     });
   }
 
   public resetNewMembership(selected: ProductMembership): void {
     this.newMembership = new MembershipPaymentRequest();
     this.newMembership.dbKey = selected.dbKey;
-    this.newMembership.successUrl = this.baseUrl + "/buySuccess/membership";
     this.newMembership.cancelUrl = this.baseUrl;
     this.confirmCertificate = false;
+
   }
 
   public minDate(): Date {
@@ -181,6 +183,7 @@ export class BuyMembershipsComponent implements OnInit {
   public async buy() {
     this.isBuying = true;
     this.newMembership.underAge = this.isUnderAge();
+    this.newMembership.successUrl = this.baseUrl + "/buySuccess/" + (this.isUnderAge() ? "underagemembership" : "membership");
 
     // console.log("About to buyGuestTicket...");
     this.paymentsService.buyMembership(this.newMembership)

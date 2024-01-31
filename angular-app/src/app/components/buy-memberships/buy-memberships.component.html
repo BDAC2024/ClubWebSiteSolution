@@ -65,7 +65,8 @@
                 <div *ngIf="membershipAvailable()">
                     <mat-form-field>
                         <mat-label *ngIf="!isUnderAge()">Name</mat-label>
-                        <mat-label *ngIf="isUnderAge()">Name of Junior</mat-label>
+                        <mat-label *ngIf="selectedMembership.description == 'Junior'">Name of Junior</mat-label>
+                        <mat-label *ngIf="selectedMembership.description == 'Intermediate'">Name of Intermediate</mat-label>
                         <input class="title-form-field" matInput [(ngModel)]="newMembership.name">
                     </mat-form-field>
                     <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
