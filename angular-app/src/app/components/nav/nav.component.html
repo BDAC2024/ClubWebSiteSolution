@@ -79,11 +79,11 @@
             </div>
           </a>
 					<a mat-list-item routerLink="/officers">Club Officers</a>
-          <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" class="parent">
-            <span class="full-width" *ngIf="authenticationService.isLoggedIn">Rules</span>
+          <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" *ngIf="authenticationService.isLoggedIn" class="parent">
+            <span class="full-width" >Rules</span>
             <mat-icon class="menu-button" [ngClass]="{'rotated' : showRulesSubMenu}" >expand_more</mat-icon>
           </mat-list-item>
-          <div class="submenu" [ngClass]="{'expanded' : showRulesSubMenu}" *ngIf="showRulesSubMenu">
+          <div class="submenu" [ngClass]="{'expanded' : showRulesSubMenu}" *ngIf="showRulesSubMenu && authenticationService.isLoggedIn">
             <a mat-list-item routerLink="/rulesGeneral" >General</a>
             <a mat-list-item routerLink="/rulesMatch" >Match</a>
             <a mat-list-item routerLink="/rulesJnrGeneral">Jnr General</a>
