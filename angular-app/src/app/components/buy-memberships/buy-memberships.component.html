@@ -37,8 +37,8 @@
         </mat-card-header>
         <mat-card-content>
             <ul>
-                <li>All online membership purchases include a £3 handling charge (covers postage and online payment processing charges)</li>
-                <li>To avoid the £3 handling charge, <a href="/forms">use the postal version (including a stamped, self-addressed
+                <li>All online membership purchases include a {{this.refData.appSettings.handlingCharge | currency:'GBP'}} handling charge (covers postage and online payment processing charges)</li>
+                <li>To avoid the {{this.refData.appSettings.handlingCharge | currency:'GBP'}} handling charge, <a href="/forms">use the postal version (including a stamped, self-addressed
                         A5 envelope)</a></li>
             </ul>
         </mat-card-content>

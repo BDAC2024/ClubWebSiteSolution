@@ -19,6 +19,7 @@ export class AppSettings {
     pondGateKeyCost!: number;
     guestTicketCost!: number;
     dayTicketCost!: number;
+    handlingCharge!: number;
     previewers!: number[];
     treasurers!: number[];
     memberSecretaries!: number[];
