@@ -10,6 +10,7 @@ namespace AnglingClubWebServices.Models
         public string ProductId { get; set; }
         public decimal ProductPrice { get; set; }
         public CheckoutType Mode { get; set; }
+        public bool AddCharges { get; set; } = false;
 
         public Dictionary<string, string> MetaData { get; set; }
     }

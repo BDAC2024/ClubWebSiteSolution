@@ -90,10 +90,10 @@ namespace AnglingClubWebServices.Models
                 AcceptPolicies = dt;
             }
 
-            if (metadata.ContainsKey("AcceptPolicies"))
+            if (metadata.ContainsKey("PaidForKey"))
             {
-                bool.TryParse(metadata["AcceptPolicies"], out bool dt);
-                AcceptPolicies = dt;
+                bool.TryParse(metadata["PaidForKey"], out bool dt);
+                PaidForKey = dt;
             }
 
             if (metadata.ContainsKey("UnderAge"))
@@ -163,6 +163,7 @@ namespace AnglingClubWebServices.Models
         public DateTime DoB { get; set; }
         public string PhoneNumber { get; set; }
         public bool AllowNameToBeUsed { get; set; }
+        public bool PaidForKey { get; set; }
         public bool AcceptPolicies { get; set; }
         public bool UnderAge { get; set; }
         public bool ParentalConsent { get; set; }
