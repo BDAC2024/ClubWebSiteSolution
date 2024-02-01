@@ -45,7 +45,6 @@ namespace AnglingClubWebServices.DTOs
 
         public Position Centre { get; set; }
         public Position Destination { get; set; }
-
         public List<Position> Path { get; set; } = new List<Position>();
 
         public bool HasLimits 

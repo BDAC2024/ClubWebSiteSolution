@@ -52,6 +52,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "MarkerLabels", Value = water.MarkerLabels, Replace = true },
 
                 new ReplaceableAttribute { Name = "Destination", Value = water.Destination, Replace = true },
+                new ReplaceableAttribute { Name = "W3WCarPark", Value = water.W3wCarPark, Replace = true },
                 new ReplaceableAttribute { Name = "Centre", Value = water.Centre, Replace = true },
                 new ReplaceableAttribute { Name = "Path", Value = water.Path, Replace = true },
 
@@ -227,6 +228,10 @@ namespace AnglingClubWebServices.Data
                             directionArr.Add(GetMultiValuedElement(attribute.Value));
                             break;
 
+                        case "W3WCarPark":
+                            water.W3wCarPark = attribute.Value;
+                            break;
+                            
                         case "VideoShortCode":
                             water.VideoShortCode = attribute.Value;
                             break;
