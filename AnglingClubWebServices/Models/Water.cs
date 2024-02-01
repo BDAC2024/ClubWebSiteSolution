@@ -10,6 +10,7 @@ namespace AnglingClubWebServices.Models
         public string Description { get; set; }
         public string Species { get; set; }
         public string Directions { get; set; }
+        public string W3wCarPark { get; set; }
 
         public string VideoShortCode { get; set; }
     }

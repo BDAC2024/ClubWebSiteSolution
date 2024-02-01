@@ -97,7 +97,18 @@ namespace AnglingClubWebServices.Services
                                 Product = createCheckoutSessionRequest.ProductId
                             },
                             Quantity = 1
-                        }
+                        },
+                        new SessionLineItemOptions
+                        {
+                            PriceData = new SessionLineItemPriceDataOptions
+                            {
+                                Currency = "gbp",
+                                UnitAmountDecimal = 3m * 100,
+                                Product = "prod_PTgluDpbMZYe08"
+                            },
+                            Quantity = 1
+                        },
+
                     },
                 BillingAddressCollection = "required",
                 PaymentIntentData = new SessionPaymentIntentDataOptions
