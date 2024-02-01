@@ -60,7 +60,9 @@
             </mat-form-field>
 
             <div *ngIf="this.selectedMembership != null">
-                <p>Cost: <b>{{selectedMembership.cost | currency:'GBP'}}</b>, Term: <b>{{selectedMembership.term}}</b> - Runs from {{selectedMembership.runs}}
+                <p>Cost: <b>{{selectedMembership.cost | currency:'GBP'}}</b> + <b>{{this.refData.appSettings.handlingCharge | currency:'GBP'}}</b> handling charge
+                </p>
+                <p>Term: <b>{{selectedMembership.term}}</b> - Runs from {{selectedMembership.runs}}
                 </p>
                 <div *ngIf="membershipAvailable()">
                     <mat-form-field>
@@ -82,8 +84,9 @@
 
                     <div *ngIf="isUnderAge()">
                         <div class="checkbox-wrapper">
-                            <mat-checkbox [(ngModel)]="newMembership.paidForKey">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that they key will only be provided to the non-fishing member/guardian for this person.</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="newMembership.paidForKey">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the member / non-fishing member / guardian for this person.</mat-checkbox>
                         </div>
+                        <br/>
                         <b>Parental Consent/Disclosure</b>
                         <br/>
                         <mat-form-field>
