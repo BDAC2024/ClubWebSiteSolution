@@ -8,6 +8,7 @@ export class Water {
     waterType!: string;
     accessType!: string;
     description!: string;
+    w3wCarPark!: string;
     videoShortCode!: string;
     species!: string;
     directions!: string;
@@ -21,6 +22,9 @@ export class Water {
         return `https://www.google.co.uk/maps/dir//${this.destination.lat},${this.destination.long}`
     }
 
+    public get what3WordsUrl(): string {
+        return `https://what3Words.com/${this.w3wCarPark.replace("///", "")}?maptype=satellite`
+    }
 }
 
 export class WaterUpdateDto {
