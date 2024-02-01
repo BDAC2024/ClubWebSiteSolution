@@ -58,7 +58,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Term", Value = membership.Term, Replace = true },
                 new ReplaceableAttribute { Name = "Runs", Value = membership.Runs, Replace = true },
                 new ReplaceableAttribute { Name = "Cost", Value = membership.Cost.ToString(), Replace = true },
-                new ReplaceableAttribute { Name = "PriceId", Value = membership.PriceId, Replace = true },
+                new ReplaceableAttribute { Name = "Product", Value = membership.Product, Replace = true },
             };
 
             request.Items.Add(
@@ -122,8 +122,8 @@ namespace AnglingClubWebServices.Data
                             membership.Cost = decimal.Parse(attribute.Value);
                             break;
 
-                        case "PriceId":
-                            membership.PriceId = attribute.Value;
+                        case "Product":
+                            membership.Product = attribute.Value;
                             break;
 
                         default:

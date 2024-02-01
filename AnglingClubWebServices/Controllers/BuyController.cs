@@ -98,7 +98,7 @@ namespace AnglingClubWebServices.Controllers
                         SuccessUrl = membership.SuccessUrl,
                         CancelUrl = membership.CancelUrl,
                         ProductPrice = selectedMembership.Cost,
-                        ProductId = selectedMembership.PriceId,
+                        ProductId = selectedMembership.Product,
                         Mode = CheckoutType.Payment,
                         MetaData = metaData
                     });

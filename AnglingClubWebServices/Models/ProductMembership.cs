@@ -12,6 +12,6 @@ namespace AnglingClubWebServices.Models
         public decimal Cost { get; set; }
 
         // Note: Internal get means this wont be sent back from API call to client
-        public string PriceId { internal get; set; }
+        public string Product { internal get; set; }
     }
 }
