@@ -30,6 +30,8 @@ namespace AnglingClubWebServices.Models
         // Note: Internal get means this wont be sent back from API call to client
         public string ProductPondGateKey { internal get; set; }
 
+        // Note: Internal get means this wont be sent back from API call to client
+        public string ProductHandlingCharge { internal get; set; }
     }
 
     public class AppSetting : TableBase

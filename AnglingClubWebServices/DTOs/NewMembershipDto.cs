@@ -11,6 +11,7 @@ namespace AnglingClubWebServices.DTOs
         public bool AllowNameToBeUsed { get; set; }
         public bool AcceptPolicies { get; set; }
         public bool UnderAge { get; set; }
+        public bool PaidForKey { get; set; }
         public bool ParentalConsent { get; set; }
         public string ChildCanSwim { get; set; }
 

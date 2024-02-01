@@ -69,7 +69,8 @@ namespace AnglingClubWebServices.Controllers
                     {
                         { "Name", membership.Name },
                         { "DoB", membership.DoB.ToString("yyyy-MM-dd") },
-                        { "AcceptPolicies", membership.AcceptPolicies.ToString() }
+                        { "AcceptPolicies", membership.AcceptPolicies.ToString() },
+                        { "PaidForKey", membership.PaidForKey.ToString() },
                     };
 
                     if (membership.UnderAge)
@@ -93,15 +94,16 @@ namespace AnglingClubWebServices.Controllers
                     }
 
 
-                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest 
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest
                     {
                         SuccessUrl = membership.SuccessUrl,
                         CancelUrl = membership.CancelUrl,
                         ProductPrice = selectedMembership.Cost,
                         ProductId = selectedMembership.Product,
+                        AddCharges = true,
                         Mode = CheckoutType.Payment,
                         MetaData = metaData
-                    });
+                    }); ;
 
                     return Ok(new CreateCheckoutSessionResponse
                     {

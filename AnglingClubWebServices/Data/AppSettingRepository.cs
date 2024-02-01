@@ -40,7 +40,8 @@ namespace AnglingClubWebServices.Data
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductDayTicket", Value = appSettings.ProductDayTicket });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductGuestTicket", Value = appSettings.ProductGuestTicket });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductPondGateKey", Value = appSettings.ProductPondGateKey });
-
+            await AddOrUpdateAppSetting(new AppSetting { Name = "ProductHandlingCharge", Value = appSettings.ProductHandlingCharge });
+            
             await AddOrUpdateAppSetting(new AppSetting { Name = "Previewers", Value = String.Join(",", appSettings.Previewers.ToArray()) });
             await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipSecretaries", Value = String.Join(",", appSettings.MembershipSecretaries.ToArray()) });
             await AddOrUpdateAppSetting(new AppSetting { Name = "Treasurers", Value = String.Join(",", appSettings.Treasurers.ToArray()) });
@@ -169,6 +170,10 @@ namespace AnglingClubWebServices.Data
 
                     case "productpondgatekey":
                         appSettings.ProductPondGateKey = settingValue;
+                        break;
+
+                    case "producthandlingcharge":
+                        appSettings.ProductHandlingCharge = settingValue;
                         break;
                         
                     case "previewers":

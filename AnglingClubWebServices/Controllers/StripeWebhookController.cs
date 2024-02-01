@@ -91,17 +91,21 @@ namespace AnglingClubWebServices.Controllers
                         sw.Start();
 
                         var sessionService = new SessionService();
-                        var sessionOptions = new Stripe.Checkout.SessionListOptions { Limit = 1, PaymentIntent = paymentIntent.Id };
+                        var sessionOptions = new Stripe.Checkout.SessionListOptions { Limit = 1, PaymentIntent = paymentIntent.Id};
+                        sessionOptions.AddExpand("data.line_items");
+                        sessionOptions.AddExpand("data.line_items.data.price");
+
                         StripeList<Session> sessions = sessionService.List(sessionOptions);
 
-                        StripeList<LineItem> lineItems = sessionService.ListLineItems(sessions.First().Id);
-
+                        var productListOptions = new ProductListOptions { Ids = sessions.First().LineItems.Select(x => x.Price.ProductId).ToList() };
                         var productService = new ProductService();
-                        var product = productService.Get(lineItems.First().Price.ProductId);
+                        var products = productService.List(productListOptions);
+                        var product = products.First(x => x.Metadata.ContainsKey("Category"));
+
                         var category = product.Metadata.Where(m => m.Key == "Category").First().Value;
                         var paymentType = category.GetValueFromDescription<PaymentType>();
 
-                        var purchaseItem = lineItems.First().Description;
+                        var purchaseItem = product.Name;
 
                         var chargeService = new ChargeService();
                         var charge = chargeService.Get(paymentIntent.LatestChargeId);

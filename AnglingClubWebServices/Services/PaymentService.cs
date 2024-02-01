@@ -1,4 +1,5 @@
 ﻿using AnglingClubWebServices.Controllers;
+using AnglingClubWebServices.Data;
 using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
@@ -22,17 +23,20 @@ namespace AnglingClubWebServices.Services
         private readonly ILogger<PaymentService> _logger;
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
+        private readonly IAppSettingRepository _appSettingRepository;
 
         public PaymentService(
             IOptions<StripeOptions> opts,
             ILoggerFactory loggerFactory,
             IOrderRepository orderRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IAppSettingRepository appSettingRepository)
         {
             StripeConfiguration.ApiKey = opts.Value.StripeApiKey;
             _logger = loggerFactory.CreateLogger<PaymentService>();
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _appSettingRepository = appSettingRepository;
         }
 
         /// <summary>
@@ -77,16 +81,10 @@ namespace AnglingClubWebServices.Services
         /// <returns></returns>
         public async Task<string> CreateCheckoutSession(CreateCustomCheckoutSessionRequest createCheckoutSessionRequest)
         {
-            var options = new SessionCreateOptions
-            {
-                SuccessUrl = createCheckoutSessionRequest.SuccessUrl,
-                CancelUrl = createCheckoutSessionRequest.CancelUrl,
-                PaymentMethodTypes = new List<string>
-                {
-                    "card"
-                },
-                Mode = createCheckoutSessionRequest.Mode.EnumDescription(),
-                LineItems = new List<SessionLineItemOptions>
+            var appSettings = await _appSettingRepository.GetAppSettings();
+
+            var lineItems =
+                new List<SessionLineItemOptions>
                     {
                         new SessionLineItemOptions
                         {
@@ -97,19 +95,49 @@ namespace AnglingClubWebServices.Services
                                 Product = createCheckoutSessionRequest.ProductId
                             },
                             Quantity = 1
-                        },
-                        new SessionLineItemOptions
-                        {
-                            PriceData = new SessionLineItemPriceDataOptions
-                            {
-                                Currency = "gbp",
-                                UnitAmountDecimal = 3m * 100,
-                                Product = "prod_PTgluDpbMZYe08"
-                            },
-                            Quantity = 1
-                        },
+                        }
+                    };
 
-                    },
+            if (createCheckoutSessionRequest.MetaData.ContainsKey("PaidForKey") && createCheckoutSessionRequest.MetaData["PaidForKey"].Equals("True"))
+            {
+                lineItems.Add(
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            Currency = "gbp",
+                            UnitAmountDecimal = appSettings.PondGateKeyCost * 100,
+                            Product = appSettings.ProductPondGateKey
+                        },
+                        Quantity = 1
+                    });
+            }
+
+            if (createCheckoutSessionRequest.AddCharges)
+            {
+                lineItems.Add(
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            Currency = "gbp",
+                            UnitAmountDecimal = appSettings.HandlingCharge * 100,
+                            Product = appSettings.ProductHandlingCharge
+                        },
+                        Quantity = 1
+                    });
+            }
+
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = createCheckoutSessionRequest.SuccessUrl,
+                CancelUrl = createCheckoutSessionRequest.CancelUrl,
+                PaymentMethodTypes = new List<string>
+                {
+                    "card"
+                },
+                Mode = createCheckoutSessionRequest.Mode.EnumDescription(),
+                LineItems = lineItems,
                 BillingAddressCollection = "required",
                 PaymentIntentData = new SessionPaymentIntentDataOptions
                 {
