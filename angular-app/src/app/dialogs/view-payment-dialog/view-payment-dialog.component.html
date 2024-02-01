@@ -6,14 +6,14 @@
         <span><b>Amount:</b><br/>{{data.amount | currency:'GBP'}}<br/></span>
         <span><b>Status</b><br/>{{data.status}}<br/></span>
         <span><b>Paid On:</b><br/>{{data.paidOn | date:'dd MMM YY'}}<br/></span>
+        <span><b>Paid For Key Deposit:</b><br/>{{YesNo(data.paidForKey)}}<br/></span>
         <span><b>Description</b><br/>{{data.description}}<br/></span>
 
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Ticket No:</b><br/>{{data.ticketNumber}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Valid On:</b><br/>{{data.validOn | date:'dd MMM YY'}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Issued On:</b><br/>{{data.issuedOn | date:'dd MMM YY'}}</span>
         <span *ngIf="data.orderType == paymentType.Membership || data.orderType == paymentType.GuestTicket"><b>Members Name:</b><br/>{{data.membersName}}</span>
-        <span *ngIf="data.orderType == paymentType.PondGateKey"><b>Name:</b><br/>{{data.membersName}}</span>
-        <span *ngIf="data.orderType == paymentType.GuestTicket || (paymentType.PondGateKey && data.membershipNumber)"><b>Membership No:</b><br/>{{data.membershipNumber}}</span>
+        <span *ngIf="data.orderType == paymentType.GuestTicket"><b>Membership No:</b><br/>{{data.membershipNumber}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket"><b>Ticket Holder:</b><br/>{{data.ticketHoldersName}}</span>
         <span *ngIf="data.orderType == paymentType.GuestTicket"><b>Guest:</b><br/>{{data.guestsName}}</span>
 
@@ -21,19 +21,19 @@
         <span><b>Billing Email</b><br/>{{data.email}}<br/></span>
 
         <span *ngIf="data.orderType == paymentType.Membership"><b>Date of Birth:</b><br/>{{data.doB | date:'dd MMM YYYY'}}</span>
-        <span *ngIf="data.orderType == (paymentType.Membership || paymentType.PondGateKey) && !data.underAge"><b>Phone No:</b><br/>{{data.phoneNumber}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && !data.underAge"><b>Allow Name in Match Results:</b><br/>{{data.allowNameToBeUsed}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Parental Consent:</b><br/>{{data.parentalConsent}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && !data.underAge"><b>Phone No:</b><br/>{{data.phoneNumber}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && !data.underAge"><b>Allow Name in Match Results:</b><br/>{{YesNo(data.allowNameToBeUsed)}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Parental Consent:</b><br/>{{YesNo(data.parentalConsent)}}</span>
         <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Can Swim:</b><br/>{{data.childCanSwim}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>1st Responsible:</b><br/>{{data.responsible1st}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>2nd Responsible:</b><br/>{{data.responsible2nd}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>3rd Responsible:</b><br/>{{data.responsible3rd}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>4th Responsible:</b><br/>{{data.responsible4th}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>1st Responsible:</b><br/>{{GivenOrNot(data.responsible1st)}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>2nd Responsible:</b><br/>{{GivenOrNot(data.responsible2nd)}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>3rd Responsible:</b><br/>{{GivenOrNot(data.responsible3rd)}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>4th Responsible:</b><br/>{{GivenOrNot(data.responsible4th)}}</span>
         <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Emergency Contact:</b><br/>{{data.emergencyContact}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Contact Home:</b><br/>{{data.emergencyContactPhoneHome}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Contact Work:</b><br/>{{data.emergencyContactPhoneWork}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Contact Mobile:</b><br/>{{data.emergencyContactPhoneMobile}}</span>
-        <span *ngIf="data.orderType == paymentType.Membership"><b>Accepted Policies:</b><br/>{{data.acceptPolicies}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Contact Home:</b><br/>{{GivenOrNot(data.emergencyContactPhoneHome)}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Contact Work:</b><br/>{{GivenOrNot(data.emergencyContactPhoneWork)}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.underAge"><b>Contact Mobile:</b><br/>{{GivenOrNot(data.emergencyContactPhoneMobile)}}</span>
+        <span *ngIf="data.orderType == paymentType.Membership"><b>Accepted Policies:</b><br/>{{YesNo(data.acceptPolicies)}}</span>
 
     </div>
     <br/>

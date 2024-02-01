@@ -68,7 +68,7 @@ const routes: Routes = [
   { path: 'buyMemberships', component: BuyMembershipsComponent},
   { path: 'payments', component: PaymentsComponent, canActivate: [AuthGuard] },
   { path: 'buyDayTickets', component: BuyDayTicketsComponent },
-  { path: 'buyPondGateKeys', component: BuyPondGateKeysComponent },
+  // { path: 'buyPondGateKeys', component: BuyPondGateKeysComponent }, // Now included as part of membership payment
   { path: 'buyGuestTickets', component: BuyGuestTicketsComponent, canActivate: [AuthGuard] },
   { path: 'buySuccess/:productType', component: BuySuccessComponent },
 ];

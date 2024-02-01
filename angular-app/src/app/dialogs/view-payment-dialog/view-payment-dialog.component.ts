@@ -51,4 +51,11 @@ export class ViewPaymentDialogComponent {
 
   }
 
+  public YesNo(value: boolean): string {
+    return (value === true) ? 'Yes' : ((value === false) ? 'No' : '');
+  }
+
+  public GivenOrNot(value: string): string {
+    return (value && value !== "") ? value : "Not given";
+  }
 }

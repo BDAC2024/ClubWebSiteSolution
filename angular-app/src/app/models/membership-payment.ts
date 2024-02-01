@@ -16,6 +16,7 @@ export class MembershipPaymentRequest {
   phoneNumber!: string;
   allowNameToBeUsed!: boolean;
   acceptPolicies!: boolean;
+  paidForKey: boolean = false;
   underAge!: boolean;
   parentalConsent!: boolean;
   childCanSwim!: string;

@@ -12,8 +12,9 @@ import { RefDataService } from 'src/app/services/ref-data.service';
   templateUrl: './buy-pond-gate-keys.component.html',
   styleUrls: ['./buy-pond-gate-keys.component.css']
 })
-export class BuyPondGateKeysComponent implements OnInit {
+export class BuyPondGateKeysComponent /*implements OnInit*/ {
 
+  /* Now included as part of membership payment
   public refData!: RefData;
   public isLoading: boolean = true;
   public pondGateKey: PondGateKey = new PondGateKey();
@@ -104,5 +105,5 @@ export class BuyPondGateKeysComponent implements OnInit {
       this.isEnabled = result;
     });
   }
-
+*/
 }

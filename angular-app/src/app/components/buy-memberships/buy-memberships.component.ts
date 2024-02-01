@@ -29,7 +29,7 @@ export class BuyMembershipsComponent implements OnInit {
   public selectedMembership!: ProductMembership;
   public newMembership: MembershipPaymentRequest = new MembershipPaymentRequest();
   private baseUrl: string = "";
-
+  public pondGateKeyCost: number = 0;
   public isEnabled: boolean = true;
   public isEnabling: boolean = false;
 
@@ -56,6 +56,7 @@ export class BuyMembershipsComponent implements OnInit {
     .subscribe(data => {
       this.refData = data;
       this.isEnabled = this.refData.appSettings.membershipsEnabled;
+      this.pondGateKeyCost = this.refData.appSettings.pondGateKeyCost;
 
       this.isLoading = false;
 

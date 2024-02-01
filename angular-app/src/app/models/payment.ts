@@ -40,15 +40,16 @@ export class PaymentDetail {
     phoneNumber!: string;
     allowNameToBeUsed!: boolean;
     acceptPolicies!: boolean;
+    paidForKey!: boolean;
     underAge!: boolean;
     parentalConsent!: boolean;
     childCanSwim!: string;
-    responsible1st!: string;
-    responsible2nd!: string;
-    responsible3rd!: string;
-    responsible4th!: string;
+    responsible1st: string = "";
+    responsible2nd: string = "";
+    responsible3rd: string = "";
+    responsible4th: string = "";
     emergencyContact!: string;
-    emergencyContactPhoneHome!: string;
-    emergencyContactPhoneWork!: string;
-    emergencyContactPhoneMobile!: string
+    emergencyContactPhoneHome: string = "";
+    emergencyContactPhoneWork: string = "";
+    emergencyContactPhoneMobile: string = ""
 }
