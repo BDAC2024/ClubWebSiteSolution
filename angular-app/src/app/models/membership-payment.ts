@@ -7,7 +7,6 @@ export class ProductMembership {
   term!: string;
   runs!: string;
   cost!: number;
-  priceId!: string;
 }
 
 export class MembershipPaymentRequest {
