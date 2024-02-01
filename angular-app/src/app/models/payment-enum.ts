@@ -1,8 +1,7 @@
 export enum PaymentType {
   Membership = 0,
   GuestTicket,
-  DayTicket,
-  PondGateKey
+  DayTicket
 }
 
 export namespace PaymentType {
@@ -14,8 +13,6 @@ export namespace PaymentType {
         return "Guest Tickets";
       case PaymentType.DayTicket:
         return "Day Tickets";
-      case PaymentType.PondGateKey:
-        return "Gate Keys";
 
       default:
         return PaymentType[type];
@@ -29,8 +26,6 @@ export namespace PaymentType {
         return "Guest Tickets";
       case PaymentType.DayTicket:
         return "Day Tickets";
-      case PaymentType.PondGateKey:
-        return "Pond Gate Keys";
       default:
         return PaymentType[type];
     }
