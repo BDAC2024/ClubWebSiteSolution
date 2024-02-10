@@ -12,10 +12,14 @@
   <ItemGroup>
     <Compile Remove="Controllers\DayTicketController.cs" />
     <Compile Remove="Controllers\GuestTicketController.cs" />
+    <Compile Remove="Controllers\RulesController.cs" />
     <Compile Remove="Data\DayTicketRepository.cs" />
     <Compile Remove="Data\GuestTicketRepository.cs" />
+    <Compile Remove="Data\RulesRepository.cs" />
     <Compile Remove="Interfaces\IDayTicketRepository.cs" />
     <Compile Remove="Interfaces\IGuestTicketRepository.cs" />
+    <Compile Remove="Interfaces\IRulesRepository.cs" />
+    <Compile Remove="Models\Rules.cs" />
   </ItemGroup>
 
   <ItemGroup>
