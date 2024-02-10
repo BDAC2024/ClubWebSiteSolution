@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -39,7 +41,7 @@ namespace AnglingClubWebServices.Data
             {
                 new ReplaceableAttribute { Name = "Date", Value = dateToString(newsItem.Date), Replace = true },
                 new ReplaceableAttribute { Name = "Title", Value = newsItem.Title, Replace = true },
-                new ReplaceableAttribute { Name = "Body", Value = newsItem.Body, Replace = true },
+                //new ReplaceableAttribute { Name = "Body", Value = newsItem.Body, Replace = true },
 
             };
 
@@ -63,6 +65,8 @@ namespace AnglingClubWebServices.Data
                 throw;
             }
 
+            await UpdateBody(newsItem);
+
         }
 
         public async Task<List<NewsItem>> GetNewsItems()
@@ -75,6 +79,8 @@ namespace AnglingClubWebServices.Data
 
             foreach (var item in items)
             {
+                var bodyArr = new List<MultiValued>();
+
                 var newsItem = new NewsItem();
 
                 newsItem.DbKey = item.Name;
@@ -93,7 +99,8 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Body":
-                            newsItem.Body = attribute.Value;
+                            bodyArr.Add(GetMultiValuedElement(attribute.Value));
+                            //newsItem.Body = attribute.Value;
                             break;
 
 
@@ -101,6 +108,8 @@ namespace AnglingClubWebServices.Data
                             break;
                     }
                 }
+
+                newsItem.Body = string.Join("", bodyArr.OrderBy(x => x.Index).Select(x => x.Text).ToArray());
 
                 newsItems.Add(newsItem);
             }
@@ -131,5 +140,54 @@ namespace AnglingClubWebServices.Data
 
 
         }
+
+        private async Task UpdateBody(NewsItem newsItem)
+        {
+            for (int i = 0; i < (newsItem.Body.Length / MultiValueSegmentSize) + 1; i++)
+            {
+                await AddPartOfBody(newsItem.DbKey, newsItem.Body, i);
+            }
+
+        }
+
+        private async Task AddPartOfBody(string dbKey, string body, int index)
+        {
+            var bodySegment = new string(body.Skip(index * MultiValueSegmentSize).Take(MultiValueSegmentSize).ToArray());
+
+            if (bodySegment != "")
+            {
+                var client = GetClient();
+
+                BatchPutAttributesRequest request = new BatchPutAttributesRequest();
+                request.DomainName = Domain;
+
+                // Mandatory Properties
+                var attributes = new List<ReplaceableAttribute>
+                {
+                    new ReplaceableAttribute { Name = "Body", Value = $"{index}{MultiValueSeparator}{bodySegment}", Replace = index == 0 },
+                };
+
+                request.Items.Add(
+                    new ReplaceableItem
+                    {
+                        Name = dbKey,
+                        Attributes = attributes
+                    }
+                );
+
+                try
+                {
+                    //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
+                    await WriteInBatches(request, client);
+                    _logger.LogDebug($"News body segment added");
+                }
+                catch (AmazonSimpleDBException ex)
+                {
+                    _logger.LogError(ex, $"Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                    throw;
+                }
+            }
+        }
+
     }
 }
