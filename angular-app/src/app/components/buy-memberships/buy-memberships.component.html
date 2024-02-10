@@ -84,7 +84,7 @@
 
                     <div *ngIf="isUnderAge()">
                         <div class="checkbox-wrapper">
-                            <mat-checkbox [(ngModel)]="newMembership.paidForKey">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the member / non-fishing member / guardian for this person.</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="newMembership.paidForKey" class="checkbox-top">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the member / non-fishing member / guardian for this person.</mat-checkbox>
                         </div>
                         <br/>
                         <b>Parental Consent/Disclosure</b>
@@ -139,18 +139,18 @@
     
                         <br/>
                         <b>Declaration</b>
-                        <p>I agree to {{newMembership.name}} attending the Angling Matches run by Boroughbridge & District Angling Club and agree to the club rules for those under age (below 18).
-                            <br/>
-                            <br/>
-                            I hereby apply for {{newMembership.name}}'s membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.
-                            <br/>
-                            <br/>
-                            In the event of any misconduct on {{newMembership.name}}'s part, the club hold the sole right to withdraw their membership and that the committee decision will be final.
-                        </p>
                         <div class="checkbox-wrapper">
-                            <mat-checkbox [(ngModel)]="newMembership.parentalConsent">I acknowledge that {{newMembership.name}} will behave responsibly at all times whilst using the club's waters and fishing matches.</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for {{newMembership.name}}'s membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.<br/><br/>
+                                <p>I also agree to {{newMembership.name}} attending the Angling Matches run by Boroughbridge & District Angling Club and agree to the club rules for those under age (below 18).</p>
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.parentalConsent" class="checkbox-top">
+                                <p>I acknowledge that {{newMembership.name}} will behave responsibly at all times whilst using the club's waters and fishing matches.</p>
+                            </mat-checkbox>
                         </div>
                         <br/>
+                        In the event of any misconduct on {{newMembership.name}}'s part, the club hold the sole right to withdraw their membership and that the committee decision will be final.
                     </div>
 
                     <div *ngIf="!isUnderAge()">
@@ -163,18 +163,22 @@
                         </div>
                         <br/>    
                         <b>Declaration</b>
-                        <p>I hereby apply for membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.
+                        <!-- <p>I hereby apply for membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.
                             <br/>
                             <br/>
                             In the event of any misconduct on my part, the club hold the sole right to withdraw my membership and that the committee decision will be final.
-                        </p>
+                        </p> -->
                     </div>
-                    <div *ngIf="isDisabled()" class="checkbox-wrapper">
-                        <mat-checkbox [(ngModel)]="this.confirmCertificate">Please confirm that you have your Disability Certificate because you will be contacted to view this before membership is issued. <b>Please do not pay if you do not have this</b></mat-checkbox>
-                    </div>
-                    <br *ngIf="isDisabled()" />
-                    <div class="checkbox-wrapper">
-                        <mat-checkbox [(ngModel)]="newMembership.acceptPolicies">I have read and accept the clubs <a href="termsAndConditions" target="_blank">terms and conditions</a> (opens in a new window)</mat-checkbox>
+                    <div *ngIf="!isUnderAge()">
+                        <div *ngIf="isDisabled()" class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="this.confirmCertificate" class="checkbox-top">Please confirm that you have your Disability Certificate because you will be contacted to view this before membership is issued. <b>Please do not pay if you do not have this</b></mat-checkbox>
+                        </div>
+                        <br *ngIf="isDisabled()" />
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for membership of the above club and do agree to abide by the rules set down in the clubrule book and notice boards, also to any such alterations that may be deemed necessary from time to time.</mat-checkbox>
+                        </div>
+                        <br/>
+                        <p>In the event of any misconduct on my part, the club hold the sole right to withdraw my membership and that the committee decision will be final</p>
                     </div>
                     <br />
                     <div class="edit-button-panel">

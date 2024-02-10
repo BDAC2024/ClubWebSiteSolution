@@ -205,3 +205,8 @@ mat-form-field {
     background-color: yellow;
     font-weight: bold;
   }
+
+/* Checkbox alignment */
+.checkbox-top.mat-checkbox.mat-accent .mat-checkbox-inner-container {
+    margin: 2px 8px auto 0;
+  }

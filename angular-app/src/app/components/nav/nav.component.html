@@ -68,11 +68,6 @@
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showClubInfoSubMenu}" >expand_more</mat-icon>
 				</mat-list-item>
 				<div class="submenu" [ngClass]="{'expanded' : showClubInfoSubMenu}" *ngIf="showClubInfoSubMenu">
-					<a mat-list-item routerLink="/termsAndConditions" *ngIf="isPreviewer()">
-            <div class="preview-option">
-              Terms and Conditions
-            </div>
-          </a>
 					<a mat-list-item routerLink="/officers">Club Officers</a>
           <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" *ngIf="authenticationService.isLoggedIn" class="parent">
             <span class="full-width" >Rules</span>
