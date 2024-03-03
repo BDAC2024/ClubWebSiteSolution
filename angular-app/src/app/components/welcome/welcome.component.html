@@ -26,20 +26,30 @@
                     <li>Club Officers</li>
                     <li>Club Forms (<a href="forms">available here</a>)</li>
                     <li>Environmental Policy</li>
-                    <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
-                        <div class="preview-option">
+                    <li *ngIf="!isLoading">
+                        <div>
                             Privacy Notice
                         </div>
                     </li>
                 </ul>
             </li>
-            <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
-                <div class="preview-option">
+            <li *ngIf="!isLoading">
+                <div class="custom-badge-wide" 
+                    matBadge="new" 
+                    matBadgeOverlap="true" 
+                    matBadgePosition="after" 
+                    matBadgeSize="small"
+                    matBadgeColor="accent">
                     <a mat-list-item routerLink="/buyMemberships">Memberships - buy online</a>
                 </div>
             </li>
             <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
-                <div class="preview-option">
+                <div class="custom-badge-wide preview-option" 
+                    matBadge="new" 
+                    matBadgeOverlap="true" 
+                    matBadgePosition="after" 
+                    matBadgeSize="small"
+                    matBadgeColor="accent">
                     <a mat-list-item routerLink="/buyDayTickets">Day Tickets - buy online</a>
                 </div>
             </li>
@@ -58,7 +68,12 @@
                 </ul>
             </li>
             <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
-                <div class="preview-option">
+                <div class="custom-badge-wide preview-option" 
+                    matBadge="new" 
+                    matBadgeOverlap="true" 
+                    matBadgePosition="after" 
+                    matBadgeSize="small"
+                    matBadgeColor="accent">
                     <a mat-list-item routerLink="/buyGuestTickets">Guest Tickets - buy online</a>
                 </div>
             </li>

@@ -5,7 +5,7 @@ import { NewsComponent } from './components/news/news.component';
 import { WatersComponent } from './components/waters/waters.component';
 import { MatchesComponent } from './components/matches/matches.component';
 import { PhotosComponent } from './components/photos/photos.component';
-import { RulesComponent } from './components/rules/rules.component';
+// import { RulesComponent } from './components/rules/rules.component';
 import { DiaryComponent } from './components/diary/diary.component';
 import { LeagueStandingsComponent } from './components/league-standings/league-standings.component';
 import { AggregateWeightsComponent } from './components/aggregate-weights/aggregate-weights.component';
@@ -34,7 +34,6 @@ import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-gue
 import { BuySuccessComponent } from './components/buy-success/buy-success.component';
 import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
 import { DataPolicyComponent } from './components/data-policy/data-policy.component';
-import { BuyPondGateKeysComponent } from './components/buy-pond-gate-keys/buy-pond-gate-keys.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -51,7 +50,7 @@ const routes: Routes = [
   { path: 'standings', component: LeagueStandingsComponent, canActivate: [AuthGuard] },
   { path: 'aggregateWeights', component: AggregateWeightsComponent, canActivate: [AuthGuard] },
   { path: 'photos', component: PhotosComponent, canActivate: [AuthGuard] },
-  { path: 'rules/:type', component: RulesComponent, canActivate: [AuthGuard]  },
+  // { path: 'rules/:type', component: RulesComponent, canActivate: [AuthGuard]  },
   { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
   { path: 'member/:id', component: MemberComponent, canActivate: [AuthGuard] },
   { path: 'members', component: MembersComponent, canActivate: [AuthGuard] },

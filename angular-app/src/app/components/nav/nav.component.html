@@ -36,23 +36,45 @@
         <a mat-list-item routerLink="/diary">Diary of Events</a>
         <!-- <a mat-list-item routerLink="/photos">Photos</a> -->
 
-        <mat-list-item (click)="showPurchaseSubMenu = !showPurchaseSubMenu" class="parent " *ngIf="isPreviewer()" title="CURRENTLY PREVIEWERS ONLY - WILL BE PUBLIC">
-					<span class="full-width preview-option" >Buy Online</span>
+        <mat-list-item (click)="showPurchaseSubMenu = !showPurchaseSubMenu" class="parent ">
+					<span class="full-width custom-badge" 
+            matBadge="new" 
+            matBadgeOverlap="false" 
+            matBadgePosition="after" 
+            matBadgeSize="small"
+            matBadgeColor="accent" >
+            Buy Online
+          </span>
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showPurchaseSubMenu}" >expand_more</mat-icon>
 				</mat-list-item>
 				<div class="submenu" [ngClass]="{'expanded' : showPurchaseSubMenu}" *ngIf="showPurchaseSubMenu">
-          <a mat-list-item routerLink="/buyMemberships" *ngIf="isPreviewer()" title="CURRENTLY PREVIEWERS ONLY - WILL BE PUBLIC">
-            <div class="preview-option">
+          <a mat-list-item routerLink="/buyMemberships">
+            <div class="custom-badge"
+                matBadge="new" 
+                matBadgeOverlap="false" 
+                matBadgePosition="after" 
+                matBadgeSize="small"
+                matBadgeColor="accent">
                 Memberships
             </div>
           </a>
-          <a mat-list-item routerLink="/buyDayTickets" *ngIf="isPreviewer()" title="CURRENTLY PREVIEWERS ONLY - WILL BE PUBLIC">
-            <div class="preview-option">
+          <a mat-list-item routerLink="/buyDayTickets" *ngIf="isPreviewer()">
+            <div class="custom-badge preview-option"
+                matBadge="new" 
+                matBadgeOverlap="false" 
+                matBadgePosition="after" 
+                matBadgeSize="small"
+                matBadgeColor="accent">
                 Day Tickets
             </div>
           </a>
-					<a mat-list-item routerLink="/buyGuestTickets" *ngIf="isPreviewer() && authenticationService.isLoggedIn"  title="CURRENTLY PREVIEWERS ONLY - WILL BE MEMBERS ONLY">
-            <div class="preview-option">
+					<a mat-list-item routerLink="/buyGuestTickets" *ngIf="isPreviewer() && authenticationService.isLoggedIn">
+            <div class="custom-badge preview-option"
+              matBadge="new" 
+              matBadgeOverlap="false" 
+              matBadgePosition="after" 
+              matBadgeSize="small"
+              matBadgeColor="accent">
               Guest Tickets
             </div>
           </a>
@@ -80,8 +102,8 @@
             <a mat-list-item routerLink="/rulesJnrMatch">Jnr Match</a>
           </div>
           <a mat-list-item routerLink="/forms">Club Forms</a>
-          <a mat-list-item routerLink="/dataPolicy" *ngIf="isPreviewer()">
-            <div class="preview-option">
+          <a mat-list-item routerLink="/dataPolicy" >
+            <div>
               Privacy Notice
             </div>
           </a>
@@ -102,8 +124,8 @@
             </div>
           </a>
           -->
-					<a mat-list-item routerLink="/payments" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC">
-            <div class="preview-option">
+					<a mat-list-item routerLink="/payments">
+            <div>
               Payments
             </div>
           </a>

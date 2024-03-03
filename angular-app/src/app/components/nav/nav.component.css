@@ -100,17 +100,5 @@
     transform: rotate(180deg);
   }
 
-  .custom-badge {
-    color: red;
-    .mat-badge-content {
-      width: fit-content;
-      text-align: center;
-      border-radius: 7px;
-      left: 53px;
-      top: -4px;
-      padding-left: 3px;
-      padding-right: 3px;
-      font-weight: 400;
-    }
-  }
+
 

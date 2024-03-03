@@ -36,7 +36,6 @@ import { NewsComponent } from './components/news/news.component';
 import { WatersComponent } from './components/waters/waters.component';
 import { MatchesComponent } from './components/matches/matches.component';
 import { PhotosComponent } from './components/photos/photos.component';
-import { RulesComponent } from './components/rules/rules.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { MatchInfoComponent } from './dialogs/match-info/match-info.component';
 import { DiaryComponent } from './components/diary/diary.component';
@@ -101,7 +100,6 @@ import { BuyPondGateKeysComponent } from './components/buy-pond-gate-keys/buy-po
     WatersComponent,
     MatchesComponent,
     PhotosComponent,
-    RulesComponent,
     PreviewComponent,
     MatchInfoComponent,
     DiaryComponent,
