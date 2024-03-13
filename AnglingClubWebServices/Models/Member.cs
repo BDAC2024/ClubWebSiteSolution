@@ -8,9 +8,22 @@ namespace AnglingClubWebServices.Models
 {
     public class Member : TableBase
     {
+        private string _email;
 
         public string Name { get; set; }
-        public string Email { get; set; }
+        public string Email 
+        {
+            get
+            {
+                return _email.Replace(" ", "");
+            }
+
+            set
+            {
+                _email = value.Replace(" ", "");
+            }
+        }
+
         public int MembershipNumber { get; set; }
         public bool Admin { get; set; } = false;
         /// <summary>
