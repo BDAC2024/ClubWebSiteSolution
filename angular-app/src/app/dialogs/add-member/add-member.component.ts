@@ -9,6 +9,7 @@ import { MembersService } from 'src/app/services/members.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { ScreenService } from "src/app/services/screen.service";
 import { ErrorComponent } from "../error/error.component";
+import { GlobalService } from "src/app/services/global.service";
 
 @Component({
   selector: 'app-add-member',
@@ -33,6 +34,7 @@ export class AddMemberComponent implements OnInit {
     private refDataService: RefDataService,
     private membersService: MembersService,
     private dialog: MatDialog,
+    private globalService: GlobalService,
     public screenService: ScreenService,
   ) { }
 
@@ -48,13 +50,13 @@ export class AddMemberComponent implements OnInit {
 
       this.refData.seasons = this.refData.seasons
       .filter((s) => {
-        return s.season <= this.refData.currentSeason;
+        return s.season >= ((this.refData.currentSeason - 2)) && s.season <= (this.refData.currentSeason + 1);
       })
       .sort((a, b) => {
         return a.season < b.season && 1 || -1;
       });
 
-      this.data.seasonsActive.push(this.refData.seasons[0].season)
+      this.data.seasonsActive.push(this.globalService.getStoredSeason(this.refData.currentSeason));
       this.isLoading = false;
     });
   }
