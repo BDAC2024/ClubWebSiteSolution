@@ -34,6 +34,11 @@ import { BuyGuestTicketsComponent } from './components/buy-guest-tickets/buy-gue
 import { BuySuccessComponent } from './components/buy-success/buy-success.component';
 import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
 import { DataPolicyComponent } from './components/data-policy/data-policy.component';
+import { JuniorProgrammeIntroComponent } from './components/junior-programme-intro/junior-programme-intro.component';
+import { JuniorTrophiesComponent } from './components/junior-trophies/junior-trophies.component';
+import { JuniorTacklePleaComponent } from './components/junior-tackle-plea/junior-tackle-plea.component';
+import { JuniorMatchesComponent } from './components/junior-matches/junior-matches.component';
+import { JuniorSponsorsComponent } from './components/junior-sponsors/junior-sponsors.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -70,6 +75,11 @@ const routes: Routes = [
   // { path: 'buyPondGateKeys', component: BuyPondGateKeysComponent }, // Now included as part of membership payment
   { path: 'buyGuestTickets', component: BuyGuestTicketsComponent, canActivate: [AuthGuard] },
   { path: 'buySuccess/:productType', component: BuySuccessComponent },
+  { path: 'juniorProgrammeIntro', component: JuniorProgrammeIntroComponent},
+  { path: 'juniorTrophies', component: JuniorTrophiesComponent},
+  { path: 'juniorTacklePlea', component: JuniorTacklePleaComponent},
+  { path: 'juniorSponsors', component: JuniorSponsorsComponent},
+  { path: 'juniorMatches', component: JuniorMatchesComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

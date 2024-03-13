@@ -90,6 +90,11 @@ import { ViewPaymentDialogComponent } from './dialogs/view-payment-dialog/view-p
 import { FeatureDisabledPanelComponent } from './components/shared/feature-disabled-panel/feature-disabled-panel.component';
 import { PolicyPanelNoPurchasesComponent } from './components/shared/policy-panel-no-purchases/policy-panel-no-purchases.component';
 import { BuyPondGateKeysComponent } from './components/buy-pond-gate-keys/buy-pond-gate-keys.component';
+import { JuniorProgrammeIntroComponent } from './components/junior-programme-intro/junior-programme-intro.component';
+import { JuniorTrophiesComponent } from './components/junior-trophies/junior-trophies.component';
+import { JuniorTacklePleaComponent } from './components/junior-tackle-plea/junior-tackle-plea.component';
+import { JuniorMatchesComponent } from './components/junior-matches/junior-matches.component';
+import { JuniorSponsorsComponent } from './components/junior-sponsors/junior-sponsors.component';
 
 @NgModule({
   declarations: [
@@ -143,6 +148,11 @@ import { BuyPondGateKeysComponent } from './components/buy-pond-gate-keys/buy-po
     FeatureDisabledPanelComponent,
     PolicyPanelNoPurchasesComponent,
     BuyPondGateKeysComponent,
+    JuniorProgrammeIntroComponent,
+    JuniorTrophiesComponent,
+    JuniorTacklePleaComponent,
+    JuniorMatchesComponent,
+    JuniorSponsorsComponent,
   ],
   imports: [
     BrowserModule,

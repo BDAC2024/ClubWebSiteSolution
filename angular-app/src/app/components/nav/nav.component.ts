@@ -27,6 +27,7 @@ export class NavComponent implements OnInit {
   showRulesSubMenu: boolean = false;
   showClubInfoSubMenu: boolean = false;
   showPurchaseSubMenu: boolean = false;
+  showJnrSectionSubMenu: boolean = false;
   // isShowing = false;
 
   @ViewChild('drawer', { static: false })

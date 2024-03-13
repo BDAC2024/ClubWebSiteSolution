@@ -68,8 +68,8 @@
                 Day Tickets
             </div>
           </a>
-					<a mat-list-item routerLink="/buyGuestTickets" *ngIf="isPreviewer() && authenticationService.isLoggedIn">
-            <div class="custom-badge preview-option"
+					<a mat-list-item routerLink="/buyGuestTickets" *ngIf="authenticationService.isLoggedIn">
+            <div class="custom-badge"
               matBadge="new" 
               matBadgeOverlap="false" 
               matBadgePosition="after" 
@@ -109,6 +109,25 @@
           </a>
 					<a mat-list-item routerLink="/environmental">Environmental</a>
 					<a mat-list-item routerLink="/anglingTrust">Angling Trust</a>
+				</div>
+        
+        <mat-list-item (click)="showJnrSectionSubMenu = !showJnrSectionSubMenu" class="parent" *ngIf="isPreviewer()" title="WILL BE PUBLIC">
+          <span class="full-width custom-badge preview-option" 
+            matBadge="new" 
+            matBadgeOverlap="false" 
+            matBadgePosition="after" 
+            matBadgeSize="small"
+            matBadgeColor="accent" >
+            Junior Programme
+          </span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showJnrSectionSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showJnrSectionSubMenu}" *ngIf="showJnrSectionSubMenu">
+					<a mat-list-item routerLink="/juniorProgrammeIntro" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Introduction</a>
+					<a mat-list-item routerLink="/juniorSponsors" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Programme Sponsors</a>
+					<a mat-list-item routerLink="/juniorTrophies" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Junior Trophies</a>
+					<a mat-list-item routerLink="/juniorTacklePlea" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Tackle Plea</a>
+					<a mat-list-item routerLink="/juniorMatches" *ngIf="isPreviewer()" title="MEMBERS ONLY" class=" preview-option">Matches</a>
 				</div>
         
         <mat-list-item (click)="showAdminSubMenu = !showAdminSubMenu" *ngIf="authenticationService.isAdmin" class="parent">
