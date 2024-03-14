@@ -112,6 +112,21 @@ namespace AnglingClubWebServices.Controllers
 
                         var paymentMetaData = new PaymentMetaData(paymentIntent.Metadata);
 
+                        decimal fee = 0.0m;
+                        try
+                        {
+                            var paymentIntentOptions = new PaymentIntentGetOptions();
+                            paymentIntentOptions.AddExpand("latest_charge.balance_transaction");
+
+                            var service = new PaymentIntentService();
+                            PaymentIntent paymentIntentForFees = service.Get(paymentIntent.Id, paymentIntentOptions);
+                            fee = paymentIntentForFees.LatestCharge.BalanceTransaction.FeeDetails.Sum(x => x.Amount) / 100.0m;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning($"Unable to get the fee for payment Id {paymentIntent.Id} ", ex);
+                            // continue to create order
+                        }
 
                         var order = new Order();
                         order.OrderType = paymentType;
@@ -125,6 +140,7 @@ namespace AnglingClubWebServices.Controllers
                         order.OrderId = latestOrderId + 1;
                         order.Description = purchaseItem;
                         order.Amount = paymentIntent.Amount / 100.0m;
+                        order.Fee = fee;
                         order.PaidOn = paymentIntent.Created;
                         order.PaymentId = paymentIntent.Id;
                         order.Status = charge.Paid ? "Paid" : "Failed";
