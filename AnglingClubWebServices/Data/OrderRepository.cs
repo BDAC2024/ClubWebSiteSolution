@@ -50,6 +50,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "GuestsName", Value = order.GuestsName, Replace = true },
                 new ReplaceableAttribute { Name = "TicketHoldersName", Value = order.TicketHoldersName, Replace = true },
                 new ReplaceableAttribute { Name = "Amount", Value = order.Amount.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "Fee", Value = order.Fee.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "ValidOn", Value = order.ValidOn.HasValue ? dateToString(order.ValidOn.Value) : "", Replace = true },
                 new ReplaceableAttribute { Name = "PaidOn", Value = order.PaidOn.HasValue ? dateToString(order.PaidOn.Value) : "", Replace = true },
                 new ReplaceableAttribute { Name = "IssuedOn", Value = order.IssuedOn.HasValue ? dateToString(order.IssuedOn.Value) : "", Replace = true },
@@ -158,6 +159,10 @@ namespace AnglingClubWebServices.Data
 
                     case "Amount":
                         order.Amount = decimal.Parse(attribute.Value);
+                        break;
+
+                    case "Fee":
+                        order.Fee = decimal.Parse(attribute.Value);
                         break;
 
                     case "ValidOn":

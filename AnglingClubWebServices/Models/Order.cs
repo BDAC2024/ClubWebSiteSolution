@@ -15,6 +15,7 @@ namespace AnglingClubWebServices.Models
         public string TicketHoldersName { get; set; } = "";
         public DateTime? ValidOn { get; set; } = null;
         public decimal Amount { get; set; }
+        public decimal Fee { get; set; }
 
         public DateTime? PaidOn { get; set; } = null;
         public DateTime? IssuedOn { get; set; } = null;
