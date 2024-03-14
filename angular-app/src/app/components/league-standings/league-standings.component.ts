@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatchResultsService } from 'src/app/services/match-results.service';
 import { ScreenService } from 'src/app/services/screen.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { MatchType } from 'src/app/models/match-enum';
+import { AggregateType, MatchType } from 'src/app/models/match-enum';
 import { LeagueStanding } from 'src/app/models/league-standing';
 import { MatchService } from 'src/app/services/match.service';
 import { GlobalService } from 'src/app/services/global.service';
@@ -21,7 +21,7 @@ export class LeagueStandingsComponent implements OnInit {
   public standings: LeagueStanding[] = [];
   public refData!: RefData;
   public selectedSeason!: number;
-  public selectedMatchType: MatchType = MatchType.Spring;
+  public selectedAggregateType: AggregateType = AggregateType.Spring;
 
   constructor(
     public matchResultsService: MatchResultsService,
@@ -30,7 +30,7 @@ export class LeagueStandingsComponent implements OnInit {
     private globalService: GlobalService,
     public screenService: ScreenService
   ) { 
-    this.displayedColumns = ["position", "name", "points", "weight"];
+    this.displayedColumns = ["position", "name", "points"];
   }
 
   ngOnInit(): void {
@@ -42,23 +42,27 @@ export class LeagueStandingsComponent implements OnInit {
 
     switch (tabChangeEvent.index) {
       case 0:
-        this.selectedMatchType = MatchType.Spring;
+        this.selectedAggregateType = AggregateType.Spring;
         break;
         
       case 1:
-        this.selectedMatchType = MatchType.Club;
+        this.selectedAggregateType = AggregateType.ClubRiver;
         break;
         
       case 2:
-        this.selectedMatchType = MatchType.Junior;
+        this.selectedAggregateType = AggregateType.ClubPond;
         break;
-
+        
       case 3:
-        this.selectedMatchType = MatchType.OSU;
+        this.selectedAggregateType = AggregateType.Junior;
         break;
 
       case 4:
-        this.selectedMatchType = MatchType.Evening;
+        this.selectedAggregateType = AggregateType.OSU;
+        break;
+
+      case 5:
+        this.selectedAggregateType = AggregateType.Evening;
         break;
     }
 
@@ -71,14 +75,11 @@ export class LeagueStandingsComponent implements OnInit {
     this.standings = [];
     
     this.globalService.setStoredSeason(this.selectedSeason);
-    this.matchResultsService.readLeagueStandings(this.selectedMatchType, this.selectedSeason)
+    this.matchResultsService.readLeagueStandings(this.selectedAggregateType, this.selectedSeason)
     .subscribe(data => {
       this.isLoading = false;
       this.standings = data;
 
-      if (this.selectedMatchType == MatchType.OSU) {
-        this.displayedColumns = ["position", "name", "points"]
-      }
     });
   }
 

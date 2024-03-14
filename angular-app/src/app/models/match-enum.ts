@@ -51,46 +51,56 @@ export namespace MatchType {
   }
 }
 
-export enum AggregateWeightType {
+export enum AggregateType {
   Spring = 0,
   ClubRiver,
   ClubPond,
   None,
   Pairs,
   Evening,
+  Junior,
+  OSU,
 }
 
-export namespace AggregateWeightType {
-  export function CompactName(type: AggregateWeightType): string {
+export namespace AggregateType {
+  export function CompactName(type: AggregateType): string {
     switch(type) {
-      case AggregateWeightType.Spring:
+      case AggregateType.Spring:
         return "Spring";
-      case AggregateWeightType.ClubRiver:
+      case AggregateType.ClubRiver:
         return "Club/River";
-      case AggregateWeightType.ClubPond:
+      case AggregateType.ClubPond:
         return "Club/Pond";
-        case AggregateWeightType.Pairs:
+        case AggregateType.Pairs:
           return "Pairs";
-        case AggregateWeightType.Evening:
+        case AggregateType.Evening:
           return "Evening";
+        case AggregateType.Junior:
+          return "Junior";
+        case AggregateType.OSU:
+          return "OSU";
         default:
-          return AggregateWeightType[type];
+          return AggregateType[type];
     }
   }
-  export function FullName(type: AggregateWeightType): string {
+  export function FullName(type: AggregateType): string {
     switch(type) {
-      case AggregateWeightType.Spring:
+      case AggregateType.Spring:
         return "Spring Leage";
-      case AggregateWeightType.ClubRiver:
+      case AggregateType.ClubRiver:
         return "Club Match - River";
-      case AggregateWeightType.ClubPond:
+      case AggregateType.ClubPond:
         return "Club Match - Pond";
-      case AggregateWeightType.Pairs:
+      case AggregateType.Pairs:
         return "Pairs";
-      case AggregateWeightType.Evening:
+      case AggregateType.Evening:
         return "Evening";
+      case AggregateType.Junior:
+        return "Junior";
+      case AggregateType.OSU:
+        return "Ouse/Swale/Ure";
       default:
-        return AggregateWeightType[type];
+        return AggregateType[type];
     }
   }
 }

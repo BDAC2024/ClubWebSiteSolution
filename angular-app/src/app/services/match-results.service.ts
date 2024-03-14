@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { AggregateWeight } from '../models/aggregate-weight';
 import { LeagueStanding } from '../models/league-standing';
 import { MatchResult } from '../models/match';
-import { AggregateWeightType, MatchType } from '../models/match-enum';
+import { AggregateType } from '../models/match-enum';
 import { Season } from '../models/refData';
 import { GlobalService } from './global.service';
 
@@ -28,14 +28,14 @@ export class MatchResultsService {
           ));
 }
 
-public readLeagueStandings(type: MatchType, season: number): Observable<LeagueStanding[]> {
+public readLeagueStandings(type: AggregateType, season: number): Observable<LeagueStanding[]> {
   return this.http.get<MatchResult[]>(`${this.globalService.ApiUrl}/api/matchResults/standings/${type}/${season}`)
             .pipe(map(res => 
               plainToClass(LeagueStanding, res)
           ));
 }
 
-public readAggregateWeights(type: AggregateWeightType, season: number): Observable<AggregateWeight[]> {
+public readAggregateWeights(type: AggregateType, season: number): Observable<AggregateWeight[]> {
   return this.http.get<MatchResult[]>(`${this.globalService.ApiUrl}/api/matchResults/aggregateWeights/${type}/${season}`)
             .pipe(map(res => 
               plainToClass(AggregateWeight, res)

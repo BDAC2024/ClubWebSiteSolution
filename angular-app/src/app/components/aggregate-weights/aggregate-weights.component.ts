@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AggregateWeight } from 'src/app/models/aggregate-weight';
-import { AggregateWeightType, MatchType } from 'src/app/models/match-enum';
+import { AggregateType, MatchType } from 'src/app/models/match-enum';
 import { RefData } from 'src/app/models/refData';
 import { GlobalService } from 'src/app/services/global.service';
 import { MatchResultsService } from 'src/app/services/match-results.service';
@@ -21,7 +21,7 @@ export class AggregateWeightsComponent implements OnInit {
   public weights: AggregateWeight[] = [];
   public refData!: RefData;
   public selectedSeason!: number;
-  public selectedAggregateWeightType: AggregateWeightType = AggregateWeightType.Spring;
+  public selectedAggregateType: AggregateType = AggregateType.Spring;
 
   constructor(
     public matchResultsService: MatchResultsService,
@@ -44,23 +44,23 @@ export class AggregateWeightsComponent implements OnInit {
 
     switch (tabChangeEvent.index) {
       case 0:
-        this.selectedAggregateWeightType = AggregateWeightType.Spring;
+        this.selectedAggregateType = AggregateType.Spring;
         break;
         
       case 1:
-        this.selectedAggregateWeightType = AggregateWeightType.ClubRiver;
+        this.selectedAggregateType = AggregateType.ClubRiver;
         break;
         
       case 2:
-        this.selectedAggregateWeightType = AggregateWeightType.ClubPond;
+        this.selectedAggregateType = AggregateType.ClubPond;
         break;
 
       case 3:
-        this.selectedAggregateWeightType = AggregateWeightType.Pairs;
+        this.selectedAggregateType = AggregateType.Pairs;
         break;
 
       case 4:
-        this.selectedAggregateWeightType = AggregateWeightType.Evening;
+        this.selectedAggregateType = AggregateType.Evening;
         break;
     }
 
@@ -74,7 +74,7 @@ export class AggregateWeightsComponent implements OnInit {
     
     this.globalService.setStoredSeason(this.selectedSeason);
     
-    this.matchResultsService.readAggregateWeights(this.selectedAggregateWeightType, this.selectedSeason)
+    this.matchResultsService.readAggregateWeights(this.selectedAggregateType, this.selectedSeason)
     .subscribe(data => {
       this.isLoading = false;
       this.weights = data;
