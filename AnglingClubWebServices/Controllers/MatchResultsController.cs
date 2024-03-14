@@ -78,10 +78,10 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        [HttpGet("standings/{matchType}/{season}")]
+        [HttpGet("standings/{aggType}/{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaguePosition>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public IActionResult GetLeagueStandings(MatchType matchType, Season season)
+        public IActionResult GetLeagueStandings(AggregateType aggType, Season season)
         {
             var errors = new List<string>();
 
@@ -89,9 +89,9 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                var standings = _matchResultService.GetLeagueStandings(matchType, season);
+                var standings = _matchResultService.GetLeagueStandings(aggType, season);
 
-                ReportTimer($"Getting league standings for {matchType} in {season}");
+                ReportTimer($"Getting league standings for {aggType} in {season}");
 
                 return Ok(standings);
 
@@ -103,10 +103,10 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        [HttpGet("aggregateWeights/{aggWeightType}/{season}")]
+        [HttpGet("aggregateWeights/{aggType}/{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AggregateWeight>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public IActionResult GetAggregateWeights(AggregateWeightType aggWeightType, Season season)
+        public IActionResult GetAggregateWeights(AggregateType aggType, Season season)
         {
             var errors = new List<string>();
 
@@ -114,9 +114,9 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                var standings = _matchResultService.GetAggregateWeights(aggWeightType, season);
+                var standings = _matchResultService.GetAggregateWeights(aggType, season);
 
-                ReportTimer($"Getting aggregate weights for {aggWeightType} in {season}");
+                ReportTimer($"Getting aggregate weights for {aggType} in {season}");
 
                 return Ok(standings);
 
