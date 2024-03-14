@@ -63,7 +63,7 @@ namespace AnglingClubWebServices.Data
 
                 // Optional properties
                 if (clubEvent.MatchType != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchType", Value = ((int)clubEvent.MatchType.Value).ToString(), Replace = true }); }
-                if (clubEvent.AggregateWeightType != null) { attributes.Add(new ReplaceableAttribute { Name = "AggregateWeightType", Value = ((int)clubEvent.AggregateWeightType.Value).ToString(), Replace = true }); }
+                if (clubEvent.AggregateType != null) { attributes.Add(new ReplaceableAttribute { Name = "AggregateWeightType", Value = ((int)clubEvent.AggregateType.Value).ToString(), Replace = true }); }
                 if (clubEvent.MatchDraw != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchDraw", Value = dateToString(clubEvent.MatchDraw.Value), Replace = true }); }
                 if (clubEvent.MatchStart != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchStart", Value = dateToString(clubEvent.MatchStart.Value), Replace = true }); }
                 if (clubEvent.MatchEnd != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchEnd", Value = dateToString(clubEvent.MatchEnd.Value), Replace = true }); }
@@ -141,7 +141,7 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "AggregateWeightType":
-                            clubEvent.AggregateWeightType = (AggregateWeightType)(Convert.ToInt32(attribute.Value));
+                            clubEvent.AggregateType = (AggregateType)(Convert.ToInt32(attribute.Value));
                             break;
 
                         case "MatchDraw":

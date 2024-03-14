@@ -12,7 +12,7 @@ namespace AnglingClubWebServices.Models
         public DateTime Date { get; set; }
         public EventType EventType { get; set; }
         public MatchType? MatchType { get; set; }
-        public AggregateWeightType? AggregateWeightType { get; set; }
+        public AggregateType? AggregateType { get; set; }
         public DateTime? MatchDraw { get; set; }
         public DateTime? MatchStart { get; set; }
         public DateTime? MatchEnd { get; set; }

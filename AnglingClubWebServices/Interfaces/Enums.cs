@@ -34,7 +34,7 @@ namespace AnglingClubWebServices.Interfaces
         Evening
     }
 
-    public enum AggregateWeightType
+    public enum AggregateType
     {
         [Description("Spring League")]
         Spring = 0,
@@ -52,6 +52,12 @@ namespace AnglingClubWebServices.Interfaces
 
         [Description("Evening League")]
         Evening,
+
+        [Description("Junior League")]
+        Junior,
+
+        [Description("Ouse, Swale, Ure Team League")]
+        OSU,
 
     }
 

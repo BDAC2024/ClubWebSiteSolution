@@ -3,6 +3,7 @@ using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
+using MatchType = AnglingClubWebServices.Interfaces.MatchType;
 
 namespace AnglingClubWebServices.Services
 {
@@ -72,9 +73,9 @@ namespace AnglingClubWebServices.Services
             return results;
         }
 
-        public List<LeaguePosition> GetLeagueStandings(MatchType matchType, Season season)
+        public List<LeaguePosition> GetLeagueStandings(AggregateType aggType, Season season)
         {
-            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.MatchType == matchType && x.Season == season).Select(x => x.Id);
+            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.AggregateType == aggType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
             var members = _memberRepository.GetMembers(season, true).Result;
 
@@ -84,15 +85,13 @@ namespace AnglingClubWebServices.Services
                 {
                     MembershipNumber = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).MembershipNumber,
                     Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
-                    Points = cl.Sum(c => c.Points),
-                    TotalWeightDecimal = cl.Sum(x=> x.WeightDecimal)
+                    Points = cl.Sum(c => c.Points)
                 }).ToList();
 
             var pos = 1;
             int numberAtPos = 0;
 
             float lastPoints = league.Any() ? league.Max(r => r.Points) : 0f;
-            float lastWeight = league.Any() ? league.First(x => x.Points == lastPoints).TotalWeightDecimal : 0f;
 
             foreach (var member in league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal))
             {
@@ -100,35 +99,23 @@ namespace AnglingClubWebServices.Services
                 {
                     pos += numberAtPos;
                     lastPoints = member.Points;
-                    lastWeight = member.TotalWeightDecimal;
                     numberAtPos = 0;
                 }
 
                 if (member.Points == lastPoints)
                 {
-                    if (member.TotalWeightDecimal < lastWeight)
-                    {
-                        pos += numberAtPos;
-                        lastWeight = member.TotalWeightDecimal;
-                        numberAtPos = 0;
-                    }
-
-                    if (member.TotalWeightDecimal == lastWeight)
-                    {
-                        numberAtPos++;
-                    }
-                    
+                    numberAtPos++;
                 }
 
                 member.Position = pos;
             }
 
-            return league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal).ToList();
+            return league.OrderByDescending(x => x.Points).ToList();
         }
 
-        public List<AggregateWeight> GetAggregateWeights(AggregateWeightType aggWeightType, Season season)
+        public List<AggregateWeight> GetAggregateWeights(AggregateType aggType, Season season)
         {
-            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.AggregateWeightType == aggWeightType && x.Season == season).Select(x => x.Id);
+            var matchIds = _eventRepository.GetEvents().Result.Where(x => x.AggregateType == aggType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
             var members = _memberRepository.GetMembers(season, true).Result;
 
@@ -165,5 +152,8 @@ namespace AnglingClubWebServices.Services
 
             return league.OrderByDescending(x => x.TotalWeightDecimal).ToList();
         }
+
+
     }
+
 }
