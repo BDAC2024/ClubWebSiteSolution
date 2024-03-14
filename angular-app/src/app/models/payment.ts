@@ -15,6 +15,7 @@ export class Payment {
     validOn!: Date;
     issuedOn!: Date;
     amount!: number;
+    fee!: number;
     status!: string;
 }
 
@@ -27,6 +28,7 @@ export class PaymentDetail {
     paidOn!: Date;
     issuedOn!: Date;
     amount!: number;
+    fee!: number;
     status!: string;
     validOn!: Date;
     membershipNumber!: number;

@@ -64,6 +64,11 @@
         <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.amount | currency:'GBP'}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="fee">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fee </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.fee | currency:'GBP'}} </td>
+    </ng-container>
+
     <ng-container matColumnDef="paidOn">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Paid on </th>
         <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.paidOn | date:'dd MMM YY'}} </td>

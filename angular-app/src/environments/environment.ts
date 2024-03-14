@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  stripePublishableKey: 'pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx'
+  stripePublishableKey: 'pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx' // DevDB
+  //stripePublishableKey: 'pk_live_51Kvzd2Ki9NY5HneShu1bYEZrFMavCdHjsG3SYebtWVzOZ9EnKkf3jUpu9oWFq35NzuNkZGxk8b0Ec4bW63BEZrqY00DrH3X3jY' // townend.dev - Live
+  //stripePublishableKey: 'pk_test_51Kvzd2Ki9NY5HneSjyGE2VDHiOt12r5wvR2YICTMNX5qiKfcRu7qVkMEhiZn1aIlbH26EO4jo6DZk2T6PNxnH92a00KOhBR1Go' // townend.dev - Test
 };
 
 /*

@@ -78,25 +78,25 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
           break;
 
         default:
-          this.displayedColumns = ["description", "membersName", "amount", "paidOn", "status", "view"];
+          this.displayedColumns = ["description", "membersName", "amount", "fee",  "paidOn", "status", "view"];
       }
 
     } else {
       switch (this.selectedPaymentType) {
         case PaymentType.DayTicket:
-          this.displayedColumns = ["ticketNumber", "ticketHoldersName", "validOn", "issuedOn", "amount", "paidOn", "status", "view"];
+          this.displayedColumns = ["ticketNumber", "ticketHoldersName", "validOn", "issuedOn", "amount", "fee", "paidOn", "status", "view"];
           break;
 
         case PaymentType.GuestTicket:
-          this.displayedColumns = ["ticketNumber", "membersName", "guestsName", "validOn", "issuedOn", "amount", "paidOn", "status", "view"];
+          this.displayedColumns = ["ticketNumber", "membersName", "guestsName", "validOn", "issuedOn", "amount", "fee",  "paidOn", "status", "view"];
           break;
 
         case PaymentType.Membership:
-          this.displayedColumns = ["description", "membersName", "amount", "paidOn", "status", "view"];
+          this.displayedColumns = ["description", "membersName", "amount", "fee",  "paidOn", "status", "view"];
           break;
 
         default:
-          this.displayedColumns = ["description", "membersName", "amount", "paidOn", "status", "view"];
+          this.displayedColumns = ["description", "membersName", "amount", "fee",  "paidOn", "status", "view"];
 
       }
 
