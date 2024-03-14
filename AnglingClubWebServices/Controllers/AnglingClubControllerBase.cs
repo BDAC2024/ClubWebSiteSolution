@@ -21,6 +21,22 @@ namespace AnglingClubWebServices.Controllers
 
         protected ILogger Logger { get; set; } = null;
 
+        protected string Caller
+        {
+            get
+            {
+                try 
+                {
+                    Request.Headers.TryGetValue("Origin", out var caller);
+                    return caller;
+                }
+                catch 
+                {
+                    return "CallerUnknown";
+                }
+            }
+        }
+
         protected Member CurrentUser
         {
             get

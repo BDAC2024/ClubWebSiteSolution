@@ -47,7 +47,7 @@ namespace AnglingClubWebServices.Services
             }
         }
 
-        public void IssueDayTicket(int ticketNumber, DateTime validOn, string holdersName, string emailAddress, string paymentId)
+        public void IssueDayTicket(int ticketNumber, DateTime validOn, string holdersName, string emailAddress, string paymentId, string callerBaseUrl)
         {
             var appSettings = _appSettingRepository.GetAppSettings().Result;
 
@@ -67,6 +67,7 @@ namespace AnglingClubWebServices.Services
                         $"Your Day Ticket for {validOn.PrettyDate()}",
                         $"Please find attached, your day ticket valid for fishing on {validOn.PrettyDate()}.<br/>" +
                             "Make sure you have your ticket with you when fishing. Either on your phone or printed.<br/><br/>" +
+                            $"Directions for the river and parking are shown here <a href='{callerBaseUrl}/waters#water3'>Club Website - Waters</a>.<br/><br/>" +
                             "Tight lines!,<br/>" +
                             "Boroughbridge & District Angling Club",
                         null,

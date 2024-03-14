@@ -152,6 +152,11 @@ namespace AnglingClubWebServices.Models
             {
                 EmergencyContactPhoneMobile = metadata["EmergencyContactPhoneMobile"];
             }
+
+            if (metadata.ContainsKey("Caller"))
+            {
+                Caller = metadata["Caller"];
+            }
         }
 
         public DateTime ValidOn { get; set; }
@@ -178,5 +183,6 @@ namespace AnglingClubWebServices.Models
         public string EmergencyContactPhoneWork { get; set; }
         public string EmergencyContactPhoneMobile { get; set; }
 
+        public string Caller { get; set; }
     }
 }
