@@ -9,5 +9,7 @@ namespace AnglingClubWebServices.DTOs
 
         public string Email { get; set; }
         public int MembershipNumber { get; set; }
+
+        public string CallerBaseUrl { get; set; }
     }
 }

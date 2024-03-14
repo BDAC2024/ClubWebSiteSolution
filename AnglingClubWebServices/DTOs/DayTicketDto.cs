@@ -9,5 +9,10 @@ namespace AnglingClubWebServices.DTOs
 
         public string SuccessUrl { get; set; }
         public string CancelUrl { get; set; }
+
+        /// <summary>
+        /// Note: This is auto-populated in controller
+        /// </summary>
+        public string CallerBaseUrl { get; set; }
     }
 }
