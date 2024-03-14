@@ -10,7 +10,9 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ScreenService } from 'src/app/services/screen.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { RefData } from 'src/app/models/refData';
-
+import {ActivatedRoute} from '@angular/router'; 
+import { Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 @Component({
   selector: 'app-waters',
   templateUrl: './waters.component.html',
@@ -29,8 +31,12 @@ export class WatersComponent implements OnInit {
   public isLoading: boolean = false;
   public isPageAdmin: boolean = false;
   public refData!: RefData;
+  public fragment: string = "";
+  public bookmark!: string;
+  public goneToBookmark: boolean = false;
 
   constructor(
+    // @Inject(DOCUMENT) private document: Document,
     public refDataService: RefDataService,
     public watersService: WatersService,
     public membersService: MembersService,
@@ -38,7 +44,8 @@ export class WatersComponent implements OnInit {
     public screenService: ScreenService,
     private dialog: MatDialog,
     private router: Router,
-    private sanitizer: DomSanitizer) { 
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute) { 
 
       this.videoHeight = this.videoWidth / (16 / 9);
 
@@ -47,6 +54,22 @@ export class WatersComponent implements OnInit {
         this.videoHeight = this.videoWidth / (16 / 9);
       });
   
+  }
+
+  ngAfterViewChecked() {
+    // contentChild is updated after the content has been checked
+
+    if (this.waters != undefined && this.waters.length > 0)
+    {
+      if (!this.goneToBookmark) {
+        this.goneToBookmark = true;
+        // console.log("ngAfterViewChecked: " + this.bookmark);
+        var anchor = document.querySelector("#" + this.bookmark);
+        if (anchor != undefined && anchor != null) {
+          anchor.scrollIntoView();
+        }
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -59,6 +82,15 @@ export class WatersComponent implements OnInit {
     // this.path.push({ lat: 54.098626321067286, long: -1.3566482946865484});
     // this.path.push({ lat: 54.09867070551979, long: -1.357407887485396});
     // this.path.push({ lat: 54.098134031424564, long: -1.3576232247914872});
+
+    this.route.fragment.subscribe(fragment => { this.fragment = fragment; });
+  }
+
+
+  ngAfterViewInit(): void {
+    try {
+      this.bookmark = this.fragment;
+    } catch (e) { }
   }
 
   public videoURL(videoShortCode: string): SafeUrl {
@@ -117,6 +149,8 @@ export class WatersComponent implements OnInit {
           m.icon = `assets/${m.icon}.png`;
         });
       });
+      //console.log("getWaters finished");
+  
     });
 
   }
@@ -125,3 +159,5 @@ export class WatersComponent implements OnInit {
     this.router.navigate(['/login'], { queryParams: { returnUrl: "/waters" } });
   }
 }
+
+

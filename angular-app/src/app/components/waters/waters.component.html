@@ -13,8 +13,8 @@
 </p>
 
 <ul>
-    <li *ngFor="let item of waters">
-        <mat-card class="news-card">
+    <li *ngFor="let item of waters" id="water{{item.id}}">
+        <mat-card class="news-card" >
             <mat-card-header>
                 <mat-card-title>{{item.name}}</mat-card-title>
                 <mat-card-subtitle>{{item.waterType}}</mat-card-subtitle>
