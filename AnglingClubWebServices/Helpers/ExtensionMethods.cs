@@ -30,7 +30,7 @@ namespace AnglingClubWebServices.Helpers
 
 
         /// <summary>
-        /// Returns the season name from [Description("2021/22,2021-03-15,2022-03-14")]
+        /// Returns the season name from [Description("2021/22,2021-04-01,2022-03-31")]
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -42,7 +42,7 @@ namespace AnglingClubWebServices.Helpers
         }
 
         /// <summary>
-        /// Returns the season start date from [Description("2021/22,2021-03-15,2022-03-14")]
+        /// Returns the season start date from [Description("2021/22,2021-04-01,2022-03-31")]
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -54,7 +54,7 @@ namespace AnglingClubWebServices.Helpers
         }
 
         /// <summary>
-        /// Returns the season end date from [Description("2021/22,2021-03-15,2022-03-14")]
+        /// Returns the season end date from [Description("2021/22,2021-04-01,2022-03-31")]
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -102,7 +102,7 @@ namespace AnglingClubWebServices.Helpers
         }
 
         /// <summary>
-        /// Splits an enum desc of [Description("2021/22,2021-03-15,2022-03-14")] into
+        /// Splits an enum desc of [Description("2021/22,2021-04-01,2022-03-31")] into
         /// comma separted parts
         /// </summary>
         /// <param name="season"></param>
