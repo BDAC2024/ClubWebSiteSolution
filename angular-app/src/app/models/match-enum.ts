@@ -86,7 +86,7 @@ export namespace AggregateType {
   export function FullName(type: AggregateType): string {
     switch(type) {
       case AggregateType.Spring:
-        return "Spring Leage";
+        return "Spring League";
       case AggregateType.ClubRiver:
         return "Club Match - River";
       case AggregateType.ClubPond:
