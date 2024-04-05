@@ -29,7 +29,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatBadgeModule} from '@angular/material/badge';
-import { AgmCoreModule } from '@agm/core';
+import { AgmCoreModule } from '@hudsontavares/agm-core';
 
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { NewsComponent } from './components/news/news.component';

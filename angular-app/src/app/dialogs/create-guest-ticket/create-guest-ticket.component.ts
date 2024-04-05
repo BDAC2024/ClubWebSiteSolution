@@ -8,7 +8,7 @@ import { RefData } from 'src/app/models/refData';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { OLDGuestTicket } from 'src/app/models/guest-ticket';
 import { ScreenService } from 'src/app/services/screen.service';
-import { ThrowStmt } from '@angular/compiler';
+//import { ThrowStmt } from '@angular/compiler';
 import { GuestTicketService } from 'src/app/services/guest-ticket.service';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';

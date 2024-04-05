@@ -83,7 +83,7 @@ export class WatersComponent implements OnInit {
     // this.path.push({ lat: 54.09867070551979, long: -1.357407887485396});
     // this.path.push({ lat: 54.098134031424564, long: -1.3576232247914872});
 
-    this.route.fragment.subscribe(fragment => { this.fragment = fragment; });
+    this.route.fragment.subscribe(fragment => { this.fragment = fragment!; });
   }
 
 

@@ -1,4 +1,4 @@
-import { LEADING_TRIVIA_CHARS } from '@angular/compiler/src/render3/view/template';
+// import { LEADING_TRIVIA_CHARS } from '@angular/compiler/src/render3/view/template';
 import { Injectable } from '@angular/core';
 import { LiteEvent } from 'src/app/models/lite-event';
 

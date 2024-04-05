@@ -11,6 +11,7 @@ import { ScreenService } from "src/app/services/screen.service";
 import { ErrorComponent } from "../error/error.component";
 import { GlobalService } from "src/app/services/global.service";
 
+
 @Component({
   selector: 'app-add-member',
   templateUrl: './add-member.component.html',
