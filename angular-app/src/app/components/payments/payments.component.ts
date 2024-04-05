@@ -23,6 +23,7 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
   public payments = new MatTableDataSource<Payment>();
   public displayedColumns: string[] = [];
   public paymentDetails!: PaymentDetail;
+  public exportName: string = "Payments_Membership";
 
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -49,6 +50,7 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     this.selectedPaymentType = tabChangeEvent.index as PaymentType;
+    this.exportName = "Payments_" + PaymentType[this.selectedPaymentType];
     this.loadPayments();
   }
 

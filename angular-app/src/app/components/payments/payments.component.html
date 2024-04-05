@@ -13,6 +13,15 @@
     <p *ngIf="!isLoading && payments.data.length == 0">No payments of this type have been made</p>
 </div>
 
+<button 
+    class="export-button" 
+    mat-stroked-button 
+    color="primary"
+    (click)="exporter.exportTable('csv', {fileName:this.exportName})">
+    Export&nbsp;&nbsp;<mat-icon>cloud_download</mat-icon>
+</button>
+<br/>
+<br/>
 
 <table mat-table matTableExporter #exporter="matTableExporter" [dataSource]="payments" matSort [hidden]="payments.data.length == 0" class="mat-elevation-z8">
 
