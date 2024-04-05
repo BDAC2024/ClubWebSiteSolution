@@ -17,6 +17,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "xlsx/dist/xlsx.mini.min",
+              "ts-md5/dist/md5"
+            ],
             "outputPath": "dist/AnglingClubWebsiteAng",
             "index": "src/index.html",
             "main": "src/main.ts",

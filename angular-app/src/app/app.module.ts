@@ -96,6 +96,8 @@ import { JuniorTacklePleaComponent } from './components/junior-tackle-plea/junio
 import { JuniorMatchesComponent } from './components/junior-matches/junior-matches.component';
 import { JuniorSponsorsComponent } from './components/junior-sponsors/junior-sponsors.component';
 
+import { MatTableExporterModule } from 'mat-table-exporter';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -191,6 +193,7 @@ import { JuniorSponsorsComponent } from './components/junior-sponsors/junior-spo
     ScrollingModule, 
     FateModule,
     FateMaterialModule,
+    MatTableExporterModule,
   ],
   providers: [
     {
