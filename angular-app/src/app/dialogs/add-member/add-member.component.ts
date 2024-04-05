@@ -1,6 +1,6 @@
 import { SelectionModel } from "@angular/cdk/collections";
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
 import { Member } from 'src/app/models/member';
@@ -17,7 +17,7 @@ import { GlobalService } from "src/app/services/global.service";
   styleUrls: ['./add-member.component.css']
 })
 export class AddMemberComponent implements OnInit {
-  emailControl: FormControl = new FormControl();
+  emailControl: UntypedFormControl = new UntypedFormControl();
 
   private membershipNumber!: number;
   public member!: Member;

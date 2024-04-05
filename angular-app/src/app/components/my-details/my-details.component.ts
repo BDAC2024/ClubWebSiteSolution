@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MemberPreferences } from 'src/app/models/memberPreferences';
 import { MembersService } from 'src/app/services/members.service';
 
@@ -9,7 +9,7 @@ import { MembersService } from 'src/app/services/members.service';
   styleUrls: ['./my-details.component.css']
 })
 export class MyDetailsComponent implements OnInit {
-  emailControl: FormControl = new FormControl();
+  emailControl: UntypedFormControl = new UntypedFormControl();
 
   public prefs!: MemberPreferences;
   public status: string = "";

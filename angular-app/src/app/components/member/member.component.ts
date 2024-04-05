@@ -8,7 +8,7 @@ import { MembersService } from 'src/app/services/members.service';
 import { SelectionModel } from "@angular/cdk/collections";
 import { RefData, Season } from 'src/app/models/refData';
 import { RefDataService } from 'src/app/services/ref-data.service';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-member',
@@ -16,7 +16,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./member.component.css']
 })
 export class MemberComponent implements OnInit {
-  emailControl: FormControl = new FormControl();
+  emailControl: UntypedFormControl = new UntypedFormControl();
 
   private membershipNumber!: number;
   public member!: Member;

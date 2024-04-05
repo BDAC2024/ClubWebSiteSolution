@@ -3,7 +3,7 @@ import { MembershipPaymentRequest, ProductMembership } from 'src/app/models/memb
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { map, startWith } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { PaymentsService } from 'src/app/services/payments.service';
 import { Router } from '@angular/router';
 import { RefDataService } from 'src/app/services/ref-data.service';
@@ -19,7 +19,7 @@ import { FateMaterialIconService } from 'fate-editor';
 })
 export class BuyMembershipsComponent implements OnInit {
 
-  myControl: FormControl = new FormControl();
+  myControl: UntypedFormControl = new UntypedFormControl();
 
   public membershipList: ProductMembership[] = [];
 

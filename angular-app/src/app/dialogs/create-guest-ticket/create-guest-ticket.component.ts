@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { Member } from 'src/app/models/member';
@@ -52,8 +52,8 @@ const IDEAL_DIALOG_HEIGHT = 715;
 })
 
 export class CreateGuestTicketComponent implements OnInit, OnDestroy, AfterViewInit {
-  myControl: FormControl = new FormControl();
-  emailControl: FormControl = new FormControl();
+  myControl: UntypedFormControl = new UntypedFormControl();
+  emailControl: UntypedFormControl = new UntypedFormControl();
   
   private VIEWING_SCALE = 3.8;
   private PRINTING_SCALE = 10;
