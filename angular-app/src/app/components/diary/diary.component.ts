@@ -2,13 +2,18 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { CalendarExportDialogComponent } from 'src/app/dialogs/calendar-export-dialog/calendar-export-dialog.component';
 import { MatchInfoComponent } from 'src/app/dialogs/match-info/match-info.component';
+import { CalendarExport, CalendarExportDialogData } from 'src/app/models/calendar-export';
+import { CalendarExportTypes } from 'src/app/models/calendar-export-types';
 import { ClubEvent } from 'src/app/models/club-event';
 import { DisplayedColumnsForEvents } from 'src/app/models/displayed-columns-events';
 import { EventType } from 'src/app/models/event-enum';
 import { RefData } from 'src/app/models/refData';
+import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { ClubEventService } from 'src/app/services/club-event.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { MembersService } from 'src/app/services/members.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { ScreenService } from 'src/app/services/screen.service';
 
@@ -36,7 +41,9 @@ export class DiaryComponent implements OnInit {
     public clubEventService: ClubEventService,
     public refDataService: RefDataService,
     public dialog: MatDialog,
-    public globalService: GlobalService
+    public globalService: GlobalService,
+    public authenticationService: AuthenticationService,
+    public membersService: MembersService
   ) { 
     this.displayedColumns = [];
 
@@ -125,5 +132,55 @@ export class DiaryComponent implements OnInit {
       this.loadEvents();
     });
 
+  }
+
+  public exportCalendar() {
+    //var item: NewsItem = { dbKey: "", title: "", body: "", date: new Date() };
+    var item: CalendarExportDialogData = { seasons: this.refData.seasons, season: this.selectedSeason, email: this.membersService.CurrentMember.email, calendarExportTypes: new CalendarExportTypes() };
+
+    const dialogRef = this.dialog.open(CalendarExportDialogComponent, {
+      width: this.screenService.IsHandset ? '90vw' : '60vw',
+      data: item
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`The dialog was closed : `);
+
+      // if (result) {
+      //   console.log("Exporting...");
+
+      //   var dto : CalendarExport = {
+      //     season: result.season,
+      //     email: result.email,
+      //     selectedCalendarExportTypes: []
+      //   }
+
+      //   if (result.calendarExportTypes.all) {
+      //     dto.selectedCalendarExportTypes.push(0);
+      //   }
+      //   if (result.calendarExportTypes.allMatches) {
+      //     dto.selectedCalendarExportTypes.push(1);
+      //   }
+      //   if (result.calendarExportTypes.meetings) {
+      //     dto.selectedCalendarExportTypes.push(2);
+      //   }
+      //   if (result.calendarExportTypes.pondMatches) {
+      //     dto.selectedCalendarExportTypes.push(3);
+      //   }
+      //   if (result.calendarExportTypes.riverMatches) {
+      //     dto.selectedCalendarExportTypes.push(4);
+      //   }
+
+      //   this.clubEventService.exportCalendar(dto).subscribe();
+      // }
+    });
+  }
+
+  public isPreviewer(): boolean {
+    if (this.refData != null) {
+      return this.authenticationService.isPreviewer(this.refData.appSettings.previewers);
+    } else {
+      return false;
+    }
   }
 }

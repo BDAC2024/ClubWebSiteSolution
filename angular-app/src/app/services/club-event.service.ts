@@ -9,6 +9,7 @@ import { ScreenService } from './screen.service';
 import { plainToClass } from 'class-transformer';
 import { GlobalService } from './global.service';
 import { map } from 'rxjs/operators';
+import { CalendarExport } from '../models/calendar-export';
 
 @Injectable({
   providedIn: 'root'
@@ -39,4 +40,9 @@ export class ClubEventService {
                   plainToClass(ClubEvent, res)
               ));
   }
+
+  public exportCalendar(dto: CalendarExport): Observable<any> {
+    return this.http.post<CalendarExport>(`${this.globalService.ApiUrl}/api/events/export`, dto);
+  }
+
 }

@@ -97,6 +97,7 @@ import { JuniorMatchesComponent } from './components/junior-matches/junior-match
 import { JuniorSponsorsComponent } from './components/junior-sponsors/junior-sponsors.component';
 
 import { MatTableExporterModule } from 'mat-table-exporter';
+import { CalendarExportDialogComponent } from './dialogs/calendar-export-dialog/calendar-export-dialog.component';
 
 @NgModule({
   declarations: [
@@ -155,6 +156,7 @@ import { MatTableExporterModule } from 'mat-table-exporter';
     JuniorTacklePleaComponent,
     JuniorMatchesComponent,
     JuniorSponsorsComponent,
+    CalendarExportDialogComponent,
   ],
   imports: [
     BrowserModule,
