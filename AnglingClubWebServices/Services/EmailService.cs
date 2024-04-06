@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 
 namespace AnglingClubWebServices.Services
 {
@@ -38,7 +39,7 @@ namespace AnglingClubWebServices.Services
             SendEmail(new List<string> { _options.PrimaryEmailUsername }, subject, textBody, attachmentFilenames, canvasAttachments);
         }
 
-        public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null, List<ImageAttachment> imageAttachments = null)
+        public void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null, List<ImageAttachment> imageAttachments = null, List<StreamAttachment> streamAttachments = null)
         {
             if (to.Any())
             {
@@ -81,6 +82,13 @@ namespace AnglingClubWebServices.Services
                     }
                 }
 
+                if (streamAttachments != null)
+                {
+                    foreach (var att in streamAttachments)
+                    {
+                        builder.Attachments.Add(att.Filename, att.Bytes, new MimeKit.ContentType(att.ContentType, ""));
+                    }
+                }
                 mailMessage.Body = builder.ToMessageBody();
 
                 sendWithFallback(mailMessage);
