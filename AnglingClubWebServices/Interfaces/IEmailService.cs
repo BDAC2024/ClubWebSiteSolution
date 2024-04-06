@@ -6,7 +6,7 @@ namespace AnglingClubWebServices.Interfaces
 {
     public interface IEmailService
     {
-        void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null, List<ImageAttachment> imageAttachments = null);
+        void SendEmail(List<string> to, string subject, string textBody, List<string> attachmentFilenames = null, List<ImageAttachment> imageAttachments = null, List<StreamAttachment> streamAttachments = null);
         void SendEmailToSupport(string subject, string textBody, List<string> attachmentFilenames = null, List<ImageAttachment> imageAttachments = null);
     }
 }

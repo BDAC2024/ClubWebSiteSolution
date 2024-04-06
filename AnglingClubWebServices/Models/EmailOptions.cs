@@ -1,4 +1,5 @@
 ﻿using AnglingClubWebServices.Helpers;
+using System.IO;
 
 namespace AnglingClubWebServices.Models
 {
@@ -64,6 +65,14 @@ namespace AnglingClubWebServices.Models
     {
         public string DataUrl { get; set; }
         public string Filename { get; set; }
+    }
+
+    public class StreamAttachment
+    {
+        public string Filename { get; set; }
+        public byte[] Bytes { get; set; }
+        //eg text/calendar
+        public string ContentType { get; set; }
     }
 
 }

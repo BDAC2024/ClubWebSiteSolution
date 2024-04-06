@@ -11,6 +11,25 @@ namespace AnglingClubWebServices.Interfaces
         Meeting,
     }
 
+    public enum CalendarExportType
+    {
+
+        [Description("Matches, Meetings and Work Parties")]
+        All = 0,
+
+        [Description("All Matches and Work Parties")]
+        AllMatches,
+
+        [Description("Meetings and Work Parties")]
+        Meetings,
+
+        [Description("Spring League Matches, Junior Matches and Work Parties")]
+        PondMatches,
+
+        [Description("Club/River Matches and Work Parties")]
+        RiverMatches,
+    }
+
     public enum MatchType
     {
         [Description("Spring League")]
