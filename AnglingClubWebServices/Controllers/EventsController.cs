@@ -87,6 +87,32 @@ namespace AnglingClubWebServices.Controllers
                 }
             }
 
+            /* Test data
+             * 
+             * PROD
+                Event:3a4e7925-9e1f-47d4-8f55-59cc1fd26fb2
+                Event:2bce451b-8883-49b5-a65a-9d26647c3a65
+                Event:fa764c8a-d7e6-4ae3-8fdc-529b5576907d
+                Event:48c1a0f8-6a81-48b5-b88b-6f1ad7818be5
+
+             * DEV
+                Event:23aa99bb-4978-4f9d-96b6-c321df3d8733
+                Event:76422e66-a73f-40da-a07d-91c8b11739c0
+                Event:c9a28642-df73-4d66-a9e1-5b8ae295631e
+                Event:0e7a20fa-d823-420f-aa7d-7f2a7f8bae18
+             
+             
+             * Code
+                var nonMatches = (_eventRepository.GetEvents().Result).Where(x => 
+                    x.DbKey == "Event:23aa99bb-4978-4f9d-96b6-c321df3d8733" ||
+                    x.DbKey == "Event:76422e66-a73f-40da-a07d-91c8b11739c0" ||
+                    x.DbKey == "Event:c9a28642-df73-4d66-a9e1-5b8ae295631e" ||
+                    x.DbKey == "Event:0e7a20fa-d823-420f-aa7d-7f2a7f8bae18");
+
+                var matches = (_eventRepository.GetEvents().Result).Where(x => x.DbKey == "NoSuchItem");
+             
+             **/
+
             var nonMatches = (_eventRepository.GetEvents().Result).Where(x => x.Season == calendarExportDto.Season && selectedEventTypes.Contains(x.EventType));
             var matches = (_eventRepository.GetEvents().Result).Where(x => x.Season == calendarExportDto.Season && x.MatchType.HasValue && selectedMatchTypes.Contains(x.MatchType.Value));
 
@@ -107,7 +133,7 @@ namespace AnglingClubWebServices.Controllers
                 {
                     Summary = $"BDAC {(ev.EventType == EventType.Match ? ev.MatchType.EnumDescription() : ev.EventType.EnumDescription())}: {ev.Description}",
                     Description = desc,
-                    Start = new CalDateTime(ev.Date),
+                    Start = new CalDateTime(ev.Date, "Europe/London"),
                     IsAllDay = ev.Date.ToShortTimeString() == "00:00"
                 };
 
@@ -123,7 +149,7 @@ namespace AnglingClubWebServices.Controllers
                 {
                     Summary = $"BDAC {ev.MatchType.EnumDescription()}: {ev.Description}",
                     Description = $"{ev.MatchType.EnumDescription()} no.{ev.Number}{(ev.Cup.IsNullOrEmpty() ? "" : " for ")}{ev.Cup}",
-                    Start = new CalDateTime(ev.Date),
+                    Start = new CalDateTime(ev.Date, "Europe/London"),
                     IsAllDay = ev.Date.ToShortTimeString() == "00:00"
                 };
 
