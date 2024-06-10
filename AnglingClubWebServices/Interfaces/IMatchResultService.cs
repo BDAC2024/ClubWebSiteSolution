@@ -8,5 +8,7 @@ namespace AnglingClubWebServices.Interfaces
         List<MatchResult> GetResults(string matchId, MatchType matchType);
         List<LeaguePosition> GetLeagueStandings(AggregateType aggType, Season season);
         List<AggregateWeight> GetAggregateWeights(AggregateType aggType, Season season);
+
+        List<TrophyWinner> GetTrophyWinners(TrophyType trophyType, Season season);
     }
 }

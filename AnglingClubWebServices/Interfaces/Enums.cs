@@ -239,4 +239,10 @@ namespace AnglingClubWebServices.Interfaces
         Disabled12Months,
         Disabled6Months
     }
+
+    public enum TrophyType
+    {
+        Senior,
+        Junior
+    }
 }
