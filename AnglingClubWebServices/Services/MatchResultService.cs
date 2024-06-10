@@ -1,8 +1,11 @@
-﻿using AnglingClubWebServices.Interfaces;
+﻿using AnglingClubWebServices.Data;
+using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using MatchType = AnglingClubWebServices.Interfaces.MatchType;
 
 namespace AnglingClubWebServices.Services
@@ -13,18 +16,21 @@ namespace AnglingClubWebServices.Services
         private readonly IEventRepository _eventRepository;
         private readonly IMemberRepository _memberRepository;
         private readonly ILogger<MatchResultService> _logger;
+        private readonly ITrophyWinnerRepository _trophyWinnerRepository;
 
         public MatchResultService(
             IMatchResultRepository matchResultRepository,
             IEventRepository eventRepository,
             IMemberRepository memberRepository,
             ILoggerFactory loggerFactory
-        )
+,
+            ITrophyWinnerRepository trophyWinnerRepository)
         {
             _matchResultRepository = matchResultRepository;
             _eventRepository = eventRepository;
             _memberRepository = memberRepository;
             _logger = loggerFactory.CreateLogger<MatchResultService>();
+            _trophyWinnerRepository = trophyWinnerRepository;
         }
 
         public List<MatchResult> GetResults(string matchId, MatchType matchType)
@@ -153,7 +159,73 @@ namespace AnglingClubWebServices.Services
             return league.OrderByDescending(x => x.TotalWeightDecimal).ToList();
         }
 
+        public List<TrophyWinner> GetTrophyWinners(TrophyType trophyType, Season season)
+        {
+            List<int> aggregateTypes = new List<int>();
 
+            if (trophyType == TrophyType.Senior)
+            {
+                aggregateTypes.Add((int)AggregateType.ClubRiver);
+                aggregateTypes.Add((int)AggregateType.ClubPond);
+                aggregateTypes.Add((int)AggregateType.Pairs);
+            }
+            else
+            {
+                aggregateTypes.Add((int)AggregateType.Junior);
+            }
+
+            var seasonsMatches = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match && x.Season == season).ToList();
+
+            var matchesWithTrophies = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match && x.AggregateType.HasValue && aggregateTypes.Contains((int)x.AggregateType.Value) && x.Season == season && x.Cup != null && x.Cup != "");
+            var matchIds = matchesWithTrophies.Select(x => x.Id);
+            var matchResultsForTrophies = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
+            var members = _memberRepository.GetMembers(season, true).Result;
+
+            List<TrophyWinner> trophyWinners = new List<TrophyWinner>();
+            
+            foreach (ClubEvent match in matchesWithTrophies) 
+            {
+                var trophyWinner = new TrophyWinner()
+                {
+                    AggregateType = match.AggregateType,
+                    Date = match.Date,
+                    DateDesc = "",
+                    MatchType = match.MatchType,
+                    Season = match.Season,
+                    Trophy = match.Cup,
+                    TrophyType = trophyType,
+                    Venue = match.Description
+                };
+
+                if (matchResultsForTrophies.Any(x => x.MatchId == match.Id))
+                {
+                    var winner = matchResultsForTrophies.Where(x => x.MatchId == match.Id).OrderByDescending(x => x.WeightDecimal).First();
+
+                    trophyWinner.WeightDecimal = winner.WeightDecimal;
+                    trophyWinner.Winner = members.Single(x => x.MembershipNumber == winner.MembershipNumber).Name;
+                    trophyWinner.IsRunning = false;
+                }
+                else
+                {
+                    trophyWinner.IsRunning = true;
+                }
+
+                trophyWinners.Add(trophyWinner);
+            }
+
+
+            var nonMatchtrophyWinners = (_trophyWinnerRepository.GetTrophyWinners().Result).Where(x => x.Season == season && x.TrophyType == trophyType);
+
+            trophyWinners.AddRange(nonMatchtrophyWinners);
+
+            // Set to "Final" if the trophy mmatch has a date, has a winner and is before today
+            foreach (var winner in trophyWinners.Where(x => x.Date.HasValue && x.Winner != "" && x.Date < DateTime.Now))
+            {
+                winner.IsRunning = false;
+            }
+
+            return trophyWinners.OrderBy(x => x.DateDesc).ThenBy(x => x.Date).ToList();
+        }
     }
 
 }
