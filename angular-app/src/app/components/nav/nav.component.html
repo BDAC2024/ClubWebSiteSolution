@@ -3,7 +3,7 @@
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
-    <mat-toolbar class="toolbar" ><img src="assets/FishingClubLogo3.png" class="club-logo"></mat-toolbar>
+    <mat-toolbar class="toolbar" ><img src="assets/FishingClubLogo3.png" title="logo" class="club-logo"></mat-toolbar>
     <!-- <mat-nav-list *ngIf="previewService.previewCodeValid"> -->
     <mat-nav-list >
       <a mat-list-item routerLink="/welcome">Welcome</a>
@@ -31,6 +31,7 @@
 				<div class="submenu" [ngClass]="{'expanded' : showStandingsSubMenu}" *ngIf="showStandingsSubMenu">
 					<a mat-list-item routerLink="/standings">Leagues</a>
 					<a mat-list-item routerLink="/aggregateWeights">Weights</a>
+					<a mat-list-item routerLink="/trophyWinners">Trophies</a>
 				</div>
 
         <a mat-list-item routerLink="/diary">Diary of Events</a>
@@ -176,7 +177,7 @@
       </mat-chip-list> -->
       <div class="toolbar-icons">
         <div>
-          <a aria-label="Club on Facebook" target="_blank" rel="noopener" href="https://www.facebook.com/groups/309517003231207" title="Club's Facebook Group">
+          <a aria-label="Club on Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/groups/309517003231207" title="Club's Facebook Group">
             <img
                 id="facebook-logo"
                 alt="Facebook Logo"
@@ -185,7 +186,7 @@
           </a>
         </div>
         <div>
-          <a aria-label="Club on YouTube" target="_blank" rel="noopener" href="https://www.youtube.com/channel/UCYBuOPmEEqB7CQ2ABSGW6Og" title="Club's YouTube Channel">
+          <a aria-label="Club on YouTube" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCYBuOPmEEqB7CQ2ABSGW6Og" title="Club's YouTube Channel">
             <svg id="youtube-logo" height="24" width="24" data-name="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff">
               <path d="M0 0h24v24H0V0z" fill="none"/>
               <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/>

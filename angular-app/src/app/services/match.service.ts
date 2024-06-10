@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ClubEvent } from 'src/app/models/club-event';
-import { AggregateType, MatchType } from 'src/app/models/match-enum';
+import { AggregateType, MatchType, TrophyType } from 'src/app/models/match-enum';
 import { EventType } from '../models/event-enum';
 import { ClubEventService } from './club-event.service';
 import { ScreenService } from './screen.service';
@@ -44,4 +44,12 @@ export class MatchService {
   private getAggTabName(type: AggregateType): string {
     return this.screenService.IsHandsetPortrait? AggregateType.CompactName(type) : AggregateType.FullName(type)
   }
+
+  public get TrophySeniorTabName() : string { return this.getTrophyTabName(TrophyType.Senior); }
+  public get TrophyJuniorTabName() : string { return this.getTrophyTabName(TrophyType.Junior); }
+
+  private getTrophyTabName(type: TrophyType): string {
+    return this.screenService.IsHandsetPortrait? TrophyType.CompactName(type) : TrophyType.FullName(type)
+  }
+
 }

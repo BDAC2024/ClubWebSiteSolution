@@ -103,4 +103,32 @@ export namespace AggregateType {
         return AggregateType[type];
     }
   }
+
+}
+export enum TrophyType {
+  Senior = 0,
+  Junior,
+}
+
+export namespace TrophyType {
+  export function CompactName(type: TrophyType): string {
+    switch(type) {
+      case TrophyType.Senior:
+        return "Senior";
+      case TrophyType.Junior:
+        return "Junior";
+      default:
+        return TrophyType[type];
+    }
+  }
+  export function FullName(type: TrophyType): string {
+    switch(type) {
+      case TrophyType.Senior:
+        return "Senior Trophies";
+      case TrophyType.Junior:
+        return "Junior Trophies";
+      default:
+        return TrophyType[type];
+    }
+  }
 }

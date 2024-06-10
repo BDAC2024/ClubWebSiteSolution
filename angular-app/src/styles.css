@@ -8,6 +8,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-weight: lighter;
 }
 
+.tbd {
+    font-weight: lighter;
+    font-style: italic;
+}
+
 .mat-drawer {
     background-color:whitesmoke;
 }

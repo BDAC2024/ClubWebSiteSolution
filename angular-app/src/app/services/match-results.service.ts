@@ -6,9 +6,10 @@ import { map } from 'rxjs/operators';
 import { AggregateWeight } from '../models/aggregate-weight';
 import { LeagueStanding } from '../models/league-standing';
 import { MatchResult } from '../models/match';
-import { AggregateType } from '../models/match-enum';
+import { AggregateType, TrophyType } from '../models/match-enum';
 import { Season } from '../models/refData';
 import { GlobalService } from './global.service';
+import { TrophyWinner } from '../models/trophy-winner';
 
 @Injectable({
   providedIn: 'root'
@@ -41,4 +42,12 @@ public readAggregateWeights(type: AggregateType, season: number): Observable<Agg
               plainToClass(AggregateWeight, res)
           ));
 }
+
+public readTrophyWinners(type: TrophyType, season: number): Observable<TrophyWinner[]> {
+  return this.http.get<TrophyWinner[]>(`${this.globalService.ApiUrl}/api/trophywinners/${type}/${season}`)
+            .pipe(map(res => 
+              plainToClass(TrophyWinner, res)
+          ));
+}
+
 }
