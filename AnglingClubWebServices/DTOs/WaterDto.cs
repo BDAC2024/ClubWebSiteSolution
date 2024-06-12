@@ -54,5 +54,21 @@ namespace AnglingClubWebServices.DTOs
                 return Markers.Any(x => x.Icon.ToLower().Contains("limit"));
             }
         }
+
+        public List<string> W3wCarParks
+        {
+            get
+            {
+                List<string> carParks = new List<string>();
+
+                var carParkList = W3wCarPark.Split(",");
+                foreach (var carPark in carParkList)
+                {
+                    carParks.Add(carPark.Trim());
+                }
+
+                return carParks;
+            }
+        }
     }
 }

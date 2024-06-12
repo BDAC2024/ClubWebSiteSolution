@@ -84,6 +84,7 @@ namespace AnglingClubWebServices.Interfaces
     {
         Stillwater = 0,
         River,
+        Canal
     }
 
     public enum WaterAccessType
