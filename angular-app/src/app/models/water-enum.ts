@@ -1,6 +1,7 @@
 export enum WaterType {
     Stillwater = 0,
     River,
+    Canal
 }
 
 export enum WaterAccessType {

@@ -34,8 +34,12 @@
                         <div [innerHTML]="item.description"></div>
                         <h3>Directions</h3>
                         <div title="What 3 Words divides the world into 3 metre squares and gives each square a unique combination of three words. Clicking the link will open it on a map.">
-                            What 3 Words car parking location: <a [href]="item.what3WordsUrl" target="_blank" >{{item.w3wCarPark}}</a>
-                            <br/>
+                            What 3 Words car parking location(s):
+                            <ul>
+                                <li *ngFor="let w3w of item.w3w" style="padding-left: 20px; margin-bottom: 0;">
+                                    <a [href]="w3w.url" target="_blank" >{{w3w.carPark}}</a>
+                                </li>
+                            </ul>
                             <br/>
                         </div>
                         <div [innerHTML]="item.directions"></div>

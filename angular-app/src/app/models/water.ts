@@ -8,7 +8,7 @@ export class Water {
     waterType!: string;
     accessType!: string;
     description!: string;
-    w3wCarPark!: string;
+    w3wCarParks!: string[];
     videoShortCode!: string;
     species!: string;
     directions!: string;
@@ -22,8 +22,19 @@ export class Water {
         return `https://www.google.co.uk/maps/dir//${this.destination.lat},${this.destination.long}`
     }
 
-    public get what3WordsUrl(): string {
-        return `https://what3Words.com/${this.w3wCarPark.replace("///", "")}?maptype=satellite`
+    public get w3w(): What3Words[] {
+        var w3wItems: What3Words[] = [];
+
+        this.w3wCarParks.forEach((carPark) => {
+
+            var item: What3Words = new What3Words;
+            item.carPark = carPark;
+            item.url = `https://what3Words.com/${carPark.replace("///", "")}?maptype=satellite`;
+
+            w3wItems.push(item);
+        });
+
+        return w3wItems;
     }
 }
 
@@ -42,4 +53,9 @@ export class Marker {
 export class Position {
     lat!: number;
     long!: number;
+}
+
+export class What3Words {
+    carPark!: string;
+    url!: string;
 }
