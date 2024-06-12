@@ -86,7 +86,10 @@ namespace AnglingClubWebServices.Controllers
                     for (int i = 0; i < paths.Length; i++)
                     {
                         var path = paths[i].Split(',');
-                        dto.Path.Add(new Position { Lat = double.Parse(path[0]), Long = double.Parse(path[1]) });
+                        if (path.Length > 1) 
+                        {
+                            dto.Path.Add(new Position { Lat = double.Parse(path[0]), Long = double.Parse(path[1]) });
+                        }
                     }
 
                     waterDtos.Add(dto);
