@@ -409,7 +409,7 @@ namespace AnglingClubWebServices.Controllers
                     var memberEmail = new List<string> { member.Email };
                     _memberRepository.AddOrUpdateMember(member);
 
-                    _emailService.SendEmail(memberEmail, $"Your new PIN for Boroughbridge Angling Club", $"Your PIN has been reset to <b>{newPin}</b>. You will have have to change this to a new PIN of your choice when you login.");
+                    _emailService.SendEmail(memberEmail, $"Your new PIN for Boroughbridge Angling Club", $"Your PIN has been reset to <b>{newPin}</b>. You will have to change this to a new PIN of your choice when you login.");
                 }
                 else
                 {
@@ -462,7 +462,7 @@ namespace AnglingClubWebServices.Controllers
 
                 var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
 
-                _emailService.SendEmail(userAdmins, $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")}, PIN has been reset", $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")} has a new PIN of <b>{newPin}</b>. Please contact them to inform them of their new PIN.<br/><br/><b>Note:</b> They will have have to change this to a new PIN of their choice when they login.");
+                _emailService.SendEmail(userAdmins, $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")}, PIN has been reset", $"User {member.MembershipNumber}{(member.AllowNameToBeUsed ? $" ({member.Name})" : "")} has a new PIN of <b>{newPin}</b>. Please contact them to inform them of their new PIN.<br/><br/><b>Note:</b> They will have to change this to a new PIN of their choice when they login.");
 
                 ReportTimer("PIN reset done");
 
