@@ -43,8 +43,8 @@
                     <a mat-list-item routerLink="/buyMemberships">Memberships - buy online</a>
                 </div>
             </li>
-            <li *ngIf="this.refDataService.isPreviewer() && !isLoading">
-                <div class="custom-badge-wide preview-option" 
+            <li *ngIf="!isLoading">
+                <div class="custom-badge-wide" 
                     matBadge="new" 
                     matBadgeOverlap="true" 
                     matBadgePosition="after" 
