@@ -22,7 +22,7 @@ using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Stripe;
 using Stripe.Checkout;
-using static AutoMapper.Internal.ExpressionFactory;
+//using static AutoMapper.Internal.ExpressionFactory;
 
 namespace AnglingClubWebServices.Controllers
 {
