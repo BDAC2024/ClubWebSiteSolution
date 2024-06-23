@@ -69,16 +69,31 @@ namespace AnglingClubWebServices.Controllers
             var sw = new Stopwatch();
 
             _logger.LogWarning($"Inside Index for WebHookController - 1");
+
+            _logger.LogWarning($"About to get json - log 2");
+
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+            _logger.LogWarning($"Got json - log 5");
+            //_logger.LogWarning($"json - log 6 = {JsonSerializer.Serialize(json)}");
+            //_logger.LogWarning($"Stripe-Signature - log 7 = {Request.Headers["Stripe-Signature"]}");
+            //_logger.LogWarning($"_endpointSecret - log 8 = {_endpointSecret}");
+
             try
             {
-                var stripeEvent = EventUtility.ConstructEvent(json,
-                    Request.Headers["Stripe-Signature"], _endpointSecret);
+                // Set this to false if webhooks have failed due to an api version mis-match. Once the outstanding items have been processed, set it back to true.
+                bool throwOnApiVersionMismatch = true;
+
+                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _endpointSecret, 300, throwOnApiVersionMismatch);
+
+                _logger.LogWarning($"Got stripe event - log 10");
 
                 // Handle the event
                 if (stripeEvent.Type == Events.PaymentIntentSucceeded)
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+
+                    _logger.LogWarning($"Got paymentIntent - log 20");
 
                     var existingOrderForThisPayment = _orderRepository.GetOrders().Result.FirstOrDefault(x => x.PaymentId == paymentIntent.Id);
 
@@ -88,6 +103,8 @@ namespace AnglingClubWebServices.Controllers
                     }
                     else
                     {
+                        _logger.LogWarning($"Order for this payment doesnt exist so processing - log 30");
+
                         sw.Start();
 
                         var sessionService = new SessionService();
@@ -97,24 +114,34 @@ namespace AnglingClubWebServices.Controllers
 
                         StripeList<Session> sessions = sessionService.List(sessionOptions);
 
+                        _logger.LogWarning($"Got sessions - log 40");
+
                         var productListOptions = new ProductListOptions { Ids = sessions.First().LineItems.Select(x => x.Price.ProductId).ToList() };
                         var productService = new ProductService();
                         var products = productService.List(productListOptions);
                         var product = products.First(x => x.Metadata.ContainsKey("Category"));
+
+                        _logger.LogWarning($"Got product - log 50");
 
                         var category = product.Metadata.Where(m => m.Key == "Category").First().Value;
                         var paymentType = category.GetValueFromDescription<PaymentType>();
 
                         var purchaseItem = product.Name;
 
+                        _logger.LogWarning($" log 60");
+
                         var chargeService = new ChargeService();
                         var charge = chargeService.Get(paymentIntent.LatestChargeId);
 
                         var paymentMetaData = new PaymentMetaData(paymentIntent.Metadata);
 
+                        _logger.LogWarning($" log 70");
+
                         decimal fee = 0.0m;
                         try
                         {
+                            _logger.LogWarning($" log 80");
+
                             var paymentIntentOptions = new PaymentIntentGetOptions();
                             paymentIntentOptions.AddExpand("latest_charge.balance_transaction");
 
@@ -128,14 +155,20 @@ namespace AnglingClubWebServices.Controllers
                             // continue to create order
                         }
 
+                        _logger.LogWarning($" log 90");
+
                         var order = new Order();
                         order.OrderType = paymentType;
 
                         var existingOrders = _orderRepository.GetOrders().Result;
                         var latestOrderId = existingOrders.Any() ? existingOrders.Max(x => x.OrderId) : 0;
 
+                        _logger.LogWarning($" log 100");
+
                         var existingOrdersOfThisType = existingOrders.Where(x => x.OrderType == order.OrderType);
                         var latestTicketNumber = existingOrdersOfThisType.Any() ? existingOrdersOfThisType.Max(x => x.TicketNumber) : 0;
+
+                        _logger.LogWarning($" log 110");
 
                         order.OrderId = latestOrderId + 1;
                         order.Description = purchaseItem;
@@ -144,10 +177,15 @@ namespace AnglingClubWebServices.Controllers
                         order.PaidOn = paymentIntent.Created;
                         order.PaymentId = paymentIntent.Id;
                         order.Status = charge.Paid ? "Paid" : "Failed";
+
+                        _logger.LogWarning($" log 120 : order = {JsonSerializer.Serialize(order)}");
+
                         switch (paymentType)
                         {
                             case PaymentType.Membership:
                                 {
+                                    _logger.LogWarning($" log 130 - membership");
+
                                     order.MembersName = paymentMetaData.Name;
 
                                     var appSettings = _appSettingRepository.GetAppSettings().Result;
@@ -195,6 +233,8 @@ namespace AnglingClubWebServices.Controllers
 
                             case PaymentType.PondGateKey:
                                 {
+                                    _logger.LogWarning($" log 140 - PondGateKey");
+
                                     order.MembersName = paymentMetaData.Name;
 
                                     var appSettings = _appSettingRepository.GetAppSettings().Result;
@@ -241,6 +281,9 @@ namespace AnglingClubWebServices.Controllers
                                 }
 
                             case PaymentType.GuestTicket:
+
+                                _logger.LogWarning($" log 150 - GuestTicket");
+
                                 order.TicketNumber = latestTicketNumber + 1;
                                 order.MembersName = paymentMetaData.MembersName;
                                 order.GuestsName = paymentMetaData.GuestsName;
@@ -248,6 +291,9 @@ namespace AnglingClubWebServices.Controllers
                                 break;
 
                             case PaymentType.DayTicket:
+
+                                _logger.LogWarning($" log 160 - DayTicket");
+
                                 order.TicketNumber = latestTicketNumber + 1;
                                 order.TicketHoldersName = paymentMetaData.TicketHoldersName;
                                 order.ValidOn = paymentMetaData.ValidOn.AddHours(12); // Ensure we don't get caught out by daylight savings!
@@ -377,7 +423,7 @@ namespace AnglingClubWebServices.Controllers
             }
             catch (StripeException e)
             {
-                _logger.LogError(e, $"Stripe webhook failed with: {e.StripeError.Message}");
+                _logger.LogError(e, "Stripe webhook failed");
                 return BadRequest(e.StripeError.Message);
             }
             catch (Exception e)
