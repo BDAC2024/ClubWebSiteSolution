@@ -26,7 +26,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
                 var url = location.AbsoluteUri;
-                return url.Contains("amazonaws");
+                return url.ToLower().Contains("amazonaws");
             }
         }
 
