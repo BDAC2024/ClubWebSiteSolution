@@ -28,6 +28,8 @@ export class BuyGuestTicketsComponent implements OnInit {
 
   public isEnabled: boolean = true;
   public isEnabling: boolean = false;
+
+  public confirmNoNightFishing: boolean = false;
   
   constructor(    
     public refDataService: RefDataService,
@@ -92,7 +94,8 @@ export class BuyGuestTicketsComponent implements OnInit {
             this.guestTicket.membersName != null && 
             this.guestTicket.membersName.trim() != "" &&
             this.guestTicket.guestsName != null && 
-            this.guestTicket.guestsName.trim() != "";
+            this.guestTicket.guestsName.trim() != "" &&
+            this.confirmNoNightFishing;
     }
 
     public enable(enabled: boolean): void {

@@ -34,6 +34,8 @@ export class BuyMembershipsComponent implements OnInit {
   public isEnabling: boolean = false;
 
   public confirmCertificate: boolean = false;
+  public confirmNoNightFishing: boolean = false;
+  public confirmWaitForBook: boolean = false;
 
   constructor(
     public refDataService: RefDataService,
@@ -69,6 +71,8 @@ export class BuyMembershipsComponent implements OnInit {
     this.newMembership.dbKey = selected.dbKey;
     this.newMembership.cancelUrl = this.baseUrl;
     this.confirmCertificate = false;
+    this.confirmNoNightFishing = false;
+    this.confirmWaitForBook = false;
 
   }
 
@@ -204,7 +208,9 @@ export class BuyMembershipsComponent implements OnInit {
     var valid = this.newMembership.name != null && 
            this.newMembership.name.trim() != "" &&
            this.newMembership.dob != null &&
-           this.newMembership.acceptPolicies;
+           this.newMembership.acceptPolicies &&
+           this.confirmNoNightFishing &&
+           this.confirmWaitForBook;
            
     var validUnderAge: boolean = !this.isUnderAge();
     var validDisabled: boolean = !this.isDisabled();

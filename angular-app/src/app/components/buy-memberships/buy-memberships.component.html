@@ -136,7 +136,7 @@
                             <mat-label>Mobile phone number</mat-label>
                             <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContactPhoneMobile">
                         </mat-form-field>
-    
+        
                         <br/>
                         <b>Declaration</b>
                         <div class="checkbox-wrapper">
@@ -147,6 +147,14 @@
                         <div class="checkbox-wrapper">
                             <mat-checkbox [(ngModel)]="newMembership.parentalConsent" class="checkbox-top">
                                 <p>I acknowledge that {{newMembership.name}} will behave responsibly at all times whilst using the club's waters and fishing matches.</p>
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmWaitForBook" class="checkbox-top">I understand that <span class="attention">{{newMembership.name}} cannot fish until membership book has been received</span>.
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmNoNightFishing" class="checkbox-top">I understand that <span class="attention">night fishing is NOT permitted</span>.
                             </mat-checkbox>
                         </div>
                         <br/>
@@ -176,6 +184,15 @@
                         <br *ngIf="isDisabled()" />
                         <div class="checkbox-wrapper">
                             <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for membership of the above club and do agree to abide by the rules set down in the clubrule book and notice boards, also to any such alterations that may be deemed necessary from time to time.</mat-checkbox>
+                        </div>
+                        <br/>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmNoNightFishing" class="checkbox-top">I understand that <span class="attention">night fishing is NOT permitted</span>.
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmWaitForBook" class="checkbox-top">I understand that <span class="attention">I cannot fish until I receive my membership book</span>.
+                            </mat-checkbox>
                         </div>
                         <br/>
                         <p>In the event of any misconduct on my part, the club hold the sole right to withdraw my membership and that the committee decision will be final</p>

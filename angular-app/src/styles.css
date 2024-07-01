@@ -111,6 +111,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-size: smaller;
 }
 
+.error-alert-card {
+    /* background-color: red; */
+    color: red;
+    font-size: smaller;
+    border: 2px solid red
+}
+
+.attention {
+    color: red;
+    font-weight: bold;
+}
+
 .errors {
     color:red;
     font-size: smaller;

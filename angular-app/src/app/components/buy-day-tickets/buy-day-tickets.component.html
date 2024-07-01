@@ -81,6 +81,11 @@
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
+                <div class="checkbox-wrapper">
+                    <mat-checkbox [(ngModel)]="confirmNoNightFishing" class="checkbox-top">I understand that <span class="attention">night fishing is NOT permitted</span>.
+                    </mat-checkbox>
+                </div>
+
                 <div class="errors" *ngIf="this.errorMessage != ''">
                     {{this.errorMessage}}
                 </div>

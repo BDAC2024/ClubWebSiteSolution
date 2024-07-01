@@ -112,7 +112,7 @@
 					<a mat-list-item routerLink="/anglingTrust">Angling Trust</a>
 				</div>
         
-        <mat-list-item (click)="showJnrSectionSubMenu = !showJnrSectionSubMenu" class="parent" *ngIf="isPreviewer()" title="WILL BE PUBLIC">
+        <!-- <mat-list-item (click)="showJnrSectionSubMenu = !showJnrSectionSubMenu" class="parent" *ngIf="isPreviewer()" title="WILL BE PUBLIC">
           <span class="full-width custom-badge preview-option" 
             matBadge="new" 
             matBadgeOverlap="false" 
@@ -129,7 +129,7 @@
 					<a mat-list-item routerLink="/juniorTrophies" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Junior Trophies</a>
 					<a mat-list-item routerLink="/juniorTacklePlea" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Tackle Plea</a>
 					<a mat-list-item routerLink="/juniorMatches" *ngIf="isPreviewer()" title="MEMBERS ONLY" class=" preview-option">Matches</a>
-				</div>
+				</div> -->
         
         <mat-list-item (click)="showAdminSubMenu = !showAdminSubMenu" *ngIf="authenticationService.isAdmin" class="parent">
 					<span class="full-width" >Admin</span>

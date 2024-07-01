@@ -29,6 +29,8 @@ export class BuyDayTicketsComponent implements OnInit {
   public isEnabled: boolean = true;
   public isEnabling: boolean = false;
 
+  public confirmNoNightFishing: boolean = false;
+
   constructor(
     public refDataService: RefDataService,
     private paymentsService: PaymentsService,
@@ -105,7 +107,8 @@ export class BuyDayTicketsComponent implements OnInit {
 
   formComplete(): boolean {
     return this.dayTicket.validOn != null &&
-          this.dayTicket.holdersName != null;
+          this.dayTicket.holdersName != null && 
+          this.confirmNoNightFishing;
   }
 
   public enable(enabled: boolean): void {
