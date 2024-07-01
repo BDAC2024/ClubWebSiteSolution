@@ -2,8 +2,11 @@ using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Stripe.Climate;
+using Stripe;
 using System.Collections.Generic;
 using System.Web;
+using System;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -88,6 +91,26 @@ namespace AnglingClubWebServices.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("TestMembership")]
+        public IActionResult TestmembershipEmail()
+        {
+            if (IsProd)
+            {
+                return BadRequest("Disabled in prod");
+            }
+
+            _emailService.SendEmail(
+                new List<string> { "stve@townendmail.co.uk" },
+                $"Confirmation of membership purchase",
+                $"Thank you for purchasing <b>TEST MEMBERSHIP</b> .<br/>" +
+                    "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
+                    "<b>Fishing is not permitted until membership book arrives.</b><br/><br/>" +
+                    "Tight lines!,<br/>" +
+                    "Boroughbridge & District Angling Club"
+            );
+            return Ok();
+        }
 
         public class EmailModel
         {

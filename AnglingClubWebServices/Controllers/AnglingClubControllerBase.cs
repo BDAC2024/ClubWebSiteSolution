@@ -20,6 +20,15 @@ namespace AnglingClubWebServices.Controllers
         #region Properties
 
         protected ILogger Logger { get; set; } = null;
+        protected bool IsProd 
+        {
+            get
+            {
+                var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+                var url = location.AbsoluteUri;
+                return url.Contains("amazonaws");
+            }
+        }
 
         protected string Caller
         {

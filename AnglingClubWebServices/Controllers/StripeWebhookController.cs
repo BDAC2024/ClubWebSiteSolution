@@ -212,6 +212,7 @@ namespace AnglingClubWebServices.Controllers
                                                 $"Confirmation of membership purchase",
                                                 $"Thank you for purchasing <b>{order.Description}</b> .<br/>" +
                                                     "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
+                                                    "<b>Fishing is not permitted until membership book arrives.</b><br/><br/>" +
                                                     "Tight lines!,<br/>" +
                                                     "Boroughbridge & District Angling Club"
                                             );
