@@ -12,6 +12,7 @@
     Keep to all footpaths, do not wander from banks. All gates must be closed after being opened. Do not climb on walls. Do not cause a parking obstruction by blocking gateways etc.
 </p>
 
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
 <ul>
     <li *ngFor="let item of waters" id="water{{item.id}}">
         <mat-card class="news-card" >
