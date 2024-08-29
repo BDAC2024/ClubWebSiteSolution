@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using Org.BouncyCastle.Cms;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,6 +50,12 @@ namespace AnglingClubWebServices.Services
                 {
                     mailMessage.To.Add(MailboxAddress.Parse(recipient));
                 }
+
+                if (!string.IsNullOrEmpty(_options.PrimaryEmailBCC))
+                {
+                    mailMessage.Bcc.Add(MailboxAddress.Parse(_options.PrimaryEmailBCC));
+                }
+
                 mailMessage.Subject = subject;
 
                 var builder = new BodyBuilder();

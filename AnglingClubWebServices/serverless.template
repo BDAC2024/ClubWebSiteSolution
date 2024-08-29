@@ -81,6 +81,11 @@
 			"Description" : "",
 			"MinLength" : "0"
 		},
+		"PrimaryEmailBCC" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
   		"FallbackEmailHost" : {
 			"Type" : "String",
 			"Description" : "",
@@ -163,6 +168,7 @@
 				"PrimaryEmailFromName" : { "Ref" : "PrimaryEmailFromName" } ,
 				"PrimaryEmailFromAddress" : { "Ref" : "PrimaryEmailFromAddress" } ,
 				"PrimaryEmailRepairUrl" : { "Ref" : "PrimaryEmailRepairUrl" } ,
+				"PrimaryEmailBCC": { "Ref" : "PrimaryEmailBCC" } ,
 				"FallbackEmailHost" : { "Ref" : "FallbackEmailHost" } ,
 				"FallbackEmailPort" : { "Ref" : "FallbackEmailPort" } ,
 				"FallbackEmailUsername" : { "Ref" : "FallbackEmailUsername" } ,
