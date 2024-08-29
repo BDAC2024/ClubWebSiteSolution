@@ -7,6 +7,7 @@ namespace AnglingClubWebServices.Models
     {
         private string _primaryFromAddress;
         private string _fallbackFromAddress;
+        private string _primaryEmailBCC;
 
         public string PrimaryEmailHost { get; set; }
         public int PrimaryEmailPort { get; set; }
@@ -33,6 +34,27 @@ namespace AnglingClubWebServices.Models
             }
         }
         public string PrimaryEmailRepairUrl { get; set; }
+        public string PrimaryEmailBCC
+        {
+            get
+            {
+                return _primaryEmailBCC;
+            }
+
+            set
+            {
+                if (RegexUtilities.IsValidEmail(value))
+                {
+                    _primaryEmailBCC = value;
+                }
+                else
+                {
+                    throw new System.Exception($"Invalid PrimaryEmailBCC {value}");
+                }
+            }
+        }
+
+
 
         public string FallbackEmailHost { get; set; }
         public int FallbackEmailPort { get; set; }
