@@ -56,8 +56,8 @@ namespace AnglingClubWebServices.Services
 
                     ImageGenerationSettings settings = new ImageGenerationSettings();
                     settings.ImageFormat = ImageFormat.Png;
-                    settings.RasterDpi = 800;
-                    settings.ImageCompressionQuality = ImageCompressionQuality.Best;
+                    settings.RasterDpi = 144;
+                    settings.ImageCompressionQuality = ImageCompressionQuality.VeryHigh;
 
                     var ticketImgPdf = generateDayTicket(holdersName, ticketNumber, validOn, appSettings.DayTicketCost);
                     var ticketImages = ticketImgPdf.GenerateImages(settings);
