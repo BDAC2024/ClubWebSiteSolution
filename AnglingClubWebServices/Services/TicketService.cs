@@ -57,12 +57,18 @@ namespace AnglingClubWebServices.Services
                     ImageGenerationSettings settings = new ImageGenerationSettings();
                     settings.ImageFormat = ImageFormat.Png;
                     settings.RasterDpi = 144;
-                    settings.ImageCompressionQuality = ImageCompressionQuality.VeryHigh;
+                    settings.ImageCompressionQuality = ImageCompressionQuality.Low;
 
-                    var ticketImgPdf = generateDayTicket(holdersName, ticketNumber, validOn, appSettings.DayTicketCost);
-                    var ticketImages = ticketImgPdf.GenerateImages(settings);
+                //_logger.LogWarning("Generating Doc...");
 
-                    _emailService.SendEmail(
+                var ticketImgPdf = generateDayTicket(holdersName, ticketNumber, validOn, appSettings.DayTicketCost);
+                    //var ticketImages = ticketImgPdf.GenerateImages(settings);
+                    //_logger.LogWarning("Generating PDF...");
+                    var ticketPdf = ticketImgPdf.GeneratePdf();
+
+                //_logger.LogWarning("Sending PDF email...");
+
+                _emailService.SendEmail(
                         new List<string> { emailAddress },
                         $"Your Day Ticket for {validOn.PrettyDate()}",
                         $"Please find attached, your day ticket valid for fishing on {validOn.PrettyDate()}.<br/>" +
@@ -71,17 +77,27 @@ namespace AnglingClubWebServices.Services
                             "Tight lines!,<br/>" +
                             "Boroughbridge & District Angling Club",
                         null,
-                        new List<ImageAttachment>
+                        null,
+                        new List<StreamAttachment>
                         {
-                            new ImageAttachment
+                            new StreamAttachment
                             {
-                                Filename = $"Day_Ticket_{validOn:yyyy_MM_dd}.png",
-                                DataUrl = "data:image/png;base64," + Convert.ToBase64String(ticketImages.First())
+                                Bytes = ticketPdf,
+                                ContentType = "application/pdf",
+                                Filename = $"Day_Ticket_{validOn:yyyy_MM_dd}.pdf"
                             }
                         }
+                        //new List<ImageAttachment>
+                        //{
+                        //    new ImageAttachment
+                        //    {
+                        //        Filename = $"Day_Ticket_{validOn:yyyy_MM_dd}.pdf",
+                        //        DataUrl = "data:application/pdf;base64," + Convert.ToBase64String(ticketPdf)
+                        //    }
+                        //}
                     );
 
-
+                //_logger.LogWarning("Sent PDF email");
             }
             catch (Exception ex)
             {

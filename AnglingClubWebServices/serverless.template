@@ -47,6 +47,25 @@
 			"Description" : "Name of developer as given in member JSON file",
 			"MinLength" : "0"
 		},
+  		"UseEmailAPI" : {
+			"AllowedValues": [
+				"true",
+				"false"
+			],
+			"Default": "false",
+			"Description": "To use email API or the old SMTP via Outlook",
+			"Type": "String"
+		},
+  		"EmailAPIPublicKey" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
+		"EmailAPIPrivateKey" : {
+			"Type" : "String",
+			"Description" : "",
+			"MinLength" : "0"
+		},
   		"PrimaryEmailHost" : {
 			"Type" : "String",
 			"Description" : "",
@@ -161,6 +180,9 @@
 				"AuthSecretKey" : { "Ref" : "AuthSecretKey" } ,
 				"AuthExpireMinutes" : { "Ref" : "AuthExpireMinutes" } ,
 				"DeveloperName" : { "Ref" : "DeveloperName" } ,
+				"UseEmailAPI" : { "Ref" : "UseEmailAPI" } ,
+				"EmailAPIPublicKey" : { "Ref" : "EmailAPIPublicKey" } ,
+				"EmailAPIPrivateKey" : { "Ref" : "EmailAPIPrivateKey" } ,
 				"PrimaryEmailHost" : { "Ref" : "PrimaryEmailHost" } ,
 				"PrimaryEmailPort" : { "Ref" : "PrimaryEmailPort" } ,
 				"PrimaryEmailUsername" : { "Ref" : "PrimaryEmailUsername" } ,

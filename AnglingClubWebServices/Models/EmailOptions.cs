@@ -9,6 +9,9 @@ namespace AnglingClubWebServices.Models
         private string _fallbackFromAddress;
         private string _primaryEmailBCC;
 
+        public bool UseEmailAPI { get; set; }
+        public string EmailAPIPublicKey { get; set; }
+        public string EmailAPIPrivateKey { get; set; }
         public string PrimaryEmailHost { get; set; }
         public int PrimaryEmailPort { get; set; }
         public string PrimaryEmailUsername { get; set; }
