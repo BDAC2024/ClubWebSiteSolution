@@ -137,7 +137,7 @@ namespace AnglingClubWebServices.Services
                     {
                             new ImageAttachment
                             {
-                                Filename = $"Day_Ticket_{validOn:yyyy_MM_dd}.png",
+                                Filename = $"Guest_Ticket_{validOn:yyyy_MM_dd}.png",
                                 DataUrl = "data:image/png;base64," + Convert.ToBase64String(ticketImages.First())
                             }
 
