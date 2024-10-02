@@ -259,4 +259,8 @@ export class BuyMembershipsComponent implements OnInit {
       this.isEnabled = result;
     });
   }
+
+  public templateMemberName() : string {
+    return this.newMembership.name == null || this.newMembership.name == "" ? "Member" : this.newMembership.name;
+  }
 }
