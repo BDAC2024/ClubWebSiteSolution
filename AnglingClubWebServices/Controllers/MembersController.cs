@@ -370,16 +370,6 @@ namespace AnglingClubWebServices.Controllers
                 return BadRequest("You cannot modify other member's details"); 
             }
 
-            if (prefs.AllowNameToBeUsed == true && member.AllowNameToBeUsed == false)
-            {
-                // Notify admins of request to use member's name
-                var memberEditUrl = $"{_memberRepository.SiteUrl}member/{member.DbKey}";
-
-                var userAdmins = _userAdminRepository.GetUserAdmins().Result.Select(x => x.EmailAddress).ToList();
-
-                _emailService.SendEmail(userAdmins, $"User {member.MembershipNumber}, action required", $"User {member.MembershipNumber} has requested their name be used in match results. <a href='{memberEditUrl}'>Please update them here</a>");
-            }
-
             member.AllowNameToBeUsed = prefs.AllowNameToBeUsed;
             member.Email = prefs.Email;
             member.PreferencesLastUpdated = DateTime.Now;
