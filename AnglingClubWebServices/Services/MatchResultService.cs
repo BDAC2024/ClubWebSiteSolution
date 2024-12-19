@@ -168,15 +168,14 @@ namespace AnglingClubWebServices.Services
                 aggregateTypes.Add((int)AggregateType.ClubRiver);
                 aggregateTypes.Add((int)AggregateType.ClubPond);
                 aggregateTypes.Add((int)AggregateType.Pairs);
+                aggregateTypes.Add((int)AggregateType.None);
             }
             else
             {
                 aggregateTypes.Add((int)AggregateType.Junior);
             }
 
-            var seasonsMatches = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match && x.Season == season).ToList();
-
-            var matchesWithTrophies = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match && x.AggregateType.HasValue && aggregateTypes.Contains((int)x.AggregateType.Value) && x.Season == season && x.Cup != null && x.Cup != "");
+            var matchesWithTrophies = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match && x.AggregateType.HasValue && aggregateTypes.Contains((int)x.AggregateType.Value) && x.Season == season && x.Cup != null && x.Cup != "" && x.Cup != "Officials");
             var matchIds = matchesWithTrophies.Select(x => x.Id);
             var matchResultsForTrophies = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
             var members = _memberRepository.GetMembers(season, true).Result;
