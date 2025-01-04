@@ -157,6 +157,12 @@ export class BuyMembershipsComponent implements OnInit {
     if (!this.is6Month()) {
       return true;
     }
+
+    return this.SixMonthMembershipAvailable();
+  }
+
+  public SixMonthMembershipAvailable(): boolean {
+    
     var d: Date = new Date();
 
     const month = (d).getMonth();
@@ -175,6 +181,14 @@ export class BuyMembershipsComponent implements OnInit {
 
   public is6Month(): boolean {
     return this.selectedMembership.term == "6 months - Winter";
+  }
+
+  public is12Month(): boolean {
+    return this.selectedMembership.term == "12 months";
+  }
+
+  public is6MonthAlternativeAvailable(): boolean {
+    return this.is12Month() && this.SixMonthMembershipAvailable() && (this.selectedMembership.description == "Adult" || this.selectedMembership.description == "Junior");
   }
 
   public isUnderAge(): boolean {

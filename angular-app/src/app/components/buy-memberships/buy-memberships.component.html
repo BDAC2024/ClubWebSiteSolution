@@ -70,6 +70,15 @@
                 </p>
                 <p>Term: <b>{{selectedMembership.term}}</b> - Runs from {{selectedMembership.runs}}
                 </p>
+                <mat-card class="warning-card" *ngIf="this.is6MonthAlternativeAvailable()">
+                    <mat-card-header>
+                        <mat-card-title>Please Note</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        This membership runs from {{selectedMembership.runs}} so will expire within the next 6 months. Please consider purchasing a 6 month membership instead.
+                    </mat-card-content>
+                </mat-card>
+
                 <div *ngIf="membershipAvailable()">
                     <mat-form-field>
                         <mat-label *ngIf="!isUnderAge()">Name</mat-label>
