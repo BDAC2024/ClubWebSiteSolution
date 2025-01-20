@@ -1,5 +1,258 @@
 ﻿@inherits LayoutComponentBase
 
-<main>
-    @Body
-</main>
+@using Syncfusion.Blazor.Navigations
+
+<div class="body-container @(menuShowingOnMobile ? "body-container-not-scrollable" : "body-container-scrollable")">
+
+    <div class="banner">
+        <div onclick="@Toggle" class="banner-hamburger">
+            X
+        </div>
+        <div class="banner-text">
+            Boroughbridge & District
+            <br />
+            Angling Club
+        </div>
+    </div>
+
+    <!-- MediaQuery="(min-width: 600px)" -->
+    <SfSidebar Width="200px" Animate="false" Type=SidebarType.Auto OnOpen="OnMenuOpen" OnClose="OnMenuClose" @bind-IsOpen="menuIsOpen" Target="@Target" >
+        <ChildContent >
+            <div class="menu-scrollable">
+                <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true">
+                    <TreeViewFieldsSettings 
+                    TValue="MenuItem" 
+                    Id="Id" 
+                    DataSource="@Menu" 
+                    Text="Name" 
+                    ParentID="ParentId" 
+                    HasChildren="HasSubMenu"
+                    NavigateUrl="NavigateUrl"
+                    Expanded="Expanded">
+                    </TreeViewFieldsSettings>
+                    <TreeViewEvents TValue="MenuItem" NodeClicked="MenuSelected"></TreeViewEvents>
+                    <TreeViewTemplates TValue="MenuItem">
+                        <NodeTemplate>
+                            @{
+                                var item = ((context as MenuItem));
+                                <div>
+                                    <div class="treeviewdiv">
+                                        <div class="nodetext">@(item.Name)</div>
+                                        @if (item.HasSubMenu)
+                                        {
+                                            <div class="nodebadge">
+                                                <SfChip>
+                                                    <ChipItems>
+                                                        <ChipItem Text="New" CssClass="e-warning"></ChipItem>
+                                                    </ChipItems>
+                                                </SfChip>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </NodeTemplate>
+                    </TreeViewTemplates>
+                </SfTreeView>
+            </div>
+
+        </ChildContent>
+    </SfSidebar>
+
+    <div class="maincontent text-content" >
+        <div style="text-align: left;">
+            <main>
+                @Body
+            </main>
+        </div>
+        <!-- DIV for creating an Overlay -->
+        <div class="@(menuShowingOnMobile ? "dim" : "hidden")"></div>
+    </div>
+
+</div>
+
+<SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
+
+@code {
+    private bool showDebugMessages = false;
+
+    public string Target = ".maincontent";
+
+    private string deviceSize { get; set; } = "";
+    private string activeBreakpoint { get; set; } = "";
+
+    public bool SidebarToggle = false;
+    public void Toggle()
+    {
+        showConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
+        showConsoleMessage($"Toggle:mobilePortrait - {mobilePortrait}");
+
+        menuIsOpen = !oldMenuIsOpen;
+        menuShowingOnMobile = mobilePortrait && menuIsOpen;
+
+        // if (oldMenuIsOpen)
+        // {
+        //     if (mobilePortrait)
+        //     {
+        //         menuShowingOnMobile = false;
+        //     }
+
+        // }
+        // else
+        // {
+        //     menuIsOpen = !oldMenuIsOpen;
+
+        //     if (mobilePortrait)
+        //     {
+        //         menuShowingOnMobile = true;
+        //     }
+        // }
+
+        // menuIsOpen = mobilePortrait && !oldMenuIsOpen;
+        // if (menuIsOpen)
+        // {
+        //     menuShowingOnMobile = mobilePortrait;
+        //     oldMenuIsOpen = true;
+        // }
+        // else
+        // {
+        //     oldMenuIsOpen = false;
+        // }
+
+
+        // SidebarToggle = !SidebarToggle;
+
+        // // showConsoleMessage(activeBreakpoint);
+
+        // if (mobilePortrait)
+        // {
+        //     menuShowingOnMobile = SidebarToggle;
+        // }
+    }
+
+    public bool menuShowingOnMobile = false;
+    public bool mobilePortrait = false;
+    public bool menuIsOpen = false;
+    public bool oldMenuIsOpen = false;
+
+    public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
+    {
+        oldMenuIsOpen = true;
+        showConsoleMessage("Menu opening");
+    }
+
+    public void OnMenuClose(Syncfusion.Blazor.Navigations.EventArgs args)
+    {
+        oldMenuIsOpen = false;
+        showConsoleMessage("Menu closing");
+    }
+
+    public void OnBreakpointChanged(BreakpointChangedEventArgs args)
+    {
+        showConsoleMessage($"OnBreakpointChanged:Breakpoint changed - now {activeBreakpoint}");
+        mobilePortrait = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
+
+        menuIsOpen = !mobilePortrait;
+
+        showConsoleMessage($"OnBreakpointChanged:mobilePortrait - now {mobilePortrait}");
+        showConsoleMessage($"OnBreakpointChanged:menuIsOpen - now {menuIsOpen}");
+
+        menuShowingOnMobile = mobilePortrait && menuIsOpen;
+
+        showConsoleMessage($"OnBreakpointChanged:menuShowingOnMobile - now {menuShowingOnMobile}");
+
+    }
+
+    public void MenuSelected(NodeClickEventArgs args)
+    {
+        bool isLeafNode = !args.NodeData.HasChildren;
+
+        showConsoleMessage($"MenuSelected - leaf node {isLeafNode}");
+
+        if (mobilePortrait && isLeafNode) 
+        {
+            menuIsOpen = false;
+            menuShowingOnMobile = false;
+        }
+    }
+
+    public void showConsoleMessage(string message)
+    {
+        if (showDebugMessages)
+        {
+            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
+        }
+    }
+
+    public class MenuItem
+    {
+        public string Id { get; set; } = "";
+        public string? ParentId { get; set; } = null;
+        public string Name { get; set; } = "";
+        public bool Expanded { get; set; } = false;
+        public bool HasSubMenu { get; set; } = false;
+        public string? NavigateUrl { get; set; } = null;
+    }
+
+    List<MenuItem> Menu = new List<MenuItem>();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Menu.Add(new MenuItem { Id = "1", Name = "Welcome", NavigateUrl = "/"});
+        Menu.Add(new MenuItem { Id = "2", Name = "News", NavigateUrl = "/News" });
+        Menu.Add(new MenuItem { Id = "3", Name = "Club Waters"});
+        Menu.Add(new MenuItem { Id = "4", Name = "Matches"});
+        Menu.Add(new MenuItem { Id = "5", Name = "Standings", HasSubMenu = true});
+                Menu.Add(new MenuItem { Id = "5.1", ParentId="5", Name = "Leagues"});
+                Menu.Add(new MenuItem { Id = "5.2", ParentId="5", Name = "Weights"});
+                Menu.Add(new MenuItem { Id = "5.3", ParentId="5", Name = "Trophies"});
+        Menu.Add(new MenuItem { Id = "6", Name = "Diary of Events"});
+        Menu.Add(new MenuItem { Id = "7", Name = "Buy Online", HasSubMenu = true});
+                Menu.Add(new MenuItem { Id = "7.1", ParentId="7", Name = "Memberships"});
+                Menu.Add(new MenuItem { Id = "7.2", ParentId="7", Name = "Day Tickets"});
+                Menu.Add(new MenuItem { Id = "7.3", ParentId="7", Name = "Guest Tickets"});
+        Menu.Add(new MenuItem { Id = "8", Name = "Club Info", HasSubMenu = true});
+                Menu.Add(new MenuItem { Id = "8.1", ParentId="8", Name = "Club Officers"});
+                Menu.Add(new MenuItem { Id = "8.2", ParentId="8", Name = "Rules", HasSubMenu = true});
+                        Menu.Add(new MenuItem { Id = "8.2.1", ParentId="8.2", Name = "General"});
+                        Menu.Add(new MenuItem { Id = "8.2.2", ParentId="8.2", Name = "Match"});
+                        Menu.Add(new MenuItem { Id = "8.2.3", ParentId="8.2", Name = "Junior General"});
+                        Menu.Add(new MenuItem { Id = "8.2.4", ParentId="8.2", Name = "Junior Match"});
+                Menu.Add(new MenuItem { Id = "8.3", ParentId="8", Name = "Club Forms" });
+                Menu.Add(new MenuItem { Id = "8.4", ParentId="8", Name = "Privacy Notice"});
+                Menu.Add(new MenuItem { Id = "8.5", ParentId="8", Name = "Environmental" });
+                Menu.Add(new MenuItem { Id = "8.6", ParentId="8", Name = "Angling Trust" });
+        Menu.Add(new MenuItem { Id = "9", Name = "Admin", HasSubMenu = true});
+                Menu.Add(new MenuItem { Id = "9.1", ParentId="9", Name = "Members"});
+                Menu.Add(new MenuItem { Id = "9.2", ParentId="9", Name = "User Admins"});
+                Menu.Add(new MenuItem { Id = "9.3", ParentId="9", Name = "Payments"});
+        Menu.Add(new MenuItem { Id = "10", Name = "My Details"});
+        Menu.Add(new MenuItem { Id = "11", Name = "Logout"});
+
+    }
+}
+
+<style>
+
+    .dim {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 2 !important;
+        background-color: black;
+        opacity: 0.25;
+    }
+
+    .hidden {
+        display: none;  
+    }
+
+    /* Sidebar styles  */
+    .e-sidebar {
+        background-color: whitesmoke;
+    }
+
+ </style>
