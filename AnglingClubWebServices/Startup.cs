@@ -17,6 +17,7 @@ namespace AnglingClubWebServices
     public class Startup
     {
 
+        // Dummy to test repo rename
 
         private static string _corsPolicy = "AnglingClubWebsiteOrigins";
         public const string LogLevelKey = "LogLevel";
