@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31112.23
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnglingClubWebServices", "AnglingClubWebServices\AnglingClubWebServices.csproj", "{E521BC83-7F2C-4905-AE4E-A739E8051102}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnglingClubWebsite", "AnglingClubWebsite\AnglingClubWebsite.csproj", "{40E1E857-8B38-4369-A901-124D862D7F49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnglingClubShared", "AnglingClubShared\AnglingClubShared.csproj", "{AC7217E8-2357-432B-9F7F-16E4E25A7F97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{E521BC83-7F2C-4905-AE4E-A739E8051102}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E521BC83-7F2C-4905-AE4E-A739E8051102}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E521BC83-7F2C-4905-AE4E-A739E8051102}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40E1E857-8B38-4369-A901-124D862D7F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40E1E857-8B38-4369-A901-124D862D7F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40E1E857-8B38-4369-A901-124D862D7F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40E1E857-8B38-4369-A901-124D862D7F49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC7217E8-2357-432B-9F7F-16E4E25A7F97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC7217E8-2357-432B-9F7F-16E4E25A7F97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC7217E8-2357-432B-9F7F-16E4E25A7F97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC7217E8-2357-432B-9F7F-16E4E25A7F97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
