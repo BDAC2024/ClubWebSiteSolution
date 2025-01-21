@@ -1,31 +1,60 @@
-﻿@inherits MvvmLayoutComponentBase<MainLayoutViewModel>
-
-@using AnglingClubWebsite.SharedComponents
+﻿@using AnglingClubWebsite.SharedComponents
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Navigations
+
+@inherits MvvmLayoutComponentBase<MainLayoutViewModel>
+
 
 <div class="body-container @(menuShowingOnMobile ? "body-container-not-scrollable" : "body-container-scrollable")">
 
     <div class="banner">
-        <div @onclick="Toggle" class="banner-hamburger" style="width: 50px; height: 50px; align-items: center; background-color: pink; color: black;">
-            X
+        <div class="menu-column">
+            <i @onclick="ShowMenu" class="fa-solid fa-bars banner-hamburger @(menuIsOpen ? "banner-hamburger-hidden" : "banner-hamburger-visible")"></i>
+         </div>
+        <div class="title-column">
+            <div class="title-container">
+                <div class="banner-logo">
+                    <img class="image" height="80" src="images/FishingClubLogo3.png"/>
+                </div>
+                <div class="banner-text">
+                    <span class="main-title">Boroughbridge & District</span>
+                    <br/>
+                    <span class="sub-title">Angling Club</span>
+                </div>
+            </div>
         </div>
-        <div class="banner-text">
-            Boroughbridge & District
-            <br />
-            Angling Club
+        <div class="icon-column">
+            <div>
+                <a aria-label="Club on Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/groups/309517003231207" title="Club's Facebook Group">
+                    <img id="facebook-logo"
+                         alt="Facebook Logo"
+                         src="images/FacebookLogo.png" />
+                </a>
+                <br/>
+                <a aria-label="Club on YouTube" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCYBuOPmEEqB7CQ2ABSGW6Og" title="Club's YouTube Channel">
+                    <svg id="youtube-logo" height="24" width="24" data-name="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff">
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z" />
+                    </svg>
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- MediaQuery="(min-width: 600px)" -->
-    <SfSidebar Width="200px" Animate="true" Type=SidebarType.Auto OnOpen="OnMenuOpen" OnClose="OnMenuClose" @bind-IsOpen="menuIsOpen" Target="@Target" >
-        <ChildContent >
+    <SfSidebar Width="200px"
+               Animate="true"
+               Type=SidebarType.Auto
+               OnOpen="OnMenuOpen"
+               OnClose="OnMenuClose"
+               @bind-IsOpen="menuIsOpen"
+               Target="@SidebarTarget">
+        <ChildContent>
             <div class="menu-scrollable">
                 <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true">
                     <TreeViewFieldsSettings 
                     TValue="MenuItem" 
                     Id="Id" 
-                    DataSource="@Menu" 
+                    DataSource="@ViewModel.Menu" 
                     Text="Name" 
                     ParentID="ParentId" 
                     HasChildren="HasSubMenu"
@@ -39,10 +68,10 @@
                                 var item = ((context as MenuItem));
                                 <div>
                                     <div class="treeviewdiv">
-                                        <div class="nodetext">@(item.Name)</div>
+                                        <div class="menu-nodetext">@(item.Name)</div>
                                         @if (item.HasSubMenu)
                                         {
-                                            <div class="nodebadge">
+                                            <div class="menu-nodebadge">
                                                 <SfChip>
                                                     <ChipItems>
                                                         <ChipItem Text="new" CssClass="e-warning"></ChipItem>
@@ -61,15 +90,14 @@
         </ChildContent>
     </SfSidebar>
 
-    <div class="maincontent text-content" >
-        <div style="text-align: left;">
-            @ViewModel.TestMessage
+    <div class="menu-and-main-wrapper">
+        <div class="main-content">
             <main>
                 @Body
             </main>
         </div>
         <!-- DIV for creating an Overlay -->
-        <div class="@(menuShowingOnMobile ? "dim" : "hidden")"></div>
+        <div class="@(menuShowingOnMobile ? "overlay-dim" : "overlay-hidden")"></div>
     </div>
 
 </div>
@@ -77,66 +105,23 @@
 <SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
 
 @code {
-    private bool showDebugMessages = true;
+    public string SidebarTarget = ".menu-and-main-wrapper";
 
-    public string Target = ".maincontent";
-
-    private string deviceSize { get; set; } = "";
     private string activeBreakpoint { get; set; } = "";
 
-    public bool SidebarToggle = false;
-    public void Toggle()
+    public bool menuShowingOnMobile = false;
+    public bool mobilePortrait = false;
+    public bool menuIsOpen = false;
+    public bool oldMenuIsOpen = false;
+
+    public void ShowMenu()
     {
         showConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
         showConsoleMessage($"Toggle:mobilePortrait - {mobilePortrait}");
 
         menuIsOpen = !oldMenuIsOpen;
         menuShowingOnMobile = mobilePortrait && menuIsOpen;
-
-        // if (oldMenuIsOpen)
-        // {
-        //     if (mobilePortrait)
-        //     {
-        //         menuShowingOnMobile = false;
-        //     }
-
-        // }
-        // else
-        // {
-        //     menuIsOpen = !oldMenuIsOpen;
-
-        //     if (mobilePortrait)
-        //     {
-        //         menuShowingOnMobile = true;
-        //     }
-        // }
-
-        // menuIsOpen = mobilePortrait && !oldMenuIsOpen;
-        // if (menuIsOpen)
-        // {
-        //     menuShowingOnMobile = mobilePortrait;
-        //     oldMenuIsOpen = true;
-        // }
-        // else
-        // {
-        //     oldMenuIsOpen = false;
-        // }
-
-
-        // SidebarToggle = !SidebarToggle;
-
-        // // showConsoleMessage(activeBreakpoint);
-
-        // if (mobilePortrait)
-        // {
-        //     menuShowingOnMobile = SidebarToggle;
-        // }
     }
-
-    public bool menuShowingOnMobile = false;
-    public bool mobilePortrait = false;
-    public bool menuIsOpen = false;
-    public bool oldMenuIsOpen = false;
 
     public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
     {
@@ -181,81 +166,11 @@
 
     public void showConsoleMessage(string message)
     {
-        if (showDebugMessages)
+        if (ViewModel.ShowDebugMessages)
         {
             Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
         }
     }
 
-    public class MenuItem
-    {
-        public string Id { get; set; } = "";
-        public string? ParentId { get; set; } = null;
-        public string Name { get; set; } = "";
-        public bool Expanded { get; set; } = false;
-        public bool HasSubMenu { get; set; } = false;
-        public string? NavigateUrl { get; set; } = null;
-    }
-
-    List<MenuItem> Menu = new List<MenuItem>();
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        Menu.Add(new MenuItem { Id = "1", Name = "Welcome", NavigateUrl = "/"});
-        Menu.Add(new MenuItem { Id = "2", Name = "News", NavigateUrl = "/News" });
-        Menu.Add(new MenuItem { Id = "3", Name = "Club Waters"});
-        Menu.Add(new MenuItem { Id = "4", Name = "Matches"});
-        Menu.Add(new MenuItem { Id = "5", Name = "Standings", HasSubMenu = true});
-                Menu.Add(new MenuItem { Id = "5.1", ParentId="5", Name = "Leagues"});
-                Menu.Add(new MenuItem { Id = "5.2", ParentId="5", Name = "Weights"});
-                Menu.Add(new MenuItem { Id = "5.3", ParentId="5", Name = "Trophies"});
-        Menu.Add(new MenuItem { Id = "6", Name = "Diary of Events"});
-        Menu.Add(new MenuItem { Id = "7", Name = "Buy Online", HasSubMenu = true});
-                Menu.Add(new MenuItem { Id = "7.1", ParentId="7", Name = "Memberships"});
-                Menu.Add(new MenuItem { Id = "7.2", ParentId="7", Name = "Day Tickets"});
-                Menu.Add(new MenuItem { Id = "7.3", ParentId="7", Name = "Guest Tickets"});
-        Menu.Add(new MenuItem { Id = "8", Name = "Club Info", HasSubMenu = true});
-                Menu.Add(new MenuItem { Id = "8.1", ParentId="8", Name = "Club Officers"});
-                Menu.Add(new MenuItem { Id = "8.2", ParentId="8", Name = "Rules", HasSubMenu = true});
-                        Menu.Add(new MenuItem { Id = "8.2.1", ParentId="8.2", Name = "General"});
-                        Menu.Add(new MenuItem { Id = "8.2.2", ParentId="8.2", Name = "Match"});
-                        Menu.Add(new MenuItem { Id = "8.2.3", ParentId="8.2", Name = "Junior General"});
-                        Menu.Add(new MenuItem { Id = "8.2.4", ParentId="8.2", Name = "Junior Match"});
-                Menu.Add(new MenuItem { Id = "8.3", ParentId="8", Name = "Club Forms" });
-                Menu.Add(new MenuItem { Id = "8.4", ParentId="8", Name = "Privacy Notice"});
-                Menu.Add(new MenuItem { Id = "8.5", ParentId="8", Name = "Environmental" });
-                Menu.Add(new MenuItem { Id = "8.6", ParentId="8", Name = "Angling Trust" });
-        Menu.Add(new MenuItem { Id = "9", Name = "Admin", HasSubMenu = true});
-                Menu.Add(new MenuItem { Id = "9.1", ParentId="9", Name = "Members"});
-                Menu.Add(new MenuItem { Id = "9.2", ParentId="9", Name = "User Admins"});
-                Menu.Add(new MenuItem { Id = "9.3", ParentId="9", Name = "Payments"});
-        Menu.Add(new MenuItem { Id = "10", Name = "My Details"});
-        Menu.Add(new MenuItem { Id = "11", Name = "Logout"});
-
-    }
 }
 
-<style>
-
-    .dim {
-        height: 100%;
-        width: 100%;
-        position: fixed;
-        left: 0;
-        top: 0;
-        z-index: 2 !important;
-        background-color: black;
-        opacity: 0.25;
-    }
-
-    .hidden {
-        display: none;  
-    }
-
-    /* Sidebar styles  */
-    .e-sidebar {
-        background-color: whitesmoke;
-    }
-
- </style>

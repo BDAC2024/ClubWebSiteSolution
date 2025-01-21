@@ -6,4 +6,6 @@ using System.Threading.Tasks;
 
 namespace AnglingClubShared
 {
+    public record class TurnOnDebugMessages(bool YesOrNo);
+
 }
