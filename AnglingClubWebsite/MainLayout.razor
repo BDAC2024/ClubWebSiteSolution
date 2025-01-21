@@ -1,11 +1,12 @@
 ﻿@inherits LayoutComponentBase
 
+@using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Navigations
 
 <div class="body-container @(menuShowingOnMobile ? "body-container-not-scrollable" : "body-container-scrollable")">
 
     <div class="banner">
-        <div onclick="@Toggle" class="banner-hamburger">
+        <div @onclick="Toggle" class="banner-hamburger" style="width: 50px; align-items: center; background-color: yellow; color: black;">
             X
         </div>
         <div class="banner-text">
@@ -16,7 +17,7 @@
     </div>
 
     <!-- MediaQuery="(min-width: 600px)" -->
-    <SfSidebar Width="200px" Animate="false" Type=SidebarType.Auto OnOpen="OnMenuOpen" OnClose="OnMenuClose" @bind-IsOpen="menuIsOpen" Target="@Target" >
+    <SfSidebar Width="200px" Animate="true" Type=SidebarType.Auto OnOpen="OnMenuOpen" OnClose="OnMenuClose" @bind-IsOpen="menuIsOpen" Target="@Target" >
         <ChildContent >
             <div class="menu-scrollable">
                 <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true">
