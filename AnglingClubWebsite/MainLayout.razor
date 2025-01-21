@@ -1,12 +1,13 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits MvvmLayoutComponentBase<MainLayoutViewModel>
 
+@using AnglingClubWebsite.SharedComponents
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Navigations
 
 <div class="body-container @(menuShowingOnMobile ? "body-container-not-scrollable" : "body-container-scrollable")">
 
     <div class="banner">
-        <div @onclick="Toggle" class="banner-hamburger" style="width: 50px; align-items: center; background-color: yellow; color: black;">
+        <div @onclick="Toggle" class="banner-hamburger" style="width: 50px; height: 50px; align-items: center; background-color: pink; color: black;">
             X
         </div>
         <div class="banner-text">
@@ -44,7 +45,7 @@
                                             <div class="nodebadge">
                                                 <SfChip>
                                                     <ChipItems>
-                                                        <ChipItem Text="New" CssClass="e-warning"></ChipItem>
+                                                        <ChipItem Text="new" CssClass="e-warning"></ChipItem>
                                                     </ChipItems>
                                                 </SfChip>
                                             </div>
@@ -62,6 +63,7 @@
 
     <div class="maincontent text-content" >
         <div style="text-align: left;">
+            @ViewModel.TestMessage
             <main>
                 @Body
             </main>
@@ -75,7 +77,7 @@
 <SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
 
 @code {
-    private bool showDebugMessages = false;
+    private bool showDebugMessages = true;
 
     public string Target = ".maincontent";
 

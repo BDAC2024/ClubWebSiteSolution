@@ -1,4 +1,5 @@
 using AnglingClubWebsite;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Syncfusion.Blazor;
@@ -14,5 +15,11 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+// Infrastructure
+builder.Services.AddScoped<IMessenger, WeakReferenceMessenger>();
+
+// ViewModels
+builder.Services.AddScoped<MainLayoutViewModel>();
 
 await builder.Build().RunAsync();
