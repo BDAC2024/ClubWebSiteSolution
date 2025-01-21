@@ -12,137 +12,20 @@ body {
     /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
 }
 
-.banner-hamburger {
-    width: 50px;
-    display: inline-block;
+h3 {
+    margin: 6px 0 2px;
 }
 
-.banner-text {
-    width: 250px;
-    display: inline-block;
-}
-
-.banner {
-    /*    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-*/
-    height: 100px;
-    background-color: #1976d2;
-    color: white;
-    z-index: 3 !important;
-    position: relative;
-}
-
-.body-container {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    right: 0;
-    bottom: 0px;
-}
-
-.menu-scrollable {
-    overflow-y: auto !important;
-    height: calc(100vh - 120px) !important;
-}
-
-.body-container-scrollable {
-    overflow-y: auto;
-}
-
-.body-container-not-scrollable {
-    overflow-y: hidden;
-}
-
-.maincontent {
-    min-height: calc(100vh - 140px) !important;
-    /*background-color: yellow;*/
-    z-index: 1;
-}
-
-.nodebadge {
-    float: right;
-    margin-right: 5px
-}
-
-.nodetext {
-    float: left;
-}
-
-.e-chip .e-chip-text {
-    font-size: 8px;
-    font-weight: normal;
-    padding-top: 4px;
-}
-
-.e-chip {
-    height: 14px !important;
-}
-
-.text-content {
-    font-size: 14px;
-    padding: 1rem;
-    z-index: 0;
-}
-
-.e-treeview .e-list-text {
-    font-family: Roboto, "Helvetica Neue", sans-serif !important;
-    padding-left: 4px !important;
-}
-
-.e-active > .e-text-content .e-list-text {
-    color: black !important;
-}
-
-.e-treeview .e-text-content {
-    padding-left: 12px !important;
-}
-
-.e-active > .e-fullrow {
-    background-color: #dddddd !important;
-    border-width: 0 !important;
-}
+/*-------------------------
+    Responsive class definitions
+--------------------------*/
 
 @media screen and (min-width: 1px) {
-    .e-selected {
-        color: black !important;
-        font-weight: bold;
-    }
 
-    .e-menu {
-        background-color: whitesmoke !important;
-    }
-
-    .e-menu-parent {
-        background-color: whitesmoke !important;
-    }
-
-    .e-menu-item {
-        font-size: 14px !important;
-        background-color: whitesmoke !important;
-        margin: 10px 0 !important;
-    }
 }
 
 @media screen and (min-width: 600px) {
-    .e-selected {
-        color: black !important;
-        font-weight: bold;
-    }
 
-    .e-menu {
-        background-color: whitesmoke !important;
-    }
-
-    .e-menu-parent {
-        background-color: whitesmoke !important;
-    }
-
-    .e-menu-item {
-        font-size: 14px !important;
-        background-color: whitesmoke !important;
-        margin: 10px 0 !important;
-    }
 }
+
+
