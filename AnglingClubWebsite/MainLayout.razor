@@ -70,7 +70,7 @@
                                 var item = ((context as MenuItem));
                                 <div>
                                     <div class="treeviewdiv">
-                                        <div class="menu-nodetext">@(item.Name)</div>
+                                        <div class="menu-nodetext @(item.HasSubMenu ? "menu-node-new" : "")">@(item.Name)</div>
                                         @if (item.HasSubMenu)
                                         {
                                             <div class="menu-nodebadge">
