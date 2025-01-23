@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnglingClubWebsite", "Angli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnglingClubShared", "AnglingClubShared\AnglingClubShared.csproj", "{AC7217E8-2357-432B-9F7F-16E4E25A7F97}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Original Assets", "Original Assets", "{719CF5EA-C0A4-4490-A23E-222E381B14FE}"
+	ProjectSection(SolutionItems) = preProject
+		Original Assets\BannerLogo1.drawio = Original Assets\BannerLogo1.drawio
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
