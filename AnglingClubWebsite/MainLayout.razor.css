@@ -189,6 +189,10 @@
     float: left;
 }
 
+.menu-node-new {
+    color: red;
+}
+
 .menu-nodebadge {
     float: right;
     margin-right: 5px
