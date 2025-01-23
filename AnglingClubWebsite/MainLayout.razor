@@ -10,32 +10,31 @@
     <div class="banner">
         <div class="menu-column">
             <i @onclick="ShowMenu" class="fa-solid fa-bars banner-hamburger @(menuIsOpen ? "banner-hamburger-hidden" : "banner-hamburger-visible")"></i>
-         </div>
+        </div>
         <div class="title-column">
             <div class="title-container">
                 <div class="banner-logo">
-                    @* <img class="image" height="80" src="images/FishingClubLogo3.png"/> *@
-                    <img height="80" src="images/BannerLogoSmall.png" />
+                    @if (mobilePortrait)
+                    {
+                        <img height="80" src="images/BannerLogoSmall.png" />
+                    }
+                    else
+                    {
+                        <img height="80" src="images/BannerLogo.png" />
+                    }
                 </div>
-@*                 <div class="banner-text">
-                    <span class="main-title">Boroughbridge & District</span>
-                    <br/>
-                    <span class="sub-title">Angling Club</span>
-                </div>
- *@            </div>
+            </div>
         </div>
         <div class="icon-column">
-            <div>
+            <div class="icons">
                 <a aria-label="Club on Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/groups/309517003231207" title="Club's Facebook Group">
-                    <img id="facebook-logo"
-                         alt="Facebook Logo"
-                         width="24"
-                         height="24"
-                         src="images/FacebookLogo.png" />
+                    <img id="facebook-logo" class="icon"
+                    alt="Facebook Logo"
+                    src="images/FacebookLogo.png" />
                 </a>
                 <br/>
                 <a aria-label="Club on YouTube" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCYBuOPmEEqB7CQ2ABSGW6Og" title="Club's YouTube Channel">
-                    <svg id="youtube-logo" height="24" width="24" data-name="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff">
+                    <svg id="youtube-logo" class="icon" data-name="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff">
                         <path d="M0 0h24v24H0V0z" fill="none" />
                         <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z" />
                     </svg>
@@ -45,12 +44,12 @@
     </div>
 
     <SfSidebar Width="200px"
-               Animate="true"
-               Type=SidebarType.Auto
-               OnOpen="OnMenuOpen"
-               OnClose="OnMenuClose"
-               @bind-IsOpen="menuIsOpen"
-               Target="@SidebarTarget">
+    Animate="true"
+    Type=SidebarType.Auto
+    OnOpen="OnMenuOpen"
+    OnClose="OnMenuClose"
+    @bind-IsOpen="menuIsOpen"
+    Target="@SidebarTarget">
         <ChildContent>
             <div class="menu-scrollable">
                 <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true">
@@ -113,6 +112,7 @@
     private string activeBreakpoint { get; set; } = "";
 
     public bool menuShowingOnMobile = false;
+    public bool mobile = false;
     public bool mobilePortrait = false;
     public bool menuIsOpen = false;
     public bool oldMenuIsOpen = false;
@@ -120,10 +120,10 @@
     public void ShowMenu()
     {
         showConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
-        showConsoleMessage($"Toggle:mobilePortrait - {mobilePortrait}");
+        showConsoleMessage($"Toggle:mobile - {mobile}");
 
         menuIsOpen = !oldMenuIsOpen;
-        menuShowingOnMobile = mobilePortrait && menuIsOpen;
+        menuShowingOnMobile = mobile && menuIsOpen;
     }
 
     public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
@@ -141,14 +141,15 @@
     public void OnBreakpointChanged(BreakpointChangedEventArgs args)
     {
         showConsoleMessage($"OnBreakpointChanged:Breakpoint changed - now {activeBreakpoint}");
-        mobilePortrait = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
+        mobile = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
+        mobilePortrait = activeBreakpoint == "Small";
 
-        menuIsOpen = !mobilePortrait;
+        menuIsOpen = !mobile;
 
-        showConsoleMessage($"OnBreakpointChanged:mobilePortrait - now {mobilePortrait}");
+        showConsoleMessage($"OnBreakpointChanged:mobile - now {mobile}");
         showConsoleMessage($"OnBreakpointChanged:menuIsOpen - now {menuIsOpen}");
 
-        menuShowingOnMobile = mobilePortrait && menuIsOpen;
+        menuShowingOnMobile = mobile && menuIsOpen;
 
         showConsoleMessage($"OnBreakpointChanged:menuShowingOnMobile - now {menuShowingOnMobile}");
 
@@ -160,7 +161,7 @@
 
         showConsoleMessage($"MenuSelected - leaf node {isLeafNode}");
 
-        if (mobilePortrait && isLeafNode) 
+        if (mobile && isLeafNode) 
         {
             menuIsOpen = false;
             menuShowingOnMobile = false;
