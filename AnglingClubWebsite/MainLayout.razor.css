@@ -95,24 +95,28 @@
                 }
 
     .banner .icon-column {
-        background-color: green;
+        /*background-color: green;*/
         float: left;
         width: 10%;
-        padding: 10px;
+        height: 100%;
         box-sizing: border-box;
+        align-content: end;
         text-align: right;
     }
 
-        .banner .icon-column .fb {
-            font-size: 10px;
+        .banner .icon-column .icons {
         }
 
-        .banner .icon-column .you-tube {
-            font-size: 10px;
-        }
+            .banner .icon-column .icons .icon {
+                padding: 4px 10px;
+                width: 16px;
+                height: 16px;
+            }
 
 .banner-hamburger {
+    /*background-color: green;*/
     font-size: 24px;
+    padding: 10px;
 }
 
 .banner-hamburger-visible {
