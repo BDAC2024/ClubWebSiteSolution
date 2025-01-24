@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.DTOs;
+﻿using AnglingClubShared.Enums;
+using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.AspNetCore.Authorization;

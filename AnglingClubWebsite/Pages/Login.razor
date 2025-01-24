@@ -1,0 +1,36 @@
+﻿@page "/login/{CallingPage?}"
+
+@inherits MvvmComponentBase<LoginViewModel>
+
+<container>
+    <div class="login">
+        <h3>Welcome - Please Sign In</h3>
+
+        <fieldset>
+            <EditForm Model="@ViewModel.LoginInfo">
+                <SfTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginInfo.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                <SfTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginInfo.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                <div class="smt-submit">
+                    <SfProgressButton type="submit"
+                                      IconPosition="IconPosition.Right"
+                                      @onclick="() => ViewModel.LoginCommand.Execute(null)"
+                                      Disabled="@(!ViewModel.LoginCommand.CanExecute(null))"
+                                      CssClass="e-block e-primary">Sign In</SfProgressButton>
+                </div>
+                <MvvmValidationSummary Context="ViewModel.LoginModel"></MvvmValidationSummary>
+            </EditForm>
+        </fieldset>
+    </div>
+</container>
+
+
+@code {
+    [Parameter]
+    public string CallingPage { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        ViewModel.Caller = CallingPage;
+        base.OnInitialized();
+    }
+}

@@ -4,12 +4,12 @@ using System;
 using AnglingClubWebServices.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Linq;
-using AnglingClubWebServices.Helpers;
 using System.IO;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 using QuestPDF.Helpers;
 using QuestPDF.Drawing;
+using AnglingClubShared.Extensions;
 
 
 namespace AnglingClubWebServices.Services

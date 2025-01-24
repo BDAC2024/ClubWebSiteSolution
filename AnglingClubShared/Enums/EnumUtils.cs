@@ -1,9 +1,9 @@
-﻿using AnglingClubWebServices.Interfaces;
+﻿using AnglingClubShared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AnglingClubWebServices.Helpers
+namespace AnglingClubShared.Enums
 {
     public static class EnumUtils
     {
@@ -44,7 +44,7 @@ namespace AnglingClubWebServices.Helpers
         /// <returns></returns>
         public static Season CurrentSeason()
         {
-            return SeasonForDate(DateTime.Now).Value;
+            return SeasonForDate(DateTime.Now)!.Value;
         }
 
         /// <summary>

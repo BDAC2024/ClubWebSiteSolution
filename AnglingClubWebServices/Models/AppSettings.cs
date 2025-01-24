@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AnglingClubShared.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 

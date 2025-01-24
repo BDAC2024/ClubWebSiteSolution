@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Interfaces;
+﻿using AnglingClubShared.Enums;
+using AnglingClubWebServices.Interfaces;
 
 namespace AnglingClubWebServices.DTOs
 {

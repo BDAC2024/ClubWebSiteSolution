@@ -1,11 +1,10 @@
-﻿using Amazon.S3.Model;
-using AnglingClubWebServices.Interfaces;
+﻿using AnglingClubShared.Enums;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace AnglingClubWebServices.Helpers
+namespace AnglingClubShared.Extensions
 {
     public static class ExtensionMethods
     {
@@ -48,7 +47,7 @@ namespace AnglingClubWebServices.Helpers
         /// <returns></returns>
         public static DateTime SeasonStarts(this Season value)
         {
-            var starts =  DateTime.Parse(seasonParts(value)[1]);
+            var starts = DateTime.Parse(seasonParts(value)[1]);
 
             return starts;
         }
@@ -113,6 +112,16 @@ namespace AnglingClubWebServices.Helpers
             var parts = desc.Split(",");
 
             return parts;
+        }
+
+        /// <summary>
+        /// Adds IsNullOrEmpty to string
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty(this string s)
+        {
+            return s == null || s.Length == 0;
         }
     }
 }

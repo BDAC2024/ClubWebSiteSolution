@@ -1,7 +1,14 @@
 ﻿using System.ComponentModel;
 
-namespace AnglingClubWebServices.Interfaces
+namespace AnglingClubShared.Enums
 {
+    public enum MessageState
+    {
+        Info = 0,
+        Error,
+        Warn,
+        Success,
+    }
 
     public enum EventType
     {

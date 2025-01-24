@@ -44,7 +44,7 @@ namespace AnglingClubWebsite
             Menu.Add(new MenuItem { Id = "5.1", ParentId = "5", Name = "Leagues" });
             Menu.Add(new MenuItem { Id = "5.2", ParentId = "5", Name = "Weights" });
             Menu.Add(new MenuItem { Id = "5.3", ParentId = "5", Name = "Trophies" });
-            Menu.Add(new MenuItem { Id = "6", Name = "Diary of Events" });
+            Menu.Add(new MenuItem { Id = "6", Name = "Diary of Events", NavigateUrl = "/Login" });
             Menu.Add(new MenuItem { Id = "7", Name = "Buy Online", HasSubMenu = true });
             Menu.Add(new MenuItem { Id = "7.1", ParentId = "7", Name = "Memberships" });
             Menu.Add(new MenuItem { Id = "7.2", ParentId = "7", Name = "Day Tickets" });

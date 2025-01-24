@@ -1,4 +1,6 @@
-﻿namespace AnglingClubWebServices.Models
+﻿using AnglingClubShared.Entities;
+
+namespace AnglingClubWebServices.Models
 {
     public class UserAdminContact : TableBase
     {

@@ -1,6 +1,23 @@
 ﻿@page "/News"
 
+@inherits MvvmComponentBase<NewsViewModel>
+
 <h3>News</h3>
+
+@if (ViewModel.User == null)
+{
+    <h3>NOT LOGGED IN YET</h3>
+}
+else
+{
+    <p>
+        Membership No: @ViewModel.User!.MembershipNumber
+    </p>
+
+    <p>
+        Email: @ViewModel.User!.Email
+    </p>
+}
 
 @code {
 

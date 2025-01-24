@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Data;
+﻿using AnglingClubShared.Enums;
+using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
@@ -6,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
-using MatchType = AnglingClubWebServices.Interfaces.MatchType;
+//using MatchType = AnglingClubWebServices.Interfaces.MatchType;
 
 namespace AnglingClubWebServices.Services
 {
