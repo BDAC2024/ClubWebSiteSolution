@@ -1,17 +1,15 @@
-﻿using AnglingClubWebServices.Interfaces;
-using AnglingClubWebServices.Services;
-using System;
-using System.Collections.Generic;
+﻿using AnglingClubShared.Enums;
+using AnglingClubShared.Services;
 using System.Security.Cryptography;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Entities
 {
     public class Member : TableBase
     {
-        private string _email;
+        private string _email = "";
 
-        public string Name { get; set; }
-        public string Email 
+        public string Name { get; set; } = "";
+        public string Email
         {
             get
             {
@@ -30,7 +28,7 @@ namespace AnglingClubWebServices.Models
         /// Will be set to 0 once user has set a new pin
         /// </summary>
         public int InitialPin { get; set; }
-        public string Pin { get; set; }
+        public string Pin { get; set; } = "";
         public bool PinResetRequested { get; set; } = false;
         public bool PinResetRequired { get; set; } = true;
         public bool AllowNameToBeUsed { get; set; } = false;
@@ -41,10 +39,10 @@ namespace AnglingClubWebServices.Models
         public List<Season> SeasonsActive { get; set; } = new List<Season>();
         public bool ReLoginRequired { get; set; } = false;
 
-        public string Surname 
+        public string Surname
         {
             get
-            { 
+            {
                 if (Name != "Anonymous" && Name.Contains("."))
                 {
                     return Name.Split(".")[1];
@@ -53,7 +51,7 @@ namespace AnglingClubWebServices.Models
                 {
                     return Name;
                 }
-            } 
+            }
         }
 
         public int NewPin(int? toPin = null)
@@ -72,8 +70,8 @@ namespace AnglingClubWebServices.Models
                 newPin = toPin.Value;
                 InitialPin = 0;
             }
-            
-            var hashedPin = AuthService.HashText(newPin.ToString(), MembershipNumber.ToString(), SHA1.Create());
+
+            var hashedPin = AuthHelperService.HashText(newPin.ToString(), MembershipNumber.ToString(), SHA1.Create());
             Pin = hashedPin;
 
             return newPin;
@@ -81,7 +79,7 @@ namespace AnglingClubWebServices.Models
 
         public bool ValidPin(int pinToCheck)
         {
-            var hashedPinToCheck = AuthService.HashText(pinToCheck.ToString(), MembershipNumber.ToString(), SHA1.Create());
+            var hashedPinToCheck = AuthHelperService.HashText(pinToCheck.ToString(), MembershipNumber.ToString(), SHA1.Create());
 
             return hashedPinToCheck == Pin;
         }

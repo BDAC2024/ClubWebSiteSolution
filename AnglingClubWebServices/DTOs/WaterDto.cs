@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Helpers;
+﻿using AnglingClubShared.Entities;
+using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Models;
 using System.Collections.Generic;
 using System.Linq;

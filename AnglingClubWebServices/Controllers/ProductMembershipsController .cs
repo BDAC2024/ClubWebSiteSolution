@@ -1,5 +1,5 @@
+using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Data;
-using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;

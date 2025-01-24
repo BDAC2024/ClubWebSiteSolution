@@ -1,3 +1,4 @@
+using AnglingClubShared.Enums;
 using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;

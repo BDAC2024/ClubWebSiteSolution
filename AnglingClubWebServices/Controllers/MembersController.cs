@@ -1,3 +1,6 @@
+using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Models.Auth;
 using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;

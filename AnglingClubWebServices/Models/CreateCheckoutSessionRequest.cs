@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Interfaces;
+﻿using AnglingClubShared.Enums;
+using AnglingClubWebServices.Interfaces;
 using System.Collections.Generic;
 
 namespace AnglingClubWebServices.Models

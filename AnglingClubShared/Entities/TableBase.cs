@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Entities
 {
     public abstract class TableBase
     {
-        public string DbKey { get; set; }
+        public string DbKey { get; set; } = "";
 
         public bool IsNewItem
         {

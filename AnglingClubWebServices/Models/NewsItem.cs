@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AnglingClubShared.Entities;
+using System;
 
 namespace AnglingClubWebServices.Models
 {
