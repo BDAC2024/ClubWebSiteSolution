@@ -1,16 +1,22 @@
 ﻿using AnglingClubShared;
 using AnglingClubWebsite.SharedComponents;
+using AnglingClubShared.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Syncfusion.Blazor.Notifications;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase, IRecipient<TurnOnDebugMessages>
+    public partial class MainLayoutViewModel : ViewModelBase, IRecipient<TurnOnDebugMessages>, IRecipient<ShowConsoleMessage>, IRecipient<ShowProgress>, IRecipient<HideProgress>, IRecipient<ShowMessage>
     {
         public MainLayoutViewModel(
             IMessenger messenger) : base(messenger)
         {
             messenger.Register<TurnOnDebugMessages>(this);
+            messenger.Register<ShowConsoleMessage>(this);
+            messenger.Register<ShowProgress>(this);
+            messenger.Register<HideProgress>(this);
+            messenger.Register<ShowMessage>(this);
 
             defineMenu();
         }
@@ -24,15 +30,92 @@ namespace AnglingClubWebsite
         [ObservableProperty]
         private bool _showDebugMessages = true;
 
+        [ObservableProperty]
+        private bool _showProgressBar = false;
+
+        [ObservableProperty]
+        private MessageSeverity _messageSeverity = MessageSeverity.Normal;
+
+        [ObservableProperty]
+        private string _messageTitle = "";
+
+        [ObservableProperty]
+        private string _messageBody = "";
+
+        [ObservableProperty]
+        private MessageButton? _confirmationButton;
+
+        [ObservableProperty]
+        private bool _messageVisible = false;
+
         #region Message Handlers
         public void Receive(TurnOnDebugMessages message)
         {
             ShowDebugMessages = message.YesOrNo;
         }
 
+        public void Receive(HideProgress message)
+        {
+            ShowProgressBar = false;
+        }
+
+        public void Receive(ShowProgress message)
+        {
+            ShowProgressBar = true;
+        }
+
+        public void Receive(ShowMessage message)
+        {
+            switch (message.State)
+            {
+                case MessageState.Info:
+                    MessageSeverity = MessageSeverity.Info;
+                    break;
+
+                case MessageState.Error:
+                    MessageSeverity = MessageSeverity.Error;
+                    break;
+
+                case MessageState.Warn:
+                    MessageSeverity = MessageSeverity.Warning;
+                    break;
+
+                case MessageState.Success:
+                    MessageSeverity = MessageSeverity.Success;
+                    break;
+
+                default:
+                    break;
+            }
+
+            MessageTitle = message.Title;
+            MessageBody = message.Body;
+            ConfirmationButton = message.confirmationButtonDetails;
+            MessageVisible = true;
+        }
+
+        public void Receive(ShowConsoleMessage message)
+        {
+            ShowConsoleMessage(message.Content);
+        }
+
         #endregion Message Handlers
 
         #region Helper Methods
+
+        public void ShowConsoleMessage(string message)
+        {
+            if (ShowDebugMessages)
+            {
+                Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
+            }
+        }
+
+        public async Task OnConfirm()
+        {
+            await ConfirmationButton!.OnConfirmed!();
+            MessageVisible = false;
+        }
 
         public void defineMenu()
         {

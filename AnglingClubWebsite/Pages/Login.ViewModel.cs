@@ -11,6 +11,7 @@ using AnglingClubWebsite.Services;
 using AnglingClubShared.Models.Auth;
 using AnglingClubShared;
 using AnglingClubShared.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -81,6 +82,7 @@ namespace AnglingClubWebsite.Pages
                     }
                     else
                     {
+                        Submitting = false;
                         _appDialogService.SendMessage(MessageState.Warn, "Sign In Failed", "Invalid username or password");
                         _messenger.Send<HideProgress>();
                     }
@@ -88,8 +90,9 @@ namespace AnglingClubWebsite.Pages
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Login failed: {ex.Message}");
-
+                    Submitting = false;
+                    //_logger.LogError(ex, $"Login failed: {ex.Message}");
+                    _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login failed: {ex.Message}"));
                     _appDialogService.SendMessage(MessageState.Error, "Sign In Failed", "An unexpected error occurred");
 
                 }
@@ -107,10 +110,33 @@ namespace AnglingClubWebsite.Pages
             return valid;
         }
 
-        public class LoginDetails
+        public partial class LoginDetails : ObservableValidator
         {
-            public string MembershipNumber { get; set; } = "";
-            public string Pin { get; set; } = "";
+            [Required]
+            [MinLength(1)]
+            [NotifyDataErrorInfo]
+            [ObservableProperty]
+            private string _membershipNumber;
+
+            //public string MembershipNumber
+            //{
+            //    get => _membershipNumber;
+            //    set => SetProperty(ref _membershipNumber, value, true);
+            //}
+
+            [Required]
+            [MinLength(1)]
+            [NotifyDataErrorInfo]
+            [ObservableProperty]
+            private string _pin;
+
+            //public string Pin
+            //{
+            //    get => _pin;
+            //    set => SetProperty(ref _pin, value, true);
+            //}
+
+            public void Validate() => ValidateAllProperties();
         }
     }
 
