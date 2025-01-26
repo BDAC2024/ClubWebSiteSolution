@@ -6,6 +6,11 @@
     <div class="login">
         <h3>Welcome - Please Sign In</h3>
 
+
+@*         <SfNumericTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginModel.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfNumericTextBox>
+        <SfNumericTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginModel.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfNumericTextBox>
+*@
+
         <fieldset>
             <EditForm Model="@ViewModel.LoginInfo">
                 <SfTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginInfo.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
@@ -14,15 +19,16 @@
                     <SfProgressButton type="submit"
                                       IconPosition="IconPosition.Right"
                                       @onclick="() => ViewModel.LoginCommand.Execute(null)"
-                                      Disabled="@(!ViewModel.LoginCommand.CanExecute(null))"
+                                      Disabled="ViewModel.Submitting"
                                       CssClass="e-block e-primary">Sign In</SfProgressButton>
                 </div>
-                <MvvmValidationSummary Context="ViewModel.LoginModel"></MvvmValidationSummary>
+                <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary>
             </EditForm>
         </fieldset>
     </div>
 </container>
 
+                                      @* Disabled="@(!ViewModel.LoginCommand.CanExecute(null))" *@
 
 @code {
     [Parameter]

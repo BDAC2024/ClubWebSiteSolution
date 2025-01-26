@@ -92,6 +92,22 @@
         </ChildContent>
     </SfSidebar>
 
+    <div>
+        <SfDialog Width="250px" IsModal="true" Visible="@ViewModel.MessageVisible" class="smt-dialog">
+            <DialogTemplates>
+                <Header><SfMessage Severity="@ViewModel.MessageSeverity">@ViewModel.MessageTitle</SfMessage> </Header>
+                <Content>@ViewModel.MessageBody</Content>
+            </DialogTemplates>
+            <DialogButtons>
+                <DialogButton Content="Cancel" IsPrimary="true" OnClick="(()=> ViewModel.MessageVisible = false)" />
+                @if (ViewModel.ConfirmationButton != null)
+                {
+                    <DialogButton Content="@ViewModel.ConfirmationButton.Label" IsPrimary="false" OnClick="(async ()=> await ViewModel.OnConfirm())" />
+                }
+            </DialogButtons>
+        </SfDialog>
+    </div>
+
     <div class="menu-and-main-wrapper">
         <div class="main-content">
             <main>
@@ -119,8 +135,8 @@
 
     public void ShowMenu()
     {
-        showConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
-        showConsoleMessage($"Toggle:mobile - {mobile}");
+        ViewModel.ShowConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
+        ViewModel.ShowConsoleMessage($"Toggle:mobile - {mobile}");
 
         menuIsOpen = !oldMenuIsOpen;
         menuShowingOnMobile = mobile && menuIsOpen;
@@ -129,29 +145,29 @@
     public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
     {
         oldMenuIsOpen = true;
-        showConsoleMessage("Menu opening");
+        ViewModel.ShowConsoleMessage("Menu opening");
     }
 
     public void OnMenuClose(Syncfusion.Blazor.Navigations.EventArgs args)
     {
         oldMenuIsOpen = false;
-        showConsoleMessage("Menu closing");
+        ViewModel.ShowConsoleMessage("Menu closing");
     }
 
     public void OnBreakpointChanged(BreakpointChangedEventArgs args)
     {
-        showConsoleMessage($"OnBreakpointChanged:Breakpoint changed - now {activeBreakpoint}");
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:Breakpoint changed - now {activeBreakpoint}");
         mobile = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
         mobilePortrait = activeBreakpoint == "Small";
 
         menuIsOpen = !mobile;
 
-        showConsoleMessage($"OnBreakpointChanged:mobile - now {mobile}");
-        showConsoleMessage($"OnBreakpointChanged:menuIsOpen - now {menuIsOpen}");
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:mobile - now {mobile}");
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:menuIsOpen - now {menuIsOpen}");
 
         menuShowingOnMobile = mobile && menuIsOpen;
 
-        showConsoleMessage($"OnBreakpointChanged:menuShowingOnMobile - now {menuShowingOnMobile}");
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:menuShowingOnMobile - now {menuShowingOnMobile}");
 
     }
 
@@ -159,7 +175,7 @@
     {
         bool isLeafNode = !args.NodeData.HasChildren;
 
-        showConsoleMessage($"MenuSelected - leaf node {isLeafNode}");
+        ViewModel.ShowConsoleMessage($"MenuSelected - leaf node {isLeafNode}");
 
         if (mobile && isLeafNode) 
         {
@@ -168,13 +184,6 @@
         }
     }
 
-    public void showConsoleMessage(string message)
-    {
-        if (ViewModel.ShowDebugMessages)
-        {
-            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
-        }
-    }
 
 }
 
