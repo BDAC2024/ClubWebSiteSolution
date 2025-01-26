@@ -2,14 +2,18 @@
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
 
-namespace AnglingClubWebsite
+namespace AnglingClubWebsite.Pages
 {
     public partial class LogoutViewModel : ViewModelBase
     {
         private readonly INavigationService _navigationService;
         private readonly IAuthenticationService _authenticationService;
 
-        public LogoutViewModel(IMessenger messenger, INavigationService navigationService, IAuthenticationService authenticationService) : base(messenger)
+        public LogoutViewModel(
+            IMessenger messenger, 
+            INavigationService navigationService, 
+            IAuthenticationService authenticationService,
+            ICurrentUserService currentUserService) : base(messenger, currentUserService)
         {
             _navigationService = navigationService;
             _authenticationService = authenticationService;

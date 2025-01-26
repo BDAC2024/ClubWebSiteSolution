@@ -22,6 +22,7 @@ namespace Fishing.Client.Services
         private readonly AuthenticationStateProvider _stateProvider;
         private ILocalStorageService _localStorageService;
         private readonly ILogger<AuthenticationService> _logger;
+        private readonly ICurrentUserService _currentUserService;
 
         private const string JWT_KEY = nameof(JWT_KEY);
         private const string REFRESH_KEY = nameof(REFRESH_KEY);
@@ -30,12 +31,13 @@ namespace Fishing.Client.Services
 
         public event Action<string?>? LoginChange;
 
-        public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService, AuthenticationStateProvider stateProvider, ILogger<AuthenticationService> logger)
+        public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService, AuthenticationStateProvider stateProvider, ILogger<AuthenticationService> logger, ICurrentUserService currentUserService)
         {
             _factory = factory;
             _localStorageService = localStorageService;
             _stateProvider = stateProvider;
             _logger = logger;
+            _currentUserService = currentUserService;
         }
 
         //public async ValueTask<string> GetJwtAsync()
@@ -51,6 +53,8 @@ namespace Fishing.Client.Services
             var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
 
             await customAuthStateProvider.UpdateAuthenticationState(null);
+
+            _currentUserService.User = null;
 
             //var response = await _factory.CreateClient(Constants.HTTP_CLIENT_KEY).DeleteAsync("api/authentication/revoke");
 
@@ -121,6 +125,8 @@ namespace Fishing.Client.Services
                 //await _localStorageService.SetItemAsync(REFRESH_KEY, content.RefreshToken);
 
                 LoginChange?.Invoke(GetUsername(content.Token));
+
+                _currentUserService.User = await GetCurrentUser();
 
                 return true;
 

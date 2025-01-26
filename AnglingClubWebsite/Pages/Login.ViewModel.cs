@@ -30,7 +30,8 @@ namespace AnglingClubWebsite.Pages
             IMessenger messenger,
             IAuthenticationService authenticationService,
             INavigationService navigationService,
-            IAppDialogService appDialogService) : base(messenger)
+            IAppDialogService appDialogService,
+            ICurrentUserService currentUserService) : base(messenger, currentUserService)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
@@ -77,7 +78,7 @@ namespace AnglingClubWebsite.Pages
                 {
                     if (await _authenticationService.LoginAsync(LoginModel))
                     {
-                        _navigationService.NavigateTo(Caller ?? "/", true);
+                        _messenger.Send<SelectMenuItem>(new SelectMenuItem(Caller ?? "/"));
                         _messenger.Send<HideProgress>();
                     }
                     else

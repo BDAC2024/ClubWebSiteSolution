@@ -13,24 +13,11 @@ namespace AnglingClubWebsite.Pages
 
         public NewsViewModel(
             IAuthenticationService authenticationService,
-            IMessenger messenger) : base(messenger)
+            IMessenger messenger,
+            ICurrentUserService currentUserService) : base(messenger, currentUserService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
-        }
-
-        [ObservableProperty]
-        private MemberDto? _user;
-
-        public override async Task Loaded()
-        {
-            await base.Loaded();
-            var user = await _authenticationService.GetCurrentUser();
-            if (user != null)
-            {
-                User = user;
-            }
-
         }
     }
 }

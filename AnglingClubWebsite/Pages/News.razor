@@ -4,21 +4,20 @@
 
 <h3>News</h3>
 
-@if (ViewModel.User == null)
+@if (ViewModel.CurrentUser == null)
 {
     <h3>NOT LOGGED IN YET</h3>
 }
 else
 {
     <p>
-        Membership No: @ViewModel.User!.MembershipNumber
+        Membership No: @ViewModel.CurrentUser!.MembershipNumber
     </p>
 
     <p>
-        Email: @ViewModel.User!.Email
+        Email: @ViewModel.CurrentUser!.Email
     </p>
 }
 
 @code {
-
 }
