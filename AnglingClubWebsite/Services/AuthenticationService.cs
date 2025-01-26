@@ -64,7 +64,7 @@ namespace Fishing.Client.Services
             //LoginChange?.Invoke(null);
         }
 
-        public async Task<MemberDto?> GetUser()
+        public async Task<MemberDto?> GetCurrentUser()
         {
             var authenticatedMember = await _localStorageService.ReadEncryptedItem<AuthenticateResponse>(Constants.AUTH_KEY);
             if (authenticatedMember == null)
@@ -72,9 +72,7 @@ namespace Fishing.Client.Services
                 return null;
             }
 
-            var user = new MemberDto(new JwtSecurityTokenHandler().ReadJwtToken(authenticatedMember.Token));
-
-            return user;
+            return new MemberDto(new JwtSecurityTokenHandler().ReadJwtToken(authenticatedMember.Token));
         }
 
         private static string GetUsername(string token)
@@ -123,6 +121,7 @@ namespace Fishing.Client.Services
                 //await _localStorageService.SetItemAsync(REFRESH_KEY, content.RefreshToken);
 
                 LoginChange?.Invoke(GetUsername(content.Token));
+
                 return true;
 
             }

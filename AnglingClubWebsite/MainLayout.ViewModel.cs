@@ -6,17 +6,20 @@ using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Notifications;
 using AnglingClubShared.Entities;
 using AnglingClubWebsite.Services;
+using AnglingClubShared.DTOs;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase, IRecipient<TurnOnDebugMessages>, IRecipient<ShowConsoleMessage>, IRecipient<ShowProgress>, IRecipient<HideProgress>, IRecipient<ShowMessage>
+    public partial class MainLayoutViewModel : ViewModelBase, IRecipient<TurnOnDebugMessages>, IRecipient<ShowConsoleMessage>, IRecipient<ShowProgress>, IRecipient<HideProgress>, IRecipient<ShowMessage>, IRecipient<LoggedIn>
     {
         private readonly IAuthenticationService _authenticationService;
+        private readonly INavigationService _navigationService;
 
         public MainLayoutViewModel(
-            IMessenger messenger, IAuthenticationService authenticationService) : base(messenger)
+            IMessenger messenger, IAuthenticationService authenticationService, INavigationService navigationService = null) : base(messenger)
         {
             messenger.Register<TurnOnDebugMessages>(this);
+            messenger.Register<LoggedIn>(this);
             messenger.Register<ShowConsoleMessage>(this);
             messenger.Register<ShowProgress>(this);
             messenger.Register<HideProgress>(this);
@@ -25,6 +28,7 @@ namespace AnglingClubWebsite
             _authenticationService = authenticationService;
 
             defineStartupMenu();
+            _navigationService = navigationService;
         }
 
         [ObservableProperty]
@@ -54,7 +58,30 @@ namespace AnglingClubWebsite
         [ObservableProperty]
         private bool _messageVisible = false;
 
+        public MemberDto? CurrentUser { get; set; }
+
         #region Message Handlers
+
+        public void Receive(LoggedIn message)
+        {
+            CurrentUser = message.User;
+
+            if (CurrentUser != null)
+            {
+                setupLoggedInMenu();
+
+                if (CurrentUser.Admin)
+                {
+                    setupAdminMenu();
+                }
+            }
+            else
+            {
+                setupLoggedOutMenu();
+                _navigationService.NavigateTo("/", false);
+            }
+        }
+
         public void Receive(TurnOnDebugMessages message)
         {
             ShowDebugMessages = message.YesOrNo;
@@ -196,12 +223,12 @@ namespace AnglingClubWebsite
         public override async Task Loaded()
         {
             await base.Loaded();
-            var user = await _authenticationService.GetUser();
-            if (user != null)
+            CurrentUser = await _authenticationService.GetCurrentUser();
+            if (CurrentUser != null)
             {
                 setupLoggedInMenu();
 
-                if (user.Admin)
+                if (CurrentUser.Admin)
                 {
                     setupAdminMenu();
                 }

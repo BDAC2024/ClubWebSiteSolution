@@ -1,7 +1,11 @@
-﻿using AnglingClubShared.Models.Auth;
+﻿using AnglingClubShared;
+using AnglingClubShared.DTOs;
+using AnglingClubShared.Models.Auth;
 using AnglingClubWebsite.Extensions;
 using Blazored.LocalStorage;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace AnglingClubWebsite.Authentication
@@ -9,11 +13,14 @@ namespace AnglingClubWebsite.Authentication
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorageService;
+        private readonly IMessenger _messenger;
+
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService)
+        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService, IMessenger messenger)
         {
             _localStorageService = localStorageService;
+            _messenger = messenger;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -60,13 +67,17 @@ namespace AnglingClubWebsite.Authentication
 
                 await _localStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession);
 
+                _messenger.Send(new LoggedIn(new MemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));
             }
             else
             {
                 claimsPrincipal = _anonymous;
 
                 await _localStorageService.RemoveItemAsync(Constants.AUTH_KEY);
+
+                _messenger.Send(new LoggedIn(null));
             }
+
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }

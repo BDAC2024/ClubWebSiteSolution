@@ -1,4 +1,5 @@
-﻿using AnglingClubShared.Enums;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 namespace AnglingClubShared
 {
     public record class TurnOnDebugMessages(bool YesOrNo);
+
+    public record class LoggedIn(MemberDto User);
 
     public record class ShowProgress();
     public record class HideProgress();
