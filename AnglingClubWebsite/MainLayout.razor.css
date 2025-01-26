@@ -218,3 +218,13 @@
     text-align: left;
 }
 
+/*-------------------------
+    Progress bar
+--------------------------*/
+.progress-with-menu {
+    width: calc(100% - 220px) !important;
+}
+
+.progress-full-width {
+    width: 100%;
+}

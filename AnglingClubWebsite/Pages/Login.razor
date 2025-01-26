@@ -16,11 +16,10 @@
                 <SfTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginInfo.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
                 <SfTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginInfo.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
                 <div class="smt-submit">
-                    <SfProgressButton type="submit"
-                                      IconPosition="IconPosition.Right"
+                    <SfButton type="submit"
                                       @onclick="() => ViewModel.LoginCommand.Execute(null)"
                                       Disabled="ViewModel.Submitting"
-                                      CssClass="e-block e-primary">Sign In</SfProgressButton>
+                                      CssClass="e-block e-primary">Sign In</SfButton>
                 </div>
                 <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary>
             </EditForm>
