@@ -6,7 +6,7 @@
 
 @if (ViewModel.CurrentUser == null)
 {
-    <h3>NOT LOGGED IN YET</h3>
+    <AuthorizationRequired/>
 }
 else
 {
@@ -17,6 +17,7 @@ else
     <p>
         Email: @ViewModel.CurrentUser!.Email
     </p>
+
 }
 
 @code {

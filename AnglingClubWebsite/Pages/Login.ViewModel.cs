@@ -39,6 +39,7 @@ namespace AnglingClubWebsite.Pages
             _authenticationService = authenticationService;
             _navigationService = navigationService;
             _appDialogService = appDialogService;
+
         }
 
         [ObservableProperty]
@@ -78,12 +79,11 @@ namespace AnglingClubWebsite.Pages
                 {
                     if (await _authenticationService.LoginAsync(LoginModel))
                     {
-                        _messenger.Send<SelectMenuItem>(new SelectMenuItem(Caller ?? "/"));
-                        _messenger.Send<HideProgress>();
+                        var target = "/" + Caller ?? "";
+                        _messenger.Send<SelectMenuItem>(new SelectMenuItem(target));
                     }
                     else
                     {
-                        Submitting = false;
                         _appDialogService.SendMessage(MessageState.Warn, "Sign In Failed", "Invalid username or password");
                         _messenger.Send<HideProgress>();
                     }
@@ -91,7 +91,6 @@ namespace AnglingClubWebsite.Pages
                 }
                 catch (Exception ex)
                 {
-                    Submitting = false;
                     //_logger.LogError(ex, $"Login failed: {ex.Message}");
                     _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login failed: {ex.Message}"));
                     _appDialogService.SendMessage(MessageState.Error, "Sign In Failed", "An unexpected error occurred");
