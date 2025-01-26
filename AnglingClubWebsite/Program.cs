@@ -39,6 +39,7 @@ builder.Services.AddScoped<IMessenger, WeakReferenceMessenger>();
 // ViewModels
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<LoginViewModel>();
+builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
 
 // Services

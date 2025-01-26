@@ -4,13 +4,17 @@ using AnglingClubShared.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Notifications;
+using AnglingClubShared.Entities;
+using AnglingClubWebsite.Services;
 
 namespace AnglingClubWebsite
 {
     public partial class MainLayoutViewModel : ViewModelBase, IRecipient<TurnOnDebugMessages>, IRecipient<ShowConsoleMessage>, IRecipient<ShowProgress>, IRecipient<HideProgress>, IRecipient<ShowMessage>
     {
+        private readonly IAuthenticationService _authenticationService;
+
         public MainLayoutViewModel(
-            IMessenger messenger) : base(messenger)
+            IMessenger messenger, IAuthenticationService authenticationService) : base(messenger)
         {
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<ShowConsoleMessage>(this);
@@ -18,7 +22,9 @@ namespace AnglingClubWebsite
             messenger.Register<HideProgress>(this);
             messenger.Register<ShowMessage>(this);
 
-            defineMenu();
+            _authenticationService = authenticationService;
+
+            defineStartupMenu();
         }
 
         [ObservableProperty]
@@ -117,44 +123,93 @@ namespace AnglingClubWebsite
             MessageVisible = false;
         }
 
-        public void defineMenu()
+        public void defineStartupMenu()
         {
-            Menu.Add(new MenuItem { Id = "1", Name = "Welcome", NavigateUrl = "/" });
-            Menu.Add(new MenuItem { Id = "2", Name = "News", NavigateUrl = "/News" });
-            Menu.Add(new MenuItem { Id = "3", Name = "Club Waters" });
-            Menu.Add(new MenuItem { Id = "4", Name = "Matches" });
-            Menu.Add(new MenuItem { Id = "5", Name = "Standings", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "5.1", ParentId = "5", Name = "Leagues" });
-            Menu.Add(new MenuItem { Id = "5.2", ParentId = "5", Name = "Weights" });
-            Menu.Add(new MenuItem { Id = "5.3", ParentId = "5", Name = "Trophies" });
-            Menu.Add(new MenuItem { Id = "6", Name = "Diary of Events", NavigateUrl = "/Login" });
-            Menu.Add(new MenuItem { Id = "7", Name = "Buy Online", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "7.1", ParentId = "7", Name = "Memberships" });
-            Menu.Add(new MenuItem { Id = "7.2", ParentId = "7", Name = "Day Tickets" });
-            Menu.Add(new MenuItem { Id = "7.3", ParentId = "7", Name = "Guest Tickets" });
-            Menu.Add(new MenuItem { Id = "8", Name = "Club Info", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "8.1", ParentId = "8", Name = "Club Officers" });
-            Menu.Add(new MenuItem { Id = "8.2", ParentId = "8", Name = "Rules", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "8.2.1", ParentId = "8.2", Name = "General" });
-            Menu.Add(new MenuItem { Id = "8.2.2", ParentId = "8.2", Name = "Match" });
-            Menu.Add(new MenuItem { Id = "8.2.3", ParentId = "8.2", Name = "Junior General" });
-            Menu.Add(new MenuItem { Id = "8.2.4", ParentId = "8.2", Name = "Junior Match" });
-            Menu.Add(new MenuItem { Id = "8.3", ParentId = "8", Name = "Club Forms" });
-            Menu.Add(new MenuItem { Id = "8.4", ParentId = "8", Name = "Privacy Notice" });
-            Menu.Add(new MenuItem { Id = "8.5", ParentId = "8", Name = "Environmental" });
-            Menu.Add(new MenuItem { Id = "8.6", ParentId = "8", Name = "Angling Trust" });
-            Menu.Add(new MenuItem { Id = "9", Name = "Admin", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "9.1", ParentId = "9", Name = "Members" });
-            Menu.Add(new MenuItem { Id = "9.2", ParentId = "9", Name = "User Admins" });
-            Menu.Add(new MenuItem { Id = "9.3", ParentId = "9", Name = "Payments" });
-            Menu.Add(new MenuItem { Id = "10", Name = "My Details" });
-            Menu.Add(new MenuItem { Id = "11", Name = "Logout" });
+            setupBaseMenu();
+            setupLoggedOutMenu();
+        }
 
+        public void setupBaseMenu()
+        {
+            Menu.Clear();
+
+            Menu.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = "/" });
+            Menu.Add(new MenuItem { Id = "02", Name = "News", NavigateUrl = "/News" });
+            Menu.Add(new MenuItem { Id = "03", Name = "Club Waters" });
+            Menu.Add(new MenuItem { Id = "04", Name = "Matches" });
+            Menu.Add(new MenuItem { Id = "05", Name = "Standings", HasSubMenu = true });
+            Menu.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues" });
+            Menu.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights" });
+            Menu.Add(new MenuItem { Id = "05.3", ParentId = "05", Name = "Trophies" });
+            Menu.Add(new MenuItem { Id = "06", Name = "Diary of Events" });
+            Menu.Add(new MenuItem { Id = "07", Name = "Buy Online", HasSubMenu = true });
+            Menu.Add(new MenuItem { Id = "07.1", ParentId = "07", Name = "Memberships" });
+            Menu.Add(new MenuItem { Id = "07.2", ParentId = "07", Name = "Day Tickets" });
+            Menu.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets" });
+            Menu.Add(new MenuItem { Id = "08", Name = "Club Info", HasSubMenu = true });
+            Menu.Add(new MenuItem { Id = "08.1", ParentId = "08", Name = "Club Officers" });
+            Menu.Add(new MenuItem { Id = "08.2", ParentId = "08", Name = "Rules", HasSubMenu = true });
+            Menu.Add(new MenuItem { Id = "08.2.1", ParentId = "08.2", Name = "General" });
+            Menu.Add(new MenuItem { Id = "08.2.2", ParentId = "08.2", Name = "Match" });
+            Menu.Add(new MenuItem { Id = "08.2.3", ParentId = "08.2", Name = "Junior General" });
+            Menu.Add(new MenuItem { Id = "08.2.4", ParentId = "08.2", Name = "Junior Match" });
+            Menu.Add(new MenuItem { Id = "08.3", ParentId = "08", Name = "Club Forms" });
+            Menu.Add(new MenuItem { Id = "08.4", ParentId = "08", Name = "Privacy Notice" });
+            Menu.Add(new MenuItem { Id = "08.5", ParentId = "08", Name = "Environmental" });
+            Menu.Add(new MenuItem { Id = "08.6", ParentId = "08", Name = "Angling Trust" });
+                                                             
+        }
+
+        public void setupLoggedOutMenu()
+        {
+            setupBaseMenu();
+
+            Menu.Add(new MenuItem { Id = "11", Name = "Login", NavigateUrl = "/Login" });
+
+            Menu = Menu.OrderBy(x => x.Id).ToList();
+        }
+
+        public void setupLoggedInMenu()
+        {
+            setupBaseMenu();
+
+            Menu.Add(new MenuItem { Id = "10", Name = "My Details" });
+            Menu.Add(new MenuItem { Id = "11", Name = "Logout", NavigateUrl = "/Logout" });
+
+            Menu = Menu.OrderBy(x => x.Id).ToList();
+        }
+
+        public void setupAdminMenu()
+        {
+            Menu.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
+            Menu.Add(new MenuItem { Id = "09.1", ParentId = "09", Name = "Members" });
+            Menu.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "User Admins" });
+            Menu.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Payments" });
+
+            Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
         #endregion Helper Methods
 
+        #region Events
 
+        public override async Task Loaded()
+        {
+            await base.Loaded();
+            var user = await _authenticationService.GetUser();
+            if (user != null)
+            {
+                setupLoggedInMenu();
+
+                if (user.Admin)
+                {
+                    setupAdminMenu();
+                }
+            }
+
+        }
+
+        #endregion
     }
 
     #region Helper classes
