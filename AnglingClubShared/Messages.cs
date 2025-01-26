@@ -14,6 +14,7 @@ namespace AnglingClubShared
 
     public record class ShowProgress();
     public record class HideProgress();
+    public record class SelectMenuItem(string NavigateUrl);
 
     public record class ShowConsoleMessage(string Content);
 

@@ -7,16 +7,28 @@ using Syncfusion.Blazor.Notifications;
 using AnglingClubShared.Entities;
 using AnglingClubWebsite.Services;
 using AnglingClubShared.DTOs;
+using Syncfusion.Blazor.Lists;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase, IRecipient<TurnOnDebugMessages>, IRecipient<ShowConsoleMessage>, IRecipient<ShowProgress>, IRecipient<HideProgress>, IRecipient<ShowMessage>, IRecipient<LoggedIn>
+    public partial class MainLayoutViewModel : ViewModelBase, 
+        IRecipient<TurnOnDebugMessages>, 
+        IRecipient<ShowConsoleMessage>, 
+        IRecipient<ShowProgress>, 
+        IRecipient<HideProgress>, 
+        IRecipient<ShowMessage>, 
+        IRecipient<LoggedIn>,
+        IRecipient<SelectMenuItem>
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly INavigationService _navigationService;
+        private readonly ICurrentUserService _currentUserService;
 
         public MainLayoutViewModel(
-            IMessenger messenger, IAuthenticationService authenticationService, INavigationService navigationService = null) : base(messenger)
+            IMessenger messenger, 
+            IAuthenticationService authenticationService, 
+            INavigationService navigationService,
+            ICurrentUserService currentUserService) : base(messenger, currentUserService)
         {
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<LoggedIn>(this);
@@ -24,11 +36,13 @@ namespace AnglingClubWebsite
             messenger.Register<ShowProgress>(this);
             messenger.Register<HideProgress>(this);
             messenger.Register<ShowMessage>(this);
+            messenger.Register<SelectMenuItem>(this);
 
             _authenticationService = authenticationService;
 
             defineStartupMenu();
             _navigationService = navigationService;
+            _currentUserService = currentUserService;
         }
 
         [ObservableProperty]
@@ -58,19 +72,27 @@ namespace AnglingClubWebsite
         [ObservableProperty]
         private bool _messageVisible = false;
 
-        public MemberDto? CurrentUser { get; set; }
+        [ObservableProperty]
+        private string[] _selectedItems = new string[] { "01" };
 
         #region Message Handlers
 
+        public void Receive(SelectMenuItem message)
+        {
+            selectMenuItem(message.NavigateUrl);
+            ShowConsoleMessage($"SelectMenuItem: About to navigate to {message.NavigateUrl}");
+            _navigationService.NavigateTo(message.NavigateUrl, false);
+        }
+
         public void Receive(LoggedIn message)
         {
-            CurrentUser = message.User;
+            _currentUserService.User = message.User;
 
-            if (CurrentUser != null)
+            if (_currentUserService.User != null)
             {
                 setupLoggedInMenu();
 
-                if (CurrentUser.Admin)
+                if (_currentUserService.User.Admin)
                 {
                     setupAdminMenu();
                 }
@@ -78,7 +100,8 @@ namespace AnglingClubWebsite
             else
             {
                 setupLoggedOutMenu();
-                _navigationService.NavigateTo("/", true);
+                selectMenuItem("/");
+                _navigationService.NavigateTo("/", false);
             }
         }
 
@@ -158,9 +181,11 @@ namespace AnglingClubWebsite
 
         public void setupBaseMenu()
         {
+            ShowConsoleMessage($"setupBaseMenu");
+
             Menu.Clear();
 
-            Menu.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = "/" });
+            Menu.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = "/"});
             Menu.Add(new MenuItem { Id = "02", Name = "News", NavigateUrl = "/News" });
             Menu.Add(new MenuItem { Id = "03", Name = "Club Waters" });
             Menu.Add(new MenuItem { Id = "04", Name = "Matches" });
@@ -198,6 +223,8 @@ namespace AnglingClubWebsite
 
         public void setupLoggedInMenu()
         {
+            ShowConsoleMessage($"setupLoggedInMenu");
+
             setupBaseMenu();
 
             Menu.Add(new MenuItem { Id = "10", Name = "My Details" });
@@ -208,12 +235,24 @@ namespace AnglingClubWebsite
 
         public void setupAdminMenu()
         {
+            ShowConsoleMessage($"setupAdminMenu");
+
             Menu.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
             Menu.Add(new MenuItem { Id = "09.1", ParentId = "09", Name = "Members" });
             Menu.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "User Admins" });
             Menu.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Payments" });
 
             Menu = Menu.OrderBy(x => x.Id).ToList();
+        }
+
+        private void selectMenuItem(string navigateUrl)
+        {
+            var menuItem = Menu.FirstOrDefault(x => x.NavigateUrl.ToLower() == navigateUrl.ToLower());
+
+            if (menuItem != null)
+            {
+                SelectedItems[0] = menuItem.Id;
+            }
         }
 
         #endregion Helper Methods
@@ -223,12 +262,12 @@ namespace AnglingClubWebsite
         public override async Task Loaded()
         {
             await base.Loaded();
-            CurrentUser = await _authenticationService.GetCurrentUser();
-            if (CurrentUser != null)
+            _currentUserService.User = await _authenticationService.GetCurrentUser();
+            if (_currentUserService.User != null)
             {
                 setupLoggedInMenu();
 
-                if (CurrentUser.Admin)
+                if (_currentUserService.User.Admin)
                 {
                     setupAdminMenu();
                 }

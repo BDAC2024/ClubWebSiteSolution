@@ -1,4 +1,7 @@
 ﻿using AnglingClubShared;
+using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
+using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -8,11 +11,18 @@ namespace AnglingClubWebsite.SharedComponents
     public abstract partial class ViewModelBase : ObservableObject, IViewModelBase
     {
         private readonly IMessenger _messenger;
+        private readonly ICurrentUserService _currentUserService;
 
-        protected ViewModelBase(IMessenger messenger)
+        protected ViewModelBase(
+            IMessenger messenger, 
+            ICurrentUserService currentUserService)
         {
             _messenger = messenger;
+            _currentUserService = currentUserService;
         }
+
+        [ObservableProperty]
+        private MemberDto? _currentUser;
 
         protected virtual void NotifyStatChanged() => OnPropertyChanged((string?)null);
 
@@ -26,6 +36,8 @@ namespace AnglingClubWebsite.SharedComponents
         {
 
             await Task.CompletedTask.ConfigureAwait(false);
+
+            CurrentUser = _currentUserService.User;
         }
 
     }

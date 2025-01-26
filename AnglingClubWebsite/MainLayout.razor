@@ -52,7 +52,7 @@
     Target="@SidebarTarget">
         <ChildContent>
             <div class="menu-scrollable">
-                <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true">
+                <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true" @bind-SelectedNodes="ViewModel.SelectedItems">
                     <TreeViewFieldsSettings 
                     TValue="MenuItem" 
                     Id="Id" 

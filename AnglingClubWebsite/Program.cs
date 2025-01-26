@@ -28,6 +28,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddBlazoredLocalStorageAsSingleton();
 builder.Services.AddTransient<AuthenticationHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""))
@@ -43,7 +44,8 @@ builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
 
 // Services
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
 builder.Services.AddTransient<IAppDialogService, AppDialogService>();
 builder.Services.AddTransient<INavigationService, NavigationService>();
 
