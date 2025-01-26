@@ -78,7 +78,7 @@ namespace AnglingClubWebsite
             else
             {
                 setupLoggedOutMenu();
-                _navigationService.NavigateTo("/", false);
+                _navigationService.NavigateTo("/", true);
             }
         }
 
