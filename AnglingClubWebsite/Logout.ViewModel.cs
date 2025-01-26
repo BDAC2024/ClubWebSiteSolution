@@ -19,7 +19,6 @@ namespace AnglingClubWebsite
         {
             await base.Loaded();
             await _authenticationService.LogoutAsync();
-            _navigationService.NavigateTo("/", true);
         }
 
     }

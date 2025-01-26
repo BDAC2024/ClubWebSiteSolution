@@ -43,7 +43,7 @@ builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
 
 // Services
-builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddTransient<IAppDialogService, AppDialogService>();
 builder.Services.AddTransient<INavigationService, NavigationService>();
 
