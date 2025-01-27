@@ -1,43 +1,84 @@
 ﻿@page "/"
 
-<h3>Welcome</h3>
-To the BDAC website
-<br />
-<br />
-    Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-<h3>A mid-text title</h3>
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-Lots more content just to see how it looks when it has to scroll off the bottom. Does the header stay in place and how does the menu look?
-<br />
-<br />
-THIS IS THE LAST LINE
+@inherits MvvmLayoutComponentBase<IndexViewModel>
+
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <img class=""
+             alt="River Ure"
+             src="images/Ure.jpg"
+             style="margin-bottom: 16px; width: 100%;" />
+        <br />
+        <img class=""
+             alt="River Ure"
+             src="images/Roecliffe.jpg"
+             style="margin-bottom: 16px; width: 100%;" />
+
+    </div>
+    <div class="col-md-6 col-sm-12">
+        Welcome to the Boroughbridge & District Angling Club. The club has a selection of waters, some being members only (with guest tickets available) and some day ticket waters.
+        <br />
+        <br />
+
+        <SfCard class="error-alert-card">
+            <CardContent>
+                <b>NO NIGHT FISHING ON ANY OF THE CLUB'S WATERS!</b>
+            </CardContent>
+        </SfCard>
+        <br />
+
+        Unrestricted access is available to: -
+        <ul>
+            <li>News</li>
+            <li>Club waters having day ticket access</li>
+            <li>
+                Club Info
+                <ul>
+                    <li>Club Officers</li>
+                    <li>Club Forms (<NavLink href="/forms">available here</NavLink>)</li>
+                    <li>Environmental Policy</li>
+                    <li *ngIf="!isLoading">
+                        <div>
+                            Privacy Notice
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <BadgeNew>
+                    <NavLink href="/buyMemberships">Memberships - buy online</NavLink>
+                </BadgeNew>
+            </li>
+            <li>
+                <BadgeNew>
+                    <NavLink href="/buyDayTickets">Day Tickets - buy online</NavLink>
+                </BadgeNew>
+                <b>Please note: </b>Day tickets can only be used on the Old Cricket Field/Aldborough stretch. They cannot be used on the members-only stretches. However non-members can fish these stretches if they accompany a member <b>and</b> the member obtains a <NavLink href="/buyGuestTickets">Guest Ticket</NavLink> for the non-member.
+            </li>
+        </ul>
+        Members get additional access to: -
+        <ul>
+            <li>Members-only club waters</li>
+            <li>Diary of events</li>
+            <li>Rules</li>
+            <li>
+                Matches
+                <ul>
+                    <li>Fixtures</li>
+                    <li>Results</li>
+                    <li>League standings</li>
+                    <li>Aggregate weight standings</li>
+                </ul>
+            </li>
+            <li>
+                <BadgeNew>
+                    <NavLink href="/buyGuestTickets">Guest Tickets - buy online</NavLink>
+                </BadgeNew>
+            </li>
+        </ul>
+        In addition to this website, the club also has a Facebook Group and a YouTube Channel (links to both available at the top of the page).
+        <br />
+        <br />
+    </div>
+</div>
+
