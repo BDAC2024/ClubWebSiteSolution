@@ -6,15 +6,43 @@ body {
     padding: 0;
     margin: 0;
     /*background-color: #2DD4BF;*/ /* Teal 400 */
-    background-color: whitesmoke; /* Teal 400 */
-    font-size: 14px;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: whitesmoke !important; /* Teal 400 */
+    font-size: 14px !important;
+    font-family: Roboto, "Helvetica Neue", sans-serif !important;
     /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
 }
 
 h3 {
     margin: 6px 0 2px;
 }
+
+.error-alert-card {
+    background-color: white;
+    color: red;
+    border: 2px solid red;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 2px 2px grey;
+}
+
+/*-------------------------
+    Badges
+--------------------------*/
+
+.highlight-badge {
+    /*float: right;*/
+    margin-right: 5px
+}
+
+    .highlight-badge .e-chip .e-chip-text {
+        font-size: 9px;
+        font-weight: normal;
+        padding-top: 3px;
+    }
+
+    .highlight-badge .e-chip {
+        height: 14px !important;
+    }
 
 /*-------------------------
     Responsive class definitions

@@ -25,7 +25,7 @@
 .banner {
     height: 100px;
     background-color: #1976d2;
-    color: white;
+    color: white !important;
     z-index: 3 !important;
     position: relative;
     align-content: center;
@@ -108,9 +108,10 @@
         }
 
             .banner .icon-column .icons .icon {
-                padding: 4px 10px;
+                margin: 8px;
                 width: 16px;
                 height: 16px;
+                color: white !important;
             }
 
 .banner-hamburger {
@@ -212,8 +213,8 @@
     App main context, where pages are displayed
 --------------------------*/
 .main-content {
-    font-size: 14px;
-    padding: 6px 6px;
+    font-size: 14px !important;
+    padding: 20px 6px;
     z-index: 0;
     text-align: left;
 }
