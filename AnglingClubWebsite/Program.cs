@@ -40,11 +40,15 @@ builder.Services.AddScoped<IMessenger, WeakReferenceMessenger>();
 
 // ViewModels
 builder.Services.AddScoped<MainLayoutViewModel>();
-builder.Services.AddScoped<AppLinkViewModel>();
 builder.Services.AddScoped<IndexViewModel>();
+builder.Services.AddScoped<DiaryViewModel>();
 builder.Services.AddScoped<LoginViewModel>();
 builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
+
+// Component ViewModels
+builder.Services.AddScoped<AppLinkViewModel>();
+builder.Services.AddScoped<NewsCardViewModel>();
 
 // Services
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();

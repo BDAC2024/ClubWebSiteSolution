@@ -4,6 +4,6 @@ namespace AnglingClubWebsite.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
-        public MemberDto? User { get; set; } = null;
+        public MemberDto User { get; set; } = new MemberDto();
     }
 }

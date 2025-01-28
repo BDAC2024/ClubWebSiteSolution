@@ -197,7 +197,7 @@ namespace AnglingClubWebsite
             Menu.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues" });
             Menu.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights" });
             Menu.Add(new MenuItem { Id = "05.3", ParentId = "05", Name = "Trophies" });
-            Menu.Add(new MenuItem { Id = "06", Name = "Diary of Events" });
+            Menu.Add(new MenuItem { Id = "06", Name = "Diary of Events", NavigateUrl = "/diary" });
             Menu.Add(new MenuItem { Id = "07", Name = "Buy Online", HasSubMenu = true });
             Menu.Add(new MenuItem { Id = "07.1", ParentId = "07", Name = "Memberships", NavigateUrl = "/buyMemberships" });
             Menu.Add(new MenuItem { Id = "07.2", ParentId = "07", Name = "Day Tickets", NavigateUrl = "/buyDayTickets" });
@@ -287,7 +287,7 @@ namespace AnglingClubWebsite
         {
             await base.Loaded();
             _currentUserService.User = await _authenticationService.GetCurrentUser();
-            if (_currentUserService.User != null)
+            if (!string.IsNullOrEmpty(_currentUserService.User.Id))
             {
                 setupLoggedInMenu();
 

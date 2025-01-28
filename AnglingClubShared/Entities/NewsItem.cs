@@ -1,7 +1,6 @@
-﻿using AnglingClubShared.Entities;
-using System;
+﻿using System;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Entities
 {
     public class NewsItem : TableBase
     {

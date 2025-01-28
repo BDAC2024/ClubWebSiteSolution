@@ -14,6 +14,6 @@ namespace AnglingClubWebsite.Services
         //Task<bool> RefreshAsync();
         Task<bool> isLoggedIn();
 
-        Task<MemberDto?> GetCurrentUser();
+        Task<MemberDto> GetCurrentUser();
     }
 }

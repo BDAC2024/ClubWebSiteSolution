@@ -1,10 +1,12 @@
 ﻿@inject NavigationManager navManager;
 @inject INavigationService navigationService;
 
-    <br/>
+<SfMessage Severity="MessageSeverity.Warning">
     You must be logged in to view this page.
 
     <a @onclick="LoginThenRedirect" href="javascript:void(0)">Login</a>
+
+</SfMessage>
 
 @code {
 

@@ -1,0 +1,88 @@
+﻿@inherits MvvmComponentBase<NewsCardViewModel>
+
+<span>
+    <SfCard>
+        <CardContent>
+            <div class="card-title">
+                @if (IsNew)
+                {
+                    <BadgeNew>@Title</BadgeNew>
+                }
+                else
+                {
+                    @Title
+                }
+            </div>
+            <div class="card-subtitle">
+                @SubTitle
+            </div>
+            <div class="card-content">
+                @ChildContent
+            </div>
+        </CardContent>
+        <CardFooter>
+            <CardFooterContent>
+                <div class="edit-button-panel">
+                    @if (!string.IsNullOrEmpty(Button1Text) && !string.IsNullOrEmpty(Button1Icon) && Button1Action != null) 
+                    { 
+                        <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(() => Button1Action!(ItemId))"> <i class="@($"fa-solid {Button1Icon} card-icon")" /> @Button1Text </SfButton > 
+                    }
+                    @if (!string.IsNullOrEmpty(Button2Text) && !string.IsNullOrEmpty(Button2Icon) && Button2Action != null)
+                    {
+                        <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(() => Button2Action!(ItemId))"> <i class="@($"fa-solid {Button2Icon} card-icon")" /> @Button2Text </SfButton>
+                    }
+                    @if (!string.IsNullOrEmpty(Button3Text) && !string.IsNullOrEmpty(Button3Icon) && Button3Action != null)
+                    {
+                        <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(() => Button3Action!(ItemId))"> <i class="@($"fa-solid {Button3Icon} card-icon")" /> @Button3Text </SfButton>
+                    }
+                </div>
+            </CardFooterContent>
+        </CardFooter>
+    </SfCard>
+</span>
+
+@code {
+    [Parameter] 
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public required string ItemId { get; set; }
+
+    [Parameter]
+    public required string Title { get; set; }
+
+    [Parameter]
+    public string SubTitle { get; set; } = "";
+
+    [Parameter]
+    public bool IsNew { get; set; } = false;
+
+
+    [Parameter]
+    public string Button1Text { get; set; } = "";
+
+    [Parameter]
+    public string Button1Icon { get; set; } = "";
+
+    [Parameter]
+    public Action<string>? Button1Action { get; set; }
+
+
+    [Parameter]
+    public string Button2Text { get; set; } = "";
+
+    [Parameter]
+    public string Button2Icon { get; set; } = "";
+
+    [Parameter]
+    public Action<string>? Button2Action { get; set; }
+
+    [Parameter]
+    public string Button3Text { get; set; } = "";
+
+    [Parameter]
+    public string Button3Icon { get; set; } = "";
+
+    [Parameter]
+    public Action<string>? Button3Action { get; set; }
+}

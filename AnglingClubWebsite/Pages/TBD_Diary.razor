@@ -1,0 +1,22 @@
+﻿@page "/diary"
+
+@inherits MvvmComponentBase<DiaryViewModel>
+
+<h3>Diary</h3>
+
+
+@if (string.IsNullOrEmpty(ViewModel.CurrentUser.Id))
+{
+    <AuthorizationRequired />
+}
+else
+{
+    <p>
+        Membership No: @ViewModel.CurrentUser.MembershipNumber
+    </p>
+
+    <p>
+        Email: @ViewModel.CurrentUser.Email
+    </p>
+
+}
