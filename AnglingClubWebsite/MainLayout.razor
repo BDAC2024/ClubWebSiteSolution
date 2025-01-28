@@ -52,7 +52,7 @@
     Target="@SidebarTarget">
         <ChildContent>
             <div class="menu-scrollable">
-                <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true" @bind-SelectedNodes="ViewModel.SelectedItems">
+                <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true" @bind-SelectedNodes="ViewModel.SelectedItems" @bind-ExpandedNodes="@ViewModel.ExpandedNodes">
                     <TreeViewFieldsSettings 
                     TValue="MenuItem" 
                     Id="Id" 
@@ -113,17 +113,17 @@
             <main>
                 <div class="@(mobile ? "progress-full-width" : "progress-with-menu")">
                     <SfProgressBar Type="ProgressType.Linear"
-                                   Visible="ViewModel.ShowProgressBar"
-                                   Width="100%"
-                                   Height="8"
-                                   Value="20"
-                                   ProgressThickness="6"
-                                   TrackThickness="8"
-                                   ProgressColor="#1976d2"
-                                   TrackColor="#6CEBED"
-                                   IsIndeterminate="true"
-                                   Minimum="0"
-                                   Maximum="100">
+                    Visible="ViewModel.ShowProgressBar"
+                    Width="100%"
+                    Height="8"
+                    Value="20"
+                    ProgressThickness="6"
+                    TrackThickness="8"
+                    ProgressColor="#1976d2"
+                    TrackColor="#6CEBED"
+                    IsIndeterminate="true"
+                    Minimum="0"
+                    Maximum="100">
                         <ProgressBarAnimation Enable="true" Duration="2000" Delay="0"></ProgressBarAnimation>
                     </SfProgressBar>
                 </div>
@@ -148,6 +148,7 @@
     public bool mobilePortrait = false;
     public bool menuIsOpen = false;
     public bool oldMenuIsOpen = false;
+    public string[] selectedNodes = [];
 
     public void ShowMenu()
     {
@@ -199,7 +200,6 @@
             menuShowingOnMobile = false;
         }
     }
-
 
 }
 

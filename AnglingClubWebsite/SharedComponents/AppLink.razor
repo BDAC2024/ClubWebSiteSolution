@@ -1,0 +1,15 @@
+﻿@inherits MvvmLayoutComponentBase<AppLinkViewModel>
+
+<a @onclick="AppRedirect" href="javascript:void(0)">@ChildContent</a>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public String Href { get; set; } = "/";
+
+    private void AppRedirect()
+    {
+        ViewModel.NavToPage(Href);
+    }
+
+}

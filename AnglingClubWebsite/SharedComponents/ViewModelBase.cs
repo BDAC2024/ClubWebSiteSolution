@@ -40,6 +40,10 @@ namespace AnglingClubWebsite.SharedComponents
             CurrentUser = _currentUserService.User;
         }
 
+        public void NavToPage(string page)
+        {
+            _messenger.Send<SelectMenuItem>(new SelectMenuItem(page));
+        }
     }
 
 }
