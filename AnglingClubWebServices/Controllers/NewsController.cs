@@ -1,5 +1,5 @@
+using AnglingClubShared.Entities;
 using AnglingClubWebServices.Interfaces;
-using AnglingClubWebServices.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

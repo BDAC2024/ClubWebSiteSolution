@@ -16,14 +16,6 @@ h3 {
     margin: 6px 0 2px;
 }
 
-.error-alert-card {
-    background-color: white;
-    color: red;
-    border: 2px solid red;
-    padding: 12px;
-    border-radius: 6px;
-    box-shadow: 2px 2px grey;
-}
 
 /*-------------------------
     Badges
@@ -43,6 +35,38 @@ h3 {
     .highlight-badge .e-chip {
         height: 14px !important;
     }
+
+/*-------------------------
+    Page layout
+--------------------------*/
+.left-header {
+    float: left;
+}
+
+.edit-button-panel {
+    float: right;
+}
+
+.edit-button {
+    margin-left: 12px;
+}
+
+/*-------------------------
+    Cards
+--------------------------*/
+.e-card .e-card-header {
+    font-family: cursive !important;
+    font-style: italic !important;
+}
+
+.error-alert-card {
+    background-color: white;
+    color: red;
+    border: 2px solid red;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 2px 2px grey;
+}
 
 /*-------------------------
     Responsive class definitions

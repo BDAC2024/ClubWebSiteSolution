@@ -54,7 +54,7 @@ namespace Fishing.Client.Services
 
             await customAuthStateProvider.UpdateAuthenticationState(null);
 
-            _currentUserService.User = null;
+            _currentUserService.User = new MemberDto();
 
             //var response = await _factory.CreateClient(Constants.HTTP_CLIENT_KEY).DeleteAsync("api/authentication/revoke");
 
@@ -68,12 +68,12 @@ namespace Fishing.Client.Services
             //LoginChange?.Invoke(null);
         }
 
-        public async Task<MemberDto?> GetCurrentUser()
+        public async Task<MemberDto> GetCurrentUser()
         {
             var authenticatedMember = await _localStorageService.ReadEncryptedItem<AuthenticateResponse>(Constants.AUTH_KEY);
             if (authenticatedMember == null)
             {
-                return null;
+                return new MemberDto();
             }
 
             return new MemberDto(new JwtSecurityTokenHandler().ReadJwtToken(authenticatedMember.Token));

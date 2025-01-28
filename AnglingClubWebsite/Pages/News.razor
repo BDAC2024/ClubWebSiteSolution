@@ -2,23 +2,41 @@
 
 @inherits MvvmComponentBase<NewsViewModel>
 
-<h3>News</h3>
+<h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Latest News</h3>
 
-@if (ViewModel.CurrentUser == null)
+@if (ViewModel.CurrentUser.Admin)
 {
-    <AuthorizationRequired/>
-}
-else
-{
-    <p>
-        Membership No: @ViewModel.CurrentUser!.MembershipNumber
-    </p>
+    <div class="edit-button-panel">
+        @if (ViewModel.IsUnlocked)
+        {
+            <SfButton CssClass="e-primary edit-button" @onclick="ViewModel.AddNewsItem"><i class="fa-solid fa-add" /> Add news item</SfButton>
+        }
 
-    <p>
-        Email: @ViewModel.CurrentUser!.Email
-    </p>
-
+        @if (!ViewModel.IsUnlocked)
+        {
+            <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(true))"><i class="fa-solid fa-lock-open"/> Unlock</SfButton>
+        }
+        else
+        {
+            <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
+        }
+    </div>
+    <br />
+    <br />
+    @foreach (var item in ViewModel.Items)
+    {
+        <NewsCard ItemId="@item.DbKey"
+                  Title="@item.Title"
+                  SubTitle="@item.Date.ToString("dd MMM yy")"
+                  IsNew="ViewModel.IsNew(item.Date)"
+                  Button1Text="@(ViewModel.IsUnlocked ? "Delete" : "")"
+                  Button1Icon="@(ViewModel.IsUnlocked ? "fa-trash" : "")"
+                  Button1Action="@(async (string itemId) => await ViewModel.OnNewsItemDeleted(itemId))"
+                  Button2Text="@(ViewModel.IsUnlocked ? "Edit" : "")"
+                  Button2Icon="@(ViewModel.IsUnlocked ? "fa-pencil" : "")"
+                  Button2Action="@(async (string itemId) => await ViewModel.OnNewsItemEdited(itemId))">
+            @((MarkupString)item.Body)
+        </NewsCard>
+    }
 }
 
-@code {
-}

@@ -75,7 +75,7 @@ namespace AnglingClubWebsite.Authentication
 
                 await _localStorageService.RemoveItemAsync(Constants.AUTH_KEY);
 
-                _messenger.Send(new LoggedIn(null));
+                _messenger.Send(new LoggedIn(new MemberDto()));
             }
 
 
