@@ -116,7 +116,7 @@ namespace AnglingClubWebsite.Pages
             [MinLength(1)]
             [NotifyDataErrorInfo]
             [ObservableProperty]
-            private string _membershipNumber;
+            private string _membershipNumber = "";
 
             //public string MembershipNumber
             //{
@@ -128,7 +128,7 @@ namespace AnglingClubWebsite.Pages
             [MinLength(1)]
             [NotifyDataErrorInfo]
             [ObservableProperty]
-            private string _pin;
+            private string _pin = "";
 
             //public string Pin
             //{

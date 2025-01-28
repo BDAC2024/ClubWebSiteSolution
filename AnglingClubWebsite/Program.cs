@@ -2,6 +2,7 @@ using AnglingClubWebsite;
 using AnglingClubWebsite.Authentication;
 using AnglingClubWebsite.Pages;
 using AnglingClubWebsite.Services;
+using AnglingClubWebsite.SharedComponents;
 using Blazored.LocalStorage;
 using CommunityToolkit.Mvvm.Messaging;
 using Fishing.Client.Services;
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IMessenger, WeakReferenceMessenger>();
 
 // ViewModels
 builder.Services.AddScoped<MainLayoutViewModel>();
+builder.Services.AddScoped<AppLinkViewModel>();
 builder.Services.AddScoped<IndexViewModel>();
 builder.Services.AddScoped<LoginViewModel>();
 builder.Services.AddScoped<LogoutViewModel>();
