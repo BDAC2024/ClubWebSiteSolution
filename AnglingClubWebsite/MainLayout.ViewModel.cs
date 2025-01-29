@@ -29,7 +29,7 @@ namespace AnglingClubWebsite
             IMessenger messenger, 
             IAuthenticationService authenticationService, 
             INavigationService navigationService,
-            ICurrentUserService currentUserService) : base(messenger, currentUserService)
+            ICurrentUserService currentUserService) : base(messenger, currentUserService, authenticationService)
         {
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<LoggedIn>(this);
@@ -83,7 +83,7 @@ namespace AnglingClubWebsite
 
         public void Receive(SelectMenuItem message)
         {
-            selectMenuItem(message.NavigateUrl);
+            SelectMenuItem(message.NavigateUrl);
             ShowConsoleMessage($"SelectMenuItem: About to navigate to {message.NavigateUrl}");
             _navigationService.NavigateTo(message.NavigateUrl, false);
         }
@@ -104,7 +104,7 @@ namespace AnglingClubWebsite
             else
             {
                 setupLoggedOutMenu();
-                selectMenuItem("/");
+                SelectMenuItem("/");
                 _navigationService.NavigateTo("/", false);
             }
         }
@@ -249,7 +249,7 @@ namespace AnglingClubWebsite
             Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
-        private void selectMenuItem(string navigateUrl)
+        public void SelectMenuItem(string navigateUrl)
         {
             var menuItem = Menu.FirstOrDefault(x => x.NavigateUrl != null && (x.NavigateUrl.ToLower() == navigateUrl.ToLower()));
 
@@ -283,10 +283,13 @@ namespace AnglingClubWebsite
 
         #region Events
 
+        public override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+        }
+
         public override async Task Loaded()
         {
-            await base.Loaded();
-            _currentUserService.User = await _authenticationService.GetCurrentUser();
             if (!string.IsNullOrEmpty(_currentUserService.User.Id))
             {
                 setupLoggedInMenu();
@@ -297,6 +300,7 @@ namespace AnglingClubWebsite
                 }
             }
 
+            await base.Loaded();
         }
 
         #endregion

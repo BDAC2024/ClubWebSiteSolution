@@ -2,6 +2,8 @@
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Navigations
 
+@inject NavigationManager navManager;
+
 @inherits MvvmLayoutComponentBase<MainLayoutViewModel>
 
 
@@ -149,6 +151,21 @@
     public bool menuIsOpen = false;
     public bool oldMenuIsOpen = false;
     public string[] selectedNodes = [];
+
+    protected override void OnInitialized()
+    {
+        var pageRoute = navManager.Uri.Replace(navManager.BaseUri, "");
+
+        if (!string.IsNullOrEmpty(pageRoute))
+        {
+            ViewModel.ShowConsoleMessage($"pageRoute: {pageRoute}");
+
+            ViewModel.SelectMenuItem($"/{pageRoute}");
+        }
+
+        base.OnInitialized();
+
+    }
 
     public void ShowMenu()
     {
