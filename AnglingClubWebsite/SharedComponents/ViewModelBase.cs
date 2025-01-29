@@ -5,6 +5,7 @@ using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Fishing.Client.Services;
 
 namespace AnglingClubWebsite.SharedComponents
 {
@@ -12,13 +13,16 @@ namespace AnglingClubWebsite.SharedComponents
     {
         private readonly IMessenger _messenger;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IAuthenticationService _authenticationService;
 
         protected ViewModelBase(
-            IMessenger messenger, 
-            ICurrentUserService currentUserService)
+            IMessenger messenger,
+            ICurrentUserService currentUserService,
+            IAuthenticationService authenticationService)
         {
             _messenger = messenger;
             _currentUserService = currentUserService;
+            _authenticationService = authenticationService;
         }
 
         [ObservableProperty]
@@ -28,16 +32,17 @@ namespace AnglingClubWebsite.SharedComponents
 
         public virtual async Task OnInitializedAsync()
         {
+            _currentUserService.User = await _authenticationService.GetCurrentUser();
+            CurrentUser = _currentUserService.User;
+
             await Loaded().ConfigureAwait(true);
         }
 
-        [RelayCommand]
         public virtual async Task Loaded()
         {
 
             await Task.CompletedTask.ConfigureAwait(false);
 
-            CurrentUser = _currentUserService.User;
         }
 
         public void NavToPage(string page)

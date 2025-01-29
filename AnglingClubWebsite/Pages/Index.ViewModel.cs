@@ -14,7 +14,7 @@ namespace AnglingClubWebsite.Pages
         public IndexViewModel(
             IAuthenticationService authenticationService,
             IMessenger messenger,
-            ICurrentUserService currentUserService) : base(messenger, currentUserService)
+            ICurrentUserService currentUserService) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
