@@ -179,6 +179,8 @@
 
 ::deep .e-sidebar {
     background-color: whitesmoke;
+    box-shadow: 1px 1px lightgrey;
+    filter: brightness(96%);
 }
 
 /*-------------------------
