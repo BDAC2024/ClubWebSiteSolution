@@ -26,6 +26,7 @@ namespace Fishing.Client.Services
 
         private const string JWT_KEY = nameof(JWT_KEY);
         private const string REFRESH_KEY = nameof(REFRESH_KEY);
+        private const string CONTROLLER = "Authentication";
 
         //private string? _jwtCache;
 
@@ -98,7 +99,7 @@ namespace Fishing.Client.Services
 
         public async Task<bool> LoginAsync(AuthenticateRequest model)
         {
-            var html = _factory.CreateClient(Constants.HTTP_CLIENT_KEY);
+            var html = _factory.CreateClient($"{Constants.HTTP_CLIENT_KEY}api/{CONTROLLER}/");
 
             _logger.LogInformation($"Accessing {html.BaseAddress}{Constants.API_AUTHENTICATE}");
 
