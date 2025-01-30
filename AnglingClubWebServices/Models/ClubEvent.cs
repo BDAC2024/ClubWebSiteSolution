@@ -39,15 +39,8 @@ namespace AnglingClubWebServices.Models
         {
             get
             {
-                if (EventType != EventType.Match)
-                {
-                    var formatted = Date.ToString("HH:mm");
-                    return formatted == "00:00" ? "" : formatted;
-                }
-                else
-                {
-                    return "";
-                }
+                var formatted = Date.ToString("HH:mm");
+                return formatted == "00:00" ? "" : formatted;
             }
         }
 
