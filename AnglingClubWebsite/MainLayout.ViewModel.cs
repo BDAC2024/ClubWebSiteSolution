@@ -9,6 +9,8 @@ using AnglingClubWebsite.Services;
 using AnglingClubShared.DTOs;
 using Syncfusion.Blazor.Lists;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using Syncfusion.Blazor.Navigations;
 
 namespace AnglingClubWebsite
 {
@@ -92,7 +94,7 @@ namespace AnglingClubWebsite
         {
             _currentUserService.User = message.User;
 
-            if (_currentUserService.User != null)
+            if (!string.IsNullOrEmpty(_currentUserService.User.Id))
             {
                 setupLoggedInMenu();
 
@@ -187,41 +189,46 @@ namespace AnglingClubWebsite
         {
             ShowConsoleMessage($"setupBaseMenu");
 
-            Menu.Clear();
+            List<MenuItem> menuItems = new List<MenuItem>();
 
-            Menu.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = "/"});
-            Menu.Add(new MenuItem { Id = "02", Name = "News", NavigateUrl = "/News" });
-            Menu.Add(new MenuItem { Id = "03", Name = "Club Waters" });
-            Menu.Add(new MenuItem { Id = "04", Name = "Matches" });
-            Menu.Add(new MenuItem { Id = "05", Name = "Standings", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues" });
-            Menu.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights" });
-            Menu.Add(new MenuItem { Id = "05.3", ParentId = "05", Name = "Trophies" });
-            Menu.Add(new MenuItem { Id = "06", Name = "Diary of Events", NavigateUrl = "/diary" });
-            Menu.Add(new MenuItem { Id = "07", Name = "Buy Online", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "07.1", ParentId = "07", Name = "Memberships", NavigateUrl = "/buyMemberships" });
-            Menu.Add(new MenuItem { Id = "07.2", ParentId = "07", Name = "Day Tickets", NavigateUrl = "/buyDayTickets" });
-            Menu.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets", NavigateUrl = "/buyGuestTickets" });
-            Menu.Add(new MenuItem { Id = "08", Name = "Club Info", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "08.1", ParentId = "08", Name = "Club Officers" });
-            Menu.Add(new MenuItem { Id = "08.2", ParentId = "08", Name = "Rules", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "08.2.1", ParentId = "08.2", Name = "General" });
-            Menu.Add(new MenuItem { Id = "08.2.2", ParentId = "08.2", Name = "Match", NavigateUrl = "/rulesMatch" });
-            Menu.Add(new MenuItem { Id = "08.2.3", ParentId = "08.2", Name = "Junior General" });
-            Menu.Add(new MenuItem { Id = "08.2.4", ParentId = "08.2", Name = "Junior Match" });
-            Menu.Add(new MenuItem { Id = "08.3", ParentId = "08", Name = "Club Forms", NavigateUrl = "/forms" });
-            Menu.Add(new MenuItem { Id = "08.4", ParentId = "08", Name = "Privacy Notice" });
-            Menu.Add(new MenuItem { Id = "08.5", ParentId = "08", Name = "Environmental" });
-            Menu.Add(new MenuItem { Id = "08.6", ParentId = "08", Name = "Angling Trust" });
-                                                             
+            menuItems.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = "/"});
+            menuItems.Add(new MenuItem { Id = "02", Name = "News", NavigateUrl = "/News" });
+            menuItems.Add(new MenuItem { Id = "03", Name = "Club Waters" });
+            menuItems.Add(new MenuItem { Id = "04", Name = "Matches" });
+            menuItems.Add(new MenuItem { Id = "05", Name = "Standings", HasSubMenu = true });
+            menuItems.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues" });
+            menuItems.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights" });
+            menuItems.Add(new MenuItem { Id = "05.3", ParentId = "05", Name = "Trophies" });
+            menuItems.Add(new MenuItem { Id = "06", Name = "Diary of Events", NavigateUrl = "/diary" });
+            menuItems.Add(new MenuItem { Id = "07", Name = "Buy Online", HasSubMenu = true });
+            menuItems.Add(new MenuItem { Id = "07.1", ParentId = "07", Name = "Memberships", NavigateUrl = "/buyMemberships" });
+            menuItems.Add(new MenuItem { Id = "07.2", ParentId = "07", Name = "Day Tickets", NavigateUrl = "/buyDayTickets" });
+            menuItems.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets", NavigateUrl = "/buyGuestTickets" });
+            menuItems.Add(new MenuItem { Id = "08", Name = "Club Info", HasSubMenu = true });
+            menuItems.Add(new MenuItem { Id = "08.1", ParentId = "08", Name = "Club Officers" });
+            menuItems.Add(new MenuItem { Id = "08.2", ParentId = "08", Name = "Rules", HasSubMenu = true });
+            menuItems.Add(new MenuItem { Id = "08.2.1", ParentId = "08.2", Name = "General" });
+            menuItems.Add(new MenuItem { Id = "08.2.2", ParentId = "08.2", Name = "Match", NavigateUrl = "/rulesMatch" });
+            menuItems.Add(new MenuItem { Id = "08.2.3", ParentId = "08.2", Name = "Junior General" });
+            menuItems.Add(new MenuItem { Id = "08.2.4", ParentId = "08.2", Name = "Junior Match" });
+            menuItems.Add(new MenuItem { Id = "08.3", ParentId = "08", Name = "Club Forms", NavigateUrl = "/forms" });
+            menuItems.Add(new MenuItem { Id = "08.4", ParentId = "08", Name = "Privacy Notice" });
+            menuItems.Add(new MenuItem { Id = "08.5", ParentId = "08", Name = "Environmental" });
+            menuItems.Add(new MenuItem { Id = "08.6", ParentId = "08", Name = "Angling Trust" });
+
+            Menu.Clear();
+            Menu.AddRange(menuItems);
         }
 
         public void setupLoggedOutMenu()
         {
             setupBaseMenu();
 
-            Menu.Add(new MenuItem { Id = "11", Name = "Login", NavigateUrl = "/Login" });
+            List<MenuItem> menuItems = new List<MenuItem>();
 
+            menuItems.Add(new MenuItem { Id = "11", Name = "Login", NavigateUrl = "/Login" });
+
+            Menu.AddRange(menuItems);
             Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
@@ -231,9 +238,12 @@ namespace AnglingClubWebsite
 
             setupBaseMenu();
 
-            Menu.Add(new MenuItem { Id = "10", Name = "My Details" });
-            Menu.Add(new MenuItem { Id = "11", Name = "Logout", NavigateUrl = "/Logout" });
+            List<MenuItem> menuItems = new List<MenuItem>();
 
+            menuItems.Add(new MenuItem { Id = "10", Name = "My Details" });
+            menuItems.Add(new MenuItem { Id = "11", Name = "Logout", NavigateUrl = "/Logout" });
+
+            Menu.AddRange(menuItems);
             Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
@@ -241,11 +251,14 @@ namespace AnglingClubWebsite
         {
             ShowConsoleMessage($"setupAdminMenu");
 
-            Menu.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
-            Menu.Add(new MenuItem { Id = "09.1", ParentId = "09", Name = "Members" });
-            Menu.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "User Admins" });
-            Menu.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Payments" });
+            List<MenuItem> menuItems = new List<MenuItem>();
 
+            menuItems.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
+            menuItems.Add(new MenuItem { Id = "09.1", ParentId = "09", Name = "Members" });
+            menuItems.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "User Admins" });
+            menuItems.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Payments" });
+
+            Menu.AddRange(menuItems);
             Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
@@ -276,6 +289,11 @@ namespace AnglingClubWebsite
                 }
 
                 SelectedItems = new string[] { selectedItemId };
+
+            }
+            else
+            {
+                ShowConsoleMessage($"SelectMenuItem - item {navigateUrl} not found!");
             }
         }
 

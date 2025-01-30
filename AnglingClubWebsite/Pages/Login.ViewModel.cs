@@ -12,6 +12,7 @@ using AnglingClubShared.Models.Auth;
 using AnglingClubShared;
 using AnglingClubShared.Enums;
 using System.ComponentModel.DataAnnotations;
+using AnglingClubShared.Extensions;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -55,6 +56,9 @@ namespace AnglingClubWebsite.Pages
         [ObservableProperty]
         private string _caller = "/";
 
+        [ObservableProperty]
+        private bool _isLoggedIn = false;
+
         [RelayCommand(CanExecute = nameof(CanWeLogin))]
         private async Task Login()
         {
@@ -69,22 +73,23 @@ namespace AnglingClubWebsite.Pages
 
             LoginModel.Validate();
 
+            Submitting = true;
+
             if (!LoginModel.HasErrors)
             {
                 _messenger.Send<ShowProgress>();
-
-                Submitting = true;
 
                 try
                 {
                     if (await _authenticationService.LoginAsync(LoginModel))
                     {
                         var target = "/" + Caller ?? "";
+                        _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login about to NavPage to: {target}"));
                         NavToPage(target);
                     }
                     else
                     {
-                        _appDialogService.SendMessage(MessageState.Warn, "Sign In Failed", "Invalid username or password");
+                        _appDialogService.SendMessage(MessageState.Warn, "Login Failed", "Invalid Membership No. or PIN");
                         _messenger.Send<HideProgress>();
                     }
 
@@ -93,7 +98,7 @@ namespace AnglingClubWebsite.Pages
                 {
                     //_logger.LogError(ex, $"Login failed: {ex.Message}");
                     _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login failed: {ex.Message}"));
-                    _appDialogService.SendMessage(MessageState.Error, "Sign In Failed", "An unexpected error occurred");
+                    _appDialogService.SendMessage(MessageState.Error, "Login Failed", "An unexpected error occurred");
 
                 }
                 finally
@@ -104,41 +109,40 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        private bool CanWeLogin()
+        public bool CanWeLogin()
         {
-            var valid = !(LoginModel.HasErrors || Submitting);
-            return valid;
-        }
-
-        public partial class LoginDetails : ObservableValidator
-        {
-            [Required]
-            [MinLength(1)]
-            [NotifyDataErrorInfo]
-            [ObservableProperty]
-            private string _membershipNumber = "";
-
-            //public string MembershipNumber
-            //{
-            //    get => _membershipNumber;
-            //    set => SetProperty(ref _membershipNumber, value, true);
-            //}
-
-            [Required]
-            [MinLength(1)]
-            [NotifyDataErrorInfo]
-            [ObservableProperty]
-            private string _pin = "";
-
-            //public string Pin
-            //{
-            //    get => _pin;
-            //    set => SetProperty(ref _pin, value, true);
-            //}
-
-            public void Validate() => ValidateAllProperties();
+            return !string.IsNullOrEmpty(LoginInfo.MembershipNumber) && !string.IsNullOrEmpty(LoginInfo.Pin);
+            //var valid = !(LoginModel.HasErrors || Submitting);
+            //return valid;
         }
     }
 
+    public partial class LoginDetails : ObservableValidator
+    {
+        //[Required]
+        //[MinLength(1)]
+        //[NotifyDataErrorInfo]
+        [ObservableProperty]
+        private string _membershipNumber = "";
 
+        //public string MembershipNumber
+        //{
+        //    get => _membershipNumber;
+        //    set => SetProperty(ref _membershipNumber, value, true);
+        //}
+
+        //[Required]
+        //[MinLength(1)]
+        //[NotifyDataErrorInfo]
+        [ObservableProperty]
+        private string _pin = "";
+
+        //public string Pin
+        //{
+        //    get => _pin;
+        //    set => SetProperty(ref _pin, value, true);
+        //}
+
+        public void Validate() => ValidateAllProperties();
+    }
 }
