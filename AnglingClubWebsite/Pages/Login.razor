@@ -6,24 +6,19 @@
     <div class="login">
         <h3>Welcome - Please Sign In</h3>
 
-
-@*         <SfNumericTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginModel.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfNumericTextBox>
-        <SfNumericTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginModel.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfNumericTextBox>
-*@
-
+        @* <EditForm Model="@ViewModel.LoginInfo"> *@
         <fieldset>
-            <EditForm Model="@ViewModel.LoginInfo">
-                <SfTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginInfo.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
-                <SfTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginInfo.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
-                <div class="smt-submit">
-                    <SfButton type="submit"
-                                      @onclick="() => ViewModel.LoginCommand.Execute(null)"
-                                      Disabled="ViewModel.Submitting"
-                                      CssClass="e-block e-primary">Sign In</SfButton>
-                </div>
-                <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary>
-            </EditForm>
+            <SfTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginInfo.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+            <SfTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginInfo.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+            <div class="smt-submit">
+                <SfButton type="submit"
+                                    @onclick="() => ViewModel.LoginCommand.Execute(null)"
+                                    Disabled="!ViewModel.LoginCommand.CanExecute(null) || ViewModel.Submitting"
+                                    CssClass="e-block e-primary">Sign In</SfButton>
+            </div>
+            @* <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary> *@
         </fieldset>
+        @* </EditForm> *@
     </div>
 </container>
 

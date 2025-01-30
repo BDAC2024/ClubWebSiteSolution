@@ -54,7 +54,7 @@ namespace Fishing.Client.Services
 
             await customAuthStateProvider.UpdateAuthenticationState(null);
 
-            _currentUserService.User = new MemberDto();
+            //_currentUserService.User = new MemberDto();
 
             //var response = await _factory.CreateClient(Constants.HTTP_CLIENT_KEY).DeleteAsync("api/authentication/revoke");
 
@@ -126,7 +126,7 @@ namespace Fishing.Client.Services
 
                 LoginChange?.Invoke(GetUsername(content.Token));
 
-                _currentUserService.User = await GetCurrentUser();
+                //_currentUserService.User = await GetCurrentUser();
 
                 return true;
 
