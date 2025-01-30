@@ -133,7 +133,7 @@
             </main>
         </div>
         <!-- DIV for creating an Overlay -->
-        <div class="@(menuShowingOnMobile ? "overlay-dim" : "overlay-hidden")"></div>
+        <div @onclick="HideOnClick" class="@(menuShowingOnMobile ? "overlay-dim" : "overlay-hidden")"></div>
     </div>
 
 </div>
@@ -165,6 +165,16 @@
 
         base.OnInitialized();
 
+    }
+
+    public void HideOnClick()
+    {
+        if (menuShowingOnMobile)
+        {
+            ViewModel.ShowConsoleMessage("HideOnClick: Menu closing");
+            menuIsOpen = false;
+            menuShowingOnMobile = false;
+        }
     }
 
     public void ShowMenu()
