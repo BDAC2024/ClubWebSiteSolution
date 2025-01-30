@@ -10,20 +10,24 @@ namespace AnglingClubWebsite.Authentication
         private readonly IAuthenticationService _authenticationService;
         private readonly AuthenticationStateProvider _stateProvider;
         private readonly IConfiguration _configuration;
+        private readonly AnonymousRoutes _anonymousRoutes;
         private bool _refreshing;
 
-        public AuthenticationHandler(IAuthenticationService authenticationService, IConfiguration configuration, AuthenticationStateProvider stateProvider)
+        public AuthenticationHandler(IAuthenticationService authenticationService, IConfiguration configuration, AuthenticationStateProvider stateProvider, AnonymousRoutes anonymousRoutes)
         {
             _authenticationService = authenticationService;
             _configuration = configuration;
             _stateProvider = stateProvider;
+            _anonymousRoutes = anonymousRoutes;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
 
-            if (request.RequestUri!.ToString().EndsWith("/authenticate") || await _authenticationService.isLoggedIn())
+            if (request.RequestUri!.ToString().EndsWith("/authenticate") ||
+                _anonymousRoutes.Contains(request.RequestUri) || 
+                await _authenticationService.isLoggedIn())
             {
                 var jwt = await customAuthStateProvider.GetToken();
 
