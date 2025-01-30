@@ -200,10 +200,9 @@ namespace AnglingClubWebsite
             menuItems.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights" });
             menuItems.Add(new MenuItem { Id = "05.3", ParentId = "05", Name = "Trophies" });
             menuItems.Add(new MenuItem { Id = "06", Name = "Diary of Events", NavigateUrl = "/diary" });
-            menuItems.Add(new MenuItem { Id = "07", Name = "Buy Online", HasSubMenu = true });
-            menuItems.Add(new MenuItem { Id = "07.1", ParentId = "07", Name = "Memberships", NavigateUrl = "/buyMemberships" });
-            menuItems.Add(new MenuItem { Id = "07.2", ParentId = "07", Name = "Day Tickets", NavigateUrl = "/buyDayTickets" });
-            menuItems.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets", NavigateUrl = "/buyGuestTickets" });
+            menuItems.Add(new MenuItem { Id = "07", Name = "Buy Online", HasSubMenu = true, IsNew = true });
+            menuItems.Add(new MenuItem { Id = "07.1", ParentId = "07", Name = "Memberships", NavigateUrl = "/buyMemberships", IsNew = true });
+            menuItems.Add(new MenuItem { Id = "07.2", ParentId = "07", Name = "Day Tickets", NavigateUrl = "/buyDayTickets", IsNew = true });
             menuItems.Add(new MenuItem { Id = "08", Name = "Club Info", HasSubMenu = true });
             menuItems.Add(new MenuItem { Id = "08.1", ParentId = "08", Name = "Club Officers" });
             menuItems.Add(new MenuItem { Id = "08.2", ParentId = "08", Name = "Rules", HasSubMenu = true });
@@ -240,6 +239,7 @@ namespace AnglingClubWebsite
 
             List<MenuItem> menuItems = new List<MenuItem>();
 
+            menuItems.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets", NavigateUrl = "/buyGuestTickets", IsNew = true });
             menuItems.Add(new MenuItem { Id = "10", Name = "My Details" });
             menuItems.Add(new MenuItem { Id = "11", Name = "Logout", NavigateUrl = "/Logout" });
 
@@ -334,6 +334,7 @@ namespace AnglingClubWebsite
         public bool Expanded { get; set; } = false;
         public bool HasSubMenu { get; set; } = false;
         public string? NavigateUrl { get; set; } = null;
+        public bool IsNew { get; set; } = false;
     }
 
     #endregion Helper classes

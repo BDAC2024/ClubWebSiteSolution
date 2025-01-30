@@ -12,6 +12,7 @@ using AnglingClubWebsite.Authentication;
 using AnglingClubWebsite.Extensions;
 using AnglingClubShared.Entities;
 using AnglingClubShared.DTOs;
+using static System.Net.WebRequestMethods;
 
 
 namespace Fishing.Client.Services
@@ -26,7 +27,7 @@ namespace Fishing.Client.Services
 
         private const string JWT_KEY = nameof(JWT_KEY);
         private const string REFRESH_KEY = nameof(REFRESH_KEY);
-        private const string CONTROLLER = "Authentication";
+        private const string CONTROLLER = "Members";
 
         //private string? _jwtCache;
 
@@ -99,11 +100,12 @@ namespace Fishing.Client.Services
 
         public async Task<bool> LoginAsync(AuthenticateRequest model)
         {
-            var html = _factory.CreateClient($"{Constants.HTTP_CLIENT_KEY}api/{CONTROLLER}/");
+            var http = _factory.CreateClient(Constants.HTTP_CLIENT_KEY);
+            http.BaseAddress = new Uri($"{http.BaseAddress.ToString()}api/{CONTROLLER}/");
 
-            _logger.LogInformation($"Accessing {html.BaseAddress}{Constants.API_AUTHENTICATE}");
+            _logger.LogInformation($"Accessing {http.BaseAddress}{Constants.API_AUTHENTICATE}");
 
-            var response = await html.PostAsync(Constants.API_AUTHENTICATE,
+            var response = await http.PostAsync(Constants.API_AUTHENTICATE,
                                                         JsonContent.Create(model));
 
             if (!response.IsSuccessStatusCode)

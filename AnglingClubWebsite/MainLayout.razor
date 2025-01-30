@@ -72,8 +72,8 @@
                                 var item = ((context as MenuItem));
                                 <div>
                                     <div class="treeviewdiv">
-                                        <div class="menu-nodetext @(item.HasSubMenu ? "menu-node-new" : "")">@(item.Name)</div>
-                                        @if (item.HasSubMenu)
+                                        <div class="menu-nodetext @(item.IsNew ? "menu-node-new" : "")">@(item.Name)</div>
+                                        @if (item.IsNew)
                                         {
                                             <div class="menu-nodebadge">
                                                 <SfChip>
