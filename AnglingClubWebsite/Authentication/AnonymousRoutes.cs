@@ -4,7 +4,7 @@
     {
         private List<string> ANONYMOUS_ROUTES = new List<string>
         {
-            "/news/"
+            "/news"
         };
 
         public bool Contains(Uri requestUri) 
