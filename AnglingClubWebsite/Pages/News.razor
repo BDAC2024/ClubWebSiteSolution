@@ -25,6 +25,36 @@
     <br />
 }
 
+@if (ViewModel.IsAdding)
+{
+    <span>
+        <SfCard>
+            <CardContent>
+                <EditForm Model="@ViewModel.NewsItem">
+                    <fieldset>
+                        <SfTextBox Placeholder='Title' @bind-Value="@ViewModel.NewsItem!.Title" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                        <br/>
+                        <br />
+                        <SfDatePicker TValue="DateTime" Width="200px" Format="dd MMM yy" Placeholder="Publication Date" @bind-Value="@ViewModel.NewsItem.Date"></SfDatePicker>
+                        <br/>
+                        <SfTextBox Placeholder='News item text' @bind-Value="@ViewModel.NewsItem!.Body" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+
+                        @* <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary> *@
+                    </fieldset>
+                </EditForm>
+            </CardContent>
+            <CardFooter>
+                <CardFooterContent>
+                    <div class="edit-button-panel">
+                        <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(() => ViewModel.CancelCommand.Execute(null))"> <i class="fa-solid fa-xmark card-icon" /> Cancel </SfButton>
+                        <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(() => ViewModel.SaveCommand.Execute(null))"> <i class="fa-solid fa-save card-icon" /> Save </SfButton>
+                    </div>
+                </CardFooterContent>
+            </CardFooter>
+        </SfCard>
+    </span>
+}
+
 @foreach (var item in ViewModel.Items)
 {
     <NewsCard ItemId="@item.DbKey"

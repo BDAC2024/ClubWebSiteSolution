@@ -9,6 +9,8 @@ using System;
 using AnglingClubShared;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using AnglingClubShared.Enums;
+using CommunityToolkit.Mvvm.Input;
+using Fishing.Client.Services;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -18,18 +20,21 @@ namespace AnglingClubWebsite.Pages
         private readonly IMessenger _messenger;
         private readonly INewsService _newsService;
         private readonly ILogger<NewsViewModel> _logger;
+        private readonly IAppDialogService _appDialogService;
 
         public NewsViewModel(
             IAuthenticationService authenticationService,
             IMessenger messenger,
             ICurrentUserService currentUserService,
             INewsService newsService,
-            ILogger<NewsViewModel> logger) : base(messenger, currentUserService, authenticationService)
+            ILogger<NewsViewModel> logger,
+            IAppDialogService appDialogService) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
             _newsService = newsService;
             _logger = logger;
+            _appDialogService = appDialogService;
         }
 
         [ObservableProperty]
@@ -37,6 +42,15 @@ namespace AnglingClubWebsite.Pages
 
         [ObservableProperty]
         private ObservableCollection<NewsItem> items = new ObservableCollection<NewsItem>();
+
+        [ObservableProperty]
+        private NewsItem? _newsItem = null;
+
+        [ObservableProperty]
+        private bool _isEditing = false;
+
+        [ObservableProperty]
+        private bool _isAdding = false;
 
         public override async Task Loaded()
         {
@@ -53,11 +67,6 @@ namespace AnglingClubWebsite.Pages
         private async Task getNews(bool unlockAfterwards = false)
         {
             _messenger.Send(new ShowProgress());
-
-            if (unlockAfterwards)
-            {
-                Unlock(false);
-            }
 
             try
             {
@@ -77,6 +86,7 @@ namespace AnglingClubWebsite.Pages
             {
                 if (unlockAfterwards)
                 {
+                    Unlock(false);
                     Unlock(true);
                 }
 
@@ -86,7 +96,53 @@ namespace AnglingClubWebsite.Pages
 
         public void AddNewsItem()
         {
+            IsAdding = true;
 
+            NewsItem = new NewsItem();
+            NewsItem.Date = DateTime.Now;
+
+        }
+
+        [RelayCommand]
+        private async Task Cancel()
+        {
+            IsAdding = false;
+            IsEditing = false;
+
+            await Task.Delay(0);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanWeSave))]
+        private async Task Save()
+        {
+            _messenger.Send<ShowProgress>();
+
+            try
+            {
+                await _newsService.SaveNewsItem(NewsItem);
+                await getNews(true);
+
+                IsAdding = false;
+                IsEditing = false;
+            }
+            catch (Exception ex)
+            {
+                _appDialogService.SendMessage(MessageState.Error, "Save Failed", "Unable to save News item");
+                _logger.LogError("Failed to save news", ex);
+            }
+            finally
+            {
+                _messenger.Send<HideProgress>();
+
+
+            }
+        }
+
+        public bool CanWeSave()
+        {
+            return true;
+            //var valid = !(LoginModel.HasErrors || Submitting);
+            //return valid;
         }
 
         public bool IsNew(DateTime itemDate)

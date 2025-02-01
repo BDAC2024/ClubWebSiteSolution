@@ -6,5 +6,6 @@ namespace AnglingClubWebsite.Services
     {
         Task<List<NewsItem>?> ReadNews();
         Task DeleteNewsItem(string id);
+        Task SaveNewsItem(NewsItem item);
     }
 }
