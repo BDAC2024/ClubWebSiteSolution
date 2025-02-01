@@ -13,7 +13,7 @@
             <div class="smt-submit">
                 <SfButton type="submit"
                                     @onclick="() => ViewModel.LoginCommand.Execute(null)"
-                                    Disabled="!ViewModel.LoginCommand.CanExecute(null) || ViewModel.Submitting"
+                                    Disabled="ViewModel.Submitting"
                                     CssClass="e-block e-primary">Sign In</SfButton>
             </div>
             @* <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary> *@

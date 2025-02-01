@@ -33,7 +33,7 @@
               IsNew="ViewModel.IsNew(item.Date)"
               Button1Text="@(ViewModel.IsUnlocked ? "Delete" : "")"
               Button1Icon="@(ViewModel.IsUnlocked ? "fa-trash" : "")"
-              Button1Action="@(async (string itemId) => await ViewModel.OnNewsItemDeleted(itemId))"
+              Button1Action="@(async (string itemId) => await ViewModel.OnNewsItemDeleted(item))"
               Button2Text="@(ViewModel.IsUnlocked ? "Edit" : "")"
               Button2Icon="@(ViewModel.IsUnlocked ? "fa-pencil" : "")"
               Button2Action="@(async (string itemId) => await ViewModel.OnNewsItemEdited(itemId))">

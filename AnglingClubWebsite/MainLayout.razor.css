@@ -224,10 +224,19 @@
 /*-------------------------
     Progress bar
 --------------------------*/
+.progress {
+    background-color: unset;
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+    z-index: 2;
+    margin: 0 10px;
+}
+
 .progress-with-menu {
-    width: calc(100% - 220px) !important;
+    left: 200px;
 }
 
 .progress-full-width {
-    width: 100%;
+    left: 10px;
 }
