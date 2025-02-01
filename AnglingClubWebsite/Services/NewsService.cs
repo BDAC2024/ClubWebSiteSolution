@@ -67,5 +67,21 @@ namespace AnglingClubWebsite.Services
 
             return;
         }
+
+        public async Task SaveNewsItem(NewsItem item)
+        {
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}";
+
+            _logger.LogInformation($"DeleteNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
+
+            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<NewsItem> { item });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"SaveNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+            }
+
+            return;
+        }
     }
 }

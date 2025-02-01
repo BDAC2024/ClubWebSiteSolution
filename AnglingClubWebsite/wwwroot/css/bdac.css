@@ -68,6 +68,30 @@ h3 {
     box-shadow: 2px 2px grey;
 }
 
+.card-title {
+    font-size: larger;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.card-subtitle {
+    font-size: smaller;
+    font-weight: 300;
+}
+
+.card-content {
+    margin-top: 6px;
+}
+
+.card-icon {
+    margin-right: 6px;
+}
+
+.e-card {
+    margin-bottom: 10px !important;
+    box-shadow: 1px 1px grey !important;
+}
+
 /*-------------------------
     Responsive class definitions
 --------------------------*/
