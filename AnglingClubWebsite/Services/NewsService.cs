@@ -14,30 +14,26 @@ namespace AnglingClubWebsite.Services
         private static string CONTROLLER = "News";
 
         private readonly ILogger<NewsService> _logger;
-        private readonly IMessenger _messenger;
 
         public NewsService(
             IHttpClientFactory httpClientFactory,
-            ILogger<NewsService> logger,
-            IMessenger messenger) : base(CONTROLLER, httpClientFactory)
+            ILogger<NewsService> logger) : base(httpClientFactory)
         {
             _logger = logger;
-            _messenger = messenger;
         }
 
 
         public async Task<List<NewsItem>?> ReadNews()
         {
-            _messenger.Send(new ShowProgress());
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}";
 
-            _logger.LogInformation($"ReadNews: Accessing {Http.BaseAddress}{Constants.API_NEWS_READ}");
+            _logger.LogInformation($"ReadNews: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
-            var response = await Http.GetAsync(Constants.API_NEWS_READ);
+            var response = await Http.GetAsync($"{relativeEndpoint}");
 
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning($"ReadNews: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                _messenger.Send(new HideProgress());
                 return null;
             }
             else 
@@ -52,13 +48,24 @@ namespace AnglingClubWebsite.Services
                     _logger.LogError($"ReadNews: {ex.Message}");
                     throw;
                 }
-                finally
-                {
-                    _messenger.Send(new HideProgress());
-                }
+            }
+        }
+
+
+        public async Task DeleteNewsItem(string id)
+        {
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}/{id}";
+
+            _logger.LogInformation($"DeleteNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
+
+            var response = await Http.DeleteAsync($"{relativeEndpoint}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"DeleteNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
             }
 
-
+            return;
         }
     }
 }

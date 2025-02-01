@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System;
 using AnglingClubShared;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using AnglingClubShared.Enums;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -16,32 +17,19 @@ namespace AnglingClubWebsite.Pages
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
         private readonly INewsService _newsService;
+        private readonly ILogger<NewsViewModel> _logger;
 
         public NewsViewModel(
             IAuthenticationService authenticationService,
             IMessenger messenger,
             ICurrentUserService currentUserService,
-            INewsService newsService
-            ) : base(messenger, currentUserService, authenticationService)
+            INewsService newsService,
+            ILogger<NewsViewModel> logger) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
             _newsService = newsService;
-
-            //Items.Add(new NewsItem
-            //{
-            //    DbKey = "Item1",
-            //    Date = DateTime.Now.AddDays(-1),
-            //    Title = "News Item 1",
-            //    Body = "A new <b>Test</b> message."
-            //});
-            //Items.Add(new NewsItem
-            //{
-            //    DbKey = "Item2",
-            //    Date = DateTime.Now.AddDays(-2),
-            //    Title = "News Item 2",
-            //    Body = "Another <i>Test</i> message."
-            //});
+            _logger = logger;
         }
 
         [ObservableProperty]
@@ -62,13 +50,37 @@ namespace AnglingClubWebsite.Pages
             IsUnlocked = unlock;
         }
 
-        private async Task getNews()
+        private async Task getNews(bool unlockAfterwards = false)
         {
-            var items = await _newsService.ReadNews();
+            _messenger.Send(new ShowProgress());
 
-            if (items != null)
+            if (unlockAfterwards)
             {
-                Items = new ObservableCollection<NewsItem>(items);
+                Unlock(false);
+            }
+
+            try
+            {
+                var items = await _newsService.ReadNews();
+
+                if (items != null)
+                {
+                    Items = new ObservableCollection<NewsItem>(items);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"getNews: {ex.Message}");
+            }
+            finally
+            {
+                if (unlockAfterwards)
+                {
+                    Unlock(true);
+                }
+
+                _messenger.Send(new HideProgress());
             }
         }
 
@@ -86,9 +98,30 @@ namespace AnglingClubWebsite.Pages
             return itemDate > newNewsDate;
         }
 
-        public async Task OnNewsItemDeleted(string itemId)
+        public async Task OnNewsItemDeleted(NewsItem newsItem)
         {
-            _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Info, $"Would be deleting: {itemId}", ""));
+            _messenger.Send<ShowMessage>(
+                new ShowMessage
+                (
+                    MessageState.Info,
+                    "Please confirm",
+                    $"Do you really want to delete the news item '{newsItem.Title}'?",
+                    new MessageButton
+                    {
+                        Label = "Yes",
+                        OnConfirmed = async () =>
+                        {
+                            _messenger.Send<ShowProgress>();
+
+                            await _newsService.DeleteNewsItem(newsItem.DbKey);
+                            await getNews(true);
+
+                            _messenger.Send<HideProgress>();
+                        }
+                    }
+                )
+            );
+
             await Task.Delay(0);
         }
 
@@ -97,6 +130,7 @@ namespace AnglingClubWebsite.Pages
             _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Info, $"Would be editing: {itemId}", ""));
             await Task.Delay(0);
         }
+
 
     }
 }

@@ -8,7 +8,7 @@
 
         public const string API_AUTHENTICATE = "authenticate";
 
-        public const string API_NEWS_READ = "";
+        public const string API_NEWS = "";
 
 
 

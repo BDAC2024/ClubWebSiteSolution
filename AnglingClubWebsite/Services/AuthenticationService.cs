@@ -101,7 +101,7 @@ namespace Fishing.Client.Services
         public async Task<bool> LoginAsync(AuthenticateRequest model)
         {
             var http = _factory.CreateClient(Constants.HTTP_CLIENT_KEY);
-            http.BaseAddress = new Uri($"{http.BaseAddress.ToString()}api/{CONTROLLER}/");
+            http.BaseAddress = new Uri($"{http.BaseAddress!.ToString()}api/{CONTROLLER}/");
 
             _logger.LogInformation($"Accessing {http.BaseAddress}{Constants.API_AUTHENTICATE}");
 
