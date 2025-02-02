@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared;
 using AnglingClubShared.Entities;
+using AnglingClubShared.Exceptions;
 using AnglingClubShared.Models.Auth;
 using CommunityToolkit.Mvvm.Messaging;
 using Fishing.Client.Services;
@@ -14,12 +15,18 @@ namespace AnglingClubWebsite.Services
         private static string CONTROLLER = "News";
 
         private readonly ILogger<NewsService> _logger;
+        private readonly IMessenger _messenger;
+        private readonly IAuthenticationService _authenticationService;
 
         public NewsService(
             IHttpClientFactory httpClientFactory,
-            ILogger<NewsService> logger) : base(httpClientFactory)
+            ILogger<NewsService> logger,
+            IMessenger messenger,
+            IAuthenticationService authenticationService) : base(httpClientFactory)
         {
             _logger = logger;
+            _messenger = messenger;
+            _authenticationService = authenticationService;
         }
 
 
@@ -58,11 +65,19 @@ namespace AnglingClubWebsite.Services
 
             _logger.LogInformation($"DeleteNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
-            var response = await Http.DeleteAsync($"{relativeEndpoint}");
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                _logger.LogWarning($"DeleteNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                var response = await Http.DeleteAsync($"{relativeEndpoint}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning($"DeleteNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                }
+            }
+            catch (UserSessionExpiredException ex)
+            {
+                _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
+                await _authenticationService.LogoutAsync();
             }
 
             return;
@@ -74,11 +89,19 @@ namespace AnglingClubWebsite.Services
 
             _logger.LogInformation($"DeleteNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
-            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<NewsItem> { item });
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                _logger.LogWarning($"SaveNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<NewsItem> { item });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning($"SaveNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                }
+            }
+            catch (UserSessionExpiredException ex)
+            {
+                _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
+                await _authenticationService.LogoutAsync();
             }
 
             return;

@@ -70,6 +70,9 @@ namespace AnglingClubWebsite
         private string _messageBody = "";
 
         [ObservableProperty]
+        private string _messageCloseButtonTitle = "";
+
+        [ObservableProperty]
         private MessageButton? _confirmationButton;
 
         [ObservableProperty]
@@ -152,6 +155,7 @@ namespace AnglingClubWebsite
 
             MessageTitle = message.Title;
             MessageBody = message.Body;
+            MessageCloseButtonTitle = message.CloseButtonTitle;
             ConfirmationButton = message.confirmationButtonDetails;
             MessageVisible = true;
         }

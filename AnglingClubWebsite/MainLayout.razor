@@ -101,7 +101,7 @@
                 <Content>@ViewModel.MessageBody</Content>
             </DialogTemplates>
             <DialogButtons>
-                <DialogButton Content="Cancel" IsPrimary="true" OnClick="(()=> ViewModel.MessageVisible = false)" />
+                <DialogButton Content="@ViewModel.MessageCloseButtonTitle" IsPrimary="true" OnClick="(()=> ViewModel.MessageVisible = false)" />
                 @if (ViewModel.ConfirmationButton != null)
                 {
                     <DialogButton Content="@ViewModel.ConfirmationButton.Label" IsPrimary="false" OnClick="(async ()=> await ViewModel.OnConfirm())" />

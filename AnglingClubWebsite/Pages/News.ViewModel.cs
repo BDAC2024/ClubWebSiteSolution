@@ -162,6 +162,7 @@ namespace AnglingClubWebsite.Pages
                     MessageState.Info,
                     "Please confirm",
                     $"Do you really want to delete the news item '{newsItem.Title}'?",
+                    "Cancel",
                     new MessageButton
                     {
                         Label = "Yes",
