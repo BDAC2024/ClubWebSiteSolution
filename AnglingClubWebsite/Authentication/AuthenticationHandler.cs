@@ -2,6 +2,10 @@
 using System.Net;
 using Microsoft.AspNetCore.Components.Authorization;
 using AnglingClubWebsite.Services;
+using AnglingClubShared;
+using CommunityToolkit.Mvvm.Messaging;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Exceptions;
 
 namespace AnglingClubWebsite.Authentication
 {
@@ -11,70 +15,78 @@ namespace AnglingClubWebsite.Authentication
         private readonly AuthenticationStateProvider _stateProvider;
         private readonly IConfiguration _configuration;
         private readonly AnonymousRoutes _anonymousRoutes;
-        private bool _refreshing;
+        private readonly IMessenger _messenger;
+        private readonly IAppDialogService _appDialogService;
 
-        public AuthenticationHandler(IAuthenticationService authenticationService, IConfiguration configuration, AuthenticationStateProvider stateProvider, AnonymousRoutes anonymousRoutes)
+        private bool _refreshing = false;
+
+        public AuthenticationHandler(
+            IAuthenticationService authenticationService,
+            IConfiguration configuration,
+            AuthenticationStateProvider stateProvider,
+            AnonymousRoutes anonymousRoutes,
+            IMessenger messenger,
+            IAppDialogService appDialogService)
         {
             _authenticationService = authenticationService;
             _configuration = configuration;
             _stateProvider = stateProvider;
             _anonymousRoutes = anonymousRoutes;
+            _messenger = messenger;
+            _appDialogService = appDialogService;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
+            var isAnonymous = _anonymousRoutes.Contains(request);
 
-            if (request.RequestUri!.ToString().EndsWith("/authenticate") ||
-                _anonymousRoutes.Contains(request.RequestUri) || 
-                await _authenticationService.isLoggedIn())
+            var jwt = await customAuthStateProvider.GetToken();
+
+            if (string.IsNullOrEmpty(jwt) && !isAnonymous)
             {
-                var jwt = await customAuthStateProvider.GetToken();
+                throw new UserSessionExpiredException();
+            }
 
-                Console.WriteLine($"Checking:{request.RequestUri?.AbsoluteUri}");
-                Console.WriteLine($"... to see if it starts with: {_configuration[Constants.API_ROOT_KEY]}");
+            Console.WriteLine($"Checking:{request.RequestUri?.AbsoluteUri}");
+            Console.WriteLine($"... to see if it starts with: {_configuration[Constants.API_ROOT_KEY]}");
 
-                var isToServer = request.RequestUri?.AbsoluteUri.StartsWith(_configuration[Constants.API_ROOT_KEY] ?? "") ?? false;
+            var isToServer = request.RequestUri?.AbsoluteUri.StartsWith(_configuration[Constants.API_ROOT_KEY] ?? "") ?? false;
 
-                Console.WriteLine($"... result: {isToServer}");
+            Console.WriteLine($"... result: {isToServer}");
 
-                Console.WriteLine($"Is jwt NOT null : {!string.IsNullOrEmpty(jwt)}");
+            Console.WriteLine($"Is jwt NOT null : {!string.IsNullOrEmpty(jwt)}");
 
-                if (isToServer && !string.IsNullOrEmpty(jwt))
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+            if (isToServer && !string.IsNullOrEmpty(jwt))
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
-                Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");
+            Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");
 
-                var response = await base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(request, cancellationToken);
 
-                if (!_refreshing && !string.IsNullOrEmpty(jwt) && response.StatusCode == HttpStatusCode.Unauthorized)
+            if (!_refreshing && response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                try
                 {
-                    try
-                    {
-                        _refreshing = true;
+                    _refreshing = true;
 
-                        throw new UnauthorizedAccessException("Login failed.");
-                        //if (await _authenticationService.RefreshAsync())
-                        //{
-                        //    jwt = await customAuthStateProvider.GetToken();
+                    throw new UnauthorizedAccessException("Login failed.");
+                    //if (await _authenticationService.RefreshAsync())
+                    //{
+                    //    jwt = await customAuthStateProvider.GetToken();
 
-                        //    if (isToServer && !string.IsNullOrEmpty(jwt))
-                        //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+                    //    if (isToServer && !string.IsNullOrEmpty(jwt))
+                    //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
-                        //    response = await base.SendAsync(request, cancellationToken);
-                        //}
-                    }
-                    finally
-                    {
-                        _refreshing = false;
-                    }
+                    //    response = await base.SendAsync(request, cancellationToken);
+                    //}
                 }
-                return response;
+                finally
+                {
+                    _refreshing = false;
+                }
             }
-            else
-            {
-                throw new UnauthorizedAccessException("Login failed.");
-            }
+            return response;
         }
 
     }

@@ -18,7 +18,7 @@ namespace AnglingClubShared
 
     public record class ShowConsoleMessage(string Content);
 
-    public record class ShowMessage(MessageState State, string Title, string Body, MessageButton? confirmationButtonDetails = null);
+    public record class ShowMessage(MessageState State, string Title, string Body, string? CloseButtonTitle = "Cancel", MessageButton? confirmationButtonDetails = null);
 
     public record MessageButton()
     {

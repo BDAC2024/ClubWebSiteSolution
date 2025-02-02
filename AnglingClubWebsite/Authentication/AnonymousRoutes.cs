@@ -2,23 +2,31 @@
 {
     public class AnonymousRoutes
     {
-        private List<string> ANONYMOUS_ROUTES = new List<string>
+        private List<AnonymousRoute> ANONYMOUS_ROUTES = new List<AnonymousRoute>
         {
-            "/news"
+            new AnonymousRoute { Route = "/authenticate", Method = "POST" },
+            new AnonymousRoute { Route = "/news", Method = "GET" },
         };
 
-        public bool Contains(Uri requestUri) 
+        public bool Contains(HttpRequestMessage request) 
         {
             var exists = false;
-            var requestedRoute = requestUri.ToString().ToLower();
+            var requestedRoute = request.RequestUri.ToString().ToLower();
+            var requestedMethod = request.Method.ToString().ToLower();
 
-            foreach (var route in ANONYMOUS_ROUTES)
+            foreach (var item in ANONYMOUS_ROUTES)
             {
-                exists = requestedRoute.EndsWith(route.ToLower());
+                exists = requestedRoute.EndsWith(item.Route.ToLower()) && requestedMethod == item.Method.ToLower();
                 if (exists) break;
             }
 
             return exists;
+        }
+
+        private class AnonymousRoute
+        {
+            public string Route { get; set; }
+            public string Method { get; set; }
         }
     }
 }

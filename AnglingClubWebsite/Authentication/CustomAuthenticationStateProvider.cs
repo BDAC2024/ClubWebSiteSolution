@@ -14,13 +14,15 @@ namespace AnglingClubWebsite.Authentication
     {
         private readonly ILocalStorageService _localStorageService;
         private readonly IMessenger _messenger;
+        private readonly ILogger<CustomAuthenticationStateProvider> _logger;
 
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService, IMessenger messenger)
+        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService, IMessenger messenger, ILogger<CustomAuthenticationStateProvider> logger)
         {
             _localStorageService = localStorageService;
             _messenger = messenger;
+            _logger = logger;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -75,7 +77,9 @@ namespace AnglingClubWebsite.Authentication
 
                 await _localStorageService.RemoveItemAsync(Constants.AUTH_KEY);
 
-                _messenger.Send(new LoggedIn(new MemberDto()));
+                var anonUser = new LoggedIn(new MemberDto());
+
+                _messenger.Send(anonUser);
             }
 
 
@@ -90,13 +94,26 @@ namespace AnglingClubWebsite.Authentication
             {
                 var userSession = await _localStorageService.ReadEncryptedItem<AuthenticateResponse>(Constants.AUTH_KEY);
 
-                if (userSession != null && DateTime.UtcNow < userSession.Expiration)
+                if (userSession != null)
                 {
-                    result = userSession.Token;
+                    var jwt = new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token);
+
+                    var expiry = jwt.ValidTo;
+
+                    if (DateTime.UtcNow < expiry)
+                    {
+                        result = userSession.Token;
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError($"GetToken: {ex.Message}");
+                throw;
             }
 
             return result;
