@@ -111,6 +111,7 @@ namespace AnglingClubWebsite.Pages
         {
             IsAdding = false;
             IsEditing = false;
+            NewsItem = null;
 
             await Task.Delay(0);
         }
@@ -137,6 +138,7 @@ namespace AnglingClubWebsite.Pages
             finally
             {
                 Submitting = false;
+                NewsItem = null;
                 _messenger.Send<HideProgress>();
             }
         }
@@ -202,7 +204,7 @@ namespace AnglingClubWebsite.Pages
 
         public async Task OnNewsItemEdited(string itemId)
         {
-            _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Info, $"Would be editing: {itemId}", ""));
+            NewsItem = Items.FirstOrDefault(i => i.DbKey == itemId);
             await Task.Delay(0);
         }
 
