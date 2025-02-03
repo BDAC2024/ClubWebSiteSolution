@@ -1,28 +1,5 @@
-﻿/*.card-title {
-    font-size: larger;
-    font-weight: bold;
-    margin-bottom: 2px;
+﻿.rte-label {
+    font-size: 12px;
+    font-weight: 500;
+    font-style: normal;
 }
-
-.card-subtitle {
-    font-size: smaller;
-    font-weight: 300;
-}
-
-.card-content {
-    margin-top: 6px;
-}
-
-.card-icon {
-    margin-right: 6px;
-}*/
-
-/*
-    Note: 
-    Need to place syncfusion controls in block/inline container
-    and then add ::deep to pick up styling
-*/
-/*::deep .e-card {
-    margin-bottom: 10px !important;
-    box-shadow: 1px 1px grey !important;
-}*/
