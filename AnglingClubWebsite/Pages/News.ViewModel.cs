@@ -113,6 +113,7 @@ namespace AnglingClubWebsite.Pages
             IsEditing = false;
             NewsItem = null;
 
+            await getNews(true);
             await Task.Delay(0);
         }
 
