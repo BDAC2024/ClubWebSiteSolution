@@ -14,7 +14,7 @@ using Syncfusion.Blazor.Navigations;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase, 
+    public partial class MainLayoutViewModel : ViewModelBase,
         IRecipient<TurnOnDebugMessages>, 
         IRecipient<ShowConsoleMessage>, 
         IRecipient<ShowProgress>, 
@@ -155,7 +155,7 @@ namespace AnglingClubWebsite
 
             MessageTitle = message.Title;
             MessageBody = message.Body;
-            MessageCloseButtonTitle = message.CloseButtonTitle;
+            MessageCloseButtonTitle = message.CloseButtonTitle!;
             ConfirmationButton = message.confirmationButtonDetails;
             MessageVisible = true;
         }
@@ -197,7 +197,7 @@ namespace AnglingClubWebsite
 
             menuItems.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = "/"});
             menuItems.Add(new MenuItem { Id = "02", Name = "News", NavigateUrl = "/News" });
-            menuItems.Add(new MenuItem { Id = "03", Name = "Club Waters" });
+            menuItems.Add(new MenuItem { Id = "03", Name = "Club Waters", NavigateUrl = "/Waters" });
             menuItems.Add(new MenuItem { Id = "04", Name = "Matches" });
             menuItems.Add(new MenuItem { Id = "05", Name = "Standings", HasSubMenu = true });
             menuItems.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues" });
