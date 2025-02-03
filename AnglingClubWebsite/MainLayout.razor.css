@@ -227,8 +227,9 @@
 .progress {
     background-color: unset;
     position: fixed;
-    bottom: 10px;
+    bottom: 0;
     right: 10px;
+    height: 40px;
     z-index: 2;
     margin: 0 10px;
 }
