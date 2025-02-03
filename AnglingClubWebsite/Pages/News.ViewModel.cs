@@ -52,6 +52,9 @@ namespace AnglingClubWebsite.Pages
         [ObservableProperty]
         private bool _isAdding = false;
 
+        [ObservableProperty]
+        private bool _submitting = false;
+
         public override async Task Loaded()
         {
             await getNews();
@@ -119,6 +122,7 @@ namespace AnglingClubWebsite.Pages
 
             try
             {
+                Submitting = true;
                 await _newsService.SaveNewsItem(NewsItem);
                 await getNews(true);
 
@@ -132,9 +136,8 @@ namespace AnglingClubWebsite.Pages
             }
             finally
             {
+                Submitting = false;
                 _messenger.Send<HideProgress>();
-
-
             }
         }
 
@@ -170,10 +173,25 @@ namespace AnglingClubWebsite.Pages
                         {
                             _messenger.Send<ShowProgress>();
 
-                            await _newsService.DeleteNewsItem(newsItem.DbKey);
-                            await getNews(true);
+                            try
+                            {
+                                Submitting = true;
 
-                            _messenger.Send<HideProgress>();
+                                await _newsService.DeleteNewsItem(newsItem.DbKey);
+                                await getNews(true);
+
+                            }
+                            catch (Exception ex)
+                            {
+                                _appDialogService.SendMessage(MessageState.Error, "Deletion Failed", "Unable to save News item");
+                                _logger.LogError("Failed to delete news", ex);
+                            }
+                            finally
+                            {
+                                Submitting = false;
+                                _messenger.Send<HideProgress>();
+                            }
+
                         }
                     }
                 )

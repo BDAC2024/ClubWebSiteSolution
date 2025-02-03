@@ -11,7 +11,7 @@
         public bool Contains(HttpRequestMessage request) 
         {
             var exists = false;
-            var requestedRoute = request.RequestUri.ToString().ToLower();
+            var requestedRoute = request.RequestUri!.ToString().ToLower();
             var requestedMethod = request.Method.ToString().ToLower();
 
             foreach (var item in ANONYMOUS_ROUTES)
@@ -25,8 +25,8 @@
 
         private class AnonymousRoute
         {
-            public string Route { get; set; }
-            public string Method { get; set; }
+            public string Route { get; set; } = "";
+            public string Method { get; set; } = "";
         }
     }
 }

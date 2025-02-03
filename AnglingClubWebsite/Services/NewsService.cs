@@ -74,7 +74,7 @@ namespace AnglingClubWebsite.Services
                     _logger.LogWarning($"DeleteNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
                 }
             }
-            catch (UserSessionExpiredException ex)
+            catch (UserSessionExpiredException)
             {
                 _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
                 await _authenticationService.LogoutAsync();
@@ -98,7 +98,7 @@ namespace AnglingClubWebsite.Services
                     _logger.LogWarning($"SaveNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
                 }
             }
-            catch (UserSessionExpiredException ex)
+            catch (UserSessionExpiredException)
             {
                 _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
                 await _authenticationService.LogoutAsync();
