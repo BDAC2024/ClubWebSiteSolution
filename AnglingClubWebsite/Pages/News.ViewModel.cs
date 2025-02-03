@@ -1,16 +1,12 @@
-﻿using AnglingClubShared.DTOs;
-using AnglingClubShared.Entities;
+﻿using AnglingClubShared.Entities;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using System;
 using AnglingClubShared;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using AnglingClubShared.Enums;
 using CommunityToolkit.Mvvm.Input;
-using Fishing.Client.Services;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -125,7 +121,7 @@ namespace AnglingClubWebsite.Pages
             try
             {
                 Submitting = true;
-                await _newsService.SaveNewsItem(NewsItem);
+                await _newsService.SaveNewsItem(NewsItem!);
                 await getNews(true);
 
                 IsAdding = false;
@@ -134,7 +130,7 @@ namespace AnglingClubWebsite.Pages
             catch (Exception ex)
             {
                 _appDialogService.SendMessage(MessageState.Error, "Save Failed", "Unable to save News item");
-                _logger.LogError("Failed to save news", ex);
+                _logger.LogError(ex, "Failed to save news");
             }
             finally
             {
@@ -187,7 +183,7 @@ namespace AnglingClubWebsite.Pages
                             catch (Exception ex)
                             {
                                 _appDialogService.SendMessage(MessageState.Error, "Deletion Failed", "Unable to save News item");
-                                _logger.LogError("Failed to delete news", ex);
+                                _logger.LogError(ex, "Failed to delete news");
                             }
                             finally
                             {

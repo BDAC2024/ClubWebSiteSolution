@@ -46,6 +46,7 @@ builder.Services.AddScoped<DiaryViewModel>();
 builder.Services.AddScoped<LoginViewModel>();
 builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
+builder.Services.AddScoped<WatersViewModel>();
 
 // Component ViewModels
 builder.Services.AddScoped<AppLinkViewModel>();

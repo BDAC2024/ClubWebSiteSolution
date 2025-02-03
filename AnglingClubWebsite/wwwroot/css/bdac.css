@@ -12,10 +12,68 @@ body {
     /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
 }
 
+/*-------------------------
+    Splash Screen
+--------------------------*/
+.loading {
+    background-color: white;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .loading .loading-text {
+        align-items: end;
+    }
+
+    .loading .title-text i {
+        /*background-color: lightcoral;*/
+        font-size: 36pt;
+        color: #BDBDBD;
+        position: absolute;
+        bottom: 140px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading img {
+        width: 30%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .loading .loading-text {
+        align-items: end;
+    }
+
+    .loading .title-text span {
+        /*background-color: lightcoral;*/
+        position: absolute;
+        bottom: 40px;
+        left: 0;
+        right: 0;
+        font-size: 16pt;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+/*-------------------------
+    Headings
+--------------------------*/
 h3 {
     margin: 6px 0 2px;
 }
-
 
 /*-------------------------
     Badges
@@ -98,9 +156,25 @@ h3 {
 
 @media screen and (min-width: 1px) {
 
+    .loading img {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+    }
+
 }
 
 @media screen and (min-width: 600px) {
+
+    .loading img {
+        width: 30%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+    }
 
 }
 
