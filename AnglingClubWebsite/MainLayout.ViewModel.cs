@@ -78,8 +78,6 @@ namespace AnglingClubWebsite
         [ObservableProperty]
         private bool _messageVisible = false;
 
-        private int MessageCount = 0;
-
         [ObservableProperty]
         private string[] _selectedItems = new string[] { "01" };
 
@@ -160,8 +158,6 @@ namespace AnglingClubWebsite
             MessageCloseButtonTitle = message.CloseButtonTitle;
             ConfirmationButton = message.confirmationButtonDetails;
             MessageVisible = true;
-
-            MessageCount++;
         }
 
         public void Receive(ShowConsoleMessage message)
@@ -184,14 +180,7 @@ namespace AnglingClubWebsite
         public async Task OnConfirm()
         {
             await ConfirmationButton!.OnConfirmed!();
-            if (MessageCount > 1)
-            {
-                MessageCount = 1;
-            }
-            else
-            {
-                MessageVisible = false;
-            }
+            MessageVisible = false;
         }
 
         public void defineStartupMenu()

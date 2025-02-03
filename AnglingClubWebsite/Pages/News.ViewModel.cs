@@ -58,7 +58,7 @@ namespace AnglingClubWebsite.Pages
         public override async Task Loaded()
         {
             await getNews();
-
+            IsUnlocked = false;
             await base.Loaded();
         }
 
