@@ -19,6 +19,8 @@
         <SfRichTextEditor Placeholder='News item text'
                           @ref="rteObj"
                           @bind-Value="Item.Body"
+                          SaveInterval="saveInterval"
+                          AutoSaveOnIdle="true"
                           EnableResize="true">
             <RichTextEditorToolbarSettings Items="@Tools" />
             <RichTextEditorEvents OnToolbarClick="@ToolbarClick" />
@@ -33,6 +35,7 @@
     public required NewsItem Item { get; set; }
 
     public required SfRichTextEditor rteObj;
+    public double saveInterval = 1000 * 60 * 60; // 1 hour
 
     private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
     {
