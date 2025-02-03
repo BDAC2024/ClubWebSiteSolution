@@ -49,7 +49,6 @@ builder.Services.AddScoped<NewsViewModel>();
 
 // Component ViewModels
 builder.Services.AddScoped<AppLinkViewModel>();
-builder.Services.AddScoped<NewsCardViewModel>();
 
 // Services
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();

@@ -1,0 +1,29 @@
+﻿<span>
+    <SfCard class="e-card editable-card">
+        <CardContent>
+            @ChildContent
+        </CardContent>
+        <CardFooter>
+            <CardFooterContent>
+                <div class="edit-button-panel">
+                    <SfButton CssClass="e-btn e-primary edit-button" @onclick="(() => CancelAction())"> <i class="fa-solid fa-xmark card-icon" /> Cancel </SfButton>
+                    <SfButton CssClass="e-btn e-primary edit-button" @onclick="(() => SaveAction())" Disabled="Submitting"> <i class="fa-solid fa-save card-icon" /> Save </SfButton>
+                </div>
+            </CardFooterContent>
+        </CardFooter>
+    </SfCard>
+</span>
+
+@code {
+    [Parameter] 
+    public required RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public required Action CancelAction { get; set; }
+
+    [Parameter]
+    public required Action SaveAction { get; set; }
+
+    [Parameter]
+    public required bool Submitting { get; set; }
+}

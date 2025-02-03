@@ -68,10 +68,6 @@ h3 {
     box-shadow: 2px 2px grey;
 }
 
-.editable-card {
-    background-color: #bbd9f7 !important;
-}
-
 .card-title {
     font-size: larger;
     font-weight: bold;
