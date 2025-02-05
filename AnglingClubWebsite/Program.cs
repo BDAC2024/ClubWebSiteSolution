@@ -57,6 +57,7 @@ builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
 builder.Services.AddTransient<IAppDialogService, AppDialogService>();
 builder.Services.AddTransient<INavigationService, NavigationService>();
 builder.Services.AddTransient<INewsService, NewsService>();
+builder.Services.AddTransient<IWatersService, WatersService>();
 
 builder.Services.AddAuthorizationCore();
 

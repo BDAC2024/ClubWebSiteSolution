@@ -69,7 +69,7 @@ namespace AnglingClubWebsite.Authentication
 
                 await _localStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession);
 
-                _messenger.Send(new LoggedIn(new MemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));
+                _messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));
             }
             else
             {
@@ -77,7 +77,7 @@ namespace AnglingClubWebsite.Authentication
 
                 await _localStorageService.RemoveItemAsync(Constants.AUTH_KEY);
 
-                var anonUser = new LoggedIn(new MemberDto());
+                var anonUser = new LoggedIn(new ClientMemberDto());
 
                 _messenger.Send(anonUser);
             }

@@ -10,7 +10,7 @@ namespace AnglingClubShared
 {
     public record class TurnOnDebugMessages(bool YesOrNo);
 
-    public record class LoggedIn(MemberDto User);
+    public record class LoggedIn(ClientMemberDto User);
 
     public record class ShowProgress();
     public record class HideProgress();
