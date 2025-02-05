@@ -4,6 +4,6 @@ namespace AnglingClubWebsite.Services
 {
     public interface ICurrentUserService
     {
-        MemberDto User { get; set; }
+        ClientMemberDto User { get; set; }
     }
 }

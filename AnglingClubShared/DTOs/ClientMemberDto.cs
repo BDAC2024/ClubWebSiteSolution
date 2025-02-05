@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace AnglingClubShared.DTOs
 {
-    public class MemberDto
+    public class ClientMemberDto
     {
         public string Id { get; set; }
         public string MembershipNumber { get; set; } = "";
@@ -22,12 +22,12 @@ namespace AnglingClubShared.DTOs
         public string Email { get; set; } = "";
         public bool PinResetRequired { get; set; } = false;
 
-        public MemberDto()
+        public ClientMemberDto()
         {
                 
         }
 
-        public MemberDto(JwtSecurityToken token)
+        public ClientMemberDto(JwtSecurityToken token)
         {
             this.Id = token.Claims.First(claim => claim.Type == "Key").Value;
             this.MembershipNumber = token.Claims.First(claim => claim.Type == "MembershipNumber").Value;

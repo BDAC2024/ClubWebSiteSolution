@@ -26,7 +26,7 @@ namespace AnglingClubWebsite.SharedComponents
         }
 
         [ObservableProperty]
-        private MemberDto _currentUser = new MemberDto();
+        private ClientMemberDto _currentUser = new ClientMemberDto();
 
         protected virtual void NotifyStatChanged() => OnPropertyChanged((string?)null);
 
