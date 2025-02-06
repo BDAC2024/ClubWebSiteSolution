@@ -2,6 +2,7 @@
 @using AnglingClubWebsite.Extensions
 @inject NavigationManager navManager;
 @inject INavigationService navigationService;
+@inject IJSRuntime JSRuntime
 
 @inherits MvvmComponentBase<WatersViewModel>
 
@@ -75,24 +76,70 @@
                             @((MarkupString)item.Directions)
                         </div>
                         <br />
-                        <h3>Access Video</h3>
-                        @if (!string.IsNullOrEmpty(item.VideoShortCode))
+                        <h6>Access Video</h6>
+                        @if (!string.IsNullOrEmpty(item.VideoShortCode) && !onLocalhost())
                         {
                             <iframe src=@($"{Constants.VIDEO_BASE_URL}/{item.VideoShortCode}".SanitizeUrl())
-                                    width="@ViewModel.VideoWidth" height="@ViewModel.VideoHeight"
-                                    title="YouTube video player"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    referrerpolicy="strict-origin-when-cross-origin"
-                                    allowfullscreen>
+                            width="@ViewModel.VideoWidth" height="@ViewModel.VideoHeight"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
                             </iframe>
                             <br />
                         }
                         else
                         {
-                            <span>Access video is not yet available for this water.<br /></span>
+                            <span>Access video is not yet available for this water.<br /><br /></span>
                         }
-                        
+                        <div>
+                            <h6>Driving Directions</h6>
+                            <a target="_blank" href="@ViewModel.DirectionUrl(item).SanitizeUrl()">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.
+                            <h6>Location</h6>
+                            <table border="0">
+                                <tr>
+                                    <td align="center">
+                                        <img width="20" src='images\car.png'>
+                                    </td>
+                                    <td style="width: 18px;"> </td>
+                                    @if (item.Path.Count() > 0)
+                                    {
+                                        <td align="center">
+                                            <div style="display: inline; color: lightgreen; font-weight:900;"><b>_____</b><br /><br /></div>
+                                        </td>
+                                    }
+                                    <td style="width: 18px;"> </td>
+                                    @if (item.HasLimits)
+                                    {
+                                        <td align="center">
+                                            <img width="20" src='images\limit.png'>
+                                        </td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        Car Parking
+                                    </td>
+                                    <td style="width: 18px;"> </td>
+                                    @if (item.Path.Count() > 0)
+                                    {
+                                        <td align="center">
+                                            Route
+                                        </td>
+                                    }
+                                    <td style="width: 18px;"> </td>
+                                    @if (item.HasLimits)
+                                    {
+                                        <td align="center">
+                                            Limit of stretch
+                                        </td>
+                                    }
+                                </tr>
+                            </table>
+                            <div id=@($"map-{item.DbKey}") class="water-map">
+                            </div>
+                        </div>
                     </div>
                 </CardContent>
                 <CardFooter>
@@ -134,6 +181,11 @@
         {
             return navManager.Uri.Replace(navManager.BaseUri, "");
         }
+    }
+
+    private bool onLocalhost()
+    {
+        return navManager.Uri.Contains("localhost");
     }
 
 }
