@@ -164,6 +164,10 @@ h3 {
         align-items: center;
     }
 
+    .water-map {
+        height: 500px;
+        width: 100%;
+    }
 }
 
 @media screen and (min-width: 600px) {
@@ -174,6 +178,11 @@ h3 {
         margin-right: auto;
         display: flex;
         align-items: center;
+    }
+
+    .water-map {
+        height: 600px;
+        width: 50%;
     }
 
 }

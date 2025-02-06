@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.RichTextEditor;
 using System.Collections.ObjectModel;
 using AnglingClubShared.DTOs;
+using Microsoft.JSInterop;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -18,6 +19,7 @@ namespace AnglingClubWebsite.Pages
         private readonly IWatersService _watersService;
         private readonly ILogger<WatersViewModel> _logger;
         private readonly BrowserService _browserService;
+        private readonly IJSRuntime _js;
 
         public WatersViewModel(
             IMessenger messenger,
@@ -25,7 +27,8 @@ namespace AnglingClubWebsite.Pages
             IAuthenticationService authenticationService,
             IWatersService watersService,
             ILogger<WatersViewModel> logger,
-            BrowserService browserService) : base(messenger, currentUserService, authenticationService)
+            BrowserService browserService,
+            IJSRuntime js) : base(messenger, currentUserService, authenticationService)
         {
             _messenger = messenger;
             _currentUserService = currentUserService;
@@ -35,6 +38,7 @@ namespace AnglingClubWebsite.Pages
 
             messenger.Register<BrowserChange>(this);
             _browserService = browserService;
+            _js = js;
         }
 
         [ObservableProperty]
@@ -76,6 +80,13 @@ namespace AnglingClubWebsite.Pages
             await getWaters();
             IsUnlocked = false;
             IsLoggedIn = await _authenticationService.isLoggedIn();
+
+            foreach (var item in Items)
+            {
+                Console.WriteLine($"Mapping map-{item.DbKey}");
+                await _js.InvokeVoidAsync("initializeMaps", $"map-{item.DbKey}", item.Centre.Lat, item.Centre.Long);
+            }
+
             await base.Loaded();
         }
 
@@ -86,6 +97,11 @@ namespace AnglingClubWebsite.Pages
 
             _messenger.Send(new ShowConsoleMessage($"Portrait: {_browserService.IsPortrait}, Width: {VideoWidth}, Height: {VideoHeight}"));
 
+        }
+
+        public string DirectionUrl(WaterOutputDto water) 
+        {
+            return $"{Constants.MAP_DIRECTIONS_BASE_URL}/{water.Destination.Lat},{water.Destination.Long}";
         }
 
         public void Unlock(bool unlock)
