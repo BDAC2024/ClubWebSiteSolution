@@ -65,20 +65,27 @@ namespace AnglingClubWebsite.Pages
 
         public void Receive(BrowserChange message)
         {
-            VideoWidth = _browserService.IsPortrait ? 260 : 500;
-            VideoHeight = VideoWidth / (16.0 / 9.0);
-
-            _messenger.Send(new ShowConsoleMessage($"Portrait: {_browserService.IsPortrait}, Width: {VideoWidth}, Height: {VideoHeight}"));
+            setVideoSize();
         }
 
         #endregion Message Handlers
 
         public override async Task Loaded()
         {
+            setVideoSize();
             await getWaters();
             IsUnlocked = false;
             IsLoggedIn = await _authenticationService.isLoggedIn();
             await base.Loaded();
+        }
+
+        private void setVideoSize()
+        {
+            VideoWidth = _browserService.IsPortrait ? 260 : 500;
+            VideoHeight = VideoWidth / (16.0 / 9.0);
+
+            _messenger.Send(new ShowConsoleMessage($"Portrait: {_browserService.IsPortrait}, Width: {VideoWidth}, Height: {VideoHeight}"));
+
         }
 
         public void Unlock(bool unlock)
