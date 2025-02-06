@@ -11,6 +11,7 @@ using Syncfusion.Blazor.Lists;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Syncfusion.Blazor.Navigations;
+using Microsoft.AspNetCore.Components;
 
 namespace AnglingClubWebsite
 {
@@ -26,12 +27,15 @@ namespace AnglingClubWebsite
         private readonly IAuthenticationService _authenticationService;
         private readonly INavigationService _navigationService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly BrowserService _browserService;
+        private readonly IMessenger _messsenger;
 
         public MainLayoutViewModel(
-            IMessenger messenger, 
-            IAuthenticationService authenticationService, 
+            IMessenger messenger,
+            IAuthenticationService authenticationService,
             INavigationService navigationService,
-            ICurrentUserService currentUserService) : base(messenger, currentUserService, authenticationService)
+            ICurrentUserService currentUserService,
+            BrowserService browserService) : base(messenger, currentUserService, authenticationService)
         {
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<LoggedIn>(this);
@@ -46,6 +50,8 @@ namespace AnglingClubWebsite
             defineStartupMenu();
             _navigationService = navigationService;
             _currentUserService = currentUserService;
+            _browserService = browserService;
+            _messsenger = messenger;
         }
 
         [ObservableProperty]
@@ -83,6 +89,12 @@ namespace AnglingClubWebsite
 
         [ObservableProperty]
         private string[] _expandedNodes = new string[0];
+
+        [ObservableProperty]
+        private string _browserDevice = "UNKNOWN";
+
+        [ObservableProperty]
+        private string _browserOrientation = "UNKNOWN";
 
         #region Message Handlers
 
@@ -323,6 +335,16 @@ namespace AnglingClubWebsite
             }
 
             await base.Loaded();
+        }
+
+        public async Task SetupBrowserDetails()
+        {
+            await _browserService.GetDimensions();
+
+            BrowserOrientation = _browserService.IsPortrait ? "Portrait" : "Landscape";
+            BrowserDevice = await _browserService.IsMobile() ? "Mobile" : "Desktop";
+
+            _messsenger.Send(new BrowserChange());
         }
 
         #endregion

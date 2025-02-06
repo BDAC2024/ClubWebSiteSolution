@@ -112,6 +112,12 @@
 
     <div class="menu-and-main-wrapper">
         <div class="main-content">
+            @if (debuggingDeviceType)
+            {
+                <span style="background-color: yellow;">
+                    DeviceType: <b>@ViewModel.BrowserDevice</b> Orientation: <b>@ViewModel.BrowserOrientation</b>
+                </span>
+            }
             <main>
                 @Body
             </main>
@@ -122,18 +128,18 @@
 
     <div class="progress @(mobile ? "progress-full-width" : "progress-with-menu")">
         <SfProgressBar Type="ProgressType.Linear"
-                       Visible="ViewModel.ShowProgressBar"
-                       Height="38"
-                       Width="100%"
-                       Value="20"
-                       ProgressThickness="28"
-                       TrackThickness="28"
-                       ProgressColor="#1976d2"
-                       CornerRadius="CornerType.Round"
-                       TrackColor="#bbd9f7"
-                       IsIndeterminate="true"
-                       Minimum="0"
-                       Maximum="100">
+        Visible="ViewModel.ShowProgressBar"
+        Height="38"
+        Width="100%"
+        Value="20"
+        ProgressThickness="28"
+        TrackThickness="28"
+        ProgressColor="#1976d2"
+        CornerRadius="CornerType.Round"
+        TrackColor="#bbd9f7"
+        IsIndeterminate="true"
+        Minimum="0"
+        Maximum="100">
             <ProgressBarAnimation Enable="true" Duration="2000" Delay="0"></ProgressBarAnimation>
             <ProgressBarMargin Left="0" Right="0"></ProgressBarMargin>
         </SfProgressBar>
@@ -144,6 +150,8 @@
 <SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
 
 @code {
+    public bool debuggingDeviceType = true;
+
     public string SidebarTarget = ".menu-and-main-wrapper";
 
     private string activeBreakpoint { get; set; } = "";
@@ -154,6 +162,9 @@
     public bool menuIsOpen = false;
     public bool oldMenuIsOpen = false;
     public string[] selectedNodes = [];
+
+
+    private bool BrowserDetailsAvailable = false;
 
     protected override void OnInitialized()
     {
@@ -201,8 +212,23 @@
         ViewModel.ShowConsoleMessage("Menu closing");
     }
 
-    public void OnBreakpointChanged(BreakpointChangedEventArgs args)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        { 
+            await SetBrowserDetails();
+        }
+    }
+
+    public async Task OnBreakpointChanged(BreakpointChangedEventArgs args)
+    {
+        // await Task.Delay(0);
+
+        if (BrowserDetailsAvailable)
+        {
+            await SetBrowserDetails();
+        }
+
         ViewModel.ShowConsoleMessage($"OnBreakpointChanged:Breakpoint changed - now {activeBreakpoint}");
         mobile = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
         mobilePortrait = activeBreakpoint == "Small";
@@ -217,6 +243,13 @@
         ViewModel.ShowConsoleMessage($"OnBreakpointChanged:menuShowingOnMobile - now {menuShowingOnMobile}");
 
     }
+
+    public async Task SetBrowserDetails()
+    {
+        await ViewModel.SetupBrowserDetails();
+        BrowserDetailsAvailable = true;
+    }
+
 
     public void MenuSelected(NodeClickEventArgs args)
     {

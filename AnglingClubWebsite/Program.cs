@@ -52,6 +52,7 @@ builder.Services.AddScoped<WatersViewModel>();
 builder.Services.AddScoped<AppLinkViewModel>();
 
 // Services
+builder.Services.AddSingleton<BrowserService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
 builder.Services.AddTransient<IAppDialogService, AppDialogService>();

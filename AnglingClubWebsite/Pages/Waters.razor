@@ -1,4 +1,5 @@
 ﻿@page "/Waters"
+@using AnglingClubWebsite.Extensions
 @inject NavigationManager navManager;
 @inject INavigationService navigationService;
 
@@ -64,7 +65,7 @@
                                 @foreach (var w3w in item.W3w)
                                 {
                                     <li style="padding-left: 20px; margin-bottom: 0;">
-                                        <a href="@w3w.Url" target="_blank">@w3w.CarPark</a>
+                                        <a href="@w3w.Url.SanitizeUrl()" target="_blank">@w3w.CarPark</a>
                                     </li>
                                 }
                             </ul>
@@ -77,11 +78,11 @@
                         <h3>Access Video</h3>
                         @if (!string.IsNullOrEmpty(item.VideoShortCode))
                         {
-                            <iframe src=@($"https://www.youtube.com/embed/{item.VideoShortCode}")
-                                    width="300" height="200"
+                            <iframe src=@($"{Constants.VIDEO_BASE_URL}/{item.VideoShortCode}".SanitizeUrl())
+                                    width="@ViewModel.VideoWidth" height="@ViewModel.VideoHeight"
                                     title="YouTube video player"
                                     frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen>
                             </iframe>
                             <br />
