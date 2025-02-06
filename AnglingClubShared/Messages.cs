@@ -12,6 +12,8 @@ namespace AnglingClubShared
 
     public record class LoggedIn(ClientMemberDto User);
 
+    public record class BrowserChange();
+
     public record class ShowProgress();
     public record class HideProgress();
     public record class SelectMenuItem(string NavigateUrl);
