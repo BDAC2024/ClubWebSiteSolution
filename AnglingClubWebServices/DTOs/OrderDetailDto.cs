@@ -2,7 +2,7 @@
 using AnglingClubWebServices.Interfaces;
 using System;
 
-namespace AnglingClubWebServices.DTOs
+namespace AnglingClubShared.DTOs
 {
     public class OrderDetailDto
     {

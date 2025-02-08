@@ -1,7 +1,7 @@
 ﻿using AnglingClubShared.Enums;
 using AnglingClubWebServices.Interfaces;
 
-namespace AnglingClubWebServices.DTOs
+namespace AnglingClubShared.DTOs
 {
     public class CalendarExportDto
     {
