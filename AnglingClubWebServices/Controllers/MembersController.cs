@@ -1,7 +1,7 @@
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models.Auth;
-using AnglingClubWebServices.DTOs;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AnglingClubWebServices.DTOs;
 
 namespace AnglingClubWebServices.Controllers
 {

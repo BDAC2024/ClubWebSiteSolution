@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AnglingClubWebServices.DTOs
+namespace AnglingClubShared.DTOs
 {
     public class NewMembershipDto
     {

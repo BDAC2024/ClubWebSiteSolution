@@ -1,7 +1,6 @@
 ﻿using AnglingClubShared.Enums;
-using AnglingClubWebServices.DTOs;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
-using AnglingClubWebServices.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AnglingClubShared.Entities;
+using AnglingClubShared.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

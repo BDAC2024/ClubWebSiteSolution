@@ -1,4 +1,4 @@
-﻿namespace AnglingClubWebServices.DTOs
+﻿namespace AnglingClubShared.DTOs
 {
     internal class CreateCheckoutSessionResponse
     {

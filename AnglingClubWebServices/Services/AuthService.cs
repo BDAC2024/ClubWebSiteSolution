@@ -1,4 +1,4 @@
-﻿using AnglingClubShared.DTOs;
+﻿using AnglingClubWebServices.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models.Auth;
@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AnglingClubShared.DTOs;
 
 namespace AnglingClubWebServices.Services
 {
@@ -119,7 +120,7 @@ namespace AnglingClubWebServices.Services
             var key = Encoding.ASCII.GetBytes(_authOptions.AuthSecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new MemberDto().GetIdentity(member, GetDeveloperName()),
+                Subject = new ClientMemberDto().GetIdentity(member, GetDeveloperName()),
                 Expires = DateTime.UtcNow.AddMinutes(_authOptions.AuthExpireMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
