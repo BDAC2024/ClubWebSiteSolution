@@ -4,7 +4,8 @@
 
 <h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Latest News</h3>
 
-@if (ViewModel.CurrentUser.Admin)
+@if (
+    ViewModel.CurrentUser.Admin)
 {
     <div class="edit-button-panel">
         @if (ViewModel.IsUnlocked)

@@ -8,6 +8,7 @@ using Syncfusion.Blazor.RichTextEditor;
 using System.Collections.ObjectModel;
 using AnglingClubShared.DTOs;
 using Microsoft.JSInterop;
+using AnglingClubShared.Models;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -83,8 +84,7 @@ namespace AnglingClubWebsite.Pages
 
             foreach (var item in Items)
             {
-                Console.WriteLine($"Mapping map-{item.DbKey}");
-                await _js.InvokeVoidAsync("initializeMaps", $"map-{item.DbKey}", item.Centre.Lat, item.Centre.Long);
+                await _js.InvokeVoidAsync("initializeMaps", $"map-{item.DbKey}", item.Centre, item.Markers.ToArray(), item.Path.ToArray());
             }
 
             await base.Loaded();
