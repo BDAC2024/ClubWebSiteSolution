@@ -31,25 +31,25 @@
 
 @foreach (var item in ViewModel.Items)
 {
-    @if (ItemBeingEdited(item))
+    @if (ViewModel.Water != null && ViewModel.Water.DbKey == item.DbKey)
     {
-        <EditForm Model="item">
-            <fieldset>
-                <EditableCard Submitting="ViewModel.Submitting"
-                              EditMode="true"
-                              CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
-                              SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
-                    <CardContent>
+        <EditableCard Submitting="ViewModel.Submitting"
+                      EditMode="true"
+                      CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
+                      SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
+            <CardContent>
+                <EditForm Model="item">
+                    <fieldset>
                         <div class="card-title">
                             @item.Name
                         </div>
                         <div>
                             <h6>Description</h6>
                             <SfRichTextEditor Placeholder='Description'
-                                                @ref="rteObjDesc"
-                                                @bind-Value="item.Description"
-                                                AutoSaveOnIdle="true"
-                                                EnableResize="true">
+                                              @ref="rteObjDesc"
+                                              @bind-Value="item.Description"
+                                              AutoSaveOnIdle="true"
+                                              EnableResize="true">
                                 <RichTextEditorToolbarSettings Items="@Tools" />
                                 <RichTextEditorEvents OnToolbarClick="@ToolbarClick1" />
                                 @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
@@ -59,10 +59,10 @@
                             <h6>Directions</h6>
                             <div>
                                 <SfRichTextEditor Placeholder='Directions'
-                                                    @ref="rteObjDirections"
-                                                    @bind-Value="item.Directions"
-                                                    AutoSaveOnIdle="true"
-                                                    EnableResize="true">
+                                                  @ref="rteObjDirections"
+                                                  @bind-Value="item.Directions"
+                                                  AutoSaveOnIdle="true"
+                                                  EnableResize="true">
                                     <RichTextEditorToolbarSettings Items="@Tools" />
                                     <RichTextEditorEvents OnToolbarClick="@ToolbarClick2" />
                                     @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
@@ -70,20 +70,10 @@
                             </div>
                             <br />
                         </div>
-                    </CardContent>
-                    <CardFooter>
-                        <CardFooterContent>
-                            @if (ViewModel.IsUnlocked && !ItemBeingEdited(item))
-                            {
-                                <div class="edit-button-panel">
-                                    <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(async () => await ViewModel.OnWaterEdited(item.DbKey))"> <i class="@($"fa-solid fa-pencil card-icon")" /> Edit </SfButton>
-                                </div>
-                            }
-                        </CardFooterContent>
-                    </CardFooter>
-                </EditableCard>
-            </fieldset>
-        </EditForm>
+                    </fieldset>
+                </EditForm>
+            </CardContent>
+        </EditableCard>
     }
     else
     {
