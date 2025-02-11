@@ -48,19 +48,19 @@ namespace AnglingClubWebsite.Authentication
                 throw new UserSessionExpiredException();
             }
 
-            Console.WriteLine($"Checking:{request.RequestUri?.AbsoluteUri}");
-            Console.WriteLine($"... to see if it starts with: {_configuration[Constants.API_ROOT_KEY]}");
+            //Console.WriteLine($"Checking:{request.RequestUri?.AbsoluteUri}");
+            //Console.WriteLine($"... to see if it starts with: {_configuration[Constants.API_ROOT_KEY]}");
 
             var isToServer = request.RequestUri?.AbsoluteUri.StartsWith(_configuration[Constants.API_ROOT_KEY] ?? "") ?? false;
 
-            Console.WriteLine($"... result: {isToServer}");
+            //Console.WriteLine($"... result: {isToServer}");
 
-            Console.WriteLine($"Is jwt NOT null : {!string.IsNullOrEmpty(jwt)}");
+            //Console.WriteLine($"Is jwt NOT null : {!string.IsNullOrEmpty(jwt)}");
 
             if (isToServer && !string.IsNullOrEmpty(jwt))
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
-            Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");
+            //Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");
 
             var response = await base.SendAsync(request, cancellationToken);
 

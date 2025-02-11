@@ -157,8 +157,14 @@ namespace AnglingClubWebsite.Pages
             Water = Items.FirstOrDefault(i => i.DbKey == itemId);
             await Task.Delay(50);
             Console.WriteLine($"Water is null: {Water == null}");
-            Console.WriteLine($"Desc: {Water!.Description}");
-            Console.WriteLine($"Directions: {Water!.Directions}");
+            if (Water != null)
+            {
+                Console.WriteLine($"Desc inside if: {Water.Description}");
+                Console.WriteLine($"Directions inside if: {Water.Directions}");
+
+                Console.WriteLine($"Desc from list: {Items.First(i => i.DbKey == itemId).Description}");
+                Console.WriteLine($"Directions from list: {Items.First(i => i.DbKey == itemId).Directions}");
+            }
         }
 
         [RelayCommand]
