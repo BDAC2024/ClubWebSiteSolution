@@ -4,19 +4,23 @@
 
 @inherits MvvmComponentBase<MatchesViewModel>
 
-<h3 class="left-header">Matches</h3>
-<div class="@(ViewModel.IsMobile ? "edit-button-panel" : "desktop-season-selector")">
-    @if (ViewModel.RefDataLoaded)
-    {
-        <SfDropDownList TValue="Season"
-                        TItem="SeasonInfo"
-                        Placeholder="Season"
-                        FloatLabelType="FloatLabelType.Auto"
-                        DataSource="@ViewModel.RefData!.Seasons"
-                        @bind-Value="@ViewModel.RefData!.CurrentSeason">
-            <DropDownListFieldSettings Value="Season" Text="Name"></DropDownListFieldSettings>
-        </SfDropDownList>
-    }
+<div>
+    <h3 class="left-header">Matches</h3>
+    <div class="@(ViewModel.IsMobile ? "edit-button-panel" : "desktop-season-selector")">
+        @if (ViewModel.RefDataLoaded)
+        {
+            <span style="display: inline-flex">Season</span>
+            <SfDropDownList TValue="Season"
+                            TItem="SeasonInfo"
+                            Placeholder="Season"
+                            Width="100px"
+                            FloatLabelType="FloatLabelType.Never"
+                            DataSource="@ViewModel.RefData!.Seasons"
+                            @bind-Value="@ViewModel.RefData!.CurrentSeason">
+                <DropDownListFieldSettings Value="Season" Text="Name"></DropDownListFieldSettings>
+            </SfDropDownList>
+        }
+    </div>
 </div>
 <br />
 <br />
