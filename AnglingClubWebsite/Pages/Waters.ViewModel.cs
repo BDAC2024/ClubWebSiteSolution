@@ -171,6 +171,7 @@ namespace AnglingClubWebsite.Pages
                 var json = JsonSerializer.Serialize(Water);
 
                 Console.WriteLine($"Water: {JsonSerializer.Serialize(Water)}");
+                Console.WriteLine($"Water from list: {JsonSerializer.Serialize(Items.First(i => i.DbKey == itemId))}");
 
             }
         }
