@@ -1,16 +1,19 @@
 ﻿<span>
-    <SfCard class="e-card editable-card">
+    <SfCard class="@getClass()">
         <CardContent>
             @ChildContent
         </CardContent>
-        <CardFooter>
-            <CardFooterContent>
-                <div class="edit-button-panel">
-                    <SfButton CssClass="e-btn e-primary edit-button" @onclick="(() => CancelAction())"> <i class="fa-solid fa-xmark card-icon" /> Cancel </SfButton>
-                    <SfButton CssClass="e-btn e-primary edit-button" @onclick="(() => SaveAction())" Disabled="Submitting"> <i class="fa-solid fa-save card-icon" /> Save </SfButton>
-                </div>
-            </CardFooterContent>
-        </CardFooter>
+        @if (EditMode)
+        {
+            <CardFooter>
+                <CardFooterContent>
+                    <div class="edit-button-panel">
+                        <SfButton CssClass="e-btn e-primary edit-button" @onclick="(() => CancelAction())"> <i class="fa-solid fa-xmark card-icon" /> Cancel </SfButton>
+                        <SfButton CssClass="e-btn e-primary edit-button" @onclick="(() => SaveAction())" Disabled="Submitting"> <i class="fa-solid fa-save card-icon" /> Save </SfButton>
+                    </div>
+                </CardFooterContent>
+            </CardFooter>
+        }
     </SfCard>
 </span>
 
@@ -26,4 +29,12 @@
 
     [Parameter]
     public required bool Submitting { get; set; }
+
+    [Parameter]
+    public bool EditMode { get; set; } = true;
+
+    private string getClass()
+    {
+        return "e-card " + (EditMode ? "editable-card" : "");
+    }
 }

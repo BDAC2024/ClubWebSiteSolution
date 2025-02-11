@@ -87,7 +87,7 @@ namespace AnglingClubWebsite.Services
         {
             var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}";
 
-            _logger.LogInformation($"DeleteNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            _logger.LogInformation($"SaveNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
             try
             {
