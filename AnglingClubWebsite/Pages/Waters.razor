@@ -60,7 +60,7 @@
                                                   AutoSaveOnIdle="true"
                                                   EnableResize="true">
                                     <RichTextEditorToolbarSettings Items="@Tools" />
-                                    <RichTextEditorEvents OnToolbarClick="@ToolbarClick" />
+                                    <RichTextEditorEvents OnToolbarClick="@ToolbarClick1" />
                                     @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
                                 </SfRichTextEditor>
 
@@ -92,7 +92,7 @@
                                                   AutoSaveOnIdle="true"
                                                   EnableResize="true">
                                     <RichTextEditorToolbarSettings Items="@Tools" />
-                                    <RichTextEditorEvents OnToolbarClick="@ToolbarClick" />
+                                    <RichTextEditorEvents OnToolbarClick="@ToolbarClick2" />
                                     @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
                                 </SfRichTextEditor>
 
@@ -241,9 +241,12 @@
         new ToolbarItemModel() { Command = ToolbarCommand.Redo }
     };
 
-    private void ToolbarClick(ToolbarClickEventArgs args)
+    private void ToolbarClick1(ToolbarClickEventArgs args)
     {
         rteObjDesc.PreventRender();
+    }
+    private void ToolbarClick2(ToolbarClickEventArgs args)
+    {
         rteObjDirections.PreventRender();
     }
 
