@@ -12,6 +12,8 @@ using AnglingClubShared.Models;
 using AnglingClubShared.Enums;
 using CommunityToolkit.Mvvm.Input;
 using Fishing.Client.Services;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -161,9 +163,15 @@ namespace AnglingClubWebsite.Pages
             {
                 Console.WriteLine($"Desc inside if: {Water.Description}");
                 Console.WriteLine($"Directions inside if: {Water.Directions}");
+                Console.WriteLine($"W3wCarPark: {Water.W3wCarPark}");
 
                 Console.WriteLine($"Desc from list: {Items.First(i => i.DbKey == itemId).Description}");
                 Console.WriteLine($"Directions from list: {Items.First(i => i.DbKey == itemId).Directions}");
+
+                var json = JsonSerializer.Serialize(Water);
+
+                Console.WriteLine($"Water: {JsonSerializer.Serialize(Water)}");
+
             }
         }
 
