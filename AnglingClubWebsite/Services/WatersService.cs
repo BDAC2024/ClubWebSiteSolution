@@ -33,7 +33,7 @@ namespace AnglingClubWebsite.Services
 
         public async Task<List<WaterOutputDto>?> ReadWaters()
         {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}";
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_WATERS}";
 
             _logger.LogInformation($"ReadWaters: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
@@ -59,20 +59,25 @@ namespace AnglingClubWebsite.Services
             }
         }
 
-        /*
-        public async Task DeleteNewsItem(string id)
+        public async Task SaveWater(WaterOutputDto water)
         {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}/{id}";
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_WATERS_UPDATE}";
 
-            _logger.LogInformation($"DeleteNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            _logger.LogInformation($"SaveWater: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
             try
             {
-                var response = await Http.DeleteAsync($"{relativeEndpoint}");
+                WaterUpdateDto dto = new WaterUpdateDto 
+                { 
+                    DbKey = water.DbKey, 
+                    Description = water.Description, 
+                    Directions = water.Directions 
+                };
+                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", dto);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning($"DeleteNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                    _logger.LogWarning($"SaveWater: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
                 }
             }
             catch (UserSessionExpiredException)
@@ -83,30 +88,5 @@ namespace AnglingClubWebsite.Services
 
             return;
         }
-
-        public async Task SaveNewsItem(NewsItem item)
-        {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}";
-
-            _logger.LogInformation($"DeleteNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
-
-            try
-            {
-                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<NewsItem> { item });
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning($"SaveNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                }
-            }
-            catch (UserSessionExpiredException)
-            {
-                _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
-                await _authenticationService.LogoutAsync();
-            }
-
-            return;
-        }
-        */
     }
 }

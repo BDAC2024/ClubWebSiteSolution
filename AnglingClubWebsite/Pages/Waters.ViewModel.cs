@@ -9,6 +9,9 @@ using System.Collections.ObjectModel;
 using AnglingClubShared.DTOs;
 using Microsoft.JSInterop;
 using AnglingClubShared.Models;
+using AnglingClubShared.Enums;
+using CommunityToolkit.Mvvm.Input;
+using Fishing.Client.Services;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -21,6 +24,7 @@ namespace AnglingClubWebsite.Pages
         private readonly ILogger<WatersViewModel> _logger;
         private readonly BrowserService _browserService;
         private readonly IJSRuntime _js;
+        private readonly IAppDialogService _appDialogService;
 
         public WatersViewModel(
             IMessenger messenger,
@@ -29,7 +33,8 @@ namespace AnglingClubWebsite.Pages
             IWatersService watersService,
             ILogger<WatersViewModel> logger,
             BrowserService browserService,
-            IJSRuntime js) : base(messenger, currentUserService, authenticationService)
+            IJSRuntime js,
+            IAppDialogService appDialogService) : base(messenger, currentUserService, authenticationService)
         {
             _messenger = messenger;
             _currentUserService = currentUserService;
@@ -40,6 +45,7 @@ namespace AnglingClubWebsite.Pages
             messenger.Register<BrowserChange>(this);
             _browserService = browserService;
             _js = js;
+            _appDialogService = appDialogService;
         }
 
         [ObservableProperty]
@@ -53,6 +59,9 @@ namespace AnglingClubWebsite.Pages
 
         [ObservableProperty]
         private bool _loading = false;
+
+        [ObservableProperty]
+        private bool _isEditing = false;
 
         [ObservableProperty]
         private bool _submitting = false;
@@ -146,6 +155,49 @@ namespace AnglingClubWebsite.Pages
         {
             Water = Items.FirstOrDefault(i => i.DbKey == itemId);
             await Task.Delay(0);
+        }
+
+        [RelayCommand]
+        private async Task Cancel()
+        {
+            IsEditing = false;
+            Water = null;
+
+            await getWaters(true);
+            await Task.Delay(0);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanWeSave))]
+        private async Task Save()
+        {
+            _messenger.Send<ShowProgress>();
+
+            try
+            {
+                Submitting = true;
+                await _watersService.SaveWater(Water!);
+                await getWaters(true);
+
+                IsEditing = false;
+            }
+            catch (Exception ex)
+            {
+                _appDialogService.SendMessage(MessageState.Error, "Save Failed", "Unable to save Water");
+                _logger.LogError(ex, "Failed to save water");
+            }
+            finally
+            {
+                Submitting = false;
+                Water = null;
+                _messenger.Send<HideProgress>();
+            }
+        }
+
+        public bool CanWeSave()
+        {
+            return true;
+            //var valid = !(LoginModel.HasErrors || Submitting);
+            //return valid;
         }
 
         private class What3Words

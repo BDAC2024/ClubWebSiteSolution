@@ -6,7 +6,6 @@ namespace AnglingClubWebsite.Services
     public interface IWatersService
     {
         Task<List<WaterOutputDto>?> ReadWaters();
-        //Task DeleteNewsItem(string id);
-        //Task SaveNewsItem(NewsItem item);
+        Task SaveWater(WaterOutputDto water);
     }
 }

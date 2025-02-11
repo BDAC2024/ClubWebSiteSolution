@@ -12,6 +12,8 @@
         public const string API_AUTHENTICATE = "authenticate";
 
         public const string API_NEWS = "";
+        public const string API_WATERS = "";
+        public const string API_WATERS_UPDATE = "UpdateDescription";
 
 
 
