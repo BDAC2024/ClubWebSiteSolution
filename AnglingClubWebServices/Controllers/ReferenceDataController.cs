@@ -1,3 +1,4 @@
+using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;

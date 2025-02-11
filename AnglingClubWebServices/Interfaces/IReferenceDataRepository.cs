@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Models;
+﻿using AnglingClubShared.Models;
+using AnglingClubWebServices.Models;
 
 namespace AnglingClubWebServices.Interfaces
 {

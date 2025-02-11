@@ -1,9 +1,7 @@
 ﻿using AnglingClubShared.Entities;
-using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Models
 {
     public class AppSettings
     {
@@ -22,22 +20,22 @@ namespace AnglingClubWebServices.Models
         public bool PondGateKeysEnabled { get; set; } = false;
 
 
-        // Note: Internal get means this wont be sent back from API call to client
-        public string ProductDayTicket { internal get; set; }
+        [JsonIgnore]
+        public string ProductDayTicket { get; set; } = "";
 
-        // Note: Internal get means this wont be sent back from API call to client
-        public string ProductGuestTicket { internal get; set; }
+        [JsonIgnore]
+        public string ProductGuestTicket { get; set; } = "";
 
-        // Note: Internal get means this wont be sent back from API call to client
-        public string ProductPondGateKey { internal get; set; }
+        [JsonIgnore]
+        public string ProductPondGateKey { get; set; } = "";
 
-        // Note: Internal get means this wont be sent back from API call to client
-        public string ProductHandlingCharge { internal get; set; }
+        [JsonIgnore]
+        public string ProductHandlingCharge { get; set; } = "";
     }
 
     public class AppSetting : TableBase
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public string Name { get; set; } = "";
+        public string Value { get; set; } = "";
     }
 }

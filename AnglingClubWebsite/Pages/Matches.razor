@@ -1,0 +1,28 @@
+﻿@page "/Matches"
+@using AnglingClubShared.Enums
+@using AnglingClubShared.Models
+
+@inherits MvvmComponentBase<MatchesViewModel>
+
+<h3 class="left-header">Matches</h3>
+<div class="@(ViewModel.IsMobile ? "edit-button-panel" : "desktop-season-selector")">
+    @if (ViewModel.RefDataLoaded)
+    {
+        <SfDropDownList TValue="Season"
+                        TItem="SeasonInfo"
+                        Placeholder="Season"
+                        FloatLabelType="FloatLabelType.Auto"
+                        DataSource="@ViewModel.RefData!.Seasons"
+                        @bind-Value="@ViewModel.RefData!.CurrentSeason">
+            <DropDownListFieldSettings Value="Season" Text="Name"></DropDownListFieldSettings>
+        </SfDropDownList>
+    }
+</div>
+<br />
+<br />
+
+<p >You can see more details of each match and the results by selecting <i class="fa-solid fa-circle-info" style="color: #1976d2;"></i> next to each match.</p>
+
+@code {
+
+}

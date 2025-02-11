@@ -13,6 +13,7 @@
 
         public const string API_NEWS = "";
         public const string API_WATERS = "";
+        public const string API_REF_DATA = "";
         public const string API_WATERS_UPDATE = "UpdateDescription";
 
 
