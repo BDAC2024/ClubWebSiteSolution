@@ -154,7 +154,9 @@ namespace AnglingClubWebsite.Pages
         public async Task OnWaterEdited(string itemId)
         {
             Water = Items.FirstOrDefault(i => i.DbKey == itemId);
-            await Task.Delay(0);
+            await Task.Delay(50);
+            Console.WriteLine($"Desc: {Water!.Description}");
+            Console.WriteLine($"Directions: {Water!.Directions}");
         }
 
         [RelayCommand]
