@@ -13,6 +13,7 @@ namespace AnglingClubWebsite.Services
         }
 
         public BrowserDimension Dimensions { get; set; } = new BrowserDimension { Width = 300, Height = 240 };
+        public bool IsMobile { get; set; } = false;
 
         public bool IsPortrait 
         { 
@@ -25,14 +26,9 @@ namespace AnglingClubWebsite.Services
         public async Task<BrowserDimension> GetDimensions()
         {
             Dimensions = await _js.InvokeAsync<BrowserDimension>("getDimensions");
+            IsMobile = await _js.InvokeAsync<bool>("isDevice");
             return Dimensions;
         }
-
-        public async Task<bool> IsMobile()
-        {
-            return await _js.InvokeAsync<bool>("isDevice");
-        }
-
 
         public class BrowserDimension
         {

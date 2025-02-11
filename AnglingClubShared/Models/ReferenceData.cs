@@ -1,9 +1,6 @@
 ﻿using AnglingClubShared.Enums;
-using AnglingClubWebServices.Interfaces;
-using System;
-using System.Collections.Generic;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Models
 {
     public class ReferenceData
     {
@@ -11,13 +8,13 @@ namespace AnglingClubWebServices.Models
 
         public List<SeasonInfo> Seasons { get; set; } = new List<SeasonInfo>();
 
-        public AppSettings AppSettings { get; set; }
+        public AppSettings AppSettings { get; set; } = new AppSettings();
     }
 
     public class SeasonInfo
     {
         public Season Season { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         public DateTime Starts { get; set; }
         public DateTime Ends { get; set; }
     }

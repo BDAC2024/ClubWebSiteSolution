@@ -150,6 +150,11 @@ h3 {
     box-shadow: 1px 1px grey !important;
 }
 
+.desktop-season-selector {
+    padding-left: 50px;
+    display: inline-block;
+}
+
 /*-------------------------
     Responsive class definitions
 --------------------------*/

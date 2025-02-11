@@ -7,6 +7,7 @@
             new AnonymousRoute { Route = "/authenticate", Method = "POST" },
             new AnonymousRoute { Route = "/news", Method = "GET" },
             new AnonymousRoute { Route = "/waters", Method = "GET" },
+            new AnonymousRoute { Route = "/referenceData", Method = "GET" },
         };
 
         public bool Contains(HttpRequestMessage request) 
