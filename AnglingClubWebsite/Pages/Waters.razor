@@ -38,7 +38,7 @@
                       CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
                       SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
             <CardContent>
-                <EditForm Model="item">
+                <EditForm Model="ViewModel.Water">
                     <fieldset>
                         <div class="card-title">
                             @item.Name
@@ -47,9 +47,10 @@
                             <h6>Description</h6>
                             <SfRichTextEditor Placeholder='Description'
                                               @ref="rteObjDesc"
-                                              @bind-Value="item.Description"
+                                              @bind-Value="ViewModel.Water.Description"
                                               AutoSaveOnIdle="true"
                                               EnableResize="true">
+                                <RichTextEditorIFrameSettings Enable="true" />
                                 <RichTextEditorToolbarSettings Items="@Tools" />
                                 <RichTextEditorEvents OnToolbarClick="@ToolbarClick1" />
                                 @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
@@ -58,16 +59,16 @@
                         <div>
                             <h6>Directions</h6>
                             <div>
-                                <SfRichTextEditor Placeholder='Directions'
+                                 <SfRichTextEditor Placeholder='Directions'
                                                   @ref="rteObjDirections"
-                                                  @bind-Value="item.Directions"
+                                                  @bind-Value="ViewModel.Water.Directions"
                                                   AutoSaveOnIdle="true"
                                                   EnableResize="true">
+                                    <RichTextEditorIFrameSettings Enable="true" />
                                     <RichTextEditorToolbarSettings Items="@Tools" />
                                     <RichTextEditorEvents OnToolbarClick="@ToolbarClick2" />
-                                    @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
                                 </SfRichTextEditor>
-                            </div>
+                             </div>
                             <br />
                         </div>
                     </fieldset>

@@ -77,6 +77,15 @@ namespace AnglingClubWebsite.Pages
         [ObservableProperty]
         private double _videoHeight = 315;
 
+        [ObservableProperty]
+        private string _waterDescription = "";
+
+        [ObservableProperty]
+        private string? _selectedWaterId = null;
+
+        [ObservableProperty]
+        private string _waterDirections = "";
+
         #region Message Handlers
 
         public void Receive(BrowserChange message)
@@ -155,12 +164,21 @@ namespace AnglingClubWebsite.Pages
 
         public async Task OnWaterEdited(string itemId)
         {
+            SelectedWaterId = itemId;
+            Water = Items.FirstOrDefault(i => i.DbKey == itemId);
+            await Task.Delay(0);
+            /*
             Console.WriteLine($"ItemId: {itemId}");
             Water = Items.FirstOrDefault(i => i.DbKey == itemId);
-            await Task.Delay(50);
+            WaterDescription = Water!.Description;
+            WaterDirections = Water!.Directions;
+            await Task.Delay(0);
             Console.WriteLine($"Water is null: {Water == null}");
             if (Water != null)
             {
+                Console.WriteLine($"WaterDescription: {WaterDescription}");
+                Console.WriteLine($"WaterDirections: {WaterDirections}");
+                
                 Console.WriteLine($"Desc inside if: {Water.Description}");
                 Console.WriteLine($"Directions inside if: {Water.Directions}");
                 Console.WriteLine($"W3wCarPark: {Water.W3wCarPark}");
@@ -172,8 +190,9 @@ namespace AnglingClubWebsite.Pages
 
                 Console.WriteLine($"Water: {JsonSerializer.Serialize(Water)}");
                 Console.WriteLine($"Water from list: {JsonSerializer.Serialize(Items.First(i => i.DbKey == itemId))}");
-
+                
             }
+            */
         }
 
         [RelayCommand]
@@ -181,6 +200,7 @@ namespace AnglingClubWebsite.Pages
         {
             IsEditing = false;
             Water = null;
+            SelectedWaterId = null;
 
             await getWaters(true);
             await Task.Delay(0);
@@ -208,6 +228,7 @@ namespace AnglingClubWebsite.Pages
             {
                 Submitting = false;
                 Water = null;
+                SelectedWaterId = null;
                 _messenger.Send<HideProgress>();
             }
         }
