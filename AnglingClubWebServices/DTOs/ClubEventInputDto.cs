@@ -1,4 +1,4 @@
-﻿using AnglingClubWebServices.Models;
+﻿using AnglingClubShared.Entities;
 
 namespace AnglingClubShared.DTOs
 {

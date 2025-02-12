@@ -1,4 +1,5 @@
-﻿using AnglingClubShared.Enums;
+﻿using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
 using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
