@@ -31,163 +31,154 @@
 
 @foreach (var item in ViewModel.Items)
 {
-    @if (ViewModel.Water != null && ViewModel.Water.DbKey == item.DbKey)
-    {
-        <EditableCard Submitting="ViewModel.Submitting"
-                      EditMode="true"
-                      CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
-                      SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
-            <CardContent>
-                <EditForm Model="ViewModel.Water">
-                    <fieldset>
-                        <div class="card-title">
-                            @item.Name
-                        </div>
-                        <div>
-                            <h6>Description</h6>
-                            <SfRichTextEditor Placeholder='Description'
-                                              @ref="rteObjDesc"
-                                              @bind-Value="ViewModel.Water.Description"
-                                              AutoSaveOnIdle="true"
-                                              EnableResize="true">
-                                <RichTextEditorIFrameSettings Enable="true" />
-                                <RichTextEditorToolbarSettings Items="@Tools" />
-                                <RichTextEditorEvents OnToolbarClick="@ToolbarClick1" />
-                                @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
-                            </SfRichTextEditor>
-                        </div>
-                        <div>
-                            <h6>Directions</h6>
-                            <div>
-                                 <SfRichTextEditor Placeholder='Directions'
-                                                  @ref="rteObjDirections"
-                                                  @bind-Value="ViewModel.Water.Directions"
-                                                  AutoSaveOnIdle="true"
-                                                  EnableResize="true">
-                                    <RichTextEditorIFrameSettings Enable="true" />
-                                    <RichTextEditorToolbarSettings Items="@Tools" />
-                                    <RichTextEditorEvents OnToolbarClick="@ToolbarClick2" />
-                                </SfRichTextEditor>
-                             </div>
-                            <br />
-                        </div>
-                    </fieldset>
-                </EditForm>
-            </CardContent>
-        </EditableCard>
-    }
-    else
-    {
-        <SfCard>
-            <CardContent>
-                <div class="card-title">
-                    @item.Name
-                </div>
-                <div class="card-subtitle">
-                    @item.WaterType
-                </div>
-                <div class="card-subtitle">
-                    @item.AccessType
-                </div>
-                <div class="card-subtitle">
-                    Main Species: @item.Species
-                </div>
-                <div class="card-content">
-                    <div>
-                        @((MarkupString)item.Description)
-                    </div>
-                    <h6>Directions</h6>
-                    <div title="What 3 Words divides the world into 3 metre squares and gives each square a unique combination of three words. Clicking the link will open it on a map.">
-                        What 3 Words car parking location(s):
-                        <ul>
-                            @foreach (var w3w in item.W3w)
-                            {
-                                <li style="padding-left: 20px; margin-bottom: 0;">
-                                    <a href="@w3w.Url.SanitizeUrl()" target="_blank">@w3w.CarPark</a>
-                                </li>
-                            }
-                        </ul>
-                        <br />
-                    </div>
-                    <div>
-                        @((MarkupString)item.Directions)
-                    </div>
-                    <br />
-                    <h6>Access Video</h6>
-                    @if (!string.IsNullOrEmpty(item.VideoShortCode) && !onLocalhost())
+    <EditableCard Submitting="ViewModel.Submitting"
+                  EditMode=@ItemBeingEdited(item)
+                  CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
+                  SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
+        <CardContent>
+            <div class="card-title">
+                @item.Name
+            </div>
+            <div class="card-subtitle">
+                @item.WaterType
+            </div>
+            <div class="card-subtitle">
+                @item.AccessType
+            </div>
+            <div class="card-subtitle">
+                Main Species: @item.Species
+            </div>
+            <div class="card-content">
+                <div>
+                    @if (ItemBeingEdited(item))
                     {
-                        <iframe src=@($"{Constants.VIDEO_BASE_URL}/{item.VideoShortCode}".SanitizeUrl())
-                        width="@ViewModel.VideoWidth" height="@ViewModel.VideoHeight"
-                        title="YouTube video player"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen>
-                        </iframe>
-                        <br />
+                        <SfRichTextEditor Placeholder='Description'
+                                          @ref="rteObjDesc"
+                                          @bind-Value="ViewModel.Water!.Description"
+                                          AutoSaveOnIdle="true"
+                                          EnableResize="true">
+                            <RichTextEditorIFrameSettings Enable="true" />
+                            <RichTextEditorToolbarSettings Items="@Tools" />
+                            <RichTextEditorEvents OnToolbarClick="@ToolbarClick" />
+                        </SfRichTextEditor>
                     }
                     else
                     {
-                        <span>Access video is not yet available for this water.<br /><br /></span>
+                        @((MarkupString)item.Description)
                     }
-                    <div>
-                        <h6>Driving Directions</h6>
-                        <a target="_blank" href="@ViewModel.DirectionUrl(item).SanitizeUrl()">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.
-                        <h6>Location</h6>
-                        <table border="0">
-                            <tr>
+                </div>
+                <h6>Directions</h6>
+                <div title="What 3 Words divides the world into 3 metre squares and gives each square a unique combination of three words. Clicking the link will open it on a map.">
+                    What 3 Words car parking location(s):
+                    <ul>
+                        @foreach (var w3w in item.W3w)
+                        {
+                            <li style="padding-left: 20px; margin-bottom: 0;">
+                                <a href="@w3w.Url.SanitizeUrl()" target="_blank">@w3w.CarPark</a>
+                            </li>
+                        }
+                    </ul>
+                    <br />
+                </div>
+                <div>
+                    @if (ItemBeingEdited(item))
+                    {
+                        <SfRichTextEditor Placeholder='Directions'
+                                          @ref="rteObjDirections"
+                                          @bind-Value="ViewModel.Water!.Directions"
+                                          AutoSaveOnIdle="true"
+                                          EnableResize="true">
+                            <RichTextEditorIFrameSettings Enable="true" />
+                            <RichTextEditorToolbarSettings Items="@Tools" />
+                            <RichTextEditorEvents OnToolbarClick="@ToolbarClick" />
+                        </SfRichTextEditor>
+                    }
+                    else
+                    {
+                        @((MarkupString)item.Directions)
+                    }
+                </div>
+                <br />
+                <h6>Access Video</h6>
+                @if (!string.IsNullOrEmpty(item.VideoShortCode) && !onLocalhost())
+                {
+                    <iframe src=@($"{Constants.VIDEO_BASE_URL}/{item.VideoShortCode}".SanitizeUrl())
+                            width="@ViewModel.VideoWidth" height="@ViewModel.VideoHeight"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
+                    </iframe>
+                    <br />
+                }
+                else
+                {
+                    <span>Access video is not yet available for this water.<br /><br /></span>
+                }
+                <div>
+                    <h6>Driving Directions</h6>
+                    <a target="_blank" href="@ViewModel.DirectionUrl(item).SanitizeUrl()">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.
+                    <h6>Location</h6>
+                    <table border="0">
+                        <tr>
+                            <td align="center">
+                                <img width="20" src='images\car.png'>
+                            </td>
+                            <td style="width: 18px;"> </td>
+                            @if (item.Path.Count() > 0)
+                            {
                                 <td align="center">
-                                    <img width="20" src='images\car.png'>
+                                    <div class="route-key"><br /><br /></div>
                                 </td>
-                                <td style="width: 18px;"> </td>
-                                @if (item.Path.Count() > 0)
-                                {
-                                    <td align="center">
-                                        <div class="route-key"><br /><br /></div>
-                                    </td>
-                                }
-                                <td style="width: 18px;"> </td>
-                                @if (item.HasLimits)
-                                {
-                                    <td align="center">
-                                        <img width="20" src='images\limit.png'>
-                                    </td>
-                                }
-                            </tr>
-                            <tr>
+                            }
+                            <td style="width: 18px;"> </td>
+                            @if (item.HasLimits)
+                            {
                                 <td align="center">
-                                    Car Parking
+                                    <img width="20" src='images\limit.png'>
                                 </td>
-                                <td style="width: 18px;"> </td>
-                                @if (item.Path.Count() > 0)
-                                {
-                                    <td align="center">
-                                        Route
-                                    </td>
-                                }
-                                <td style="width: 18px;"> </td>
-                                @if (item.HasLimits)
-                                {
-                                    <td align="center">
-                                        Limit of stretch
-                                    </td>
-                                }
-                            </tr>
-                        </table>
-                        <div id=@($"map-{item.DbKey}") class="water-map">
-                        </div>
+                            }
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                Car Parking
+                            </td>
+                            <td style="width: 18px;"> </td>
+                            @if (item.Path.Count() > 0)
+                            {
+                                <td align="center">
+                                    Route
+                                </td>
+                            }
+                            <td style="width: 18px;"> </td>
+                            @if (item.HasLimits)
+                            {
+                                <td align="center">
+                                    Limit of stretch
+                                </td>
+                            }
+                        </tr>
+                    </table>
+                    <div id=@($"map-{item.DbKey}") class="water-map">
                     </div>
                 </div>
-            </CardContent>
-            <CardFooter>
-                <CardFooterContent>
+            </div>
+        </CardContent>
+        <CardFooter>
+            <CardFooterContent>
+                @if (ViewModel.IsUnlocked && ViewModel.Water == null)
+                {
                     <div class="edit-button-panel">
                         <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(async () => await ViewModel.OnWaterEdited(item.DbKey))"> <i class="@($"fa-solid fa-pencil card-icon")" /> Edit </SfButton>
                     </div>
-                </CardFooterContent>
-            </CardFooter>
-        </SfCard>
+                }
+            </CardFooterContent>
+        </CardFooter>
+    </EditableCard>
+    /*
     }
+    */
 }
 
 @if (!ViewModel.IsLoggedIn && !ViewModel.Loading)
@@ -246,12 +237,9 @@
         new ToolbarItemModel() { Command = ToolbarCommand.Redo }
     };
 
-    private void ToolbarClick1(ToolbarClickEventArgs args)
+    private void ToolbarClick(ToolbarClickEventArgs args)
     {
         rteObjDesc.PreventRender();
-    }
-    private void ToolbarClick2(ToolbarClickEventArgs args)
-    {
         rteObjDirections.PreventRender();
     }
 

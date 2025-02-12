@@ -63,9 +63,6 @@ namespace AnglingClubWebsite.Pages
         private bool _loading = false;
 
         [ObservableProperty]
-        private bool _isEditing = false;
-
-        [ObservableProperty]
         private bool _submitting = false;
 
         [ObservableProperty]
@@ -76,15 +73,6 @@ namespace AnglingClubWebsite.Pages
 
         [ObservableProperty]
         private double _videoHeight = 315;
-
-        [ObservableProperty]
-        private string _waterDescription = "";
-
-        [ObservableProperty]
-        private string? _selectedWaterId = null;
-
-        [ObservableProperty]
-        private string _waterDirections = "";
 
         #region Message Handlers
 
@@ -164,43 +152,14 @@ namespace AnglingClubWebsite.Pages
 
         public async Task OnWaterEdited(string itemId)
         {
-            SelectedWaterId = itemId;
             Water = Items.FirstOrDefault(i => i.DbKey == itemId);
             await Task.Delay(0);
-            /*
-            Console.WriteLine($"ItemId: {itemId}");
-            Water = Items.FirstOrDefault(i => i.DbKey == itemId);
-            WaterDescription = Water!.Description;
-            WaterDirections = Water!.Directions;
-            await Task.Delay(0);
-            Console.WriteLine($"Water is null: {Water == null}");
-            if (Water != null)
-            {
-                Console.WriteLine($"WaterDescription: {WaterDescription}");
-                Console.WriteLine($"WaterDirections: {WaterDirections}");
-                
-                Console.WriteLine($"Desc inside if: {Water.Description}");
-                Console.WriteLine($"Directions inside if: {Water.Directions}");
-                Console.WriteLine($"W3wCarPark: {Water.W3wCarPark}");
-
-                Console.WriteLine($"Desc from list: {Items.First(i => i.DbKey == itemId).Description}");
-                Console.WriteLine($"Directions from list: {Items.First(i => i.DbKey == itemId).Directions}");
-
-                var json = JsonSerializer.Serialize(Water);
-
-                Console.WriteLine($"Water: {JsonSerializer.Serialize(Water)}");
-                Console.WriteLine($"Water from list: {JsonSerializer.Serialize(Items.First(i => i.DbKey == itemId))}");
-                
-            }
-            */
         }
 
         [RelayCommand]
         private async Task Cancel()
         {
-            IsEditing = false;
             Water = null;
-            SelectedWaterId = null;
 
             await getWaters(true);
             await Task.Delay(0);
@@ -216,8 +175,6 @@ namespace AnglingClubWebsite.Pages
                 Submitting = true;
                 await _watersService.SaveWater(Water!);
                 await getWaters(true);
-
-                IsEditing = false;
             }
             catch (Exception ex)
             {
@@ -228,7 +185,6 @@ namespace AnglingClubWebsite.Pages
             {
                 Submitting = false;
                 Water = null;
-                SelectedWaterId = null;
                 _messenger.Send<HideProgress>();
             }
         }
