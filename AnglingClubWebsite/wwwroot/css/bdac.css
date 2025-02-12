@@ -156,6 +156,28 @@ h3 {
 }
 
 /*-------------------------
+    Tabs
+--------------------------*/
+
+.e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
+    border-bottom: 3px solid #6610f2;
+    color: #6610f2 !important;
+    font-weight: bold !important;
+}
+
+.e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+    color: #62b4fd;
+}
+
+.e-tab .e-tab-header::before {
+    border-color: #CCFBF1;
+}
+
+.e-tab .e-tab-header .e-toolbar-item.e-active {
+    border: 1px solid #CCFBF1;
+}
+
+/*-------------------------
     Responsive class definitions
 --------------------------*/
 
