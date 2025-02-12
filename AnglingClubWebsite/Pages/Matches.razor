@@ -4,7 +4,7 @@
 
 @inherits MvvmComponentBase<MatchesViewModel>
 
-<div>
+<div style="display: block !important;">
     <h3 class="left-header">Matches</h3>
     <div class="@(ViewModel.IsMobile ? "edit-button-panel" : "desktop-season-selector")">
         @if (ViewModel.RefDataLoaded)
@@ -23,9 +23,88 @@
     </div>
 </div>
 <br />
-<br />
+@if (ViewModel.IsMobile)
+{
+    <br />
+}
 
-<p >You can see more details of each match and the results by selecting <i class="fa-solid fa-circle-info" style="color: #1976d2;"></i> next to each match.</p>
+<p>You can see more details of each match and the results by selecting <i class="fa-solid fa-circle-info" style="color: #1976d2;"></i> next to each match.</p>
+
+<style>
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
+        border-bottom: 3px solid #1976d2;
+        color: #6610f2 !important;
+        font-weight: bold !important;
+    }
+
+    .e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+        color: #62b4fd;
+        font-size: small !important;
+    }
+
+    .e-tab .e-tab-header::before {
+        border-color: #CCFBF1;
+        font-size: small !important;
+    }
+
+    .e-tab .e-tab-header .e-toolbar-item.e-active {
+        border: 1px solid #CCFBF1;
+        font-size: small !important;
+    }
+
+    .e-tab-text {
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        color: darkslategray !important;
+    }
+
+    .e-active .e-tab-text {
+        font-size: 10px !important;
+        font-weight: bold !important;
+        color: black !important;
+    }
+
+</style>
+
+<SfTab >
+    <TabItems>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Spring"></TabHeader>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Club"></TabHeader>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Junior"></TabHeader>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="OSU"></TabHeader>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Specials"></TabHeader>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Pairs"></TabHeader>
+            </ChildContent>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Evening"></TabHeader>
+            </ChildContent>
+        </TabItem>
+    </TabItems>
+</SfTab>
 
 @code {
 
