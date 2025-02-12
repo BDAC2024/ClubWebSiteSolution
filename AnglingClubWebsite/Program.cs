@@ -54,6 +54,7 @@ builder.Services.AddScoped<AppLinkViewModel>();
 
 // Services
 builder.Services.AddSingleton<BrowserService>();
+builder.Services.AddSingleton<IGlobalService, GlobalService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
 builder.Services.AddTransient<IAppDialogService, AppDialogService>();
@@ -61,6 +62,7 @@ builder.Services.AddTransient<INavigationService, NavigationService>();
 builder.Services.AddTransient<INewsService, NewsService>();
 builder.Services.AddTransient<IWatersService, WatersService>();
 builder.Services.AddTransient<IRefDataService, RefDataService>();
+builder.Services.AddTransient<IClubEventService, ClubEventService>();
 
 builder.Services.AddAuthorizationCore();
 

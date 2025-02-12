@@ -1,10 +1,8 @@
-﻿using AnglingClubShared.Entities;
-using AnglingClubShared.Enums;
+﻿using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
-using AnglingClubWebServices.Interfaces;
-using System;
+using MatchType = AnglingClubShared.Enums.MatchType;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Entities
 {
 
     public class ClubEventBase : TableBase
@@ -19,8 +17,8 @@ namespace AnglingClubWebServices.Models
         public DateTime? MatchStart { get; set; }
         public DateTime? MatchEnd { get; set; }
         public int? Number { get; set; }
-        public string Description { get; set; }
-        public string Cup { get; set; }
+        public string Description { get; set; } = "";
+        public string Cup { get; set; } = "";
     }
 
 
@@ -35,7 +33,7 @@ namespace AnglingClubWebServices.Models
             }
         }
 
-        public string Time 
+        public string Time
         {
             get
             {
@@ -44,8 +42,8 @@ namespace AnglingClubWebServices.Models
             }
         }
 
-        public string DescriptionForTable 
-        { 
+        public string DescriptionForTable
+        {
             get
             {
                 if (EventType == EventType.Work)
@@ -54,7 +52,7 @@ namespace AnglingClubWebServices.Models
                 }
                 else if (EventType == EventType.Match)
                 {
-                    return $"{MatchType.EnumDescription()} {(Number != null ? $"no.{Number}" : "")} at {Description}";
+                    return $"{MatchType!.EnumDescription()} {(Number != null ? $"no.{Number}" : "")} at {Description}";
                 }
                 else
                 {
@@ -67,7 +65,7 @@ namespace AnglingClubWebServices.Models
         {
             get
             {
-                return MatchEnd != null ? MatchEnd < DateTime.Now :  Date < DateTime.Now.Date;
+                return MatchEnd != null ? MatchEnd < DateTime.Now : Date < DateTime.Now.Date;
             }
         }
     }
