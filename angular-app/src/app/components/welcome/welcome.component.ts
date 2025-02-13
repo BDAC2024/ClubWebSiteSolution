@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RefData } from 'src/app/models/refData';
+import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 
 @Component({
@@ -13,6 +14,7 @@ export class WelcomeComponent implements OnInit {
   public isLoading: boolean = false;
 
   constructor(
+    public authenticationService: AuthenticationService,
     public refDataService: RefDataService
   ) { }
 
@@ -29,5 +31,12 @@ export class WelcomeComponent implements OnInit {
     });
   }
 
+  public isPreviewer(): boolean {
+    if (this.refData != null) {
+      return this.authenticationService.isPreviewer(this.refData.appSettings.previewers);
+    } else {
+      return false;
+    }
+  }
 
 }

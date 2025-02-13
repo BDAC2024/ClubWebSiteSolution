@@ -23,6 +23,7 @@
         </a>
         <a mat-list-item routerLink="/waters">Club Waters</a>
         <a mat-list-item routerLink="/matches">Matches</a>
+        <a mat-list-item routerLink="/juniorOpenMatches" *ngIf="isPreviewer()" class=" preview-option">Junior Open Matches</a>
 
         <mat-list-item (click)="showStandingsSubMenu = !showStandingsSubMenu" class="parent">
 					<span class="full-width" >Standings</span>
@@ -130,7 +131,7 @@
 					<a mat-list-item routerLink="/juniorTacklePlea" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Tackle Plea</a>
 					<a mat-list-item routerLink="/juniorMatches" *ngIf="isPreviewer()" title="MEMBERS ONLY" class=" preview-option">Matches</a>
 				</div> -->
-        
+
         <mat-list-item (click)="showAdminSubMenu = !showAdminSubMenu" *ngIf="authenticationService.isAdmin" class="parent">
 					<span class="full-width" >Admin</span>
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showAdminSubMenu}" >expand_more</mat-icon>
@@ -147,6 +148,11 @@
 					<a mat-list-item routerLink="/payments">
             <div>
               Payments
+            </div>
+          </a>
+					<a mat-list-item routerLink="/juniorOpenRegistrations" *ngIf="isPreviewer()" class=" preview-option">
+            <div>
+              Junior Open Registrations
             </div>
           </a>
 					<!-- <a mat-list-item routerLink="/aggregateWeights">Weights</a> -->

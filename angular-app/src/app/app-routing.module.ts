@@ -40,6 +40,9 @@ import { JuniorTacklePleaComponent } from './components/junior-tackle-plea/junio
 import { JuniorMatchesComponent } from './components/junior-matches/junior-matches.component';
 import { JuniorSponsorsComponent } from './components/junior-sponsors/junior-sponsors.component';
 import { TrophyWinnersComponent } from './components/trophy-winners/trophy-winners.component';
+import { RegisterComponent } from './components/register/register.component';
+import { JuniorOpenMatchesComponent } from './components/junior-open-matches/junior-open-matches.component';
+import { JuniorOpenRegistrationsComponent } from './components/junior-open-registrations/junior-open-registrations.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -82,6 +85,9 @@ const routes: Routes = [
   { path: 'juniorSponsors', component: JuniorSponsorsComponent},
   { path: 'juniorMatches', component: JuniorMatchesComponent, canActivate: [AuthGuard] },
   { path: 'trophyWinners', component: TrophyWinnersComponent, canActivate: [AuthGuard] },
+  { path: 'register', component: RegisterComponent},
+  { path: 'juniorOpenMatches', component: JuniorOpenMatchesComponent},
+  { path: 'juniorOpenRegistrations', component: JuniorOpenRegistrationsComponent},
 ];
 
 @NgModule({
