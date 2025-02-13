@@ -12,13 +12,15 @@
 
     <p *ngIf="!this.screenService.IsHandsetLandscape">You can see more details of each match and the results by selecting<button mat-icon-button color="link" style="color: #1976d2;"><mat-icon>info</mat-icon></button>next to each match.</p>
     <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
-        <mat-tab label="{{matchService.SpringTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.ClubTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.JuniorTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.OsuTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.SpecialsTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.PairsTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.EveningTabName}}"></mat-tab>
+        <mat-tab aria-label="0" label="{{matchService.SpringTabName}}" *ngIf="anyOfType(0)"></mat-tab>
+        <mat-tab aria-label="1" label="{{matchService.ClubTabName}}" *ngIf="anyOfType(1)"></mat-tab>
+        <mat-tab aria-label="2" label="{{matchService.JuniorTabName}}" *ngIf="anyOfType(2)"></mat-tab>
+        <mat-tab aria-label="3" label="{{matchService.OsuTabName}}" *ngIf="anyOfType(3)"></mat-tab>
+        <mat-tab aria-label="4" label="{{matchService.SpecialsTabName}}" *ngIf="anyOfType(4)"></mat-tab>
+        <mat-tab aria-label="5" label="{{matchService.PairsTabName}}" *ngIf="anyOfType(5)"></mat-tab>
+        <mat-tab aria-label="6" label="{{matchService.EveningTabName}}" *ngIf="anyOfType(6)"></mat-tab>
+        <mat-tab aria-label="7" label="{{matchService.VisitorsTabName}}" *ngIf="anyOfType(7)"></mat-tab>
+        <mat-tab aria-label="8" label="{{matchService.QualifierTabName}}" *ngIf="anyOfType(8)"></mat-tab>
     </mat-tab-group>
     <br/>
     <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>

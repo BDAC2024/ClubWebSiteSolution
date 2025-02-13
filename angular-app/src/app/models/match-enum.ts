@@ -5,7 +5,9 @@ export enum MatchType {
   OSU,
   Specials,
   Pairs,
-  Evening
+  Evening,
+  Visitors,
+  Qualifier
 }
 
 export namespace MatchType {
@@ -25,6 +27,10 @@ export namespace MatchType {
         return "Pairs";
       case MatchType.Evening:
         return "Evening";
+      case MatchType.Visitors:
+        return "Visitors";
+      case MatchType.Qualifier:
+        return "Qualifiers";
       default:
         return MatchType[type];
     }
@@ -45,6 +51,10 @@ export namespace MatchType {
         return "Pairs";
       case MatchType.Evening:
         return "Evening League";
+      case MatchType.Visitors:
+        return "Visiting Clubs";
+      case MatchType.Qualifier:
+        return "Event Qualifiers";
       default:
         return MatchType[type];
     }

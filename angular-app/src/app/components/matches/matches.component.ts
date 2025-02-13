@@ -63,8 +63,13 @@ export class MatchesComponent implements OnInit {
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    this.selectedMatchType = tabChangeEvent.index as MatchType;
+    this.selectedMatchType = parseInt(tabChangeEvent.tab.ariaLabel) as MatchType;
+    
     this.loadMatches();
+  }
+
+  public anyOfType(matchType: number): boolean {
+    return this.allMatches.filter(m => m.matchType === matchType).length > 0;
   }
 
   private loadMatches(): void

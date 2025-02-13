@@ -28,6 +28,8 @@ export class MatchService {
   public get SpecialsTabName() : string { return this.getTabName(MatchType.Specials); }
   public get PairsTabName() : string { return this.getTabName(MatchType.Pairs); }
   public get EveningTabName() : string { return this.getTabName(MatchType.Evening); }
+  public get VisitorsTabName() : string { return this.getTabName(MatchType.Visitors); }
+  public get QualifierTabName() : string { return this.getTabName(MatchType.Qualifier); }
 
   private getTabName(type: MatchType): string {
     return this.screenService.IsHandsetPortrait? MatchType.CompactName(type) : MatchType.FullName(type)
