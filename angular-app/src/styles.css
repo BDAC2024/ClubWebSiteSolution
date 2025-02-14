@@ -256,3 +256,26 @@ mat-form-field {
     margin: 2px 8px auto 0;
   }
 
+/* Responsiveness ****************************************************************************/
+
+@media screen and (min-width: 200px) {
+    .open-match-poster {
+        width: 100%;
+    }
+
+    .open-match-map {
+        width: 100%;
+    }
+
+}
+
+@media screen and (min-width: 900px) {
+    .open-match-poster {
+        width: 50%;
+    }
+
+    .open-match-map {
+        width: 50%;
+    }
+
+}
