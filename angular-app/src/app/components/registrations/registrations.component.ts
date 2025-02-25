@@ -4,12 +4,11 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 import { RefDataService } from 'src/app/services/ref-data.service';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  selector: 'app-registrations',
+  templateUrl: './registrations.component.html',
+  styleUrls: ['./registrations.component.css']
 })
-export class RegisterComponent implements OnInit {
-
+export class RegistrationsComponent implements OnInit {
   public refData!: RefData;
   public isLoading: boolean = false;
 
@@ -18,9 +17,8 @@ export class RegisterComponent implements OnInit {
     private refDataService: RefDataService,
 
   ) {
-    
-   }
-
+  }
+  
   ngOnInit(): void {
     this.getRefData();
   }
@@ -38,7 +36,6 @@ export class RegisterComponent implements OnInit {
       .sort((a, b) => {
         return a.season < b.season && 1 || -1;
       });
-
       this.isLoading = false;
     });
   }

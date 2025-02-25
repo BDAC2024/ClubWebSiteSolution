@@ -1,0 +1,225 @@
+<div>
+    <div style="display: flex;">
+        <h1 class="left-header">Junior Open Matches</h1>
+    </div>  
+
+    <div *ngIf="isLoading">
+        <mat-spinner diameter="32" ></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading">
+        <table mat-table [dataSource]="matches" class="mat-elevation-z8" *ngIf="matches.length > 0">
+
+            <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+    
+            <!-- Date Column -->
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef align="center" class="first-col-header"> Date </th>
+                <td mat-cell *matCellDef="let element" align="right" [ngClass]="{'past-event': element.inThePast}" class="cell-date first-col"> {{element.date | date:'dd MMM YY'}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="draw">
+                <th mat-header-cell *matHeaderCellDef align="center"  class="first-col-header"> Draw </th>
+                <td mat-cell *matCellDef="let element" align="center" [ngClass]="{'past-event': element.inThePast}" > {{element.drawTime}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="start">
+                <th mat-header-cell *matHeaderCellDef align="center"  class="first-col-header"> Starts </th>
+                <td mat-cell *matCellDef="let element" align="center" [ngClass]="{'past-event': element.inThePast}" > {{element.startTime}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="end">
+                <th mat-header-cell *matHeaderCellDef align="center"  class="first-col-header"> Ends </th>
+                <td mat-cell *matCellDef="let element" align="center" [ngClass]="{'past-event': element.inThePast}" > {{element.endTime}} </td>
+            </ng-container>
+  
+            <!-- Number Column -->
+            <ng-container matColumnDef="pegsAvailable">
+                <th mat-header-cell *matHeaderCellDef> Pegs</th>
+                <td mat-cell align="center" *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.pegsAvailable}} </td>
+            </ng-container>
+    
+            <!-- Number Column -->
+            <ng-container matColumnDef="pegsRemaining">
+                <th mat-header-cell *matHeaderCellDef> Pegs Remaining </th>
+                <td mat-cell align="center" *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.pegsRemaining}} </td>
+            </ng-container>
+    
+            <!-- More Column -->
+            <ng-container matColumnDef="register">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element" >
+                <button *ngIf="element.pegsRemaining > 0 && !element.inThePast" class="edit-button" mat-raised-button color="primary" style="color: white;" aria-label="More" (click)="register(element)">Register</button>
+                <span *ngIf="element.pegsRemaining == 0 && !element.inThePast">Fully booked</span>
+                <span *ngIf="element.inThePast" class="past-event">Finished</span>
+            </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="registrations">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="last-col">
+                    <button class="edit-button" mat-raised-button color="primary" style="color: white;" aria-label="More" (click)="viewRegistrations(element)">View</button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="getDisplayedMatchColumns()"></tr>
+            <tr mat-row *matRowDef="let row; columns: getDisplayedMatchColumns();"></tr>
+        </table>
+    </div>
+    <br/>
+    <div *ngIf="isRegistering" style="width: 350px;">
+        <h2>Registration for Match on {{registrationMatch.date | date:'dd MMM YY'}}</h2>
+
+        <mat-form-field>
+            <mat-label>Angler's Name</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="registration.name">
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field>
+            <mat-label>Age Group</mat-label>
+            <mat-select [(ngModel)]="registration.ageGroup" >
+                <mat-option [value]=0>Up to 12 years</mat-option>
+                <mat-option [value]=1>13 to 18 years</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field>
+            <mat-label>Address</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="registration.address">
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field>
+            <mat-label>Parent or Guardian Name</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="registration.parentName">
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field>
+            <mat-label>Emergency Contact Phone No. (of parent or guardian)</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="registration.emergencyContactPhone">
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field>
+            <mat-label>Email Address (optional - confirmation sent if given)</mat-label>
+            <input type="email" name="email" [formControl]="emailControl" class="title-form-field" ngModel email="true" matInput [(ngModel)]="registration.contactEmail">
+            <div *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)" class="alert">
+                Please enter a valid email address.
+            </div>
+        </mat-form-field>
+        <br/>
+
+        <div class="errors" *ngIf="this.errorMessage != ''">
+            {{this.errorMessage}}
+        </div>
+        <div class="edit-button-panel">
+            <button 
+                class="edit-button"
+                [ngClass]="[!formComplete() ? 'edit-button-disabled' : '']" 
+                [disabled]="this.isSubmitting || !formComplete()" 
+                [attr.title]="!formComplete() ? 'Please complete ALL form fields' : ''" 
+                mat-stroked-button 
+                color="primary" 
+                (click)="submit()">
+                    <mat-spinner diameter="20" class="button-spinner" *ngIf="isSubmitting" ></mat-spinner>
+                    Submit Registration
+            </button>
+        </div>
+
+    </div>
+
+    <mat-card class="centered-title-card" *ngIf="registrationSuccessful && !isLoading" style="width: 400px;">
+        <div>
+            <mat-card-title>
+                <table>
+                    <tr>
+                        <td><mat-icon aria-hidden="false" aria-label="Thank you" style="margin-top: 4px; font-size: 24px; color: darkgreen;">check_circle_outline</mat-icon></td>
+                        <td>Registration Complete</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-size: 14px;">
+                            Registration number is {{registrationNumber}}
+                        </td>
+                    </tr>
+                </table>
+            </mat-card-title>
+        </div>
+    </mat-card>
+
+    <div>
+        <h2 *ngIf="isListing">Registrations for Open Match on {{registrationMatch.date | date:'dd MMM YY'}}</h2>
+        <div *ngIf="isLoadingRegistrations">
+            <mat-spinner diameter="32" ></mat-spinner>
+        </div>
+    
+        <div *ngIf="registrations.data.length > 0" [innerHtml]="matchRegistrationSummary()">
+        </div>
+
+        <table mat-table [dataSource]="registrations" class="mat-elevation-z8" matSort [hidden]="registrations.data.length == 0">
+
+            <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+    
+            <!-- Date Column -->
+            <ng-container matColumnDef="registrationNumber">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header align="left" > No.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
+                <td mat-cell *matCellDef="let element" align="center" class="first-col"> {{element.registrationNumber}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header > Name </th>
+                <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}" > {{element.name}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="ageGroupAsString">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header > Age Group </th>
+                <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}" > {{element.ageGroupAsString}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="address">
+                <th mat-header-cell *matHeaderCellDef  > Address </th>
+                <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}" > {{element.address}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="parent">
+                <th mat-header-cell *matHeaderCellDef > Parent / Guardian&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
+                <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}" > {{element.parentName}} </td>
+            </ng-container>
+  
+            <!-- Time Column -->
+            <ng-container matColumnDef="contact">
+                <th mat-header-cell *matHeaderCellDef > Contact No. </th>
+                <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}" > {{element.emergencyContactPhone}} </td>
+            </ng-container>
+  
+            <!-- Number Column -->
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef> Email</th>
+                <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.contactEmail}} </td>
+            </ng-container>
+    
+            <!-- More Column -->
+            <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element" >
+                <button class="edit-button" mat-raised-button color="primary" style="color: white;" aria-label="More" (click)="unregister(element)">Delete</button>
+            </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="getDisplayedRegistrationColumns()"></tr>
+            <tr mat-row *matRowDef="let row; columns: getDisplayedRegistrationColumns();"></tr>
+        </table>
+    </div>
+</div>  

@@ -100,8 +100,9 @@ import { MatTableExporterModule } from 'mat-table-exporter';
 import { CalendarExportDialogComponent } from './dialogs/calendar-export-dialog/calendar-export-dialog.component';
 import { TrophyWinnersComponent } from './components/trophy-winners/trophy-winners.component';
 import { RegisterComponent } from './components/register/register.component';
-import { JuniorOpenMatchesComponent } from './components/junior-open-matches/junior-open-matches.component';
 import { JuniorOpenRegistrationsComponent } from './components/junior-open-registrations/junior-open-registrations.component';
+import { RegistrationsComponent } from './components/registrations/registrations.component';
+import { RegistrationPanelComponent } from './components/registration-panel/registration-panel.component';
 
 @NgModule({
   declarations: [
@@ -162,9 +163,11 @@ import { JuniorOpenRegistrationsComponent } from './components/junior-open-regis
     JuniorSponsorsComponent,
     CalendarExportDialogComponent,
     TrophyWinnersComponent,
+    RegistrationsComponent,
     RegisterComponent,
-    JuniorOpenMatchesComponent,
     JuniorOpenRegistrationsComponent,
+    RegistrationsComponent,
+    RegistrationPanelComponent,
   ],
   imports: [
     BrowserModule,

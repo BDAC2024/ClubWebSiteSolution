@@ -23,8 +23,16 @@
         </a>
         <a mat-list-item routerLink="/waters">Club Waters</a>
         <a mat-list-item routerLink="/matches">Matches</a>
-        <a mat-list-item routerLink="/juniorOpenMatches" *ngIf="isPreviewer()" class=" preview-option">Junior Open Matches</a>
-
+        <a mat-list-item routerLink="/register" *ngIf="isPreviewer()" class=" preview-option">Junior Open Matches</a>
+        <!-- <a mat-list-item routerLink="/register" >
+          <div class="custom-badge"
+            matBadgeOverlap="false" 
+            matBadgePosition="after" 
+            matBadgeSize="small"
+            matBadgeColor="accent">
+            Junior Open Matches
+          </div>
+        </a> -->
         <mat-list-item (click)="showStandingsSubMenu = !showStandingsSubMenu" class="parent">
 					<span class="full-width" >Standings</span>
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showStandingsSubMenu}" >expand_more</mat-icon>
