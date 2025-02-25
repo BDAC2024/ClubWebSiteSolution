@@ -53,6 +53,21 @@ namespace AnglingClubWebServices.Interfaces
         Evening
     }
 
+    public enum OpenMatchType
+    {
+        [Description("Junior Open")]
+        Junior = 0
+    }
+
+    public enum JuniorAgeGroup
+    {
+        [Description("Up to 12")]
+        UpTo12 = 0,
+
+        [Description("13 to 18")]
+        ThirteenTo18
+    }
+
     public enum AggregateType
     {
         [Description("Spring League")]
