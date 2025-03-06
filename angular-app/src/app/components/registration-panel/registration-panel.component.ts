@@ -39,8 +39,8 @@ export class RegistrationPanelComponent implements OnInit, AfterViewInit {
   public registrationMatch!: OpenMatch;
   public registration!: OpenMatchRegistration;
   public selectedSeason!: number;
-  public registrationNumber!: number;
-
+  public successfulRegistration!: OpenMatchRegistration;
+  
   public registrations = new MatTableDataSource<OpenMatchRegistration>();
   public isLoadingRegistrations: boolean = false;
 
@@ -165,7 +165,7 @@ export class RegistrationPanelComponent implements OnInit, AfterViewInit {
           return throwError(error);
         }))
       .subscribe(data => {
-        this.registrationNumber = data;
+        this.successfulRegistration = data;
         this.getMatches();
         this.registrationSuccessful = true;
         if (this.isListing) {
@@ -187,7 +187,6 @@ export class RegistrationPanelComponent implements OnInit, AfterViewInit {
     ];
 
     var dcReg = [
-      "registrationNumber",
       "name",
       "ageGroupAsString",
       "contact"

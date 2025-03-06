@@ -25,9 +25,9 @@ export class OpenMatchService {
             ));
   }
 
-  public submitRegistration(registration: OpenMatchRegistration): Observable<number> {
+  public submitRegistration(registration: OpenMatchRegistration): Observable<OpenMatchRegistration> {
 
-    return this.http.post<number>(`${this.globalService.ApiUrl}/api/openMatch/MatchRegistration`, registration)
+    return this.http.post<OpenMatchRegistration>(`${this.globalService.ApiUrl}/api/openMatch/MatchRegistration`, registration)
               .pipe(map(res =>
                 res
               ));

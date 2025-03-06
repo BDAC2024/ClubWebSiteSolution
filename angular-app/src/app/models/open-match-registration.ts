@@ -3,7 +3,6 @@ import { JuniorAgeGroup } from "./open-match-enum";
 export class OpenMatchRegistration {
   dbKey!: string;
   openMatchId!: string;
-  registrationNumber!: number;
   name!: string;
   ageGroup!: JuniorAgeGroup;
   ageGroupAsString!: string;
