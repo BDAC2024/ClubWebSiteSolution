@@ -59,7 +59,21 @@ namespace AnglingClubWebServices.Models
                 }
                 else if (EventType == EventType.Match)
                 {
-                    return $"{MatchType.EnumDescription()} {(Number != null ? $"no.{Number}" : "")} at {Description}";
+                    switch (MatchType)
+                    {
+                        case Interfaces.MatchType.Club:
+                        case Interfaces.MatchType.Junior:
+                        case Interfaces.MatchType.Pairs:
+                        case Interfaces.MatchType.Evening:
+                        case Interfaces.MatchType.Spring:
+                            return $"{MatchType.EnumDescription()} {(Number != null ? $"no.{Number}" : "")} at {Description}";
+
+                        case Interfaces.MatchType.Specials:
+                            return Description;
+
+                        default:
+                            return $"{MatchType.EnumDescription()} - {Description}";
+                    }
                 }
                 else
                 {

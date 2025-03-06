@@ -50,7 +50,13 @@ namespace AnglingClubWebServices.Interfaces
         Pairs,
 
         [Description("Evening League")]
-        Evening
+        Evening,
+
+        [Description("Visitors")]
+        Visitors,
+
+        [Description("Qualifier")]
+        Qualifier
     }
 
     public enum OpenMatchType

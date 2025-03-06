@@ -10,12 +10,6 @@ namespace AnglingClubWebServices.Models
         [Required]
         public string OpenMatchId { get; set; }
 
-        /// <summary>
-        /// This is per match and starts at 1
-        /// </summary>
-        [Required]
-        public int RegistrationNumber { get; set; }
-
         [Required]
         public string Name { get; set; }
 

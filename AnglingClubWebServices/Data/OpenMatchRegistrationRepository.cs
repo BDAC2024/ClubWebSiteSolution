@@ -39,7 +39,6 @@ namespace AnglingClubWebServices.Data
             var attributes = new List<ReplaceableAttribute>
             {
                 new ReplaceableAttribute { Name = "OpenMatchId", Value = registration.OpenMatchId, Replace = true },
-                new ReplaceableAttribute { Name = "RegistrationNumber", Value = ((int)registration.RegistrationNumber).ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Name", Value = registration.Name, Replace = true },
                 new ReplaceableAttribute { Name = "AgeGroup", Value = ((int)registration.AgeGroup).ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Address", Value = registration.Address, Replace = true },
@@ -95,10 +94,6 @@ namespace AnglingClubWebServices.Data
                     {
                         case "OpenMatchId":
                             openMatchRegistration.OpenMatchId = attribute.Value;
-                            break;
-
-                        case "RegistrationNumber":
-                            openMatchRegistration.RegistrationNumber = Convert.ToInt32(attribute.Value);
                             break;
 
                         case "Name":
