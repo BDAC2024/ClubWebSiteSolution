@@ -75,7 +75,7 @@ namespace AnglingClubWebServices.Controllers
 
             ReportTimer("Getting Open matche registraions");
 
-            return Ok(items.OrderBy(x => x.OpenMatchId).ThenBy(x => x.RegistrationNumber));
+            return Ok(items.OrderBy(x => x.OpenMatchId));
         }
 
         [HttpPost("Matches")]
@@ -109,7 +109,6 @@ namespace AnglingClubWebServices.Controllers
             {
                 try
                 {
-                    registration.RegistrationNumber = currentRegistrations.Any() ? currentRegistrations.Max(x => x.RegistrationNumber) + 1 : 1;
                     await _openMatchRegistrationRepository.AddOrUpdateOpenMatchRegistration(registration);
                 }
                 catch (System.Exception ex)
@@ -124,7 +123,7 @@ namespace AnglingClubWebServices.Controllers
                 {
                     _emailService.SendEmail(new List<string> { registration.ContactEmail },
                         $"Confirmation of Junior Open Match registration for {openMatch.Date.ToString("dd MMM yyyy")}",
-                        $"Thank you for registering for the match. Your registration number is <b>{registration.RegistrationNumber}</b><br/>" +
+                        $"Thank you for registering for the match.<br/>" +
                         $"Remember that the draw is at <b>{openMatch.DrawTime}</b> and the match runs from <b>{openMatch.StartTime}</b> to <b>{openMatch.EndTime}</b><br/><br/>" +
                         $"Please familiarise yourself with the pond/match rules and the pond location at <a href='https://boroughbridgeanglingclub.com/register'>https://boroughbridgeanglingclub.com/register</a><br/><br/>" +
                         "Tight lines!,<br/>" +
@@ -147,7 +146,7 @@ namespace AnglingClubWebServices.Controllers
                     "Boroughbridge & District Angling Club"
                 );
 
-                return Ok(registration.RegistrationNumber);
+                return Ok(registration);
             }
         }
         [HttpDelete("MatchRegistration/{id}")]
