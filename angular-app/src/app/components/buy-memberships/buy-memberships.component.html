@@ -71,7 +71,8 @@
             </div>
 
             <div *ngIf="this.selectedMembership != null">
-                <p>Cost: <b>{{selectedMembership.cost | currency:'GBP'}}</b> + <b>{{this.refData.appSettings.handlingCharge | currency:'GBP'}}</b> handling charge
+                <p>Cost: <b>{{selectedMembership.cost | currency:'GBP'}}</b> + <b>{{this.refData.appSettings.handlingCharge | currency:'GBP'}}</b> handling charge<br/>
+                Note: A one-off charge of <b>{{this.pondGateKeyCost | currency:'GBP'}}</b> must also be paid by <b>new members</b> wanting to fish Roecliffe Pond for the key deposit.
                 </p>
                 <p *ngIf="selectedMembership.description == 'Junior'">
                     This cost applies until the 1st of April after your 16th Birthday. Then you become an Intermediate member.
@@ -110,7 +111,7 @@
 
                     <div *ngIf="isUnderAge()">
                         <div class="checkbox-wrapper">
-                            <mat-checkbox [(ngModel)]="newMembership.paidForKey" class="checkbox-top">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the member / non-fishing member / guardian for this person.</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="newMembership.paidForKey" class="checkbox-top">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the parent/guardian for this person.</mat-checkbox>
                         </div>
                         <br/>
                         <b>Parental Consent/Disclosure</b>
