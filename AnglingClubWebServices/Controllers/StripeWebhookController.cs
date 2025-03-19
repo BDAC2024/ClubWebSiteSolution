@@ -79,17 +79,28 @@ namespace AnglingClubWebServices.Controllers
             //_logger.LogWarning($"Stripe-Signature - log 7 = {Request.Headers["Stripe-Signature"]}");
             //_logger.LogWarning($"_endpointSecret - log 8 = {_endpointSecret}");
 
+            // Set this to false if webhooks have failed due to an api version mis-match. Once the outstanding items have been processed, set it back to true.
+            bool throwOnApiVersionMismatch = true;
+
+            Event stripeEvent;
+
             try
             {
-                // Set this to false if webhooks have failed due to an api version mis-match. Once the outstanding items have been processed, set it back to true.
-                bool throwOnApiVersionMismatch = true;
+                stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _endpointSecret, 300, throwOnApiVersionMismatch);
+            }
+            catch (StripeException e)
+            {
+                _logger.LogError("*******************************************************************************************");
+                _logger.LogError(e.Message);
+                _logger.LogError("IF API VERSION MISMATCH, TRY SETTING THROWONAPIVERSIONMISMATCH (A FEW LINES ABOVE) TO FALSE");
+                _logger.LogError("*******************************************************************************************");
+                throw;
+            }
 
-                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _endpointSecret, 300, throwOnApiVersionMismatch);
-
-                _logger.LogWarning($"Got stripe event - log 10");
-
+            try
+            {
                 // Handle the event
-                if (stripeEvent.Type == Events.PaymentIntentSucceeded)
+                if (stripeEvent.Type == BDACStripeEvents.PaymentIntentSucceeded)
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
 
@@ -187,7 +198,7 @@ namespace AnglingClubWebServices.Controllers
                                     _logger.LogWarning($" log 130 - membership");
 
                                     order.MembersName = paymentMetaData.Name;
-
+                                    order.SeasonName = paymentMetaData.SeasonName;
                                     var appSettings = _appSettingRepository.GetAppSettings().Result;
                                     var notificationSent = false;
 
@@ -201,7 +212,7 @@ namespace AnglingClubWebServices.Controllers
 
                                             _emailService.SendEmail(
                                                 emails,
-                                                $"New membership has been purchased",
+                                                $"New membership has been purchased for {order.SeasonName}",
                                                 $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
                                                     "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
                                                     "Boroughbridge & District Angling Club"
@@ -209,7 +220,7 @@ namespace AnglingClubWebServices.Controllers
 
                                             _emailService.SendEmail(
                                                 new List<string> { paymentIntent.ReceiptEmail },
-                                                $"Confirmation of membership purchase",
+                                                $"Confirmation of membership purchase for the {order.SeasonName} season",
                                                 $"Thank you for purchasing <b>{order.Description}</b> .<br/>" +
                                                     "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
                                                     "<b>Fishing is not permitted until membership book arrives.</b><br/><br/>" +
@@ -398,7 +409,7 @@ namespace AnglingClubWebServices.Controllers
                     }
 
                 }
-                if (stripeEvent.Type == Events.ChargeRefunded)
+                if (stripeEvent.Type == BDACStripeEvents.ChargeRefunded)
                 {
                     _logger.LogWarning($"WebHookTimer - issuing a refund");
 

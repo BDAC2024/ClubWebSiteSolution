@@ -33,6 +33,13 @@ namespace AnglingClubWebServices.Services
             _trophyWinnerRepository = trophyWinnerRepository;
         }
 
+        public List<MatchResult> GetMemberResults(List<string> matchIds, int membershipNumber)
+        {
+            var results = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId) && x.MembershipNumber == membershipNumber).OrderBy(x => x.MatchId).ToList();
+
+            return results;
+        }
+
         public List<MatchResult> GetResults(string matchId, MatchType matchType)
         {
             var results = (_matchResultRepository.GetMatchResults(matchId).Result).OrderByDescending(r => r.Points).ThenByDescending(r => r.WeightDecimal).ToList();

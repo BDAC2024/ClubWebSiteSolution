@@ -48,6 +48,24 @@ namespace AnglingClubWebServices.Helpers
         }
 
         /// <summary>
+        /// Returns the current season and, if between Jan and Mar, the next season too.
+        /// </summary>
+        /// <returns></returns>
+        public static List<Season> SeasonsForMembershipPurchase()
+        {
+            var seasons = new List<Season>();
+            var now = DateTime.Now;
+
+            seasons.Add(SeasonForDate(now).Value);
+            if (now.Month < 4)
+            {
+                seasons.Add(SeasonForDate(now.AddYears(1)).Value);
+            }
+
+            return seasons;
+        }
+
+        /// <summary>
         /// Returns the season as 2022/2023 etc
         /// </summary>
         /// <returns></returns>

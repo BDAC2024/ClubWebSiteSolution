@@ -8,6 +8,7 @@ namespace AnglingClubWebServices.DTOs
         public int OrderId { get; set; }
         public PaymentType OrderType { get; set; }
         public string Description { get; set; }
+        public string SeasonName { get; set; }
         public string Address { get; set; }
 
         public DateTime? PaidOn { get; set; }
