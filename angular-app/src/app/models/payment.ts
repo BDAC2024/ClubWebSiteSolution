@@ -23,6 +23,7 @@ export class PaymentDetail {
     orderId!: number;
     orderType!: PaymentType;
     description!: string;
+    seasonName!: string;
     address!: string;
     @Type(() => Date)
     paidOn!: Date;

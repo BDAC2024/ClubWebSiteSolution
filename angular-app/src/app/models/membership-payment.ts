@@ -1,4 +1,5 @@
 import { MembershipType } from "./product-membership-enum";
+import { Season } from "./refData";
 
 export class ProductMembership {
   dbKey!: string;
@@ -11,6 +12,7 @@ export class ProductMembership {
 
 export class MembershipPaymentRequest {
   dbKey!: string;
+  season!: Season;
   name!: string;
   dob!: Date;
   phoneNumber!: string;

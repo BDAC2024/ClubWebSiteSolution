@@ -8,7 +8,7 @@ import { PaymentsService } from 'src/app/services/payments.service';
 import { Router } from '@angular/router';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { PaymentType } from 'src/app/models/payment-enum';
-import { RefData } from 'src/app/models/refData';
+import { RefData, Season } from 'src/app/models/refData';
 import { FateMaterialIconService } from 'fate-editor';
 
 
@@ -27,6 +27,7 @@ export class BuyMembershipsComponent implements OnInit {
   public isLoading: boolean = true;
   public isBuying: boolean = false;
   public selectedMembership!: ProductMembership;
+  public selectedSeason!: Season;
   public newMembership: MembershipPaymentRequest = new MembershipPaymentRequest();
   private baseUrl: string = "";
   public pondGateKeyCost: number = 0;
@@ -60,6 +61,11 @@ export class BuyMembershipsComponent implements OnInit {
       this.isEnabled = this.refData.appSettings.membershipsEnabled;
       this.pondGateKeyCost = this.refData.appSettings.pondGateKeyCost;
 
+      if (this.refData.seasonsForMembershipPurchase.length == 1) 
+      {
+        this.selectedSeason = this.refData.seasonsForMembershipPurchase[0];
+      }
+
       this.isLoading = false;
 
       this.getProductMemberships();
@@ -70,6 +76,7 @@ export class BuyMembershipsComponent implements OnInit {
     this.newMembership = new MembershipPaymentRequest();
     this.newMembership.dbKey = selected.dbKey;
     this.newMembership.cancelUrl = this.baseUrl;
+    this.newMembership.season = this.selectedSeason;
     this.confirmCertificate = false;
     this.confirmNoNightFishing = false;
     this.confirmWaitForBook = false;
@@ -162,19 +169,20 @@ export class BuyMembershipsComponent implements OnInit {
   }
 
   public SixMonthMembershipAvailable(): boolean {
-    
+
+    var selectedSeasonStarts = new Date(this.selectedSeason.starts);
     var d: Date = new Date();
 
     const month = (d).getMonth();
     const day = (d).getDate();
 
-    var unavailable = (month === 2 && day > 14) || // March
-      month === 3 ||             // April
+    var unavailable = month === 3 || // April
       month === 4 ||             // May
       month === 5 ||             // June
       month === 6 ||             // July
       month === 7 ||             // August
-      (month === 8 && day < 9); // September
+      (month === 8 && day < 9) ||// September
+      selectedSeasonStarts > d;
 
     return !unavailable;
   }

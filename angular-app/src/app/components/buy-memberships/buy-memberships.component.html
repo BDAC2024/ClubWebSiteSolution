@@ -51,13 +51,24 @@
         <mat-card-content>
 
             <mat-form-field>
-                <mat-label>Membership Type</mat-label>
-                <mat-select [(ngModel)]="selectedMembership" >
-                    <mat-option *ngFor="let sel of this.membershipList" [value]="sel" (onSelectionChange)="resetNewMembership(sel)">
-                        {{sel.description}} - {{sel.term}}
+                <mat-label>Season</mat-label>
+                <mat-select [(ngModel)]="selectedSeason" >
+                    <mat-option *ngFor="let season of this.refData.seasonsForMembershipPurchase" [value]="season">
+                        From {{season.starts | date:'dd MMM YYYY'}} to {{season.ends | date:'dd MMM YYYY'}}
                       </mat-option>
                 </mat-select>
             </mat-form-field>
+
+            <div *ngIf="this.selectedSeason != null">
+                <mat-form-field>
+                    <mat-label>Membership Type</mat-label>
+                    <mat-select [(ngModel)]="selectedMembership" >
+                        <mat-option *ngFor="let sel of this.membershipList" [value]="sel" (onSelectionChange)="resetNewMembership(sel)">
+                            {{sel.description}} - {{sel.term}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
             <div *ngIf="this.selectedMembership != null">
                 <p>Cost: <b>{{selectedMembership.cost | currency:'GBP'}}</b> + <b>{{this.refData.appSettings.handlingCharge | currency:'GBP'}}</b> handling charge
@@ -75,7 +86,7 @@
                         <mat-card-title>Please Note</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
-                        This membership runs from {{selectedMembership.runs}} so will expire within the next 6 months. Please consider purchasing a 6 month membership instead.
+                        This membership runs from {{selectedMembership.runs}} so will expire on {{selectedSeason.ends | date:'dd MMM YYYY'}}. Please consider purchasing a 6 month membership instead.
                     </mat-card-content>
                 </mat-card>
 

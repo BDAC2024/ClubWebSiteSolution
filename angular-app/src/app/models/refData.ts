@@ -3,6 +3,7 @@ import { Type } from "class-transformer";
 export class RefData {
     currentSeason!: number;
     seasons!: Season[];
+    seasonsForMembershipPurchase!: Season[];
     appSettings!: AppSettings;
 }
 

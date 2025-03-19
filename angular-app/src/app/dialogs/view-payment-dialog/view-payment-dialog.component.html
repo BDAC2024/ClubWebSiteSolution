@@ -8,6 +8,8 @@
         <span><b>Paid On:</b><br/>{{data.paidOn | date:'dd MMM YY'}}<br/></span>
         <span *ngIf="data.orderType == paymentType.Membership"><b>Paid For Key Deposit:</b><br/>{{YesNo(data.paidForKey)}}<br/></span>
         <span><b>Description</b><br/>{{data.description}}<br/></span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.seasonName != ''"><b>For Season:</b><br/>{{data.seasonName}}<br/></span>
+        <span *ngIf="data.orderType == paymentType.Membership && data.seasonName == ''"><b>For Season:</b><br/>Not specified<br/></span>
 
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Ticket No:</b><br/>{{data.ticketNumber}}</span>
         <span *ngIf="data.orderType == paymentType.DayTicket || data.orderType == paymentType.GuestTicket"><b>Valid On:</b><br/>{{data.validOn | date:'dd MMM YY'}}</span>
