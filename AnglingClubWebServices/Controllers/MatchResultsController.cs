@@ -78,6 +78,47 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
+        // GET api/values
+        [HttpGet("member/{membershipNumber}/{matchType}/{season}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultOutputDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult GetMemberResults(int membershipNumber, MatchType matchType, Season season)
+        {
+            var errors = new List<string>();
+
+            StartTimer();
+
+            try
+            {
+                var matchIds = _eventRepository.GetEvents().Result.Where(x => x.MatchType == matchType && x.Season == season).Select(x => x.Id).ToList();
+                var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetMemberResults(matchIds, membershipNumber));
+                var members = _memberRepository.GetMembers(season, true).Result;
+
+                foreach (var result in results)
+                {
+                    var member = members.FirstOrDefault(x => x.MembershipNumber == result.MembershipNumber);
+                    if (member != null)
+                    {
+                        result.Name = member.Name;
+                    }
+                    else
+                    {
+                        result.Name = $"Member {result.MembershipNumber} not found";
+                    }
+                }
+
+                ReportTimer("Getting match results for member");
+
+                return Ok(results);
+
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+                return BadRequest(errors);
+            }
+        }
+
         [HttpGet("standings/{aggType}/{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaguePosition>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

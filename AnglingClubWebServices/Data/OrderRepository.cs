@@ -46,6 +46,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "OrderType", Value = ((int)order.OrderType).ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Description", Value = order.Description, Replace = true },
                 new ReplaceableAttribute { Name = "TicketNumber", Value = order.TicketNumber.ToString(), Replace = true },
+                new ReplaceableAttribute { Name = "Season", Value = order.SeasonName, Replace = true },
                 new ReplaceableAttribute { Name = "MembersName", Value = order.MembersName, Replace = true },
                 new ReplaceableAttribute { Name = "GuestsName", Value = order.GuestsName, Replace = true },
                 new ReplaceableAttribute { Name = "TicketHoldersName", Value = order.TicketHoldersName, Replace = true },
@@ -147,6 +148,10 @@ namespace AnglingClubWebServices.Data
 
                     case "MembersName":
                         order.MembersName = attribute.Value;
+                        break;
+
+                    case "Season":
+                        order.SeasonName = attribute.Value;
                         break;
 
                     case "GuestsName":

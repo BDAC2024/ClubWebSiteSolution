@@ -7,6 +7,7 @@ namespace AnglingClubWebServices.Models
     public class Order : TableBase
     {
         public int OrderId { get; set; }
+        public string SeasonName { get; set; } = "";
         public PaymentType OrderType { get; set; }
         public string Description { get; set; }
         public int TicketNumber { get; set; }

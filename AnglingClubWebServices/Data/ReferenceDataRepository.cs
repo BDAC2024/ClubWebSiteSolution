@@ -36,6 +36,17 @@ namespace AnglingClubWebServices.Data
 
             refData.CurrentSeason = EnumUtils.CurrentSeason();
 
+            foreach (var season in EnumUtils.SeasonsForMembershipPurchase())
+            {
+                refData.SeasonsForMembershipPurchase.Add(new SeasonInfo
+                {
+                    Season = season,
+                    Name = season.SeasonName(),
+                    Starts = season.SeasonStarts(),
+                    Ends = season.SeasonEnds()
+                });
+            }
+
             refData.AppSettings = _appSettingRepository.GetAppSettings().Result;
 
             return refData;

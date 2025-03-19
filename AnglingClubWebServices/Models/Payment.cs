@@ -8,6 +8,7 @@ namespace AnglingClubWebServices.Models
     public class Payment
     {
         public string SessionId { get; set; }
+        public string SeasonName { get; set; } = "";
         public PaymentType Category { get; set; }
         public string Purchase { get; set; }
         public string MembersName { get; set; }
@@ -33,6 +34,11 @@ namespace AnglingClubWebServices.Models
 
         public PaymentMetaData(Dictionary<string, string> metadata)
         {
+            if (metadata.ContainsKey("Season"))
+            {
+                SeasonName = metadata["Season"];
+            }
+
             if (metadata.ContainsKey("ValidOn"))
             {
                 DateTime.TryParse(metadata["ValidOn"], out DateTime dt);
@@ -162,6 +168,7 @@ namespace AnglingClubWebServices.Models
         public DateTime ValidOn { get; set; }
         public int MembershipNumber { get; set; }
         public string TicketHoldersName { get; set; }
+        public string SeasonName { get; set; }
         public string MembersName { get; set; }
         public string GuestsName { get; set; }
         public string Name { get; set; }

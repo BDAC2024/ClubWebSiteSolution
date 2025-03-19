@@ -67,6 +67,7 @@ namespace AnglingClubWebServices.Controllers
                 {
                     Dictionary<string, string> metaData = new Dictionary<string, string>()
                     {
+                        { "Season", membership.Season.Name },
                         { "Name", membership.Name },
                         { "DoB", membership.DoB.ToString("yyyy-MM-dd") },
                         { "AcceptPolicies", membership.AcceptPolicies.ToString() },

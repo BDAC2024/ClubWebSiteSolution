@@ -143,6 +143,7 @@ namespace AnglingClubWebServices.Services
                 {
                     Metadata = createCheckoutSessionRequest.MetaData
                 }
+                
             };
 
             var service = new SessionService();
