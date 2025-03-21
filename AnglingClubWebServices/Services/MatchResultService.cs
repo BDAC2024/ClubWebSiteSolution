@@ -205,10 +205,19 @@ namespace AnglingClubWebServices.Services
 
                 if (matchResultsForTrophies.Any(x => x.MatchId == match.Id))
                 {
-                    var winner = matchResultsForTrophies.Where(x => x.MatchId == match.Id).OrderByDescending(x => x.WeightDecimal).First();
+                    var winningWeight = matchResultsForTrophies.Where(x => x.MatchId == match.Id).OrderByDescending(x => x.WeightDecimal).First().WeightDecimal;
+                    var winners = matchResultsForTrophies.Where(x => x.MatchId == match.Id && x.WeightDecimal == winningWeight);
 
-                    trophyWinner.WeightDecimal = winner.WeightDecimal;
-                    trophyWinner.Winner = members.Single(x => x.MembershipNumber == winner.MembershipNumber).Name;
+                    trophyWinner.WeightDecimal = winningWeight;
+                    trophyWinner.Winner = "";
+                    foreach (var winner in winners)
+                    {
+                        if (!string.IsNullOrEmpty(trophyWinner.Winner))
+                        {
+                            trophyWinner.Winner += "/";
+                        }
+                        trophyWinner.Winner += members.Single(x => x.MembershipNumber == winner.MembershipNumber).Name;
+                    }
                     trophyWinner.IsRunning = false;
                 }
                 else
@@ -224,7 +233,7 @@ namespace AnglingClubWebServices.Services
 
             trophyWinners.AddRange(nonMatchtrophyWinners);
 
-            // Set to "Final" if the trophy mmatch has a date, has a winner and is before today
+            // Set to "Final" if the trophy match has a date, has a winner and is before today
             foreach (var winner in trophyWinners.Where(x => x.Date.HasValue && x.Winner != "" && x.Date < DateTime.Now))
             {
                 winner.IsRunning = false;
