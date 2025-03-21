@@ -50,7 +50,6 @@ export class MatchesComponent implements OnInit {
 
   ngOnInit(): void {
     this.globalService.log("ngOnInit running");
-    this.isLoading = true;
     this.getRefData();
   }
 
@@ -108,8 +107,10 @@ export class MatchesComponent implements OnInit {
   }
 
   public getRefData() {
+    this.isLoading = true;
     this.refDataService.getRefData()
     .subscribe(data => {
+      this.isLoading = false;
       this.refData = data;
       this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
       this.getMatches();
@@ -117,6 +118,7 @@ export class MatchesComponent implements OnInit {
   }
 
   public getMatches() {
+    this.isLoading = true;
     this.globalService.setStoredSeason(this.selectedSeason);
     this.clubEventService.readEvents(this.selectedSeason)
     .subscribe(data => {
