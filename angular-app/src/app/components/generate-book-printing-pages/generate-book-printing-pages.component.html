@@ -1,0 +1,57 @@
+<h1>Calculate Book Printing Pages</h1>
+
+<mat-card class="warning-card" style="width: 500px;">
+    <mat-card-header>
+    </mat-card-header>
+    <mat-card-content>
+        Assuming double-sided printing and printing 4 pages per side!
+    </mat-card-content>
+</mat-card>
+<br/>
+<br/>
+
+<mat-card class="purchase-card" style="width: 500px;">
+    <mat-form-field>
+        <mat-label>How many pages do you have</mat-label>
+        <input class="title-form-field" matInput [(ngModel)]="numPages">
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+        <mat-label>Do you wish to print the cover seperately (i.e. on card)</mat-label>
+        <mat-select [(ngModel)]="this.printCoverSeparately" >
+            <mat-option value=true>Yes</mat-option>
+            <mat-option value=false>No</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <br/>
+</mat-card>
+<br/>
+<br/>
+<mat-card class="error-card" style="width: 500px;" *ngIf="errorMessage != ''">
+    <mat-card-header>
+    </mat-card-header>
+    <mat-card-content>
+        {{errorMessage}}
+    </mat-card-content>
+</mat-card>
+<br/>
+<br/>
+<button class="edit-button" 
+    mat-raised-button 
+    color="primary" 
+    (click)="calcPages()">
+        Calculate
+</button>
+
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+<br/>
+<br/>
+
+<mat-card class="purchase-card" style="width: 800px;" *ngIf="results != ''">
+    <mat-card-content>
+        <div [innerHtml]="results"></div>
+    </mat-card-content>
+</mat-card>
+<br/>
+
+

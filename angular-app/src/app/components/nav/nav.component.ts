@@ -86,7 +86,7 @@ export class NavComponent implements OnInit {
       private screenService: ScreenService,
       private globalService: GlobalService,
       public authenticationService: AuthenticationService,
-      private refDataService: RefDataService,
+      public refDataService: RefDataService,
       public newsService: NewsService,
       router: Router) {
 

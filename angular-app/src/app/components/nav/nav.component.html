@@ -153,7 +153,8 @@
             </div>
           </a>
           -->
-					<a mat-list-item routerLink="/payments">
+					<a mat-list-item routerLink="/generateBookPrintingPages" *ngIf="this.refDataService.isMemberSecretary()">Book Printing</a>
+          <a mat-list-item routerLink="/payments">
             <div>
               Payments
             </div>

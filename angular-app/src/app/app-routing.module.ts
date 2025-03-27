@@ -43,6 +43,7 @@ import { TrophyWinnersComponent } from './components/trophy-winners/trophy-winne
 import { RegistrationsComponent } from './components/registrations/registrations.component';
 import { RegisterComponent } from './components/register/register.component';
 import { JuniorOpenRegistrationsComponent } from './components/junior-open-registrations/junior-open-registrations.component';
+import { GenerateBookPrintingPagesComponent } from './components/generate-book-printing-pages/generate-book-printing-pages.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full'},
@@ -88,6 +89,7 @@ const routes: Routes = [
   { path: 'registrations', component: RegistrationsComponent},
   { path: 'register', component: RegisterComponent},
   { path: 'juniorOpenRegistrations', component: JuniorOpenRegistrationsComponent},
+  { path: 'generateBookPrintingPages', component: GenerateBookPrintingPagesComponent},
 ];
 
 @NgModule({

@@ -105,6 +105,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-size: smaller;
 }
 
+.warning-card {
+    background-color: goldenrod;
+    color: white;
+    font-size: smaller;
+}
+
 .error-card {
     background-color: red;
     color: white;

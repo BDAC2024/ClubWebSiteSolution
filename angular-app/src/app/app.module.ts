@@ -103,6 +103,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { JuniorOpenRegistrationsComponent } from './components/junior-open-registrations/junior-open-registrations.component';
 import { RegistrationsComponent } from './components/registrations/registrations.component';
 import { RegistrationPanelComponent } from './components/registration-panel/registration-panel.component';
+import { GenerateBookPrintingPagesComponent } from './components/generate-book-printing-pages/generate-book-printing-pages.component';
 
 @NgModule({
   declarations: [
@@ -168,6 +169,7 @@ import { RegistrationPanelComponent } from './components/registration-panel/regi
     JuniorOpenRegistrationsComponent,
     RegistrationsComponent,
     RegistrationPanelComponent,
+    GenerateBookPrintingPagesComponent,
   ],
   imports: [
     BrowserModule,

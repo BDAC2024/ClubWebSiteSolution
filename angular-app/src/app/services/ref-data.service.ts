@@ -55,7 +55,7 @@ export class RefDataService {
 
   public isMemberSecretary(): boolean {
     if (this.refData != null) {
-      return this.authenticationService.isPreviewer(this.refData.appSettings.memberSecretaries);
+      return this.authenticationService.isPreviewer(this.refData.appSettings.membershipSecretaries);
     } else {
       return false;
     }
