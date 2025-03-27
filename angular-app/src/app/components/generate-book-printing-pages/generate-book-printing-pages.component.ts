@@ -76,7 +76,7 @@ export class GenerateBookPrintingPagesComponent implements OnInit {
           {
               this.results += ` - ${this.printPaginationSummary[0].instructions}<br/>`;
           }
-          this.results += `   <b>${this.printPaginationSummary[0].pagesToPrint}</b><br/><br/>`;
+          this.results += `<br/>   <b>${this.printPaginationSummary[0].pagesToPrint}</b><br/><br/>`;
 
           this.results += "Cut the pages in the middle horizontally.<br/><br/>";
 
@@ -87,7 +87,7 @@ export class GenerateBookPrintingPagesComponent implements OnInit {
           {
             this.results += ` - ${this.printPaginationSummary[1].instructions}<br/>`;
           }
-          this.results += `   <b>${this.printPaginationSummary[1].pagesToPrint}</b><br/><br/>`;
+          this.results += `<br/>   <b>${this.printPaginationSummary[1].pagesToPrint}</b><br/><br/>`;
         }
         else
         {
@@ -96,7 +96,7 @@ export class GenerateBookPrintingPagesComponent implements OnInit {
             {
               this.results += element.instructions + "<br/><br/>";
             }
-            this.results += "<b>" + element.pagesToPrint + "</b><br/><br/>";
+            this.results += "<br/><b>" + element.pagesToPrint + "</b><br/><br/>";
           });
         }
         this.results += this.stdClosingText();
