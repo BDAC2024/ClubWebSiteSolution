@@ -120,6 +120,7 @@ namespace AnglingClubWebServices
             services.AddTransient<ITicketService, TicketService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IUtilityService, UtilityService>();
 
 
         }

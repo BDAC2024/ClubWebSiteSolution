@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using static AnglingClubWebServices.Services.UtilityService;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -20,11 +22,13 @@ namespace AnglingClubWebServices.Controllers
         private readonly IMemberRepository _memberRepository;
         private readonly IUserAdminRepository _userAdminRepository;
         private readonly IMatchResultRepository _matchResultRepository;
+        private readonly IReferenceDataRepository _referenceDataRepository;
         private readonly IEventRepository _eventRepository;
         private readonly ILogger<MembersController> _logger;
         private readonly IMapper _mapper;
         private readonly IAuthService _authService;
         private readonly IEmailService _emailService;
+        private readonly IUtilityService _utilityService;
 
         public MembersController(
             IMemberRepository memberRepository,
@@ -34,7 +38,9 @@ namespace AnglingClubWebServices.Controllers
             IMapper mapper,
             IAuthService authService,
             IEmailService emailService,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            IReferenceDataRepository referenceDataRepository,
+            IUtilityService utilityService)
         {
             _memberRepository = memberRepository;
             _userAdminRepository = userAdminRepository;
@@ -45,6 +51,8 @@ namespace AnglingClubWebServices.Controllers
             _emailService = emailService;
             _logger = loggerFactory.CreateLogger<MembersController>();
             base.Logger = _logger;
+            _referenceDataRepository = referenceDataRepository;
+            _utilityService = utilityService;
         }
 
         [HttpPost("authenticate")]
@@ -497,18 +505,41 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [HttpGet("PagesForBookPrinting/{numPages}/{printCoverSeparately}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PrintPaginationSummary>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult CalcPagesForBookPrinting(int numPages, bool printCoverSeparately)
         {
+            StartTimer();
+
+            var memberSecretaries = _referenceDataRepository.GetReferenceData().AppSettings.MembershipSecretaries;
+
+            if (!memberSecretaries.Contains(CurrentUser.MembershipNumber))
+            {
+                return BadRequest("Only Member Secretary can access this.");
+            }
+
+            // Fixed at 4 for now
+            var pagesPerSide = 4;
+
+            List<PrintPaginationSummary> pageList = new List<PrintPaginationSummary>();
+            try
+            {
+                pageList = _utilityService.CalcPagesForBookPrinting(numPages, pagesPerSide, printCoverSeparately);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            ReportTimer("Calc pages for printing");
+
+            return Ok(pageList);
+
+
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+
 
     }
 }
