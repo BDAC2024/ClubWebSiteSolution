@@ -32,10 +32,17 @@ namespace AnglingClubWebServices.Services
         {
             var member = (await _memberRepository.GetMembers(EnumUtils.CurrentSeason())).SingleOrDefault(x => x.MembershipNumber == model.MembershipNumber);
 
-            // return null if user not found or PIN invalid
             if (member == null)
             {
-                return null;
+                // Check if new membership for the following season and fail login with appropriate message
+                var newMember = (await _memberRepository.GetMembers(EnumUtils.NextSeason())).SingleOrDefault(x => x.MembershipNumber == model.MembershipNumber);
+
+                if (newMember == null)
+                {
+                    return null;
+                }
+
+                throw new CustomException($"Sorry - You are not able to login until your membership starts on {EnumUtils.NextSeason().SeasonStarts().ToString("dd MMM yyyy")}");
             }
 
             // Reject if locked out

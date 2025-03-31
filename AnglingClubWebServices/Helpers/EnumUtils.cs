@@ -48,6 +48,15 @@ namespace AnglingClubWebServices.Helpers
         }
 
         /// <summary>
+        /// Returns the next season.
+        /// </summary>
+        /// <returns></returns>
+        public static Season NextSeason()
+        {
+            return SeasonForDate(DateTime.Now.AddYears(1)).Value;
+        }
+
+        /// <summary>
         /// Returns the current season and, if between Jan and Mar, the next season too.
         /// </summary>
         /// <returns></returns>
