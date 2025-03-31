@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using static AnglingClubWebServices.Services.UtilityService;
 
 namespace AnglingClubWebServices.Controllers
@@ -57,11 +58,11 @@ namespace AnglingClubWebServices.Controllers
 
         [HttpPost("authenticate")]
         [AllowAnonymous]
-        public IActionResult Authenticate([FromBody] AuthenticateRequest model)
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequest model)
         {
             try
             {
-                var response = _authService.Authenticate(model).Result;
+                var response = await _authService.Authenticate(model);
 
                 if (response == null)
                 {
@@ -69,6 +70,10 @@ namespace AnglingClubWebServices.Controllers
                 }
 
                 return Ok(response);
+            }
+            catch (CustomException cex)
+            {
+                return BadRequest(new { message = cex.Message });
             }
             catch (Exception ex)
             {
