@@ -25,16 +25,15 @@
     </mat-form-field>
 </div>
 <br/>
-<br/>
-<br/>
 <mat-card class="error-card" *ngIf="errorMessage != ''" style="max-width: 500px;">
     <mat-card-header>
     </mat-card-header>
     <mat-card-content>
         {{errorMessage}}
+        <br/>
+        <br/>
     </mat-card-content>
 </mat-card>
-<br/>
 <br/>
 <button class="edit-button" 
     mat-raised-button 
@@ -47,7 +46,7 @@
 <br/>
 <br/>
 
-<div [innerHtml]="results" *ngIf="results != ''"></div>
+<div [innerHtml]="results" *ngIf="results != ''" style="width: 500px; max-width: 500px; overflow-wrap: anywhere;"></div>
 <br/>
 
 

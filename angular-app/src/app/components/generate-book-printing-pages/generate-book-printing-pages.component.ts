@@ -48,30 +48,12 @@ export class GenerateBookPrintingPagesComponent implements OnInit {
         this.printPaginationSummary = data;
 
         this.results = "<h2>Results</h2>";
-
-        this.results += "In the Print dialogue: -<br/>"
-        this.results += this.stdOpeningText();
-
-        // this.results += `this.printCoverSeparately ${this.printCoverSeparately}<br/>`
-        // if (this.printCoverSeparatelyAsString == "true")
-        // {
-        //   this.results += `IT IS TRUE<br/>`
-        // }
-        // else
-        // {
-        //   this.results += `IT ISNT TRUE<br/>`
-        // }
-        // if (this.printCoverSeparatelyAsString == "false")
-        // {
-        //   this.results += `IT ISNT TRUE<br/>`
-        // }
-        // else
-        // {
-        //   this.results += `IT IS TRUE<br/>`
-        // }
-    
+  
         if (this.printCoverSeparatelyAsString == "true")
         {
+          this.results += "For the front cover In the Print dialogue: -<br/>";
+          this.results += this.stdOpeningText();
+
           if (this.printPaginationSummary[0].instructions != "")
           {
               this.results += ` - ${this.printPaginationSummary[0].instructions}<br/>`;
@@ -91,15 +73,18 @@ export class GenerateBookPrintingPagesComponent implements OnInit {
         }
         else
         {
+          this.results += "In the Print dialogue: -<br/>";
+          this.results += this.stdOpeningText();
+
           this.printPaginationSummary.forEach(element => {
             if (element.instructions != "")
             {
-              this.results += element.instructions + "<br/><br/>";
+              this.results += " - " + element.instructions + "<br/>";
             }
             this.results += "<br/><b>" + element.pagesToPrint + "</b><br/><br/>";
           });
         }
-        this.results += this.stdClosingText();
+        this.results += this.stdClosingText(this.printCoverSeparatelyAsString);
       });
   
     }
@@ -107,13 +92,20 @@ export class GenerateBookPrintingPagesComponent implements OnInit {
 
   private stdOpeningText(): string
   {
-    return " - Choose '4 pages per sheet'<br/>" + 
-           " - Choose 'Portrait Orientation'<br/><br/>";
+    return " - <b>Note: This prints 2 books to set your number of 'Copies' appropriately.</b><br/>" + 
+            " - Choose 'Print on Both Sides - Flip pages on long edge'<br/>" + 
+            " - Choose 'Portrait Orientation'<br/>" +
+            " - Choose '4 pages per sheet'<br/>";
   }
 
-  private stdClosingText(): string
+  private stdClosingText(printCoverSeparately: string): string
   {
-    return "Cut the pages in the middle horizontally to create a top and bottom pile.<br/>" + 
-            "Place one pile on top of the other pile then fold!"
+    var addCover: string = "";
+
+    if (this.printCoverSeparatelyAsString == "true")
+    {
+      addCover = ", add a cover sheet, ";
+    }
+    return `Cut the pages in the middle horizontally${addCover} then fold!`;
   }
 }
