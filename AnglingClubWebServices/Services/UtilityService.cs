@@ -60,7 +60,7 @@ namespace AnglingClubWebServices.Services
                 innerContentStart = pagesPerSheet * 2;
 
                 PrintPaginationSummary coverPage = new PrintPaginationSummary();
-                coverPage.Instructions = "Under Settings choose 'Custom Print' then enter the following page numbers: -";
+                coverPage.Instructions = "Choose 'Custom Print' then enter the following pages: -";
                 coverPage.PagesToPrint = string.Join(",", pageNumbers.Take(innerContentStart).ToArray());
                 printPages.Add(coverPage);
 
@@ -69,7 +69,7 @@ namespace AnglingClubWebServices.Services
             }
 
             PrintPaginationSummary pages = new PrintPaginationSummary();
-            pages.Instructions += "Under Settings choose 'Custom Print' then enter the following page numbers: -";
+            pages.Instructions += "Choose 'Custom Print' then enter the following pages: -";
             pages.PagesToPrint = string.Join(",", pageNumbers.Skip(innerContentStart).ToArray());
             printPages.Add(pages);
 
