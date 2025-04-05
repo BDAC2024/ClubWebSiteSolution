@@ -92,7 +92,7 @@ export class GenerateBookPrintingPagesComponent implements OnInit {
 
   private stdOpeningText(): string
   {
-    return " - <b>Note: This prints 2 books to set your number of 'Copies' appropriately.</b><br/>" + 
+    return " - Set your number of 'Copies' <b>(1 copy prints 2 books)</b><br/>" + 
             " - Choose 'Print on Both Sides - Flip pages on long edge'<br/>" + 
             " - Choose 'Portrait Orientation'<br/>" +
             " - Choose '4 pages per sheet'<br/>";
