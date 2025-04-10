@@ -23,16 +23,17 @@
         </a>
         <a mat-list-item routerLink="/waters">Club Waters</a>
         <a mat-list-item routerLink="/matches">Matches</a>
-        <a mat-list-item routerLink="/register" *ngIf="isPreviewer()" class=" preview-option">Junior Open Matches</a>
-        <!-- <a mat-list-item routerLink="/register" >
-          <div class="custom-badge"
-            matBadgeOverlap="false" 
-            matBadgePosition="after" 
-            matBadgeSize="small"
-            matBadgeColor="accent">
-            Junior Open Matches
+        <a mat-list-item routerLink="/register">
+          <div
+              class="custom-badge-opens-menu" 
+                  matBadge="new" 
+                  matBadgeOverlap="false" 
+                  matBadgePosition="after" 
+                  matBadgeSize="small"
+                  matBadgeColor="accent">
+                  Junior Open Matches
           </div>
-        </a> -->
+        </a>
         <mat-list-item (click)="showStandingsSubMenu = !showStandingsSubMenu" class="parent">
 					<span class="full-width" >Standings</span>
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showStandingsSubMenu}" >expand_more</mat-icon>
@@ -47,47 +48,13 @@
         <!-- <a mat-list-item routerLink="/photos">Photos</a> -->
 
         <mat-list-item (click)="showPurchaseSubMenu = !showPurchaseSubMenu" class="parent ">
-					<span class="full-width custom-badge" 
-            matBadge="new" 
-            matBadgeOverlap="false" 
-            matBadgePosition="after" 
-            matBadgeSize="small"
-            matBadgeColor="accent" >
-            Buy Online
-          </span>
+					<span class="full-width" >Buy Online</span>
 					<mat-icon class="menu-button" [ngClass]="{'rotated' : showPurchaseSubMenu}" >expand_more</mat-icon>
 				</mat-list-item>
 				<div class="submenu" [ngClass]="{'expanded' : showPurchaseSubMenu}" *ngIf="showPurchaseSubMenu">
-          <a mat-list-item routerLink="/buyMemberships">
-            <div class="custom-badge"
-                matBadge="new" 
-                matBadgeOverlap="false" 
-                matBadgePosition="after" 
-                matBadgeSize="small"
-                matBadgeColor="accent">
-                Memberships
-            </div>
-          </a>
-          <a mat-list-item routerLink="/buyDayTickets">
-            <div class="custom-badge"
-                matBadge="new" 
-                matBadgeOverlap="false" 
-                matBadgePosition="after" 
-                matBadgeSize="small"
-                matBadgeColor="accent">
-                Day Tickets
-            </div>
-          </a>
-					<a mat-list-item routerLink="/buyGuestTickets" *ngIf="authenticationService.isLoggedIn">
-            <div class="custom-badge"
-              matBadge="new" 
-              matBadgeOverlap="false" 
-              matBadgePosition="after" 
-              matBadgeSize="small"
-              matBadgeColor="accent">
-              Guest Tickets
-            </div>
-          </a>
+          <a mat-list-item routerLink="/buyMemberships">Memberships</a>
+          <a mat-list-item routerLink="/buyDayTickets">Day Tickets</a>
+					<a mat-list-item routerLink="/buyGuestTickets" *ngIf="authenticationService.isLoggedIn">Guest Tickets</a>
 					<!-- <a mat-list-item routerLink="/buySuccess"   title="CURRENTLY PREVIEWERS ONLY - WILL BE MEMBERS ONLY">
             <div class="preview-option">
               Success
@@ -159,7 +126,7 @@
               Payments
             </div>
           </a>
-					<a mat-list-item routerLink="/juniorOpenRegistrations" *ngIf="isPreviewer()" class=" preview-option">
+					<a mat-list-item routerLink="/juniorOpenRegistrations" >
             <div>
               Junior Open Registrations
             </div>

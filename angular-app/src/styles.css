@@ -257,6 +257,36 @@ mat-form-field {
       font-weight: 400;
     }
   }
+
+  .custom-badge-opens {
+    color: red;
+
+    .mat-badge-content {
+        width: fit-content;
+        text-align: center;
+        border-radius: 7px;
+        left: 213px;
+        top: 3px !important;
+        padding-left: 3px;
+        padding-right: 3px;
+        font-weight: 400;
+    }
+  }
+
+  .custom-badge-opens-menu {
+    color: red;
+
+    .mat-badge-content {
+        width: fit-content;
+        text-align: center;
+        border-radius: 7px;
+        left: 155px;
+        top: 3px !important;
+        padding-left: 3px;
+        padding-right: 3px;
+        font-weight: 400;
+    }
+  }
 /* Checkbox alignment */
 .checkbox-top.mat-checkbox.mat-accent .mat-checkbox-inner-container {
     margin: 2px 8px auto 0;

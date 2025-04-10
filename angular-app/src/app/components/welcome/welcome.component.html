@@ -41,29 +41,21 @@
                     </li>
                 </ul>
             </li>
-            <li *ngIf="!isLoading">
-                <div class="custom-badge-wide" 
-                    matBadge="new" 
-                    matBadgeOverlap="true" 
-                    matBadgePosition="after" 
-                    matBadgeSize="small"
-                    matBadgeColor="accent">
-                    <a mat-list-item routerLink="/buyMemberships">Memberships - buy online</a>
-                </div>
+            <li *ngIf="!isLoading"><a mat-list-item routerLink="/buyMemberships">Memberships - buy online</a>
             </li>
-            <li *ngIf="!isLoading">
-                <div class="custom-badge-wide" 
-                    matBadge="new" 
-                    matBadgeOverlap="true" 
-                    matBadgePosition="after" 
-                    matBadgeSize="small"
-                    matBadgeColor="accent">
-                    <a mat-list-item routerLink="/buyDayTickets">Day Tickets - buy online</a>
-                </div>
+            <li *ngIf="!isLoading"><a mat-list-item routerLink="/buyDayTickets">Day Tickets - buy online</a>
+                <br/>
                 <b>Please note: </b>Day tickets can only be used on the Old Cricket Field/Aldborough stretch. They cannot be used on the members-only stretches. However non-members can fish these stretches if they accompany a member <b>and</b> the member obtains a <a mat-list-item routerLink="/buyGuestTickets">Guest Ticket</a> for the non-member. 
             </li>
-            <li *ngIf="!isLoading && isPreviewer()">
-                <a mat-list-item routerLink="/register" *ngIf="isPreviewer()" class=" preview-option">Register for Junior Open Matches</a>
+            <li *ngIf="!isLoading">
+                <div class="custom-badge-opens"
+                    matBadge="new" 
+                    matBadgeOverlap="true" 
+                    matBadgePosition="after" 
+                    matBadgeSize="small"
+                    matBadgeColor="accent">
+                    <a mat-list-item routerLink="/register">Register for Junior Open Matches</a>
+                </div>
             </li>
 
         </ul>
@@ -80,15 +72,7 @@
                     <li>Aggregate weight standings</li>
                 </ul>
             </li>
-            <li *ngIf="!isLoading">
-                <div class="custom-badge-wide" 
-                    matBadge="new" 
-                    matBadgeOverlap="true" 
-                    matBadgePosition="after" 
-                    matBadgeSize="small"
-                    matBadgeColor="accent">
-                    <a mat-list-item routerLink="/buyGuestTickets">Guest Tickets - buy online</a>
-                </div>
+            <li *ngIf="!isLoading"><a mat-list-item routerLink="/buyGuestTickets">Guest Tickets - buy online</a>
             </li>
         </ul>
         In addition to this website, the club also has a Facebook Group and a YouTube Channel (links to both available at the top of the page). 
