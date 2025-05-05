@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Pond Key?</h1>
+<div mat-dialog-content>
+  <div>You have not selected a key for Roecliffe Pond so will <b>not</b> be able to fish the pond unless you already own one.<br/>
+    Would you like to purchase one for <b>{{data.pondGateKeyCost| currency:'GBP'}}</b> ?
+</div>
+  <br/>
+</div>
+<div >
+  <button class="edit-button" mat-raised-button color="primary" value="Confirm" [mat-dialog-close]="true">Yes, purchase Key</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <button class="edit-button" mat-raised-button color="primary" value="Cancel" [mat-dialog-close]="false">No, continue without a key</button>
+</div>

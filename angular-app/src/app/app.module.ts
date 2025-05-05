@@ -104,6 +104,7 @@ import { JuniorOpenRegistrationsComponent } from './components/junior-open-regis
 import { RegistrationsComponent } from './components/registrations/registrations.component';
 import { RegistrationPanelComponent } from './components/registration-panel/registration-panel.component';
 import { GenerateBookPrintingPagesComponent } from './components/generate-book-printing-pages/generate-book-printing-pages.component';
+import { ConfirmKeyDialogComponent } from './dialogs/confirm-key-dialog/confirm-key-dialog.component';
 
 @NgModule({
   declarations: [
@@ -170,6 +171,7 @@ import { GenerateBookPrintingPagesComponent } from './components/generate-book-p
     RegistrationsComponent,
     RegistrationPanelComponent,
     GenerateBookPrintingPagesComponent,
+    ConfirmKeyDialogComponent,
   ],
   imports: [
     BrowserModule,
