@@ -8,7 +8,9 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 })
 export class ConfirmKeyDialogComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<ConfirmKeyDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any) { }
+              @Inject(MAT_DIALOG_DATA) public data: any) { 
+                dialogRef.disableClose = true;
+              }
 
 
   ngOnInit() {
