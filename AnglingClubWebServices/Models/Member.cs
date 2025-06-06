@@ -34,7 +34,7 @@ namespace AnglingClubWebServices.Models
         public bool PinResetRequested { get; set; } = false;
         public bool PinResetRequired { get; set; } = true;
         public bool AllowNameToBeUsed { get; set; } = false;
-        public DateTime PreferencesLastUpdated { get; set; } = DateTime.MinValue;
+        public DateTimeOffset PreferencesLastUpdated { get; set; } = DateTime.MinValue;
         public DateTime LastLoginFailure { get; set; } = DateTime.MinValue;
         public int FailedLoginAttempts { get; set; } = 0;
 

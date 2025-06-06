@@ -153,6 +153,12 @@ namespace AnglingClubWebServices.Data
             return date.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
+        internal string dateOffsetToString(DateTimeOffset date)
+        {
+            //return date.ToString("yyyy-MM-ddTHH:mm:ss.000Z");
+            return date.ToString("yyyy-MM-dd HH:mm:ss.000Z");
+        }
+
         protected async Task<List<Item>> GetData(string idPrefix, string additionalWhereClause = "", string orderByClause = "")
         {
             List<Item> items = new List<Item>();
