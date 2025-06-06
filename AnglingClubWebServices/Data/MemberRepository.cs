@@ -59,7 +59,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "InitialPin", Value = member.InitialPin.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Pin", Value = member.Pin, Replace = true },
                 new ReplaceableAttribute { Name = "AllowNameToBeUsed", Value = member.AllowNameToBeUsed ? "1" : "0", Replace = true },
-                new ReplaceableAttribute { Name = "PreferencesLastUpdated", Value = dateToString(member.PreferencesLastUpdated), Replace = true },
+                new ReplaceableAttribute { Name = "PreferencesLastUpdated", Value = dateOffsetToString(member.PreferencesLastUpdated), Replace = true },
                 new ReplaceableAttribute { Name = "PinResetRequired", Value = member.PinResetRequired ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "PinResetRequested", Value = member.PinResetRequested ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "FailedLoginAttempts", Value = member.FailedLoginAttempts.ToString(), Replace = true },
