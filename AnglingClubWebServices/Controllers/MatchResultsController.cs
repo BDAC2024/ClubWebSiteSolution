@@ -1,4 +1,5 @@
 using AnglingClubWebServices.DTOs;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -78,7 +79,6 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        // GET api/values
         [HttpGet("member/{membershipNumber}/{matchType}/{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultOutputDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
@@ -108,6 +108,106 @@ namespace AnglingClubWebServices.Controllers
                 }
 
                 ReportTimer("Getting match results for member");
+
+                return Ok(results);
+
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.Message);
+                return BadRequest(errors);
+            }
+        }
+
+        [HttpGet("members")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultOutputDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult GetAllMembersResults()
+        {
+            var errors = new List<string>();
+            List<MatchAllResultOutputDto> results = new List<MatchAllResultOutputDto>();
+
+            StartTimer();
+
+            try
+            {
+                var allMatches = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match).ToList();
+                var allSeasons = allMatches.DistinctBy(x => x.Season).Select(x => x.Season).ToList();
+                var allMembers = _memberRepository.GetMembers().Result;
+                var allResults = _matchResultRepository.GetAllMatchResults().Result;
+
+                foreach (var season in allSeasons)
+                {
+                    var seasonMembers = allMembers.Where(x => x.SeasonsActive.Contains(season));
+                    int memberPosition = 0;
+
+                    foreach (var match in allMatches.Where(x => x.Season == season))
+                    {
+                        var matchResults = allResults.Where(x => x.MatchId == match.Id);
+                        List<MatchAllResultOutputDto> matchResultsForMatch = new List<MatchAllResultOutputDto>();
+
+                        foreach (var matchResult in matchResults)
+                        {
+                            var member = seasonMembers.Single(x => x.MembershipNumber == matchResult.MembershipNumber);
+                            var result = new MatchAllResultOutputDto
+                            {
+                                Name = member.Name,
+                                WeightDecimal = matchResult.WeightDecimal,
+                                Position = memberPosition,
+                                MatchId = matchResult.MatchId,
+                                MembershipNumber = matchResult.MembershipNumber,
+                                Peg = matchResult.Peg,
+                                Points = matchResult.Points,
+                                MatchType = match.MatchType.Value.EnumDescription(),
+                                AggType = match.AggregateType.Value.EnumDescription(),
+                                Season = season.EnumDescription().Split(",")[0],
+                                Venue = match.Description
+                            };
+                            matchResultsForMatch.Add(result);
+                        }
+
+                        var pos = 1;
+                        int numberAtPos = 0;
+
+                        float lastWeight = matchResultsForMatch.Any() ? matchResultsForMatch.Max(r => r.WeightDecimal) : 0f;
+                        float lastPoints = 10000;
+
+                        foreach (var result in matchResultsForMatch)
+                        {
+                            if (match.MatchType == MatchType.OSU)
+                            {
+                                if (result.Points < lastPoints)
+                                {
+                                    pos += numberAtPos;
+                                    lastPoints = result.Points;
+                                    numberAtPos = 0;
+
+                                }
+                            }
+                            else
+                            {
+                                if (result.WeightDecimal < lastWeight)
+                                {
+                                    pos += numberAtPos;
+                                    lastWeight = result.WeightDecimal;
+                                    numberAtPos = 0;
+                                }
+
+                            }
+
+                            if (result.WeightDecimal == lastWeight)
+                            {
+                                numberAtPos++;
+                            }
+
+                            result.Position = match.MatchType == MatchType.OSU || result.WeightDecimal > 0 ? pos : 0;
+                        }
+
+                        results.AddRange(matchResultsForMatch);
+                    }
+                }
+
+                ReportTimer("Getting all match results for all members");
 
                 return Ok(results);
 
