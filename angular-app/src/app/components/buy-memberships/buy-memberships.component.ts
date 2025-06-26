@@ -10,6 +10,8 @@ import { RefDataService } from 'src/app/services/ref-data.service';
 import { PaymentType } from 'src/app/models/payment-enum';
 import { RefData, Season } from 'src/app/models/refData';
 import { FateMaterialIconService } from 'fate-editor';
+import { ConfirmKeyDialogComponent } from 'src/app/dialogs/confirm-key-dialog/confirm-key-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -41,7 +43,8 @@ export class BuyMembershipsComponent implements OnInit {
   constructor(
     public refDataService: RefDataService,
     public paymentsService: PaymentsService,
-    private router: Router) {
+    private router: Router,
+    private dialog: MatDialog) {
 
   }
 
@@ -207,10 +210,35 @@ export class BuyMembershipsComponent implements OnInit {
     return this.selectedMembership.description == "Disabled";
   }
 
+  public async checkForKey() {
+    if (!this.newMembership.paidForKey) {
+      const confirmKeyDialog = this.dialog.open(ConfirmKeyDialogComponent, {
+        data: {
+          pondGateKeyCost: this.pondGateKeyCost,
+        }
+        });
+      confirmKeyDialog.afterClosed().subscribe(async result => {
+        if (result === true) {
+          this.newMembership.paidForKey = true;
+          //console.log("BUYING key");
+          await this.buy();
+        } else {
+          //console.log("NOT buying key");
+          await this.buy();
+        }
+      });
+
+    } else {
+      await this.buy();
+    }
+  }
+
   public async buy() {
     this.isBuying = true;
     this.newMembership.underAge = this.isUnderAge();
     this.newMembership.successUrl = this.baseUrl + "/buySuccess/" + (this.isUnderAge() ? "underagemembership" : "membership");
+
+    //console.log("PaidForKey: " + this.newMembership.paidForKey);
 
     // console.log("About to buyGuestTicket...");
     this.paymentsService.buyMembership(this.newMembership)

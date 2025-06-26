@@ -111,7 +111,7 @@
 
                     <div *ngIf="isUnderAge()">
                         <div class="checkbox-wrapper">
-                            <mat-checkbox [(ngModel)]="newMembership.paidForKey" class="checkbox-top">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the parent/guardian for this person.</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="newMembership.paidForKey" class="checkbox-top">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the parent/guardian for this person.<br/><span style="background-color: red; color: white;"><b>Note: </b>This must be purchased if you wish to fish Roecliffe Pond and do not already own a key.</span></mat-checkbox>
                         </div>
                         <br/>
                         <b>Parental Consent/Disclosure</b>
@@ -190,7 +190,7 @@
 
                     <div *ngIf="!isUnderAge()">
                         <div class="checkbox-wrapper">
-                            <mat-checkbox [(ngModel)]="newMembership.paidForKey">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>)</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="newMembership.paidForKey">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). <br/><span style="background-color: red; color: white;"><b>Note: </b>This must be purchased if you wish to fish Roecliffe Pond and do not already own a key.</span></mat-checkbox>
                         </div>
     
                         <div class="checkbox-wrapper">
@@ -229,7 +229,7 @@
                         <button class="edit-button" [ngClass]="[!formComplete() ? 'edit-button-disabled' : '']"
                             [disabled]="this.isBuying || !formComplete()"
                             [attr.title]="!formComplete() ? 'Please complete ALL form fields' : ''" mat-stroked-button
-                            color="primary" (click)="buy()">
+                            color="primary" (click)="checkForKey()">
                             <mat-icon *ngIf="!isBuying" aria-hidden="false" aria-label="Go to Checkout">shopping_cart</mat-icon>
                             <mat-spinner diameter="20" class="button-spinner" *ngIf="isBuying"></mat-spinner>
                             Go to Checkout
