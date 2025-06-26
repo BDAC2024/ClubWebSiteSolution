@@ -52,7 +52,7 @@ namespace AnglingClubWebServices.Controllers
             try
             {
                 var match = _eventRepository.GetEvents().Result.Single(x => x.Id == matchId);
-                var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetResults(matchId, match.MatchType.GetValueOrDefault(MatchType.Club)));
+                var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetResults(matchId, match));
                 var members = _memberRepository.GetMembers(match.Season, true).Result;
                 foreach (var result in results)
                 {

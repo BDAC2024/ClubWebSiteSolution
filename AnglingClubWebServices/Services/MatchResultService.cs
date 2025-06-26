@@ -40,20 +40,29 @@ namespace AnglingClubWebServices.Services
             return results;
         }
 
-        public List<MatchResult> GetResults(string matchId, MatchType matchType)
+        public List<MatchResult> GetResults(string matchId, ClubEvent match)
         {
-            var results = (_matchResultRepository.GetMatchResults(matchId).Result).OrderByDescending(r => r.Points).ThenByDescending(r => r.WeightDecimal).ToList();
+            var results = (_matchResultRepository.GetMatchResults(matchId).Result).ToList();
+
+            if (match.AggregateType == AggregateType.PairsPointsAsc)
+            {
+                results = results.OrderBy(r => r.Points).ThenBy(r => r.WeightDecimal).ToList();
+            }
+            else
+            {
+                results = results.OrderByDescending(r => r.Points).ThenByDescending(r => r.WeightDecimal).ToList();
+            }
 
             var pos = 1;
             int numberAtPos = 0;
 
             float lastWeight = results.Any() ? results.Max(r => r.WeightDecimal) : 0f;
-            float lastPoints = 10000;
+            float lastPoints = match.AggregateType == AggregateType.PairsPointsAsc? -10000 : 10000;
 
             foreach (var result in results)
             {
 
-                if (matchType == MatchType.OSU)
+                if (match.MatchType == MatchType.OSU)
                 {
                     if (result.Points < lastPoints)
                     {
@@ -61,6 +70,23 @@ namespace AnglingClubWebServices.Services
                         lastPoints = result.Points;
                         numberAtPos = 0;
 
+                    }
+                    if (result.Points == lastPoints)
+                    {
+                        numberAtPos++;
+                    }
+                }
+                else if (match.AggregateType == AggregateType.PairsPointsAsc)
+                {
+                    if (result.Points > lastPoints)
+                    {
+                        pos += numberAtPos;
+                        lastPoints = result.Points;
+                        numberAtPos = 0;
+                    }
+                    if (result.Points == lastPoints)
+                    {
+                        numberAtPos++;
                     }
                 }
                 else
@@ -72,15 +98,13 @@ namespace AnglingClubWebServices.Services
                         numberAtPos = 0;
                     }
 
+                    if (result.WeightDecimal == lastWeight)
+                    {
+                        numberAtPos++;
+                    }
                 }
 
-
-                if (result.WeightDecimal == lastWeight)
-                {
-                    numberAtPos++;
-                }
-
-                result.Position = matchType == MatchType.OSU || result.WeightDecimal > 0 ? pos : 0;
+                result.Position = match.MatchType == MatchType.OSU || match.AggregateType == AggregateType.PairsPointsAsc || result.WeightDecimal > 0 ? pos : 0;
             }
 
             return results;
@@ -98,32 +122,68 @@ namespace AnglingClubWebServices.Services
                 {
                     MembershipNumber = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).MembershipNumber,
                     Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
-                    Points = cl.Sum(c => c.Points)
+                    Points = cl.Sum(c => c.Points),
+                    TotalWeightDecimal = cl.Sum(c => c.WeightDecimal)
                 }).ToList();
 
             var pos = 1;
             int numberAtPos = 0;
 
-            float lastPoints = league.Any() ? league.Max(r => r.Points) : 0f;
-
-            foreach (var member in league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal))
+            if (aggType == AggregateType.PairsPointsAsc)
             {
-                if (member.Points < lastPoints)
+                float lastPoints = league.Any() ? league.Min(r => r.Points) : 0f;
+                float lastWeight = league.Any() ? league.Max(r => r.TotalWeightDecimal) : 0f;
+
+                foreach (var member in league.OrderBy(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal))
                 {
-                    pos += numberAtPos;
-                    lastPoints = member.Points;
-                    numberAtPos = 0;
+                    if (member.Points > lastPoints)
+                    {
+                        pos += numberAtPos;
+                        lastPoints = member.Points;
+                        numberAtPos = 0;
+                    }
+
+                    if (member.Points == lastPoints)
+                    {
+                        if (member.TotalWeightDecimal < lastWeight)
+                        {
+                            pos += numberAtPos;
+                            lastWeight = member.TotalWeightDecimal;
+                            numberAtPos = 0;
+                        }
+
+                        numberAtPos++;
+                    }
+
+                    member.Position = pos;
                 }
 
-                if (member.Points == lastPoints)
+                return league.OrderBy(x => x.Position).ToList();
+            }
+            else
+            {
+                float lastPoints = league.Any() ? league.Max(r => r.Points) : 0f;
+
+                foreach (var member in league.OrderByDescending(x => x.Points).ThenByDescending(x => x.TotalWeightDecimal))
                 {
-                    numberAtPos++;
+                    if (member.Points < lastPoints)
+                    {
+                        pos += numberAtPos;
+                        lastPoints = member.Points;
+                        numberAtPos = 0;
+                    }
+
+                    if (member.Points == lastPoints)
+                    {
+                        numberAtPos++;
+                    }
+
+                    member.Position = pos;
                 }
 
-                member.Position = pos;
+                return league.OrderByDescending(x => x.Points).ToList();
             }
 
-            return league.OrderByDescending(x => x.Points).ToList();
         }
 
         public List<AggregateWeight> GetAggregateWeights(AggregateType aggType, Season season)
@@ -179,7 +239,8 @@ namespace AnglingClubWebServices.Services
             }
             else
             {
-                aggregateTypes.Add((int)AggregateType.Junior);
+                // Not needed because Junior winners are explicityly entered in Trophy table, not taken from match results
+                //aggregateTypes.Add((int)AggregateType.Junior);
             }
 
             var matchesWithTrophies = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match && x.AggregateType.HasValue && aggregateTypes.Contains((int)x.AggregateType.Value) && x.Season == season && x.Cup != null && x.Cup != "" && x.Cup != "Officials");

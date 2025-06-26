@@ -99,6 +99,9 @@ namespace AnglingClubWebServices.Interfaces
         [Description("Ouse, Swale, Ure Team League")]
         OSU,
 
+        [Description("Pairs Points Asc")]
+        PairsPointsAsc,
+
     }
 
     public enum WaterType
