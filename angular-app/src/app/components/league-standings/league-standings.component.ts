@@ -8,6 +8,8 @@ import { MatchService } from 'src/app/services/match.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { RefData, Season } from 'src/app/models/refData';
+import { ClubEventService } from 'src/app/services/club-event.service';
+import { ClubEvent } from 'src/app/models/club-event';
 
 @Component({
   selector: 'app-league-standings',
@@ -16,6 +18,7 @@ import { RefData, Season } from 'src/app/models/refData';
 })
 export class LeagueStandingsComponent implements OnInit {
 
+  public allMatches: ClubEvent[] = [];
   public displayedColumns: string[];
   public isLoading: boolean = false;
   public standings: LeagueStanding[] = [];
@@ -28,9 +31,10 @@ export class LeagueStandingsComponent implements OnInit {
     public matchService: MatchService,
     private refDataService: RefDataService,
     private globalService: GlobalService,
-    public screenService: ScreenService
+    public screenService: ScreenService,
+    public clubEventService: ClubEventService
   ) { 
-    this.displayedColumns = ["position", "name", "points"];
+    this.displayedColumns = ["position", "name", "weight", "points"];
   }
 
   ngOnInit(): void {
@@ -39,32 +43,7 @@ export class LeagueStandingsComponent implements OnInit {
   }
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-
-    switch (tabChangeEvent.index) {
-      case 0:
-        this.selectedAggregateType = AggregateType.Spring;
-        break;
-        
-      case 1:
-        this.selectedAggregateType = AggregateType.ClubRiver;
-        break;
-        
-      case 2:
-        this.selectedAggregateType = AggregateType.ClubPond;
-        break;
-        
-      case 3:
-        this.selectedAggregateType = AggregateType.Junior;
-        break;
-
-      case 4:
-        this.selectedAggregateType = AggregateType.OSU;
-        break;
-
-      case 5:
-        this.selectedAggregateType = AggregateType.Evening;
-        break;
-    }
+    this.selectedAggregateType = parseInt(tabChangeEvent.tab.ariaLabel) as AggregateType;
 
     this.loadLeague();
   }
@@ -83,11 +62,27 @@ export class LeagueStandingsComponent implements OnInit {
     });
   }
 
+  public anyOfType(aggType: number): boolean {
+    return this.allMatches.filter(m => m.aggregateType === aggType).length > 0;
+  }
+
   private getRefData() {
     this.refDataService.getRefData()
     .subscribe(data => {
       this.refData = data;
       this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
+      this.getMatches();
+    });
+
+  }
+
+  public getMatches() {
+    this.isLoading = true;
+    this.globalService.setStoredSeason(this.selectedSeason);
+    this.clubEventService.readEvents(this.selectedSeason)
+    .subscribe(data => {
+      this.isLoading = false;
+      this.allMatches = data;
       this.loadLeague();
     });
   }

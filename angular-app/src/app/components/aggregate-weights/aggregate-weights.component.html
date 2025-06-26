@@ -5,7 +5,7 @@
         <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']" ></span>
         <mat-form-field class="season-selector" *ngIf="!isLoading">
             <mat-label>Season</mat-label>
-            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="loadWeights()" >
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="getMatches()" >
             <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -13,11 +13,11 @@
 
 
     <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
-        <mat-tab label="{{matchService.AggSpringTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.AggClubRiverTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.AggClubPondTabName}}"></mat-tab>
-        <mat-tab label="{{matchService.AggPairsTabName}}" ></mat-tab>
-        <mat-tab label="{{matchService.AggEveningTabName}}" ></mat-tab>
+        <mat-tab aria-label="0" *ngIf="anyOfType(0)" label="{{matchService.AggSpringTabName}}"></mat-tab>
+        <mat-tab aria-label="1" *ngIf="anyOfType(1)" label="{{matchService.AggClubRiverTabName}}"></mat-tab>
+        <mat-tab aria-label="2" *ngIf="anyOfType(2)" label="{{matchService.AggClubPondTabName}}"></mat-tab>
+        <mat-tab aria-label="4" *ngIf="anyOfType(4)" label="{{matchService.AggPairsTabName}}" ></mat-tab>
+        <mat-tab aria-label="5" *ngIf="anyOfType(5)" label="{{matchService.AggEveningTabName}}" ></mat-tab>
     </mat-tab-group>
     <br/>
     <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
@@ -30,7 +30,7 @@
         <!-- Position Column -->
         <ng-container matColumnDef="position">
             <th mat-header-cell *matHeaderCellDef class="first-col"> Position </th>
-            <td mat-cell *matCellDef="let element" class="first-col"> {{element.position}} </td>
+            <td mat-cell *matCellDef="let element" class="first-col"> {{element.positionOrdinal}} </td>
         </ng-container>
 
         <!-- Name Column -->

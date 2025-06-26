@@ -70,6 +70,7 @@ export enum AggregateType {
   Evening,
   Junior,
   OSU,
+  PairsPointsAsc
 }
 
 export namespace AggregateType {
@@ -89,6 +90,8 @@ export namespace AggregateType {
           return "Junior";
         case AggregateType.OSU:
           return "OSU";
+        case AggregateType.PairsPointsAsc:
+          return "Pairs";
         default:
           return AggregateType[type];
     }
@@ -109,6 +112,8 @@ export namespace AggregateType {
         return "Junior";
       case AggregateType.OSU:
         return "Ouse/Swale/Ure";
+      case AggregateType.PairsPointsAsc:
+        return "Pairs";
       default:
         return AggregateType[type];
     }

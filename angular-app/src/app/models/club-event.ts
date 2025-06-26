@@ -1,7 +1,8 @@
 import { Type } from 'class-transformer';
 import { EventType } from 'src/app/models/event-enum';
-import { MatchType } from 'src/app/models/match-enum';
+import { AggregateType, MatchType } from 'src/app/models/match-enum';
 import { Season } from './season-enum';
+import { AggregateWeight } from './aggregate-weight';
 
 export class ClubEvent {
   id!: string;
@@ -22,6 +23,7 @@ export class ClubEvent {
   number?: number;
   description!: string;
   cup?: string;
+  aggregateType?: AggregateType
 }
 
 

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AggregateWeight } from 'src/app/models/aggregate-weight';
+import { ClubEvent } from 'src/app/models/club-event';
 import { AggregateType, MatchType } from 'src/app/models/match-enum';
 import { RefData } from 'src/app/models/refData';
+import { ClubEventService } from 'src/app/services/club-event.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { MatchResultsService } from 'src/app/services/match-results.service';
 import { MatchService } from 'src/app/services/match.service';
@@ -16,6 +18,7 @@ import { ScreenService } from 'src/app/services/screen.service';
 })
 export class AggregateWeightsComponent implements OnInit {
 
+  public allMatches: ClubEvent[] = [];
   public displayedColumns: string[];
   public isLoading: boolean = false;
   public weights: AggregateWeight[] = [];
@@ -28,7 +31,8 @@ export class AggregateWeightsComponent implements OnInit {
     public matchService: MatchService,
     private refDataService: RefDataService,
     private globalService: GlobalService,
-    public screenService: ScreenService
+    public screenService: ScreenService,
+    public clubEventService: ClubEventService
 
   ) { 
     this.displayedColumns = ["position", "name", "weight"];
@@ -40,30 +44,14 @@ export class AggregateWeightsComponent implements OnInit {
 
   }
 
+  public anyOfType(aggType: number): boolean {
+    return this.allMatches.filter(m => m.aggregateType === aggType).length > 0;
+  }
+
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
 
-    switch (tabChangeEvent.index) {
-      case 0:
-        this.selectedAggregateType = AggregateType.Spring;
-        break;
-        
-      case 1:
-        this.selectedAggregateType = AggregateType.ClubRiver;
-        break;
-        
-      case 2:
-        this.selectedAggregateType = AggregateType.ClubPond;
-        break;
-
-      case 3:
-        this.selectedAggregateType = AggregateType.Pairs;
-        break;
-
-      case 4:
-        this.selectedAggregateType = AggregateType.Evening;
-        break;
-    }
-
+    this.selectedAggregateType = parseInt(tabChangeEvent.tab.ariaLabel) as AggregateType;
+    
     this.loadWeights();
   }
 
@@ -86,8 +74,18 @@ export class AggregateWeightsComponent implements OnInit {
     .subscribe(data => {
       this.refData = data;
       this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
-      this.loadWeights();
+      this.getMatches();
     });
   }
 
+  public getMatches() {
+    this.isLoading = true;
+    this.globalService.setStoredSeason(this.selectedSeason);
+    this.clubEventService.readEvents(this.selectedSeason)
+    .subscribe(data => {
+      this.isLoading = false;
+      this.allMatches = data;
+      this.loadWeights();
+    });
+  }  
 }

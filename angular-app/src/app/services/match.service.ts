@@ -39,6 +39,7 @@ export class MatchService {
   public get AggClubRiverTabName() : string { return this.getAggTabName(AggregateType.ClubRiver); }
   public get AggClubPondTabName() : string { return this.getAggTabName(AggregateType.ClubPond); }
   public get AggPairsTabName() : string { return this.getAggTabName(AggregateType.Pairs); }
+  public get AggPairsPointsAscTabName() : string { return this.getAggTabName(AggregateType.PairsPointsAsc); }
   public get AggEveningTabName() : string { return this.getAggTabName(AggregateType.Evening); }
   public get AggJuniorTabName() : string { return this.getAggTabName(AggregateType.Junior); }
   public get AggOsuTabName() : string { return this.getAggTabName(AggregateType.OSU); }
