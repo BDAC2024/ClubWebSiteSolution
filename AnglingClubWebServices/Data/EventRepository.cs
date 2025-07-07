@@ -1,5 +1,6 @@
 ﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
@@ -176,6 +177,20 @@ namespace AnglingClubWebServices.Data
 
         }
 
+        public async Task<List<ClubEvent>> GetDayTicketMatches()
+        {
+            var events = await GetEvents();
 
+            var dayTicketMatches = events
+                .Where(x => 
+                    x.EventType == EventType.Match 
+                    && x.Season == EnumUtils.CurrentSeason()
+                    && (x.Description.ToLower().Contains("cricket field") || x.Description.ToLower().Contains("ings lane"))
+                )
+                .OrderBy(x => x.Date)
+                .ToList();
+
+            return dayTicketMatches;
+        }
     }
 }

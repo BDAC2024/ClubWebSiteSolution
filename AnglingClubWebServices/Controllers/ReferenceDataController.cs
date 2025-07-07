@@ -33,5 +33,15 @@ namespace AnglingClubWebServices.Controllers
 
             return refData;
         }
+
+        // GET api/values
+        [AllowAnonymous]
+        [HttpGet("GetForDayTickets")]
+        public ReferenceData GetForDayTickets()
+        {
+            var refData = _referenceDataRepository.GetReferenceDataForDayTickets();
+
+            return refData;
+        }
     }
 }

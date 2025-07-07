@@ -7,6 +7,7 @@ namespace AnglingClubWebServices.Interfaces
     public interface IEventRepository
     {
         Task AddOrUpdateEvent(ClubEvent clubEVent);
+        Task<List<ClubEvent>> GetDayTicketMatches();
         Task<List<ClubEvent>> GetEvents();
     }
 }

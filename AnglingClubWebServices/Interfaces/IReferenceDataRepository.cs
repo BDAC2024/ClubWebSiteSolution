@@ -5,5 +5,6 @@ namespace AnglingClubWebServices.Interfaces
     public interface IReferenceDataRepository
     {
         ReferenceData GetReferenceData();
+        ReferenceData GetReferenceDataForDayTickets();
     }
 }

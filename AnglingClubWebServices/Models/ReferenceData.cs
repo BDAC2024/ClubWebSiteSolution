@@ -11,6 +11,11 @@ namespace AnglingClubWebServices.Models
         public List<SeasonInfo> Seasons { get; set; } = new List<SeasonInfo>();
         public List<SeasonInfo> SeasonsForMembershipPurchase { get; set; } = new List<SeasonInfo>();
 
+        /// <summary>
+        /// Matches that are scheduled on day ticket waters.
+        /// </summary>
+        public List<ClubEvent> DayTicketMatches { get; set; } = new List<ClubEvent>();
+        
         public AppSettings AppSettings { get; set; }
     }
 
