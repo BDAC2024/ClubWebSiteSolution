@@ -49,7 +49,7 @@ export class BuyDayTicketsComponent implements OnInit {
     this.dayTicket.successUrl = this.baseUrl + "/buySuccess/dayTicket";
     this.dayTicket.cancelUrl = this.baseUrl;
 
-    this.maxDate.setDate(this.maxDate.getDate() + 914);
+    this.maxDate.setDate(this.maxDate.getDate() + 14);
   }
 
   public getRefData() {
