@@ -1,0 +1,15 @@
+<h2 mat-dialog-title style="background-color: goldenrod; color: white; padding: 6px;">Match Booked!</h2>
+<mat-dialog-content class="mat-typography">
+    Please be aware that a match is booked on that date for {{description}}.
+    <span *ngIf="canStillFish != ''">
+        <br/>
+        <br/>
+        {{canStillFish}}
+    </span>
+    <br/>
+    <br/>
+    <b>Note: </b>The club reserves the right to change match venues at short notice for safety reasons should river conditions dictate.
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>OK</button>
+</mat-dialog-actions>

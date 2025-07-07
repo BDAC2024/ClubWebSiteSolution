@@ -37,6 +37,14 @@ export class RefDataService {
     });
   }
 
+  public getRefDataForDayTickets(): Observable<RefData> {
+    return this.http.get<RefData>(`${this.globalService.ApiUrl}/api/referenceData/GetForDayTickets`)
+              .pipe(map(res => 
+                  plainToClass(RefData, res)
+              ));
+    }
+
+
   public isPreviewer(): boolean {
     if (this.refData != null) {
       return this.authenticationService.isPreviewer(this.refData.appSettings.previewers);

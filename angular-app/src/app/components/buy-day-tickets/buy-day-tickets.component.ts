@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { TicketService } from 'src/app/services/ticket.service';
 import { PaymentType } from 'src/app/models/payment-enum';
 import { FateLegacyBrowserService } from 'fate-editor';
+import { MatDialog } from '@angular/material/dialog';
+import { MatchBookedComponent } from 'src/app/dialogs/match-booked/match-booked.component';
 
 @Component({
   selector: 'app-buy-day-tickets',
@@ -35,7 +37,8 @@ export class BuyDayTicketsComponent implements OnInit {
     public refDataService: RefDataService,
     private paymentsService: PaymentsService,
     private ticketService: TicketService,
-    private router: Router) { }
+    private router: Router,
+    private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.getRefData();
@@ -51,7 +54,7 @@ export class BuyDayTicketsComponent implements OnInit {
 
   public getRefData() {
     this.isLoading = true;
-    this.refDataService.getRefData()
+    this.refDataService.getRefDataForDayTickets()
     .subscribe(data => {
       this.refData = data;
       this.dayTicket.cost = this.refData.appSettings.dayTicketCost;
@@ -71,6 +74,42 @@ export class BuyDayTicketsComponent implements OnInit {
 
   public dayTicketsAvailable(): boolean {
     return this.ticketService.dayTicketsAvailable(new Date());
+  }
+
+  public checkForMatches() {
+    var matchDescription = "";
+    var canStillFish = "";
+
+    this.refData.dayTicketMatches.forEach((item) => {
+      var dt = new Date(item.date);
+
+      if (dt.toLocaleDateString() == this.dayTicket.validOn?.toLocaleDateString())
+      {
+        matchDescription = item.description;
+
+        if (item.description.toLowerCase().indexOf("cricket") >= 0 && item.description.toLowerCase().indexOf("ings") >= 0) {
+          canStillFish = "";
+        } else if (item.description.toLowerCase().indexOf("cricket") >= 0) {
+          canStillFish = "You can still fish the Ings Lane stretch (pegs 27 & above).";
+        } else if (item.description.toLowerCase().indexOf("ings") >= 0) {
+          canStillFish = "You can still fish the Cricket Field stretch (pegs 1 to 25).";
+        }
+
+      }
+    });
+
+    if (matchDescription != "") {
+
+
+          const dialogRef = this.dialog.open(MatchBookedComponent, { 
+            width: "350px", 
+            maxHeight: "100vh", 
+            data: {
+              description: matchDescription, 
+              canStillFish: canStillFish
+            }
+          });
+    }
   }
 
   public async buy() {

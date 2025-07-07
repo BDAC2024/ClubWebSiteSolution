@@ -105,6 +105,7 @@ import { RegistrationsComponent } from './components/registrations/registrations
 import { RegistrationPanelComponent } from './components/registration-panel/registration-panel.component';
 import { GenerateBookPrintingPagesComponent } from './components/generate-book-printing-pages/generate-book-printing-pages.component';
 import { ConfirmKeyDialogComponent } from './dialogs/confirm-key-dialog/confirm-key-dialog.component';
+import { MatchBookedComponent } from './dialogs/match-booked/match-booked.component';
 
 @NgModule({
   declarations: [
@@ -172,6 +173,7 @@ import { ConfirmKeyDialogComponent } from './dialogs/confirm-key-dialog/confirm-
     RegistrationPanelComponent,
     GenerateBookPrintingPagesComponent,
     ConfirmKeyDialogComponent,
+    MatchBookedComponent,
   ],
   imports: [
     BrowserModule,

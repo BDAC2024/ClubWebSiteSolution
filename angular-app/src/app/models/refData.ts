@@ -1,9 +1,11 @@
 import { Type } from "class-transformer";
+import { ClubEvent } from "./club-event";
 
 export class RefData {
     currentSeason!: number;
     seasons!: Season[];
     seasonsForMembershipPurchase!: Season[];
+    dayTicketMatches!: ClubEvent[];
     appSettings!: AppSettings;
 }
 
