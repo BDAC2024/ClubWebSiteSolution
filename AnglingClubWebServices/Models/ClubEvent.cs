@@ -55,7 +55,7 @@ namespace AnglingClubWebServices.Models
             {
                 if (EventType == EventType.Work)
                 {
-                    return $"{EventType.EnumDescription()} at {Description}";
+                    return $"{Description}";
                 }
                 else if (EventType == EventType.Match)
                 {
