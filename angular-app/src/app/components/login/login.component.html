@@ -1,9 +1,3 @@
-<mat-card class="members-only-card">
-    <mat-card-content>
-        <p *ngIf="previewService.inBeta">PIN numbers are not being handed out yet as the site is being beta tested.</p>
-        <p *ngIf="!previewService.inBeta">Don't have a PIN? Request one from the Membership Officer (contact details on the <a href="/officers">Club Officers</a> page).</p>
-    </mat-card-content>
-</mat-card>
 <mat-card class="login-card">
     <mat-card-header>
         <mat-card-title>Member Login</mat-card-title>
@@ -50,7 +44,7 @@
         <button mat-raised-button color="primary"  *ngIf="!pinResetRequired" (click)="onSubmit()"  >Login</button>
         <br/>
         <br/>
-        <a (click)="onForgotPin()" href="javascript:void(0);">I have forgotten my PIN</a>
+        <a (click)="onForgotPin()" href="javascript:void(0);"><b>I have forgotten my PIN</b></a>
         <!-- <button mat-raised-button color="secondary"  *ngIf="!pinResetRequired" (click)="onForgotPin()"  >I've forgotten my PIN</button> -->
         <br/>
     </mat-card-content>
