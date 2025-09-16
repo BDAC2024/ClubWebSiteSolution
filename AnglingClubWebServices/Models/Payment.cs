@@ -163,6 +163,12 @@ namespace AnglingClubWebServices.Models
             {
                 Caller = metadata["Caller"];
             }
+
+            if (metadata.ContainsKey("DisabilityCertificateSavedFileId"))
+            {
+                DisabilityCertificateSavedFileId = metadata["DisabilityCertificateSavedFileId"];
+            }
+
         }
 
         public DateTime ValidOn { get; set; }
@@ -191,5 +197,10 @@ namespace AnglingClubWebServices.Models
         public string EmergencyContactPhoneMobile { get; set; }
 
         public string Caller { get; set; }
+
+        public string DisabilityCertificateSavedFileId
+        {
+            get; set;
+        }
     }
 }
