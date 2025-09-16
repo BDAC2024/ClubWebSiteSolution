@@ -23,6 +23,11 @@
 			"Description" : "S3 bucket for DB backups",
 			"MinLength" : "0"
 		},
+  		"TmpFilesBucket" : {
+			"Type" : "String",
+			"Description" : "S3 bucket for TMP Files",
+			"MinLength" : "0"
+		},
   		"AWSRegion" : {
 			"Type" : "String",
 			"Description" : "AWS Region",
@@ -175,6 +180,7 @@
 				"AWSSecret" : { "Ref" : "AWSSecret" } ,
 				"SimpleDbDomain" : { "Ref" : "SimpleDbDomain" } ,
 				"BackupBucket" : { "Ref" : "BackupBucket" } ,
+				"TmpFilesBucket" : { "Ref" : "TmpFilesBucket" } ,
 				"AWSRegion" : { "Ref" : "AWSRegion" } ,
 				"SiteUrl" : { "Ref" : "SiteUrl" } ,
 				"AuthSecretKey" : { "Ref" : "AuthSecretKey" } ,
