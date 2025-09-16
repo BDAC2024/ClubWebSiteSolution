@@ -12,7 +12,7 @@ export class ProductMembership {
 
 export class MembershipPaymentRequest {
   dbKey!: string;
-  season!: Season;
+  seasonName!: string;
   name!: string;
   dob!: Date;
   phoneNumber!: string;
@@ -32,6 +32,7 @@ export class MembershipPaymentRequest {
   emergencyContactPhoneMobile!: string;
   successUrl!: string;
   cancelUrl!: string;
+  disabilityCertificateFile?: File | null;
 }
 
 

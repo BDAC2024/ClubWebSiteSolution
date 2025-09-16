@@ -205,12 +205,17 @@
                         </p> -->
                     </div>
                     <div *ngIf="!isUnderAge()">
-                        <div *ngIf="isDisabled()" class="checkbox-wrapper">
+                        <!-- <div *ngIf="isDisabled()" class="checkbox-wrapper">
                             <mat-checkbox [(ngModel)]="this.confirmCertificate" class="checkbox-top">Please confirm that you have your Disability Certificate because you will be contacted to view this before membership is issued. <b>Please do not pay if you do not have this</b></mat-checkbox>
+                        </div>-->
+                        <div *ngIf="isDisabled()" class="image-upload-wrapper">
+                               <label for="disabilityCertificateUpload">Please upload a photo of your Disability Certificate: </label>
+                               <input type="file" id="disabilityCertificateUpload" accept="image/*" (change)="onDisabilityCertificateUpload($event)" />
+                               <!-- <span *ngIf="disabilityCertificateFile">Selected file: {{disabilityCertificateFile.name}}</span> -->
                         </div>
                         <br *ngIf="isDisabled()" />
                         <div class="checkbox-wrapper">
-                            <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for membership of the above club and do agree to abide by the rules set down in the clubrule book and notice boards, also to any such alterations that may be deemed necessary from time to time.</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for membership of the above club and do agree to abide by the rules set down in the club rule book and notice boards, also to any such alterations that may be deemed necessary from time to time.</mat-checkbox>
                         </div>
                         <br/>
                         <div class="checkbox-wrapper">
@@ -228,7 +233,7 @@
                     <div class="edit-button-panel">
                         <button class="edit-button" [ngClass]="[!formComplete() ? 'edit-button-disabled' : '']"
                             [disabled]="this.isBuying || !formComplete()"
-                            [attr.title]="!formComplete() ? 'Please complete ALL form fields' : ''" mat-stroked-button
+                            [attr.title]="!formComplete() ? completionMessage() : ''" mat-stroked-button
                             color="primary" (click)="checkForKey()">
                             <mat-icon *ngIf="!isBuying" aria-hidden="false" aria-label="Go to Checkout">shopping_cart</mat-icon>
                             <mat-spinner diameter="20" class="button-spinner" *ngIf="isBuying"></mat-spinner>

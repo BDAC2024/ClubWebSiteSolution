@@ -40,6 +40,8 @@ export class BuyMembershipsComponent implements OnInit {
   public confirmNoNightFishing: boolean = false;
   public confirmWaitForBook: boolean = false;
 
+  public disabilityCertificateFile: File | null = null;
+
   constructor(
     public refDataService: RefDataService,
     public paymentsService: PaymentsService,
@@ -79,11 +81,11 @@ export class BuyMembershipsComponent implements OnInit {
     this.newMembership = new MembershipPaymentRequest();
     this.newMembership.dbKey = selected.dbKey;
     this.newMembership.cancelUrl = this.baseUrl;
-    this.newMembership.season = this.selectedSeason;
+    this.newMembership.seasonName = this.selectedSeason.name;
     this.confirmCertificate = false;
     this.confirmNoNightFishing = false;
     this.confirmWaitForBook = false;
-
+    this.disabilityCertificateFile = null;
   }
 
   public minDate(): Date {
@@ -238,6 +240,9 @@ export class BuyMembershipsComponent implements OnInit {
     this.newMembership.underAge = this.isUnderAge();
     this.newMembership.successUrl = this.baseUrl + "/buySuccess/" + (this.isUnderAge() ? "underagemembership" : "membership");
 
+      // Attach disability certificate file if present
+      this.newMembership.disabilityCertificateFile = this.disabilityCertificateFile;
+
     //console.log("PaidForKey: " + this.newMembership.paidForKey);
 
     // console.log("About to buyGuestTicket...");
@@ -267,7 +272,7 @@ export class BuyMembershipsComponent implements OnInit {
 
     if (this.isDisabled())
     {
-      validDisabled = this.confirmCertificate;
+      validDisabled = this.disabilityCertificateFile != null;
     }
 
     if (this.isUnderAge())
@@ -301,6 +306,15 @@ export class BuyMembershipsComponent implements OnInit {
 
   }
 
+  public completionMessage(): string {
+    var message: string = "Please complete ALL form fields";
+    if (this.isDisabled())
+    {
+      message += " and upload a disability certificate"; 
+    }
+    return message;
+  }
+
   public enable(enabled: boolean): void {
     this.isEnabling = true;
     this.paymentsService.enableFeature(PaymentType.Membership, enabled)
@@ -313,4 +327,13 @@ export class BuyMembershipsComponent implements OnInit {
   public templateMemberName() : string {
     return this.newMembership.name == null || this.newMembership.name == "" ? "Member" : this.newMembership.name;
   }
+
+    public onDisabilityCertificateUpload(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files.length > 0) {
+        this.disabilityCertificateFile = input.files[0];
+      } else {
+        this.disabilityCertificateFile = null;
+      }
+    }
 }
