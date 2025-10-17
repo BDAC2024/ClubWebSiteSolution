@@ -13,7 +13,7 @@ export class GlobalService {
     this.ApiUrl = this.OnLocalhost ? "https://localhost:5001" : "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod";
 
     // Use this one with a DevTunnel for Stripe Testing - see OneNote "Stripe TEST/LIVE Modes"
-    // this.ApiUrl = this.OnLocalhost ? "https://zwrb9p0c-5001.uks1.devtunnels.ms" : "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod";
+    //this.ApiUrl = this.OnLocalhost ? "https://30kvnh6s-5001.uks1.devtunnels.ms" : "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod";
     
    }
 
