@@ -46,6 +46,7 @@ namespace AnglingClubWebServices.Data
             await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipSecretaries", Value = String.Join(",", appSettings.MembershipSecretaries.ToArray()) });
             await AddOrUpdateAppSetting(new AppSetting { Name = "Treasurers", Value = String.Join(",", appSettings.Treasurers.ToArray()) });
 
+            await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketClosureTimesPerMonth", Value = appSettings.DayTicketClosureTimesPerMonth });
         }
 
         public async Task AddOrUpdateAppSetting(AppSetting appSetting)
@@ -175,6 +176,11 @@ namespace AnglingClubWebServices.Data
                     case "producthandlingcharge":
                         appSettings.ProductHandlingCharge = settingValue;
                         break;
+
+                    case "dayticketclosuretimespermonth":
+                        appSettings.DayTicketClosureTimesPerMonth = settingValue;
+                        break;
+
                         
                     case "previewers":
                         if (settingValue != "")
