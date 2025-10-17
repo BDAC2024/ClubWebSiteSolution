@@ -1,15 +1,17 @@
-﻿using AnglingClubWebServices.Models;
-using System.Collections.Generic;
-using System;
+﻿using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
+using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using AnglingClubWebServices.Helpers;
-using System.IO;
-using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
-using QuestPDF.Helpers;
 using QuestPDF.Drawing;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 
 
 namespace AnglingClubWebServices.Services
@@ -74,6 +76,8 @@ namespace AnglingClubWebServices.Services
                         $"Please find attached, your day ticket valid for fishing on {validOn.PrettyDate()}.<br/>" +
                             "Make sure you have your ticket with you when fishing. Either on your phone or printed.<br/><br/>" +
                             $"Directions for the river and parking are shown here <a href='{callerBaseUrl}/waters#water3'>Club Website - Waters</a>.<br/><br/>" +
+                            generateClosureTimesAsHtml(appSettings) +
+                            $"<br/><br/>"  +
                             "Tight lines!,<br/>" +
                             "Boroughbridge & District Angling Club",
                         null,
@@ -427,14 +431,15 @@ namespace AnglingClubWebServices.Services
                             {
                                 column.Item().PaddingTop(verticalPadding * 2.5f).AlignCenter().Text(text =>
                                 {
+                                    text.Line("Ticket Holder ONLY permitted to fish and ONLY on the date above.");
+                                    text.Line("You must abide by the closure times posted at the venue.");
                                     text.Line("No dogs, No fires; No camping; No loud music.");
-                                    text.Line("NO FISHING AFTER DUSK OR FROM BOATS.");
+                                    text.Line("NO FISHING FROM BOATS.");
+                                    text.Line("NO Live baiting, NO trolling & NO fish to be taken!");
                                     text.Line("Entry to fishing via old Cricket Field & Hall Arms Lane.");
                                     text.Line("Fish old Cricket Field, peg 1 to limit board at");
                                     text.Line("Aldborough, which is one field upstream from Hall Arms");
                                     text.Line("Lane. (look for the limit board).");
-                                    text.Line("Ticket Holder ONLY permitted to fish and ONLY on the date above.");
-                                    text.Line("NO Live baiting, NO trolling & NO fish to be taken!");
                                 });
                             });
 
@@ -477,6 +482,67 @@ namespace AnglingClubWebServices.Services
 
             }
 
+        }
+
+        private string generateClosureTimesAsHtml(AppSettings appSettings)
+        {
+            string html = "";
+
+            html = $"Please note the following closure times for the Day Ticket stretch: -<br/><br/>" +
+                $"<ul>" +
+                    $"<li>These are <span style='background-color: yellow;'>absolutely non-negotiable</span> timings by which you must be packed up and <b>OFF</b> the bank.</li>" +
+                    $"<li><span style='background-color: yellow;'>The club has a complete <b>NO NIGHT FISHING</b> policy!</span></li>" +
+                    $"<li>This rule applies to all <b>Members</b> and <b>Day Ticket holders</b>.</li>" +
+                $"</ul>" +
+                $"<br/>" +
+                $"<span style='color:blue;'><b>OFF</b> THE BANK TIMES BY MONTH</span><br/><br/>" +
+                "" +
+                "<table border='1'>";
+
+            var closureTimes = getDayTicketClosureTimes(appSettings);
+
+            List<string> months = new List<string>();
+            List<string> times = new List<string>();
+
+            foreach (string month in closureTimes)
+            {
+                months.Add(month);
+                times.Add(closureTimes[month]);
+            }
+
+            var monthsArr = months.ToArray();
+            var timesArr = times.ToArray();
+
+            for (var row = 0; row < 4; row++)
+            {
+                html += "<tr>";
+                for (var col = 0; col < 3; col++)
+                {
+                    var idx = row + (col * 4);
+                    html += $"<td style='padding-right:20px;'><nobr><div style='display: inline-block; text-align: center; width: 50px;'>{monthsArr[idx]}</div> - {timesArr[idx]}</nobr></td>";
+                }
+                html += "</tr>";
+            }
+            html += "</table>";
+
+            return html;
+        }
+
+        private NameValueCollection getDayTicketClosureTimes(AppSettings appSettings)
+        {
+            NameValueCollection times = new NameValueCollection();
+            var closureTimes = appSettings.DayTicketClosureTimesPerMonth.Split(",");
+            if (closureTimes.Length != 12)
+            {
+                throw new Exception("DayTicketClosureTimesPerMonth app setting not defined correctly.");
+            }
+
+            for (var i = 1; i <= 12; i++)
+            {
+                times.Add(CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(i), closureTimes[i - 1]);
+            }
+
+            return times;
         }
     }
 }
