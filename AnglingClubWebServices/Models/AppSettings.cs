@@ -20,6 +20,10 @@ namespace AnglingClubWebServices.Models
         public bool DayTicketsEnabled { get; set; } = false;
         public bool PondGateKeysEnabled { get; set; } = false;
 
+        /// <summary>
+        /// List of closure times per month, comma separated, 1st item is January, 2nd February etc.
+        /// </summary>
+        public string DayTicketClosureTimesPerMonth { get; set; }
 
         // Note: Internal get means this wont be sent back from API call to client
         public string ProductDayTicket { internal get; set; }

@@ -2,6 +2,7 @@ using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using AnglingClubWebServices.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
@@ -29,6 +31,7 @@ namespace AnglingClubWebServices.Controllers
         private readonly IProductMembershipRepository _productMembershipRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly ITmpFileRepository _savedFileRepository;
+        private readonly IAuthService _authService;
 
         public BuyController(
             IOptions<StripeOptions> opts,
@@ -39,7 +42,8 @@ namespace AnglingClubWebServices.Controllers
             ITicketService ticketService,
             IPaymentsService paymentsService,
             IProductMembershipRepository productMembershipRepository,
-            IOrderRepository orderRepository)
+            IOrderRepository orderRepository,
+            IAuthService authService)
         {
             StripeConfiguration.ApiKey = opts.Value.StripeApiKey;
 
@@ -52,6 +56,7 @@ namespace AnglingClubWebServices.Controllers
             _productMembershipRepository = productMembershipRepository;
             _orderRepository = orderRepository;
             _savedFileRepository = savedFileRepository;
+            _authService = authService;
         }
 
         [AllowAnonymous]
@@ -507,6 +512,20 @@ namespace AnglingClubWebServices.Controllers
             {
                 ReportTimer("Enable/disable feature");
             }
+
+        }
+
+        [HttpGet("TestDayTicketClosures")]
+        public IActionResult TestDayTicketClosures()
+        {
+            if (CurrentUser.Name != _authService.GetDeveloperName())
+            {
+                return Unauthorized();
+            }
+
+            _ticketService.IssueDayTicket(1, DateTime.Now, "holdersName", "emailAddress", "paymentId", "callerBaseUrl");
+
+            return Ok();
 
         }
 

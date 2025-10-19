@@ -1,5 +1,6 @@
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using AnglingClubWebServices.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,17 +14,20 @@ namespace AnglingClubWebServices.Controllers
     {
         private readonly ILogger<AppSettingsController> _logger;
         private readonly IAppSettingRepository _appSettingRepository;
+        private readonly IAuthService _authService;
         private readonly IMapper _mapper;
 
         public AppSettingsController(
             IAppSettingRepository appSettingRepository,
             IMapper mapper,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            IAuthService authService)
         {
             _appSettingRepository = appSettingRepository;
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<AppSettingsController>();
             base.Logger = _logger;
+            _authService = authService;
         }
 
         // GET satisfied by RefData
@@ -73,6 +77,29 @@ namespace AnglingClubWebServices.Controllers
             {
                 throw;
             }
+
+        }
+
+        /// <summary>
+        /// Prepopulates the ClosureTimes appSettings with standard values.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("PopulateClosureTimes")]
+        public IActionResult PopulateClosureTimes()
+        {
+            if (CurrentUser.Name != _authService.GetDeveloperName())
+            {
+                return Unauthorized();
+            }
+
+            var currentSettings = _appSettingRepository.GetAppSettings().Result;
+            if (currentSettings != null)
+            {
+                currentSettings.DayTicketClosureTimesPerMonth = "4pm,5pm,6pm,CLOSED,CLOSED,9pm,9pm,9pm,7pm,6pm,4pm,4pm";
+                _appSettingRepository.AddOrUpdateAppSettings(currentSettings);
+            }
+
+            return Ok();
 
         }
     }
