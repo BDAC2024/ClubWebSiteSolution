@@ -162,7 +162,11 @@ namespace AnglingClubWebServices.Controllers
 
                             var service = new PaymentIntentService();
                             PaymentIntent paymentIntentForFees = service.Get(paymentIntent.Id, paymentIntentOptions);
-                            fee = paymentIntentForFees.LatestCharge.BalanceTransaction.FeeDetails.Sum(x => x.Amount) / 100.0m;
+                            fee = paymentIntentForFees.LatestCharge.BalanceTransaction.FeeDetails.Sum(x => x.Amount);
+                            if (fee != 0)
+                            {
+                                fee = fee / 100.0m;
+                            }
                         }
                         catch (Exception ex)
                         {
