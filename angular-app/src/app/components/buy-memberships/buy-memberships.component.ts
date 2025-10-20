@@ -12,6 +12,7 @@ import { RefData, Season } from 'src/app/models/refData';
 import { FateMaterialIconService } from 'fate-editor';
 import { ConfirmKeyDialogComponent } from 'src/app/dialogs/confirm-key-dialog/confirm-key-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ScreenService } from 'src/app/services/screen.service';
 
 
 @Component({
@@ -46,6 +47,7 @@ export class BuyMembershipsComponent implements OnInit {
     public refDataService: RefDataService,
     public paymentsService: PaymentsService,
     private router: Router,
+    public screenService: ScreenService,
     private dialog: MatDialog) {
 
   }
@@ -212,6 +214,11 @@ export class BuyMembershipsComponent implements OnInit {
     return this.selectedMembership.description == "Disabled";
   }
 
+  public isDisabledCertRequired(): boolean {
+    return this.disabilityCertificateFile == null;
+  }
+  
+
   public async checkForKey() {
     if (!this.newMembership.paidForKey) {
       const confirmKeyDialog = this.dialog.open(ConfirmKeyDialogComponent, {
@@ -328,12 +335,30 @@ export class BuyMembershipsComponent implements OnInit {
     return this.newMembership.name == null || this.newMembership.name == "" ? "Member" : this.newMembership.name;
   }
 
-    public onDisabilityCertificateUpload(event: Event): void {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files.length > 0) {
-        this.disabilityCertificateFile = input.files[0];
-      } else {
-        this.disabilityCertificateFile = null;
-      }
+  public onDisabilityCertificateUpload(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.disabilityCertificateFile = input.files[0];
+
+      const reader = new FileReader();
+      const imageElement = document.getElementById('disabilityCertificateImage') as HTMLImageElement | null;
+
+      reader.onload = () => {
+        const result = reader.result;
+        if (imageElement != null && typeof result === 'string') {
+          imageElement.setAttribute('src', result);
+        }
+      };
+
+      reader.readAsDataURL(input.files[0]);
+
+
+    } else {
+      this.disabilityCertificateFile = null;
     }
+  }
+
+  public clearDisabilityCertificate(): void {
+    this.disabilityCertificateFile = null;
+  }
 }

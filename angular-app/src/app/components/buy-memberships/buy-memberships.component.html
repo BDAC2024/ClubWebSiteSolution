@@ -188,7 +188,72 @@
                         In the event of any misconduct on {{templateMemberName()}}'s part, the club hold the sole right to withdraw their membership and that the committee decision will be final.
                     </div>
 
+                    <div *ngIf="isDisabled()">
+                        <b>Disability Certificate</b>
+                        <br/>
+                        <div *ngIf="isDisabledCertRequired()" class="image-upload-wrapper">
+                            <label *ngIf="screenService.IsHandset">You must upload or take a photo of your Disability Certificate</label>
+                            <label *ngIf="!screenService.IsHandset">You must upload a photo of your Disability Certificate: </label>
+                            <br/>
+                            <div class="third">
+                                <button class="edit-button"
+                                        mat-stroked-button
+                                        color="primary"
+                                        style="height: fit-content;">
+                                        <label for="disabilityCertificateUpload">
+                                            <div style="width: 100px; text-wrap: pretty; line-height: 1.2em;">
+                                                <br/>
+                                                <mat-icon aria-hidden="false" aria-label="Upload file" style="transform: scale(2);">upload_file</mat-icon>
+                                                <div style="height: 14px;"></div>
+                                                Upload your certificate
+                                            </div>
+                                        </label>
+                                </button>
+                                <input type="file" id="disabilityCertificateUpload" accept="image/*" (change)="onDisabilityCertificateUpload($event)" class="hidden" />
+                            </div>
+                            <div *ngIf="screenService.IsHandset" class="third" 
+                                    style="padding: 0 8px 0 8px;">
+                                    or                                  
+                                    <br/>
+                                    <br/>
+                            </div>
+
+                            <div class="third" *ngIf="screenService.IsHandset">
+                                <button class="edit-button"
+                                        mat-stroked-button
+                                        color="primary" 
+                                        style="height: fit-content;">
+                                        <label for="disabilityCertificatePhoto">
+                                            <div style="width: 100px; text-wrap: pretty; line-height: 1.2em;">
+                                                <br/>
+                                                <mat-icon aria-hidden="false" aria-label="Upload file" style="transform: scale(2);">photo_camera</mat-icon>
+                                                <div style="height: 14px;"></div>
+                                                Take a photo of your certificate
+                                            </div>
+                                            <div style="width: 100px; text-wrap: pretty; line-height: 1.2em;">
+                                            </div>
+                                        </label>
+                                </button>
+                                <input type="file" id="disabilityCertificatePhoto" accept="image/*" capture="environment" (change)="onDisabilityCertificateUpload($event)" class="hidden"/>
+                                <!-- <span *ngIf="disabilityCertificateFile">Selected file: {{disabilityCertificateFile.name}}</span> -->
+                            </div>
+                        </div>
+                        <div [style.display]="isDisabledCertRequired() ? 'none' : 'block' ">
+                            <img id="disabilityCertificateImage" style="width: 200px; height: auto;"/>
+                            <br/>
+                                <!-- <button class="edit-button"
+                                        mat-stroked-button
+                                        color="primary" 
+                                        style="height: fit-content;"
+                                        (click)="clearDisabilityCertificate()">
+                                            <mat-icon aria-hidden="false" aria-label="Upload file">delete</mat-icon> Delete certificate and try again
+                                </button> -->
+                        </div>
+                        <br />
+                        <br />
+                    </div>                    
                     <div *ngIf="!isUnderAge()">
+                        <b>Options</b>
                         <div class="checkbox-wrapper">
                             <mat-checkbox [(ngModel)]="newMembership.paidForKey">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). <br/><span style="background-color: red; color: white;"><b>Note: </b>This must be purchased if you wish to fish Roecliffe Pond and do not already own a key.</span></mat-checkbox>
                         </div>
@@ -208,12 +273,6 @@
                         <!-- <div *ngIf="isDisabled()" class="checkbox-wrapper">
                             <mat-checkbox [(ngModel)]="this.confirmCertificate" class="checkbox-top">Please confirm that you have your Disability Certificate because you will be contacted to view this before membership is issued. <b>Please do not pay if you do not have this</b></mat-checkbox>
                         </div>-->
-                        <div *ngIf="isDisabled()" class="image-upload-wrapper">
-                               <label for="disabilityCertificateUpload">Please upload a photo of your Disability Certificate: </label>
-                               <input type="file" id="disabilityCertificateUpload" accept="image/*" (change)="onDisabilityCertificateUpload($event)" />
-                               <!-- <span *ngIf="disabilityCertificateFile">Selected file: {{disabilityCertificateFile.name}}</span> -->
-                        </div>
-                        <br *ngIf="isDisabled()" />
                         <div class="checkbox-wrapper">
                             <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for membership of the above club and do agree to abide by the rules set down in the club rule book and notice boards, also to any such alterations that may be deemed necessary from time to time.</mat-checkbox>
                         </div>
