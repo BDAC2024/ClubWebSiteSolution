@@ -22,7 +22,12 @@ export class ScreenService {
   private _width!: number;
   private _height!: number;
 
-  constructor() { }
+  private _platform: string = "";
+  private _userAgent: string = "";
+  
+  constructor() {
+    this.checkBrowserAgent();
+   }
 
   // Size
   public get Width(): number {
@@ -123,6 +128,18 @@ export class ScreenService {
     return this._isWebLandscape || this._isWebPortrait;
   }
 
+  public get Platform(): string {
+    return this._platform;
+  }
+
+  public get HasCamera(): boolean {
+    return this._platform == "ios" || this._platform == "android";
+  }
+
+  public get UserAgent(): string {
+    return this._userAgent;
+  }
+
   private showScreenDetails(): void {
     console.log(`_isHandsetPortrait: ${this._isHandsetPortrait}`);
     console.log(`_isHandsetLandscape: ${this._isHandsetLandscape}`);
@@ -135,6 +152,37 @@ export class ScreenService {
     console.log(`Height: ${this.Height}`);
   }
 
+  private checkBrowserAgent(): void {
+    this._userAgent = window.navigator.userAgent;
+
+    if (this._platform == "") {
+
+      if (this._userAgent.toLocaleLowerCase().match(/windows/)) {
+        this._platform = "windows";
+      }
+
+      if (this._userAgent.toLocaleLowerCase().match(/ios/) || 
+          this._userAgent.toLocaleLowerCase().match(/iphone/) || 
+          this._userAgent.toLocaleLowerCase().match(/ipad/)) {
+        this._platform = "ios";
+      }
+
+      if (this._userAgent.toLocaleLowerCase().match(/macintosh/)) {
+        if (navigator.maxTouchPoints && navigator.maxTouchPoints > 2) {
+          this._platform = "ios"
+        } else {
+          this._platform = "mac";
+        }
+      } 
+
+      if (this._userAgent.toLocaleLowerCase().match(/android/)) {
+        this._platform = "android";
+      } else if (this._userAgent.toLocaleLowerCase().match(/linux/)) {
+        this._platform = "linux";
+      }
+
+    }
+  }
   /*
   private _isHandsetPortrait: boolean = false;
   private _isHandsetLandscape: boolean = false;

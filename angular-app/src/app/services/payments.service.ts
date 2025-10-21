@@ -155,10 +155,19 @@ return false so that the caller can react appropriately.
     However, if stripe is unable to create the checkout session for any reason then we need to
     return false so that the caller can react appropriately.
   */
-  public async buyMembership(membership: MembershipPaymentRequest): Promise<boolean> {
+  public async buyMembership(request: MembershipPaymentRequest): Promise<boolean> {
 
+    const formData = new FormData();
+    (Object.keys(request) as Array<keyof MembershipPaymentRequest>).forEach(key => {
+      if (key === 'disabilityCertificateFile' && request.disabilityCertificateFile) {
+        formData.append('disabilityCertificateFile', request.disabilityCertificateFile);
+      } else if (request[key] !== undefined && request[key] !== null) {
+        formData.append(key, String(request[key]));
+      }
+    });    
+    
     return new Promise((resolve, reject) => {
-      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/buy/membership`, membership)
+      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/buy/membership`, formData)
         .pipe(map(res => res),
           catchError((error: HttpErrorResponse) => {
             return throwError(error);

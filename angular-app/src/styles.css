@@ -4,6 +4,16 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.hidden {
+    display: none;
+}
+
+.third { 
+    display: inline-block;
+    /* width: 33.33%; 
+    float: left;  */
+}
+
 .past-event {
     font-weight: lighter;
 }
