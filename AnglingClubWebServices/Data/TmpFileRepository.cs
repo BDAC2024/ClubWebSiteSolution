@@ -182,10 +182,9 @@ namespace AnglingClubWebServices.Data
 
             foreach (var file in tmpFiles)
             {
-//                if (file.Created < DateTime.Now.AddDays(-DAYS_TO_EXPIRE))
-                if (file.Created < DateTime.Now.AddMinutes(-1))
+                if (file.Created < DateTime.Now.AddDays(-DAYS_TO_EXPIRE))
                 {
-                        _logger.LogInformation($"Purging TmpFile: {file.Id}, Created: {file.Created}");
+                    _logger.LogInformation($"Purging TmpFile: {file.Id}, Created: {file.Created}");
                     await DeleteTmpFile(file.Id, file.Content != null);
                 }
             }
