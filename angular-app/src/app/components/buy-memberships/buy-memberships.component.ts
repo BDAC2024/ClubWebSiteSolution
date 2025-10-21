@@ -12,6 +12,7 @@ import { RefData, Season } from 'src/app/models/refData';
 import { FateMaterialIconService } from 'fate-editor';
 import { ConfirmKeyDialogComponent } from 'src/app/dialogs/confirm-key-dialog/confirm-key-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ScreenService } from 'src/app/services/screen.service';
 
 
 @Component({
@@ -40,10 +41,13 @@ export class BuyMembershipsComponent implements OnInit {
   public confirmNoNightFishing: boolean = false;
   public confirmWaitForBook: boolean = false;
 
+  public disabilityCertificateFile: File | null = null;
+
   constructor(
     public refDataService: RefDataService,
     public paymentsService: PaymentsService,
     private router: Router,
+    public screenService: ScreenService,
     private dialog: MatDialog) {
 
   }
@@ -79,11 +83,11 @@ export class BuyMembershipsComponent implements OnInit {
     this.newMembership = new MembershipPaymentRequest();
     this.newMembership.dbKey = selected.dbKey;
     this.newMembership.cancelUrl = this.baseUrl;
-    this.newMembership.season = this.selectedSeason;
+    this.newMembership.seasonName = this.selectedSeason.name;
     this.confirmCertificate = false;
     this.confirmNoNightFishing = false;
     this.confirmWaitForBook = false;
-
+    this.disabilityCertificateFile = null;
   }
 
   public minDate(): Date {
@@ -210,6 +214,11 @@ export class BuyMembershipsComponent implements OnInit {
     return this.selectedMembership.description == "Disabled";
   }
 
+  public isDisabledCertRequired(): boolean {
+    return this.disabilityCertificateFile == null;
+  }
+  
+
   public async checkForKey() {
     if (!this.newMembership.paidForKey) {
       const confirmKeyDialog = this.dialog.open(ConfirmKeyDialogComponent, {
@@ -237,6 +246,9 @@ export class BuyMembershipsComponent implements OnInit {
     this.isBuying = true;
     this.newMembership.underAge = this.isUnderAge();
     this.newMembership.successUrl = this.baseUrl + "/buySuccess/" + (this.isUnderAge() ? "underagemembership" : "membership");
+
+      // Attach disability certificate file if present
+      this.newMembership.disabilityCertificateFile = this.disabilityCertificateFile;
 
     //console.log("PaidForKey: " + this.newMembership.paidForKey);
 
@@ -267,7 +279,7 @@ export class BuyMembershipsComponent implements OnInit {
 
     if (this.isDisabled())
     {
-      validDisabled = this.confirmCertificate;
+      validDisabled = this.disabilityCertificateFile != null;
     }
 
     if (this.isUnderAge())
@@ -301,6 +313,15 @@ export class BuyMembershipsComponent implements OnInit {
 
   }
 
+  public completionMessage(): string {
+    var message: string = "Please complete ALL form fields";
+    if (this.isDisabled())
+    {
+      message += " and upload a disability certificate"; 
+    }
+    return message;
+  }
+
   public enable(enabled: boolean): void {
     this.isEnabling = true;
     this.paymentsService.enableFeature(PaymentType.Membership, enabled)
@@ -312,5 +333,32 @@ export class BuyMembershipsComponent implements OnInit {
 
   public templateMemberName() : string {
     return this.newMembership.name == null || this.newMembership.name == "" ? "Member" : this.newMembership.name;
+  }
+
+  public onDisabilityCertificateUpload(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.disabilityCertificateFile = input.files[0];
+
+      const reader = new FileReader();
+      const imageElement = document.getElementById('disabilityCertificateImage') as HTMLImageElement | null;
+
+      reader.onload = () => {
+        const result = reader.result;
+        if (imageElement != null && typeof result === 'string') {
+          imageElement.setAttribute('src', result);
+        }
+      };
+
+      reader.readAsDataURL(input.files[0]);
+
+
+    } else {
+      this.disabilityCertificateFile = null;
+    }
+  }
+
+  public clearDisabilityCertificate(): void {
+    this.disabilityCertificateFile = null;
   }
 }
