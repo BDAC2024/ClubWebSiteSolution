@@ -6,7 +6,7 @@ namespace AnglingClubWebServices.DTOs
     public class NewMembershipDto
     {
         public string DbKey { get; set; }
-        public SeasonInfo Season { get; set; }
+        public string SeasonName { get; set; }
         public string Name { get; set; }
         public DateTime DoB { get; set; }
         public string PhoneNumber { get; set; }

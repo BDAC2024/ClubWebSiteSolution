@@ -4,12 +4,15 @@ using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AnglingClubWebServices.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Stripe;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -27,12 +30,14 @@ namespace AnglingClubWebServices.Controllers
         private readonly IAppSettingRepository _appSettingRepository;
         private readonly IProductMembershipRepository _productMembershipRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly ITmpFileRepository _savedFileRepository;
         private readonly IAuthService _authService;
 
         public BuyController(
             IOptions<StripeOptions> opts,
             IEmailService emailService,
             IAppSettingRepository appSettingRepository,
+            ITmpFileRepository savedFileRepository,
             ILoggerFactory loggerFactory,
             ITicketService ticketService,
             IPaymentsService paymentsService,
@@ -50,12 +55,13 @@ namespace AnglingClubWebServices.Controllers
             _paymentsService = paymentsService;
             _productMembershipRepository = productMembershipRepository;
             _orderRepository = orderRepository;
+            _savedFileRepository = savedFileRepository;
             _authService = authService;
         }
 
         [AllowAnonymous]
         [HttpPost("Membership")]
-        public async Task<IActionResult> Membership([FromBody] NewMembershipDto membership)
+        public async Task<IActionResult> Membership([FromForm] NewMembershipDto membership, IFormFile disabilityCertificateFile)
         {
             StartTimer();
 
@@ -68,16 +74,43 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
+                string disabilityCertificateFileAsString = "";
+                string disabilityCertificateSavedFileId = "";
+
+                try
+                {
+                    if (disabilityCertificateFile != null)
+                    {
+                        using var disabilityCertificateFileStream = disabilityCertificateFile.OpenReadStream();
+                        using var ms = new MemoryStream();
+                        disabilityCertificateFileStream.CopyTo(ms);
+                        disabilityCertificateFileAsString = Convert.ToBase64String(ms.ToArray());
+                        disabilityCertificateSavedFileId = Guid.NewGuid().ToString();
+                        TmpFile disabilityCertificateSavedFile = new TmpFile { Id = disabilityCertificateSavedFileId, Content = disabilityCertificateFileAsString };
+
+                        await _savedFileRepository.AddOrUpdateTmpFile(disabilityCertificateSavedFile);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"Failed to save disabled certificate: {ex.InnerException.Message}");
+                }
+
                 try
                 {
                     Dictionary<string, string> metaData = new Dictionary<string, string>()
                     {
-                        { "Season", membership.Season.Name },
+                        { "Season", membership.SeasonName },
                         { "Name", membership.Name },
                         { "DoB", membership.DoB.ToString("yyyy-MM-dd") },
                         { "AcceptPolicies", membership.AcceptPolicies.ToString() },
                         { "PaidForKey", membership.PaidForKey.ToString() },
                     };
+
+                    if (!disabilityCertificateFileAsString.IsNullOrEmpty())
+                    {
+                        metaData["DisabilityCertificateSavedFileId"] = disabilityCertificateSavedFileId;
+                    }
 
                     if (membership.UnderAge)
                     {
