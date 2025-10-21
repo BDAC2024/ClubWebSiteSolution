@@ -9,6 +9,6 @@ namespace AnglingClubWebServices.Interfaces
         Task AddOrUpdateTmpFile(TmpFile file);
         Task<List<TmpFile>> GetTmpFiles(bool loadFile = true);
         Task<TmpFile> GetTmpFile(string id);
-        Task DeleteTmpFile(string id);
+        Task DeleteTmpFile(string id, bool deleteFromS3 = true);
     }
 }
