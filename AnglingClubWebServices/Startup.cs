@@ -115,6 +115,7 @@ namespace AnglingClubWebServices
             services.AddTransient<ITrophyWinnerRepository, TrophyWinnerRepository>();
             services.AddTransient<IOpenMatchRepository, OpenMatchRepository>();
             services.AddTransient<IOpenMatchRegistrationRepository, OpenMatchRegistrationRepository>();
+            services.AddTransient<ITmpFileRepository, TmpFileRepository>();
 
             services.AddTransient<IPaymentsService, PaymentService>();
             services.AddTransient<ITicketService, TicketService>();

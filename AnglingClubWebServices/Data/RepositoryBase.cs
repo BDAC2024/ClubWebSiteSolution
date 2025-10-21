@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -372,5 +373,53 @@ namespace AnglingClubWebServices.Data
             });
 
         }
+
+        protected async Task saveBase64AsFile(string fileContents, string fileName)
+        {
+            AmazonS3Client s3Client;
+
+            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+
+            await s3Client.PutObjectAsync(new Amazon.S3.Model.PutObjectRequest
+            {
+                BucketName = _options.TmpFilesBucket,
+                Key = fileName,
+                ContentType = "text/plain",
+                ContentBody = fileContents
+
+            });
+
+        }
+
+        protected async Task<string> getFileAsBase64(string fileName)
+        {
+            AmazonS3Client s3Client;
+
+            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+
+            var fileContents = await s3Client.GetObjectAsync(new Amazon.S3.Model.GetObjectRequest
+            {
+                BucketName = _options.TmpFilesBucket,
+                Key = fileName
+            });
+
+            StreamReader reader = new StreamReader(fileContents.ResponseStream);
+
+            String content = reader.ReadToEnd();
+
+            return content;
+        }
+
+        protected async Task deleteFile(string fileName)
+        {
+            AmazonS3Client s3Client;
+            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+            await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
+            {
+                BucketName = _options.TmpFilesBucket,
+                Key = fileName
+            });
+        }
+
     }
 }

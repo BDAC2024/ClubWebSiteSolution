@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Stripe;
 using Stripe.Checkout;
@@ -36,6 +37,7 @@ namespace AnglingClubWebServices.Controllers
         private readonly IOrderRepository _orderRepository;
         private readonly IAppSettingRepository _appSettingRepository;
         private readonly IMemberRepository _memberRepository;
+        private ITmpFileRepository _savedFileRepository;
 
         public WebHookController(
             IOptions<StripeOptions> opts,
@@ -44,7 +46,8 @@ namespace AnglingClubWebServices.Controllers
             ITicketService ticketService,
             IOrderRepository orderRepository,
             IAppSettingRepository appSettingRepository,
-            IMemberRepository memberRepository)
+            IMemberRepository memberRepository,
+            ITmpFileRepository savedFileRepository)
         {
             _emailService = emailService;
 
@@ -60,6 +63,7 @@ namespace AnglingClubWebServices.Controllers
             _orderRepository = orderRepository;
             _appSettingRepository = appSettingRepository;
             _memberRepository = memberRepository;
+            _savedFileRepository = savedFileRepository;
         }
 
         [AllowAnonymous]
@@ -158,7 +162,11 @@ namespace AnglingClubWebServices.Controllers
 
                             var service = new PaymentIntentService();
                             PaymentIntent paymentIntentForFees = service.Get(paymentIntent.Id, paymentIntentOptions);
-                            fee = paymentIntentForFees.LatestCharge.BalanceTransaction.FeeDetails.Sum(x => x.Amount) / 100.0m;
+                            fee = paymentIntentForFees.LatestCharge.BalanceTransaction.FeeDetails.Sum(x => x.Amount);
+                            if (fee != 0)
+                            {
+                                fee = fee / 100.0m;
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -209,14 +217,42 @@ namespace AnglingClubWebServices.Controllers
                                         if (members.Any())
                                         {
                                             var emails = members.Select(x => x.Email).ToList();
+                                            var body = "";
+                                            List<ImageAttachment> attachments = new List<ImageAttachment>();
+
+                                            var disabilityCertificateSavedFileId = paymentMetaData.DisabilityCertificateSavedFileId;
+                                            if (disabilityCertificateSavedFileId.IsNullOrEmpty())
+                                            {
+                                                body = $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
+                                                        "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
+                                                        "Boroughbridge & District Angling Club";
+                                            }
+                                            else
+                                            {
+                                                var disabilityCertificateSavedFile = await _savedFileRepository.GetTmpFile(disabilityCertificateSavedFileId);
+
+                                                body = $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
+                                                    "Full details can be found in the 'Payments' section of the Admin area of the website.<br/>" +
+                                                    "Their disability certificate is attached to this email.<br/><br/>" +
+                                                    "Boroughbridge & District Angling Club";
+
+                                                attachments.Add(new ImageAttachment
+                                                {
+                                                    Filename = $"DisabilityCertificate_{order.MembersName}.png",
+                                                    DataUrl = "data:image/png;base64," + disabilityCertificateSavedFile.Content
+                                                });
+
+                                                await _savedFileRepository.DeleteTmpFile(disabilityCertificateSavedFile.Id);
+                                            }
 
                                             _emailService.SendEmail(
                                                 emails,
                                                 $"New membership has been purchased for {order.SeasonName}",
-                                                $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
-                                                    "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
-                                                    "Boroughbridge & District Angling Club"
+                                                body,
+                                                null,
+                                                attachments
                                             );
+
 
                                             _emailService.SendEmail(
                                                 new List<string> { paymentIntent.ReceiptEmail },
