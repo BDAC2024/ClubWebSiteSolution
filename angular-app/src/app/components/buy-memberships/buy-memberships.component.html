@@ -192,8 +192,8 @@
                         <b>Disability Certificate</b>
                         <br/>
                         <div *ngIf="isDisabledCertRequired()" class="image-upload-wrapper">
-                            <label *ngIf="screenService.IsHandset">You must upload or take a photo of your Disability Certificate</label>
-                            <label *ngIf="!screenService.IsHandset">You must upload a photo of your Disability Certificate: </label>
+                            <label *ngIf="screenService.HasCamera">You must upload or take a photo of your Disability Certificate</label>
+                            <label *ngIf="!screenService.HasCamera">You must upload a photo of your Disability Certificate: </label>
                             <br/>
                             <div class="third">
                                 <button class="edit-button"
@@ -205,20 +205,20 @@
                                                 <br/>
                                                 <mat-icon aria-hidden="false" aria-label="Upload file" style="transform: scale(2);">upload_file</mat-icon>
                                                 <div style="height: 14px;"></div>
-                                                Upload your certificate
+                                                Upload your<br/>certificate
                                             </div>
                                         </label>
                                 </button>
                                 <input type="file" id="disabilityCertificateUpload" accept="image/*" (change)="onDisabilityCertificateUpload($event)" class="hidden" />
                             </div>
-                            <div *ngIf="screenService.IsHandset" class="third" 
+                            <div *ngIf="screenService.HasCamera" class="third" 
                                     style="padding: 0 8px 0 8px;">
                                     or                                  
                                     <br/>
                                     <br/>
                             </div>
 
-                            <div class="third" *ngIf="screenService.IsHandset">
+                            <div class="third" *ngIf="screenService.HasCamera">
                                 <button class="edit-button"
                                         mat-stroked-button
                                         color="primary" 
@@ -228,7 +228,7 @@
                                                 <br/>
                                                 <mat-icon aria-hidden="false" aria-label="Upload file" style="transform: scale(2);">photo_camera</mat-icon>
                                                 <div style="height: 14px;"></div>
-                                                Take a photo of your certificate
+                                                Take a photo of<br/>your certificate
                                             </div>
                                             <div style="width: 100px; text-wrap: pretty; line-height: 1.2em;">
                                             </div>
@@ -302,6 +302,12 @@
                     <br />
                     <br />
                     <br />
+                    <div style="background-color: orange; display: none;">
+                        <b>Debug Information</b><br/>
+                        <b>UserAgent:</b> {{screenService.UserAgent}}<br/>
+                        <b>Platform:</b> {{screenService.Platform}}<br/>
+                        <b>HasCamera:</b> {{screenService.HasCamera}}<br/>
+                    </div>
                 </div>
 
                 <mat-card class="warning-card" *ngIf="!this.membershipAvailable()">
