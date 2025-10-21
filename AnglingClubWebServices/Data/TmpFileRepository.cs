@@ -84,7 +84,20 @@ namespace AnglingClubWebServices.Data
 
             foreach (var item in items)
             {
-                files.Add(await GetTmpFileFromDbItem(item, loadFile));
+                try
+                {
+                    files.Add(await GetTmpFileFromDbItem(item, loadFile));
+                }
+                catch (Exception)
+                {
+                    // File is listed in SimpleDB but not found in S3
+                    files.Add(new TmpFile
+                    {
+                        Id = item.Attributes.FirstOrDefault(a => a.Name == "Id")?.Value,
+                        Created = DateTime.Parse(item.Attributes.FirstOrDefault(a => a.Name == "Created")?.Value ?? DateTime.MinValue.ToString()),
+                        Content = null
+                    });
+                }
             }
 
             return files;
@@ -96,10 +109,23 @@ namespace AnglingClubWebServices.Data
             if (items.Count != 1)
                 throw new Exception($"Could not locate TmpFile: {id}");
 
-            return await GetTmpFileFromDbItem(items.First(), true);
+            try
+            {
+                return await GetTmpFileFromDbItem(items.First(), true);
+            }
+            catch (Exception)
+            {
+                // File is listed in SimpleDB but not found in S3
+                return new TmpFile
+                {
+                    Id = items.First().Attributes.FirstOrDefault(a => a.Name == "Id")?.Value,
+                    Created = DateTime.Parse(items.First().Attributes.FirstOrDefault(a => a.Name == "Created")?.Value ?? DateTime.MinValue.ToString()),
+                    Content = null
+                };
+            }
         }
 
-        public async Task DeleteTmpFile(string id)
+        public async Task DeleteTmpFile(string id, bool deleteFromS3 = true)
         {
             var client = GetClient();
 
@@ -111,7 +137,10 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                await base.deleteFile(id);
+                if (deleteFromS3)
+                {
+                    await base.deleteFile(id);
+                }
                 await client.DeleteAttributesAsync(request);
             }
             catch (AmazonSimpleDBException ex)
@@ -153,10 +182,11 @@ namespace AnglingClubWebServices.Data
 
             foreach (var file in tmpFiles)
             {
-                if (file.Created < DateTime.Now.AddDays(-DAYS_TO_EXPIRE))
+//                if (file.Created < DateTime.Now.AddDays(-DAYS_TO_EXPIRE))
+                if (file.Created < DateTime.Now.AddMinutes(-1))
                 {
-                    _logger.LogInformation($"Purging TmpFile: {file.Id}, Created: {file.Created}");
-                    await DeleteTmpFile(file.Id);
+                        _logger.LogInformation($"Purging TmpFile: {file.Id}, Created: {file.Created}");
+                    await DeleteTmpFile(file.Id, file.Content != null);
                 }
             }
         }
