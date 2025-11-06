@@ -29,5 +29,7 @@ namespace AnglingClubWebServices.DTOs
         public string SuccessUrl { get; set; }
         public string CancelUrl { get; set; }
 
+        public string DisabilityCertificateId { get; set; }
+
     }
 }

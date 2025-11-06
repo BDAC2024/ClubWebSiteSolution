@@ -1,4 +1,5 @@
 ﻿using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
 using AnglingClubWebServices.Models;
@@ -374,24 +375,7 @@ namespace AnglingClubWebServices.Data
 
         }
 
-        protected async Task saveBase64AsFile(string fileContents, string fileName)
-        {
-            AmazonS3Client s3Client;
-
-            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
-
-            await s3Client.PutObjectAsync(new Amazon.S3.Model.PutObjectRequest
-            {
-                BucketName = _options.TmpFilesBucket,
-                Key = fileName,
-                ContentType = "text/plain",
-                ContentBody = fileContents
-
-            });
-
-        }
-
-        protected async Task<string> getFileAsBase64(string fileName)
+        protected async Task<string> getFileAsBase64(string fileName, string bucketName)
         {
             AmazonS3Client s3Client;
 
@@ -399,27 +383,127 @@ namespace AnglingClubWebServices.Data
 
             var fileContents = await s3Client.GetObjectAsync(new Amazon.S3.Model.GetObjectRequest
             {
-                BucketName = _options.TmpFilesBucket,
+                BucketName = bucketName,
                 Key = fileName
             });
 
-            StreamReader reader = new StreamReader(fileContents.ResponseStream);
+            using var responseStream = fileContents.ResponseStream;
+            using var ms = new MemoryStream();
+            await responseStream.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+            var contentBase64 = Convert.ToBase64String(bytes);
 
-            String content = reader.ReadToEnd();
-
-            return content;
+            return contentBase64;
         }
 
-        protected async Task deleteFile(string fileName)
+        protected async Task<List<StoredFileMeta>> getFilesFromS3(string bucketName)
+        {
+            AmazonS3Client s3Client;
+
+            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+
+            var results = new List<StoredFileMeta>();
+
+            try
+            {
+                string continuationToken = null;
+
+                do
+                {
+                    var listRequest = new ListObjectsV2Request
+                    {
+                        BucketName = bucketName,
+                        ContinuationToken = continuationToken,
+                        MaxKeys = 1000
+                    };
+
+                    var listResponse = await s3Client.ListObjectsV2Async(listRequest);
+
+                    foreach (var s3Object in listResponse.S3Objects)
+                    {
+                        try
+                        {
+                            // Get metadata for each object
+                            var metaResponse = await s3Client.GetObjectMetadataAsync(new GetObjectMetadataRequest
+                            {
+                                BucketName = bucketName,
+                                Key = s3Object.Key
+                            });
+
+                            var meta = new
+                            {
+                                Key = s3Object.Key,
+                                Size = metaResponse.ContentLength,
+                                LastModified = metaResponse.LastModified,
+                                ContentType = metaResponse.Headers.ContentType,
+                                ETag = metaResponse.ETag,
+                                UserMetadata = metaResponse.Metadata // IDictionary<string,string>
+                            };
+
+                            var storedFileMeta = new StoredFileMeta
+                            {
+                                Id = s3Object.Key,
+                                Created = metaResponse.LastModified,
+                            };
+
+                            results.Add(storedFileMeta);
+                        }
+                        catch (AmazonS3Exception s3Ex)
+                        {
+                            _logger.LogError(s3Ex, $"Failed to get metadata for S3 object {s3Object.Key} in bucket {bucketName}");
+                            // skip problematic object but continue
+                        }
+                    }
+
+                    continuationToken = listResponse.IsTruncated ? listResponse.NextContinuationToken : null;
+
+                } while (continuationToken != null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to list objects in bucket {bucketName}");
+                throw;
+            }
+
+            return results;
+        }
+
+        protected async Task deleteFile(string fileName, string bucketName)
         {
             AmazonS3Client s3Client;
             s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
             await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
             {
-                BucketName = _options.TmpFilesBucket,
+                BucketName = bucketName,
                 Key = fileName
             });
         }
 
+        /// <summary>
+        /// Initial attempts to upload the file as an arg to a web api call failed on AWS with a 413 (content too large) error.
+        /// The approach here is to get a pre-signed URL from the web api, then use that URL to upload the file directly to S3.
+        /// The solution was obtained from ChatGPT
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="contentType"></param>
+        /// <param name="bucketName"></param>
+        /// <returns></returns>
+        protected async Task<string> getPreSignedUploadUrl(string filename, string contentType, string bucketName)
+        {
+            AmazonS3Client s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+
+            var requestModel = new GetPreSignedUrlRequest
+            {
+                BucketName = bucketName,
+                Key = filename,
+                Verb = HttpVerb.PUT,
+                ContentType = contentType,
+                Expires = DateTime.UtcNow.AddMinutes(5)
+            };
+
+            var url = await s3Client.GetPreSignedURLAsync(requestModel);
+
+            return url;
+        }
     }
 }
