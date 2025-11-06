@@ -61,7 +61,7 @@ namespace AnglingClubWebServices.Controllers
 
         [AllowAnonymous]
         [HttpPost("Membership")]
-        public async Task<IActionResult> Membership([FromForm] NewMembershipDto membership, IFormFile disabilityCertificateFile)
+        public async Task<IActionResult> Membership([FromBody] NewMembershipDto membership)
         {
             StartTimer();
 
@@ -74,20 +74,11 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                string disabilityCertificateFileAsString = "";
-                string disabilityCertificateSavedFileId = "";
-
                 try
                 {
-                    if (disabilityCertificateFile != null)
+                    if (!string.IsNullOrEmpty(membership.DisabilityCertificateId))
                     {
-                        using var disabilityCertificateFileStream = disabilityCertificateFile.OpenReadStream();
-                        using var ms = new MemoryStream();
-                        disabilityCertificateFileStream.CopyTo(ms);
-                        disabilityCertificateFileAsString = Convert.ToBase64String(ms.ToArray());
-                        disabilityCertificateSavedFileId = Guid.NewGuid().ToString();
-                        TmpFile disabilityCertificateSavedFile = new TmpFile { Id = disabilityCertificateSavedFileId, Content = disabilityCertificateFileAsString };
-
+                        StoredFileMeta disabilityCertificateSavedFile = new StoredFileMeta { Id = membership.DisabilityCertificateId};
                         await _savedFileRepository.AddOrUpdateTmpFile(disabilityCertificateSavedFile);
                     }
                 }
@@ -107,9 +98,9 @@ namespace AnglingClubWebServices.Controllers
                         { "PaidForKey", membership.PaidForKey.ToString() },
                     };
 
-                    if (!disabilityCertificateFileAsString.IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(membership.DisabilityCertificateId))
                     {
-                        metaData["DisabilityCertificateSavedFileId"] = disabilityCertificateSavedFileId;
+                        metaData["DisabilityCertificateSavedFileId"] = membership.DisabilityCertificateId;
                     }
 
                     if (membership.UnderAge)

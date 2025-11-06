@@ -2,10 +2,15 @@
 
 namespace AnglingClubWebServices.Models
 {
-    public class TmpFile
+    public class StoredFileMeta
     {
         public string Id { get; set; } = "";
         public DateTime Created { get; set; }
-        public string Content { get; set; }
     }
+
+    public class StoredFile : StoredFileMeta
+    {
+        public string Content { get; set; } = null;
+    }
+
 }
