@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using static NodaTime.TimeZones.ZoneEqualityComparer;
 
 namespace AnglingClubWebServices.Data
 {
@@ -18,15 +19,17 @@ namespace AnglingClubWebServices.Data
         private const string IdPrefix = "TmpFile";
         private const int DAYS_TO_EXPIRE = 7; // Will purge files older than this
         private readonly ILogger<TmpFileRepository> _logger;
+        private readonly RepositoryOptions _options;
 
         public TmpFileRepository(
             IOptions<RepositoryOptions> opts,
             ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
         {
+            _options = opts.Value;
             _logger = loggerFactory.CreateLogger<TmpFileRepository>();
         }
 
-        public async Task AddOrUpdateTmpFile(TmpFile file)
+        public async Task AddOrUpdateTmpFile(StoredFileMeta file)
         {
             var client = GetClient();
 
@@ -62,24 +65,18 @@ namespace AnglingClubWebServices.Data
                 throw;
             }
 
-            await SaveFileContent(file);
-
             await PurgeTmpFiles();
         }
 
-        public async Task SaveFileContent(TmpFile file)
-        {
-            await base.saveBase64AsFile(file.Content, file.Id);
-        }
 
         /// <summary>
         /// Loads all TmpFiles - optionally loading the file content
         /// </summary>
         /// <param name="loadFile"></param>
         /// <returns></returns>
-        public async Task<List<TmpFile>> GetTmpFiles(bool loadFile = true)
+        public async Task<List<StoredFile>> GetTmpFiles(bool loadFile = false)
         {
-            var files = new List<TmpFile>();
+            var files = new List<StoredFile>();
             var items = await GetData(IdPrefix, "AND Id > ''", "ORDER BY Id");
 
             foreach (var item in items)
@@ -91,11 +88,10 @@ namespace AnglingClubWebServices.Data
                 catch (Exception)
                 {
                     // File is listed in SimpleDB but not found in S3
-                    files.Add(new TmpFile
+                    files.Add(new StoredFile
                     {
                         Id = item.Attributes.FirstOrDefault(a => a.Name == "Id")?.Value,
                         Created = DateTime.Parse(item.Attributes.FirstOrDefault(a => a.Name == "Created")?.Value ?? DateTime.MinValue.ToString()),
-                        Content = null
                     });
                 }
             }
@@ -103,7 +99,7 @@ namespace AnglingClubWebServices.Data
             return files;
         }
 
-        public async Task<TmpFile> GetTmpFile(string id)
+        public async Task<StoredFile> GetTmpFile(string id)
         {
             var items = await GetData(IdPrefix, $"AND ItemName() = '{IdPrefix}:{id}'");
             if (items.Count != 1)
@@ -116,11 +112,10 @@ namespace AnglingClubWebServices.Data
             catch (Exception)
             {
                 // File is listed in SimpleDB but not found in S3
-                return new TmpFile
+                return new StoredFile
                 {
                     Id = items.First().Attributes.FirstOrDefault(a => a.Name == "Id")?.Value,
                     Created = DateTime.Parse(items.First().Attributes.FirstOrDefault(a => a.Name == "Created")?.Value ?? DateTime.MinValue.ToString()),
-                    Content = null
                 };
             }
         }
@@ -139,7 +134,7 @@ namespace AnglingClubWebServices.Data
             {
                 if (deleteFromS3)
                 {
-                    await base.deleteFile(id);
+                    await base.deleteFile(id, _options.TmpFilesBucket);
                 }
                 await client.DeleteAttributesAsync(request);
             }
@@ -150,9 +145,9 @@ namespace AnglingClubWebServices.Data
             }
         }
 
-        private async Task<TmpFile> GetTmpFileFromDbItem(Item item, bool loadFile)
+        private async Task<StoredFile> GetTmpFileFromDbItem(Item item, bool loadFile)
         {
-            var file = new TmpFile();
+            var file = new StoredFile();
             var contentArr = new List<MultiValued>();
 
             foreach (var attribute in item.Attributes)
@@ -170,7 +165,7 @@ namespace AnglingClubWebServices.Data
 
             if (loadFile)
             {
-                file.Content = await base.getFileAsBase64(file.Id);
+                file.Content = await base.getFileAsBase64(file.Id, _options.TmpFilesBucket);
             }
 
             return file;
@@ -180,14 +175,42 @@ namespace AnglingClubWebServices.Data
         {
             var tmpFiles = await GetTmpFiles();
 
+            //var expiryTime = DateTime.Now.AddMinutes(-1);
+            var expiryTime = DateTime.Now.AddDays(-DAYS_TO_EXPIRE);
+
             foreach (var file in tmpFiles)
             {
-                if (file.Created < DateTime.Now.AddDays(-DAYS_TO_EXPIRE))
+                if (file.Created.ToUniversalTime() < expiryTime.ToUniversalTime())
                 {
                     _logger.LogInformation($"Purging TmpFile: {file.Id}, Created: {file.Created}");
-                    await DeleteTmpFile(file.Id, file.Content != null);
+                    await DeleteTmpFile(file.Id);
                 }
             }
+
+            // Now remove any tmp files that didn't have a corresponding Db entry
+            var tmpFilesFromS3 = await getFilesFromS3(_options.TmpFilesBucket);
+
+            foreach (var file in tmpFilesFromS3)
+            {
+                if (file.Created.ToUniversalTime() < expiryTime.ToUniversalTime())
+                {
+                    _logger.LogInformation($"Purging S3 TmpFile: {file.Id}, Created: {file.Created}");
+                    await base.deleteFile(file.Id, _options.TmpFilesBucket);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initial attempts to upload the file as an arg to a web api call failed on AWS with a 413 (content too large) error.
+        /// The approach here is to get a pre-signed URL from the web api, then use that URL to upload the file directly to S3.
+        /// The solution was obtained from ChatGPT
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
+        public async Task<string> GetTmpFileUploadUrl(string filename, string contentType)
+        {
+            return await base.getPreSignedUploadUrl(filename, contentType, _options.TmpFilesBucket);
         }
 
     }

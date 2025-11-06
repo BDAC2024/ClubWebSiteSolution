@@ -210,17 +210,25 @@ namespace AnglingClubWebServices.Controllers
                                     var appSettings = _appSettingRepository.GetAppSettings().Result;
                                     var notificationSent = false;
 
+                                    _logger.LogWarning($" log 131 - membership - getting appSettings");
+
                                     if (appSettings.MembershipSecretaries.Any())
                                     {
+                                        _logger.LogWarning($" log 132 - membership - getting MembershipSecretaries");
+
                                         var members = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => appSettings.MembershipSecretaries.Contains(x.MembershipNumber));
 
                                         if (members.Any())
                                         {
+                                            _logger.LogWarning($" log 133 - membership - starting email composition");
+
                                             var emails = members.Select(x => x.Email).ToList();
                                             var body = "";
                                             List<ImageAttachment> attachments = new List<ImageAttachment>();
 
                                             var disabilityCertificateSavedFileId = paymentMetaData.DisabilityCertificateSavedFileId;
+                                            StoredFile disabilityCertificateSavedFile = null;
+
                                             if (disabilityCertificateSavedFileId.IsNullOrEmpty())
                                             {
                                                 body = $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
@@ -229,7 +237,9 @@ namespace AnglingClubWebServices.Controllers
                                             }
                                             else
                                             {
-                                                var disabilityCertificateSavedFile = await _savedFileRepository.GetTmpFile(disabilityCertificateSavedFileId);
+                                                _logger.LogWarning($" log 134 - membership - starting diabled cert processing");
+
+                                                disabilityCertificateSavedFile = await _savedFileRepository.GetTmpFile(disabilityCertificateSavedFileId);
 
                                                 body = $"A new <b>{order.Description}</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
                                                     "Full details can be found in the 'Payments' section of the Admin area of the website.<br/>" +
@@ -241,28 +251,54 @@ namespace AnglingClubWebServices.Controllers
                                                     Filename = $"DisabilityCertificate_{order.MembersName}.png",
                                                     DataUrl = "data:image/png;base64," + disabilityCertificateSavedFile.Content
                                                 });
-
-                                                await _savedFileRepository.DeleteTmpFile(disabilityCertificateSavedFile.Id);
                                             }
 
-                                            _emailService.SendEmail(
-                                                emails,
-                                                $"New membership has been purchased for {order.SeasonName}",
-                                                body,
-                                                null,
-                                                attachments
-                                            );
+                                            try
+                                            {
+                                                _emailService.SendEmail(
+                                                    emails,
+                                                    $"New membership has been purchased for {order.SeasonName}",
+                                                    body,
+                                                    null,
+                                                    attachments
+                                                );
+
+                                                _logger.LogWarning($" log 136.5 - membership - finished sending email to secretaries");
+
+                                                if (disabilityCertificateSavedFile != null)
+                                                {
+                                                    _logger.LogWarning($" log 136.6 - membership - deleting cert file");
+
+                                                    await _savedFileRepository.DeleteTmpFile(disabilityCertificateSavedFile.Id);
+                                                }
+
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _logger.LogError(ex, $"log 136.7 - membership - error sending email to secretaries");
+                                                throw;
+                                            }
 
 
-                                            _emailService.SendEmail(
-                                                new List<string> { paymentIntent.ReceiptEmail },
-                                                $"Confirmation of membership purchase for the {order.SeasonName} season",
-                                                $"Thank you for purchasing <b>{order.Description}</b> .<br/>" +
-                                                    "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
-                                                    "<b>Fishing is not permitted until membership book arrives.</b><br/><br/>" +
-                                                    "Tight lines!,<br/>" +
-                                                    "Boroughbridge & District Angling Club"
-                                            );
+                                            try
+                                            {
+                                                _logger.LogWarning($" log 137 - membership - sending email to buyer");
+
+                                                _emailService.SendEmail(
+                                                    new List<string> { paymentIntent.ReceiptEmail },
+                                                    $"Confirmation of membership purchase for the {order.SeasonName} season",
+                                                    $"Thank you for purchasing <b>{order.Description}</b> .<br/>" +
+                                                        "Your membership book will soon be prepared and will be sent to you when ready.<br/><br/>" +
+                                                        "<b>Fishing is not permitted until membership book arrives.</b><br/><br/>" +
+                                                        "Tight lines!,<br/>" +
+                                                        "Boroughbridge & District Angling Club"
+                                                );
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                _logger.LogError(ex, $"log 138 - membership - error sending email to secretaries");
+                                                throw;
+                                            }
 
                                             notificationSent = true;
                                         }

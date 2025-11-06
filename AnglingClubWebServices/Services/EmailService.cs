@@ -49,10 +49,13 @@ namespace AnglingClubWebServices.Services
         {
             if (_options.UseEmailAPI)
             {
+                _logger.LogWarning($" log 136.0.1 - email - sending via api");
                 sendViaApi(to, subject, textBody, attachmentFilenames, imageAttachments, streamAttachments).Wait();
             }
             else
             {
+                _logger.LogWarning($" log 136.0.2 - email - NOT sending via api");
+
                 if (to.Any())
                 {
                     var mailMessage = new MimeMessage();
@@ -66,6 +69,8 @@ namespace AnglingClubWebServices.Services
                     {
                         mailMessage.Bcc.Add(MailboxAddress.Parse(_options.PrimaryEmailBCC));
                     }
+
+                    _logger.LogWarning($" log 136.0.3 - email");
 
                     mailMessage.Subject = subject;
 
@@ -112,11 +117,24 @@ namespace AnglingClubWebServices.Services
                     // No longer used
                     //sendWithFallback(mailMessage);
 
+                    _logger.LogWarning($" log 136.0.4 - email");
+
                     // Mailjet SMTP timing out on AWS Lambda so using the fallback (outlook) settings. Although these will be removed soon.
                     mailMessage.From.Remove(new MailboxAddress(_options.PrimaryEmailFromName, _options.PrimaryEmailFromAddress));
                     mailMessage.From.Add(new MailboxAddress(_options.FallbackEmailFromName, _options.FallbackEmailFromAddress));
 
-                    sendViaSMTP(mailMessage, _options.FallbackEmailHost, _options.FallbackEmailPort, _options.FallbackEmailUsername, _options.FallbackEmailPassword);
+                    try
+                    {
+                        sendViaSMTP(mailMessage, _options.FallbackEmailHost, _options.FallbackEmailPort, _options.FallbackEmailUsername, _options.FallbackEmailPassword);
+
+                        _logger.LogWarning($" log 136.0.5 - email worked");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $" log 136.0.6 - email failed");
+                    }
+
 
                 }
             }
