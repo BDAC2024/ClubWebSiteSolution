@@ -156,18 +156,9 @@ return false so that the caller can react appropriately.
     return false so that the caller can react appropriately.
   */
   public async buyMembership(request: MembershipPaymentRequest): Promise<boolean> {
-
-    const formData = new FormData();
-    (Object.keys(request) as Array<keyof MembershipPaymentRequest>).forEach(key => {
-      if (key === 'disabilityCertificateFile' && request.disabilityCertificateFile) {
-        formData.append('disabilityCertificateFile', request.disabilityCertificateFile);
-      } else if (request[key] !== undefined && request[key] !== null) {
-        formData.append(key, String(request[key]));
-      }
-    });    
     
     return new Promise((resolve, reject) => {
-      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/buy/membership`, formData)
+      this.http.post<CreateCheckoutSessionResponse>(`${this.globalService.ApiUrl}/api/buy/membership`, request)
         .pipe(map(res => res),
           catchError((error: HttpErrorResponse) => {
             return throwError(error);

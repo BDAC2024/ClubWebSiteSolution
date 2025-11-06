@@ -32,7 +32,7 @@ export class MembershipPaymentRequest {
   emergencyContactPhoneMobile!: string;
   successUrl!: string;
   cancelUrl!: string;
-  disabilityCertificateFile?: File | null;
+  disabilityCertificateId!: string;
 }
 
 
