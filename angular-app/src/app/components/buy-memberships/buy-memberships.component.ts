@@ -13,6 +13,7 @@ import { FateMaterialIconService } from 'fate-editor';
 import { ConfirmKeyDialogComponent } from 'src/app/dialogs/confirm-key-dialog/confirm-key-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ScreenService } from 'src/app/services/screen.service';
+import { TmpFileService } from 'src/app/services/tmp-file.service';
 
 
 @Component({
@@ -42,13 +43,16 @@ export class BuyMembershipsComponent implements OnInit {
   public confirmWaitForBook: boolean = false;
 
   public disabilityCertificateFile: File | null = null;
+  public progress = 0;
+  public statusMessage = '';
 
   constructor(
     public refDataService: RefDataService,
     public paymentsService: PaymentsService,
     private router: Router,
     public screenService: ScreenService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private tmpFileService: TmpFileService) {
 
   }
 
@@ -247,11 +251,36 @@ export class BuyMembershipsComponent implements OnInit {
     this.newMembership.underAge = this.isUnderAge();
     this.newMembership.successUrl = this.baseUrl + "/buySuccess/" + (this.isUnderAge() ? "underagemembership" : "membership");
 
-      // Attach disability certificate file if present
-      this.newMembership.disabilityCertificateFile = this.disabilityCertificateFile;
+    // Attach disability certificate file if present
+    if (this.disabilityCertificateFile) {
 
-    //console.log("PaidForKey: " + this.newMembership.paidForKey);
+      this.tmpFileService.getUploadFileUrl(this.disabilityCertificateFile).subscribe({
+        next: resp => {
+          this.statusMessage = 'Uploading to S3...';
+          this.tmpFileService.uploadToS3(resp.uploadUrl, this.disabilityCertificateFile!).subscribe({
+            next: percent => (this.progress = percent),
+            error: err => {
+              console.error('Upload failed', err);
+              this.statusMessage = '❌ Upload failed.';
+            },
+            complete: () => {
+              this.newMembership.disabilityCertificateId = resp.uploadedFileName;
+              this.checkout();
+            },
+          });
+        },
+        error: err => {
+          console.error(err);
+          this.statusMessage = '❌ Could not get upload URL.';
+        },
+      });
+    } else {
+      this.checkout();
+    }
 
+  }
+
+  checkout (): void {
     // console.log("About to buyGuestTicket...");
     this.paymentsService.buyMembership(this.newMembership)
     .then(() => {
@@ -263,7 +292,6 @@ export class BuyMembershipsComponent implements OnInit {
       //console.log("then catch");
       this.isBuying = false;
     });
-      
   }
 
   formComplete(): boolean {
