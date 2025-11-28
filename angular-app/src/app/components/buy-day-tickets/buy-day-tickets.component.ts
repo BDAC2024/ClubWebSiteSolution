@@ -90,9 +90,9 @@ export class BuyDayTicketsComponent implements OnInit {
         if (item.description.toLowerCase().indexOf("cricket") >= 0 && item.description.toLowerCase().indexOf("ings") >= 0) {
           canStillFish = "";
         } else if (item.description.toLowerCase().indexOf("cricket") >= 0) {
-          canStillFish = "You can still fish the Ings Lane stretch (pegs 27 to 80).";
+          canStillFish = "You can still fish the Ings Lane stretch (pegs 21 to 80).";
         } else if (item.description.toLowerCase().indexOf("ings") >= 0) {
-          canStillFish = "You can still fish the Cricket Field stretch (pegs 1 to 21).";
+          canStillFish = "You can still fish the Cricket Field stretch (pegs 1 to 16).";
         }
 
       }
