@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Helpers;
+﻿using AnglingClubShared.Entities;
+using AnglingClubShared.Extensions;
 using System;
 
 namespace AnglingClubWebServices.Models

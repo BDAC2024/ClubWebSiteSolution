@@ -1,7 +1,7 @@
-﻿using AnglingClubWebServices.Controllers;
+﻿using AnglingClubShared.Extensions;
+using AnglingClubWebServices.Controllers;
 using AnglingClubWebServices.Data;
-using AnglingClubWebServices.DTOs;
-using AnglingClubWebServices.Helpers;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;

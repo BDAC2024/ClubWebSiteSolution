@@ -1,0 +1,243 @@
+﻿
+/*-------------------------
+    Body containers, scrollable and not scrollable
+--------------------------*/
+
+.body-container {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+}
+
+.body-container-scrollable {
+    overflow-y: auto;
+}
+
+.body-container-not-scrollable {
+    overflow-y: hidden;
+}
+
+/*-------------------------
+    App Banner
+--------------------------*/
+.banner {
+    height: 100px;
+    background-color: #1976d2;
+    color: white !important;
+    z-index: 3 !important;
+    position: relative;
+    align-content: center;
+}
+
+    .banner::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    .banner .menu-column {
+        /*background-color: green;*/
+        float: left;
+        width: 10%;
+        height: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: left;
+        align-content: center;
+    }
+
+    .banner .title-column {
+        /*background-color: red;*/
+        float: left;
+        width: 80%;
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: center;
+        align-content: center;
+    }
+
+        .banner .title-column .title-container {
+            text-align: center;
+            /*background-color: orange;*/
+            display: inline-block;
+        }
+            .banner .title-column .title-container .banner-logo {
+                display: inline-block;
+                float: left;
+            }
+
+                .banner .title-column .title-container .banner-logo .image {
+                    margin-right: 6px;
+                }
+
+            .banner .title-column .title-container .banner-text {
+                /*background-color: green;*/
+                height: 80px;
+                float: left;
+                /*display: inline-block;*/
+                text-align: left !important;
+                align-content: center;
+            }
+
+                .banner .title-column .title-container .banner-text .main-title {
+                    font-size: 16px;
+                    font-weight: bold;
+                    display: inline-block;
+                    margin-bottom: 4px;
+                }
+
+                .banner .title-column .title-container .banner-text .sub-title {
+                    font-size: 14px;
+                    display: inline-block;
+                    margin-top: 4px;
+                }
+
+    .banner .icon-column {
+        /*background-color: green;*/
+        float: left;
+        width: 10%;
+        height: 100%;
+        box-sizing: border-box;
+        align-content: end;
+        text-align: right;
+    }
+
+        .banner .icon-column .icons {
+        }
+
+            .banner .icon-column .icons .icon {
+                margin: 8px;
+                width: 16px;
+                height: 16px;
+                color: white !important;
+            }
+
+.banner-hamburger {
+    /*background-color: green;*/
+    font-size: 24px;
+    padding: 10px;
+}
+
+.banner-hamburger-visible {
+    display: inline-block;
+}
+
+.banner-hamburger-hidden {
+    display: none;
+}
+
+
+
+/*-------------------------
+    Main menu
+--------------------------*/
+.menu-scrollable {
+    overflow-y: auto !important;
+    height: calc(100vh - 100px) !important;
+}
+
+    ::deep .menu-scrollable .e-treeview .e-list-text {
+        font-family: Roboto, "Helvetica Neue", sans-serif !important;
+        padding-left: 4px !important;
+    }
+
+    ::deep .menu-scrollable .e-active > .e-text-content .e-list-text {
+        color: black !important;
+    }
+
+    ::deep .menu-scrollable .e-treeview .e-text-content {
+        padding-left: 12px !important;
+    }
+
+    ::deep .menu-scrollable .e-active > .e-fullrow {
+        background-color: #dddddd !important;
+        border-width: 0 !important;
+    }
+
+.menu-and-main-wrapper {
+    /*background-color: yellow;*/
+    min-height: calc(100vh - 100px) !important;
+    z-index: 1;
+}
+
+.overlay-dim {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2 !important;
+    background-color: black;
+    opacity: 0.25;
+}
+
+.overlay-hidden {
+    display: none;
+}
+
+::deep .e-sidebar {
+    background-color: whitesmoke;
+    box-shadow: 1px 1px lightgrey;
+    filter: brightness(96%);
+}
+
+/*-------------------------
+    Main menu nodes
+    For some reason these don't work in scoped css
+    so have to go main bdacc.css
+--------------------------*/
+.menu-nodetext {
+    float: left;
+}
+
+.menu-node-new {
+    color: red;
+}
+
+.menu-nodebadge {
+    float: right;
+    margin-right: 5px
+}
+
+    ::deep .menu-nodebadge .e-chip .e-chip-text {
+        font-size: 9px;
+        font-weight: normal;
+        padding-top: 3px;
+    }
+
+    ::deep .menu-nodebadge .e-chip {
+        height: 14px !important;
+    }
+
+/*-------------------------
+    App main context, where pages are displayed
+--------------------------*/
+.main-content {
+    font-size: 14px !important;
+    padding: 20px 20px;
+    z-index: 0;
+    text-align: left;
+}
+
+/*-------------------------
+    Progress bar
+--------------------------*/
+.progress {
+    background-color: unset;
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+    height: 40px;
+    z-index: 2;
+    margin: 0 10px;
+}
+
+.progress-with-menu {
+    left: 200px;
+}
+
+.progress-full-width {
+    left: 10px;
+}

@@ -1,0 +1,268 @@
+﻿@using AnglingClubWebsite.SharedComponents
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Navigations
+
+@inject NavigationManager navManager;
+
+@inherits MvvmLayoutComponentBase<MainLayoutViewModel>
+
+
+<div class="body-container @(menuShowingOnMobile ? "body-container-not-scrollable" : "body-container-scrollable")">
+
+    <div class="banner">
+        <div class="menu-column">
+            <i @onclick="ShowMenu" class="fa-solid fa-bars banner-hamburger @(menuIsOpen ? "banner-hamburger-hidden" : "banner-hamburger-visible")"></i>
+        </div>
+        <div class="title-column">
+            <div class="title-container">
+                <div class="banner-logo">
+                    @if (mobilePortrait)
+                    {
+                        <img height="80" src="images/BannerLogoSmall.png" />
+                    }
+                    else
+                    {
+                        <img height="80" src="images/BannerLogo.png" />
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="icon-column">
+            <div class="icons">
+                <a aria-label="Club on Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/groups/309517003231207" title="Club's Facebook Group">
+                    <img id="facebook-logo" class="icon"
+                    alt="Facebook Logo"
+                    src="images/FacebookLogo.png" />
+                </a>
+                <br/>
+                <a aria-label="Club on YouTube" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCYBuOPmEEqB7CQ2ABSGW6Og" title="Club's YouTube Channel">
+                    <svg id="youtube-logo" class="icon" data-name="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff">
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <SfSidebar Width="200px"
+    Animate="true"
+    Type=SidebarType.Auto
+    OnOpen="OnMenuOpen"
+    OnClose="OnMenuClose"
+    @bind-IsOpen="menuIsOpen"
+    Target="@SidebarTarget">
+        <ChildContent>
+            <div class="menu-scrollable">
+                <SfTreeView TValue="MenuItem" ExpandOn="ExpandAction.Click" FullRowNavigable="true" @bind-SelectedNodes="ViewModel.SelectedItems" @bind-ExpandedNodes="@ViewModel.ExpandedNodes">
+                    <TreeViewFieldsSettings 
+                    TValue="MenuItem" 
+                    Id="Id" 
+                    DataSource="@ViewModel.Menu" 
+                    Text="Name" 
+                    ParentID="ParentId" 
+                    HasChildren="HasSubMenu"
+                    NavigateUrl="NavigateUrl"
+                    Expanded="Expanded">
+                    </TreeViewFieldsSettings>
+                    <TreeViewEvents TValue="MenuItem" NodeClicked="MenuSelected"></TreeViewEvents>
+                    <TreeViewTemplates TValue="MenuItem">
+                        <NodeTemplate>
+                            @{
+                                var item = ((context as MenuItem));
+                                <div>
+                                    <div class="treeviewdiv">
+                                        <div class="menu-nodetext @(item.IsNew ? "menu-node-new" : "")">@(item.Name)</div>
+                                        @if (item.IsNew)
+                                        {
+                                            <div class="menu-nodebadge">
+                                                <SfChip>
+                                                    <ChipItems>
+                                                        <ChipItem Text="new" CssClass="e-warning"></ChipItem>
+                                                    </ChipItems>
+                                                </SfChip>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </NodeTemplate>
+                    </TreeViewTemplates>
+                </SfTreeView>
+            </div>
+
+        </ChildContent>
+    </SfSidebar>
+
+    <div>
+        <SfDialog Width="250px" IsModal="true" Visible="@ViewModel.MessageVisible" class="smt-dialog">
+            <DialogTemplates>
+                <Header><SfMessage Severity="@ViewModel.MessageSeverity">@ViewModel.MessageTitle</SfMessage> </Header>
+                <Content>@ViewModel.MessageBody</Content>
+            </DialogTemplates>
+            <DialogButtons>
+                <DialogButton Content="@ViewModel.MessageCloseButtonTitle" IsPrimary="true" OnClick="(()=> ViewModel.MessageVisible = false)" />
+                @if (ViewModel.ConfirmationButton != null)
+                {
+                    <DialogButton Content="@ViewModel.ConfirmationButton.Label" IsPrimary="false" OnClick="(async ()=> await ViewModel.OnConfirm())" />
+                }
+            </DialogButtons>
+        </SfDialog>
+    </div>
+
+    <div class="menu-and-main-wrapper">
+        <div class="main-content">
+            @if (debuggingDeviceType)
+            {
+                <span style="background-color: yellow;">
+                    DeviceType: <b>@ViewModel.BrowserDevice</b> Orientation: <b>@ViewModel.BrowserOrientation</b>
+                </span>
+            }
+            <main>
+                @Body
+            </main>
+        </div>
+        <!-- DIV for creating an Overlay -->
+        <div @onclick="HideOnClick" class="@(menuShowingOnMobile ? "overlay-dim" : "overlay-hidden")"></div>
+    </div>
+
+    <div class="progress @(mobile ? "progress-full-width" : "progress-with-menu")">
+        <SfProgressBar Type="ProgressType.Linear"
+        Visible="ViewModel.ShowProgressBar"
+        Height="38"
+        Width="100%"
+        Value="20"
+        ProgressThickness="28"
+        TrackThickness="28"
+        ProgressColor="#1976d2"
+        CornerRadius="CornerType.Round"
+        TrackColor="#bbd9f7"
+        IsIndeterminate="true"
+        Minimum="0"
+        Maximum="100">
+            <ProgressBarAnimation Enable="true" Duration="2000" Delay="0"></ProgressBarAnimation>
+            <ProgressBarMargin Left="0" Right="0"></ProgressBarMargin>
+        </SfProgressBar>
+    </div>
+
+</div>
+
+<SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
+
+@code {
+    public bool debuggingDeviceType = false;
+
+    public string SidebarTarget = ".menu-and-main-wrapper";
+
+    private string activeBreakpoint { get; set; } = "";
+
+    public bool menuShowingOnMobile = false;
+    public bool mobile = false;
+    public bool mobilePortrait = false;
+    public bool menuIsOpen = false;
+    public bool oldMenuIsOpen = false;
+    public string[] selectedNodes = [];
+
+
+    private bool BrowserDetailsAvailable = false;
+
+    protected override void OnInitialized()
+    {
+        var pageRoute = navManager.Uri.Replace(navManager.BaseUri, "");
+
+        if (!string.IsNullOrEmpty(pageRoute))
+        {
+            ViewModel.ShowConsoleMessage($"pageRoute: {pageRoute}");
+
+            ViewModel.SelectMenuItem($"/{pageRoute}");
+        }
+
+        base.OnInitialized();
+
+    }
+
+    public void HideOnClick()
+    {
+        if (menuShowingOnMobile)
+        {
+            ViewModel.ShowConsoleMessage("HideOnClick: Menu closing");
+            menuIsOpen = false;
+            menuShowingOnMobile = false;
+        }
+    }
+
+    public void ShowMenu()
+    {
+        ViewModel.ShowConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
+        ViewModel.ShowConsoleMessage($"Toggle:mobile - {mobile}");
+
+        menuIsOpen = !oldMenuIsOpen;
+        menuShowingOnMobile = mobile && menuIsOpen;
+    }
+
+    public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
+    {
+        oldMenuIsOpen = true;
+        ViewModel.ShowConsoleMessage("Menu opening");
+    }
+
+    public void OnMenuClose(Syncfusion.Blazor.Navigations.EventArgs args)
+    {
+        oldMenuIsOpen = false;
+        ViewModel.ShowConsoleMessage("Menu closing");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        { 
+            await SetBrowserDetails();
+        }
+    }
+
+    public async Task OnBreakpointChanged(BreakpointChangedEventArgs args)
+    {
+        // await Task.Delay(0);
+
+        if (BrowserDetailsAvailable)
+        {
+            await SetBrowserDetails();
+        }
+
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:Breakpoint changed - now {activeBreakpoint}");
+        mobile = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
+        mobilePortrait = activeBreakpoint == "Small";
+
+        menuIsOpen = !mobile;
+
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:mobile - now {mobile}");
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:menuIsOpen - now {menuIsOpen}");
+
+        menuShowingOnMobile = mobile && menuIsOpen;
+
+        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:menuShowingOnMobile - now {menuShowingOnMobile}");
+
+    }
+
+    public async Task SetBrowserDetails()
+    {
+        await ViewModel.SetupBrowserDetails();
+        BrowserDetailsAvailable = true;
+    }
+
+
+    public void MenuSelected(NodeClickEventArgs args)
+    {
+        bool isLeafNode = !args.NodeData.HasChildren;
+
+        ViewModel.ShowConsoleMessage($"MenuSelected - leaf node {isLeafNode}");
+
+        if (mobile && isLeafNode) 
+        {
+            menuIsOpen = false;
+            menuShowingOnMobile = false;
+        }
+    }
+
+}
+

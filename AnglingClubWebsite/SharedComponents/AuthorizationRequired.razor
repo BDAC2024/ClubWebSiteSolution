@@ -1,0 +1,27 @@
+﻿@inject NavigationManager navManager;
+@inject INavigationService navigationService;
+
+<SfMessage Severity="MessageSeverity.Warning">
+    You must be logged in to view this page.
+
+    <a @onclick="LoginThenRedirect" href="javascript:void(0)">Login</a>
+
+</SfMessage>
+
+@code {
+
+    private void LoginThenRedirect()
+    {
+        navigationService.NavigateTo($"/login/{CallingRoute}");
+    }
+
+    private string CallingRoute
+    {
+        get
+        {
+            return navManager.Uri.Replace(navManager.BaseUri, "");
+        }
+    }
+
+
+}

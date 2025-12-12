@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.DTOs;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubWebServices.Models;
 using AutoMapper;
 

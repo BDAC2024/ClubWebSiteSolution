@@ -1,4 +1,8 @@
-﻿using AnglingClubWebServices.Helpers;
+﻿using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
+using AnglingClubShared.Models.Auth;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Options;
@@ -6,10 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AnglingClubShared.DTOs;
 
 namespace AnglingClubWebServices.Services
 {
@@ -72,11 +75,12 @@ namespace AnglingClubWebServices.Services
 
             await _memberRepository.AddOrUpdateMember(member);
 
-
             // authentication successful so generate jwt token
             var token = generateJwtToken(member);
 
-            return new AuthenticateResponse(member, token);
+            var expiration = DateTime.UtcNow.AddMonths(12);
+
+            return new AuthenticateResponse(member.DbKey, token, expiration, (int)expiration.Subtract(DateTime.Now).TotalSeconds);
         }
         public async Task<Member> GetByKey(string key)
         {
@@ -121,17 +125,7 @@ namespace AnglingClubWebServices.Services
             var key = Encoding.ASCII.GetBytes(_authOptions.AuthSecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] {
-                    new Claim("Key", member.DbKey),
-                    new Claim("MembershipNumber", member.MembershipNumber.ToString()),
-                    new Claim("Admin", member.Admin.ToString()),
-                    new Claim("Developer", (member.Name == GetDeveloperName()).ToString()),
-                    new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),
-                    new Claim("PreferencesLastUpdated", member.PreferencesLastUpdated.ToString("u")),
-                    new Claim("Name", member.Name),
-                    new Claim("Email", member.Email),
-                    new Claim("PinResetRequired", member.PinResetRequired.ToString())
-                }),
+                Subject = new ClientMemberDto().GetIdentity(member, GetDeveloperName()),
                 Expires = DateTime.UtcNow.AddMinutes(_authOptions.AuthExpireMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -139,13 +133,6 @@ namespace AnglingClubWebServices.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public static string HashText(string text, string salt, HashAlgorithm hasher)
-        {
-            byte[] textWithSaltBytes = Encoding.UTF8.GetBytes(string.Concat(text, salt));
-            byte[] hashedBytes = hasher.ComputeHash(textWithSaltBytes);
-            hasher.Clear();
-            return Convert.ToBase64String(hashedBytes);
-        }
 
         public string GetDeveloperName()
         {

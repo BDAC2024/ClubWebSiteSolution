@@ -1,7 +1,7 @@
 ﻿using AnglingClubWebServices.Models;
 using System;
 
-namespace AnglingClubWebServices.DTOs
+namespace AnglingClubShared.DTOs
 {
     public class NewMembershipDto
     {

@@ -17,7 +17,6 @@ namespace AnglingClubWebServices
     public class Startup
     {
 
-
         private static string _corsPolicy = "AnglingClubWebsiteOrigins";
         public const string LogLevelKey = "LogLevel";
 

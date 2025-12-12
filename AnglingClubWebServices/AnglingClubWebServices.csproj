@@ -46,7 +46,11 @@
     <PackageReference Include="QuestPDF" Version="2024.6.2" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
     <PackageReference Include="Stripe.net" Version="44.13.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AnglingClubShared\AnglingClubShared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,195 @@
+﻿html, body {
+    height: 100%;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    /*background-color: #2DD4BF;*/ /* Teal 400 */
+    background-color: whitesmoke !important; /* Teal 400 */
+    font-size: 14px !important;
+    font-family: Roboto, "Helvetica Neue", sans-serif !important;
+    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+}
+
+/*-------------------------
+    Splash Screen
+--------------------------*/
+.loading {
+    background-color: white;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .loading .loading-text {
+        align-items: end;
+    }
+
+    .loading .title-text i {
+        /*background-color: lightcoral;*/
+        font-size: 36pt;
+        color: #BDBDBD;
+        position: absolute;
+        bottom: 140px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading img {
+        width: 30%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .loading .loading-text {
+        align-items: end;
+    }
+
+    .loading .title-text span {
+        /*background-color: lightcoral;*/
+        position: absolute;
+        bottom: 40px;
+        left: 0;
+        right: 0;
+        font-size: 16pt;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+/*-------------------------
+    Headings
+--------------------------*/
+h3 {
+    margin: 6px 0 2px;
+}
+
+/*-------------------------
+    Badges
+--------------------------*/
+
+.highlight-badge {
+    /*float: right;*/
+    margin-right: 5px
+}
+
+    .highlight-badge .e-chip .e-chip-text {
+        font-size: 9px;
+        font-weight: normal;
+        padding-top: 3px;
+    }
+
+    .highlight-badge .e-chip {
+        height: 14px !important;
+    }
+
+/*-------------------------
+    Page layout
+--------------------------*/
+.left-header {
+    float: left;
+}
+
+.edit-button-panel {
+    float: right;
+}
+
+.edit-button {
+    margin-left: 12px;
+}
+
+/*-------------------------
+    Cards
+--------------------------*/
+.e-card .e-card-header {
+    font-family: cursive !important;
+    font-style: italic !important;
+}
+
+.error-alert-card {
+    background-color: white;
+    color: red;
+    border: 2px solid red;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 2px 2px grey;
+}
+
+.card-title {
+    font-size: larger;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.card-subtitle {
+    font-size: smaller;
+    font-weight: 300;
+}
+
+.card-content {
+    margin-top: 6px;
+}
+
+.card-icon {
+    margin-right: 6px;
+}
+
+.e-card {
+    margin-bottom: 10px !important;
+    box-shadow: 1px 1px grey !important;
+}
+
+.desktop-season-selector {
+    padding-left: 50px;
+    display: inline-block;
+}
+
+/*-------------------------
+    Responsive class definitions
+--------------------------*/
+
+@media screen and (min-width: 1px) {
+
+    .loading img {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .water-map {
+        height: 500px;
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 600px) {
+
+    .loading img {
+        width: 30%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .water-map {
+        height: 600px;
+        width: 50%;
+    }
+
+}
+
+

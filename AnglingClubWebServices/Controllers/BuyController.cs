@@ -1,5 +1,6 @@
-using AnglingClubWebServices.DTOs;
-using AnglingClubWebServices.Helpers;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AnglingClubWebServices.Services;

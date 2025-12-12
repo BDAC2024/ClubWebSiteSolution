@@ -1,4 +1,7 @@
-﻿using AnglingClubWebServices.Helpers;
+﻿using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
