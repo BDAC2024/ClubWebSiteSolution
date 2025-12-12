@@ -1,6 +1,6 @@
 ﻿using AnglingClubWebServices.Models;
 
-namespace AnglingClubWebServices.DTOs
+namespace AnglingClubShared.DTOs
 {
     public class MatchResultInputDto : MatchResultBase
     {

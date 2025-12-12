@@ -1,5 +1,6 @@
-using AnglingClubWebServices.DTOs;
-using AnglingClubWebServices.Helpers;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -15,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AnglingClubShared.Entities;
 
 namespace AnglingClubWebServices.Controllers
 {

@@ -1,6 +1,7 @@
 ﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
-using AnglingClubWebServices.Helpers;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;

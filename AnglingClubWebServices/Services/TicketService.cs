@@ -2,6 +2,8 @@
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.IO;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -10,8 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
-using System.IO;
-using System.Linq;
+using AnglingClubShared.Extensions;
+using AnglingClubShared.Models;
 
 
 namespace AnglingClubWebServices.Services

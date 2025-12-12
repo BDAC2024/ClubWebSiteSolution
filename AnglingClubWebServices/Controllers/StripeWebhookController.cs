@@ -9,7 +9,8 @@ using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using AnglingClubWebServices.DTOs;
+using AnglingClubShared.Enums;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
@@ -23,6 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Stripe;
 using Stripe.Checkout;
+using AnglingClubShared.Extensions;
 //using static AutoMapper.Internal.ExpressionFactory;
 
 namespace AnglingClubWebServices.Controllers

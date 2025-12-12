@@ -1,6 +1,6 @@
-﻿using AnglingClubWebServices.Models;
+﻿using AnglingClubShared.Entities;
 
-namespace AnglingClubWebServices.DTOs
+namespace AnglingClubShared.DTOs
 {
     public class ClubEventInputDto : ClubEventBase
     {

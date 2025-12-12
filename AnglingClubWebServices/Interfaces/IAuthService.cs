@@ -1,4 +1,6 @@
-﻿using AnglingClubWebServices.Models;
+﻿using AnglingClubShared.Entities;
+using AnglingClubShared.Models.Auth;
+using AnglingClubWebServices.Models;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Interfaces

@@ -1,4 +1,7 @@
-using AnglingClubWebServices.DTOs;
+using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Models.Auth;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
@@ -13,6 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using static AnglingClubWebServices.Services.UtilityService;
+using AnglingClubWebServices.DTOs;
 
 namespace AnglingClubWebServices.Controllers
 {

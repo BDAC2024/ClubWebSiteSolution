@@ -1,0 +1,7 @@
+﻿::deep .editable-card {
+    background-color: #bbd9f7 !important;
+}
+
+::deep .e-card-actions {
+    width: 100% !important;
+}

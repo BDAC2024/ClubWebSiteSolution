@@ -1,0 +1,61 @@
+﻿@using AnglingClubShared.Entities
+
+<EditForm Model="Item">
+    <fieldset>
+        <SfTextBox Placeholder='Title'
+                   @bind-Value="@Item.Title"
+                   FloatLabelType='@FloatLabelType.Auto'>
+        </SfTextBox>
+        <br />
+        <SfDatePicker TValue="DateTime"
+                      Width="200px"
+                      Format="dd MMM yy"
+                      Placeholder="Publication Date"
+                      @bind-Value="@Item.Date"
+                      FloatLabelType='@FloatLabelType.Auto'>
+        </SfDatePicker>
+        <br />
+        <span class="e-float-text e-label-top rte-label">News Item Text</span>
+        <SfRichTextEditor Placeholder='News item text'
+                          @ref="rteObj"
+                          @bind-Value="Item.Body"
+                          AutoSaveOnIdle="true"
+                          EnableResize="true">
+            <RichTextEditorToolbarSettings Items="@Tools" />
+            <RichTextEditorEvents OnToolbarClick="@ToolbarClick" />
+            @* <RichTextEditorInlineMode Enable="true" ShowOnSelection="false" /> *@
+        </SfRichTextEditor>
+        @* <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary> *@
+    </fieldset>
+</EditForm>
+
+
+@code {
+    [Parameter] 
+    public required NewsItem Item { get; set; }
+
+    public required SfRichTextEditor rteObj;
+
+    private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
+    {
+        new ToolbarItemModel() { Command = ToolbarCommand.Bold },
+        new ToolbarItemModel() { Command = ToolbarCommand.Italic },
+        new ToolbarItemModel() { Command = ToolbarCommand.Formats },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontName },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontSize },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontColor },
+        new ToolbarItemModel() { Command = ToolbarCommand.BackgroundColor },
+        new ToolbarItemModel() { Command = ToolbarCommand.Alignments },
+        new ToolbarItemModel() { Command = ToolbarCommand.NumberFormatList },
+        new ToolbarItemModel() { Command = ToolbarCommand.BulletFormatList },
+        new ToolbarItemModel() { Command = ToolbarCommand.Indent },
+        new ToolbarItemModel() { Command = ToolbarCommand.Outdent },
+        new ToolbarItemModel() { Command = ToolbarCommand.Undo },
+        new ToolbarItemModel() { Command = ToolbarCommand.Redo }
+    };
+
+    private void ToolbarClick(ToolbarClickEventArgs args)
+    {
+        rteObj.PreventRender();
+    }
+}

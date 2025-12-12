@@ -1,4 +1,5 @@
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Enums;
 using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;

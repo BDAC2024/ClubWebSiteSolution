@@ -1,0 +1,109 @@
+﻿@page "/Matches"
+@using AnglingClubShared.Enums
+@using AnglingClubShared.Models
+@using static AnglingClubWebsite.Pages.MatchesViewModel
+
+@inherits MvvmComponentBase<MatchesViewModel>
+
+<div style="display: block !important;">
+    <h3 class="left-header">Matches</h3>
+    <div class="@(ViewModel.IsMobile ? "edit-button-panel" : "desktop-season-selector")">
+        @if (ViewModel.RefDataLoaded)
+        {
+            <span style="display: inline-flex">Season</span>
+            <SfDropDownList TValue="Season"
+            TItem="SeasonInfo"
+            Placeholder="Season"
+            Width="100px"
+            FloatLabelType="FloatLabelType.Never"
+            DataSource="@ViewModel.RefData!.Seasons"
+            @bind-Value="@ViewModel.SelectedSeason">
+                <DropDownListFieldSettings Value="Season" Text="Name"></DropDownListFieldSettings>
+                <DropDownListEvents TValue="Season" TItem="SeasonInfo" ValueChange="OnSeasonChange"></DropDownListEvents>
+            </SfDropDownList>
+        }
+    </div>
+</div>
+<br />
+@if (ViewModel.IsMobile)
+{
+    <br />
+}
+
+<p>You can see more details of each match and the results by selecting <i class="fa-solid fa-circle-info" style="color: #1976d2;"></i> next to each match.</p>
+
+<SfTab >
+    <TabEvents Selected="OnTabSelected"></TabEvents>
+    <TabItems>
+        @foreach (MatchTabData Item in ViewModel.MatchTabItems)
+        {
+            <TabItem>
+                <HeaderTemplate>
+                    <div>@(Item.Header)</div>
+                </HeaderTemplate>
+            </TabItem>
+        }
+    </TabItems>
+</SfTab>
+
+<ul>
+    @foreach (var item in ViewModel.Matches)
+    {
+        <li>@item.Date.ToShortDateString() - @item.Id</li>
+    }
+</ul>
+
+<!-- Note: For some reason, these styles only work when applied in the html file.
+They get ignored in both scoped CSS and app-level CSS.
+-->
+<style>
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
+    border-bottom: 3px solid #1976d2;
+    color: #6610f2 !important;
+    font-weight: bold !important;
+    }
+
+    .e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+    color: #62b4fd;
+    padding: 0 6px;
+    }
+
+    .e-tab .e-tab-header::before {
+    border-color: #CCFBF1;
+    }
+
+    .e-tab .e-tab-header .e-toolbar-item.e-active {
+    border: 1px solid #CCFBF1;
+    }
+
+    .e-tab-text {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: darkslategray !important;
+    }
+
+    .e-active .e-tab-text {
+    font-size: 12px !important;
+    font-weight: bold !important;
+    color: black !important;
+    }
+
+</style>
+
+@code {
+    public void OnTabSelected(SelectEventArgs args)
+    {
+        Console.WriteLine($"Selected item: {args.SelectedIndex} - {ViewModel.MatchTabItems.ToArray()[args.SelectedIndex].MatchType}");
+        ViewModel.SelectedMatchType = ViewModel.MatchTabItems.ToArray()[args.SelectedIndex].MatchType;
+        ViewModel.LoadMatches();
+    }
+
+    public async Task OnSeasonChange(ChangeEventArgs<Season, SeasonInfo> args)
+    {
+        Console.WriteLine("The DropDownList Value is: ", args.Value);
+        await ViewModel.GetMatches();
+
+    }
+
+
+}
