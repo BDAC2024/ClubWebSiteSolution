@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.1.11304.174 d18.0
+VisualStudioVersion = 18.1.11304.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnglingClubWebServices", "AnglingClubWebServices\AnglingClubWebServices.csproj", "{E521BC83-7F2C-4905-AE4E-A739E8051102}"
 EndProject
@@ -12,6 +12,27 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Original Assets", "Original Assets", "{719CF5EA-C0A4-4490-A23E-222E381B14FE}"
 	ProjectSection(SolutionItems) = preProject
 		Original Assets\BannerLogo1.drawio = Original Assets\BannerLogo1.drawio
+	EndProjectSection
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "angular-app", "angular-app\", "{4F9116E6-5056-FF6B-26C8-E6450A1E8A08}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_51765"
+		Debug.AspNetCompiler.PhysicalPath = "angular-app\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51765\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_51765"
+		Release.AspNetCompiler.PhysicalPath = "angular-app\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51765\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51765"
+		SlnRelativePath = "angular-app\"
 	EndProjectSection
 EndProject
 Global
@@ -32,6 +53,10 @@ Global
 		{AC7217E8-2357-432B-9F7F-16E4E25A7F97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC7217E8-2357-432B-9F7F-16E4E25A7F97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC7217E8-2357-432B-9F7F-16E4E25A7F97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F9116E6-5056-FF6B-26C8-E6450A1E8A08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F9116E6-5056-FF6B-26C8-E6450A1E8A08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F9116E6-5056-FF6B-26C8-E6450A1E8A08}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F9116E6-5056-FF6B-26C8-E6450A1E8A08}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
