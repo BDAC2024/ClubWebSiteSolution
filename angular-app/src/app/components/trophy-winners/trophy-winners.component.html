@@ -1,0 +1,61 @@
+<div>
+    <div style="display: flex;">
+        <h1 class="left-header">Trophy Winners</h1>
+        <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']" ></span>
+        <mat-form-field class="season-selector" *ngIf="!isLoading">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="loadTrophyWinners()" >
+            <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>  
+
+    <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
+        <mat-tab label="{{matchService.TrophySeniorTabName}}"></mat-tab>
+        <mat-tab label="{{matchService.TrophyJuniorTabName}}"></mat-tab>
+    </mat-tab-group>
+    <br/>
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+    <p *ngIf="!isLoading && trophyWinners.length == 0">Not yet available</p>
+    <table mat-table [dataSource]="trophyWinners" class="mat-elevation-z8" *ngIf="trophyWinners.length > 0">
+
+        <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+        <ng-container matColumnDef="trophy">
+            <th mat-header-cell *matHeaderCellDef class="first-col"> Trophy </th>
+            <td mat-cell *matCellDef="let element" class="first-col" [ngClass]="{'tbd': element.isRunning}"> {{element.trophy}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="winner">
+            <th mat-header-cell *matHeaderCellDef> Winner </th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{'tbd': element.isRunning}"> {{element.winner}}  </td>
+        </ng-container>
+
+        <ng-container matColumnDef="weightpoints">
+            <th mat-header-cell *matHeaderCellDef align="end"> Wt/Pts </th>
+            <td mat-cell *matCellDef="let element" align="end" [ngClass]="{'tbd': element.isRunning}"> {{element.weightPoints}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="venue">
+            <th mat-header-cell *matHeaderCellDef align="end"> Venue </th>
+            <td mat-cell *matCellDef="let element" align="start" [ngClass]="{'tbd': element.isRunning}"> {{element.venue}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef align="end"> Date </th>
+            <td mat-cell *matCellDef="let element" align="end" [ngClass]="{'tbd': element.isRunning}"> {{element.dateSummary}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div *ngIf="trophyWinners.length > 0">
+        <br/>
+        <b>Note:</b> Trophies still being contested are shown in <span class="tbd">italic with light text.</span>
+        <br/>
+        <br/>
+    </div>
+
+</div>

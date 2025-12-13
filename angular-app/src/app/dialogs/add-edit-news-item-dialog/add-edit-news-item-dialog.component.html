@@ -1,0 +1,26 @@
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{title}}</h1>
+<br/>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Title</mat-label>
+        <input class="title-form-field" matInput [(ngModel)]="data.title">
+    </mat-form-field>
+    <br/>
+    <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="data.date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+        <fate-material placeholder="Item Text" [(ngModel)]="data.body" rows="10" [buttons]="['bold', 'italic', 'underline', 'heading1', 'heading2', 'heading3', 'normal', 'indent', 'outdent', 'ordered', 'unordered', 'center', 'justify', 'left', 'right', 'undo']"></fate-material>
+    </mat-form-field>
+    <br/>
+    <br/>
+    <br/>
+</div>
+<div mat-dialog-actions class="edit-button-panel">
+    <button class="edit-button" mat-raised-button color="primary" value="Confirm" [mat-dialog-close]="data" >Save</button>
+    <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Cancel</button>
+</div>

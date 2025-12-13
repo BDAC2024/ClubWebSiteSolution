@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content>
+  <div [innerHtml]="data.message" ></div>
+  <br/>
+</div>
+<div class="edit-button-panel">
+  <button class="edit-button" mat-raised-button color="primary" value="Confirm" [mat-dialog-close]="true">Confirm</button>
+  <button class="edit-button" mat-raised-button color="primary" value="Cancel" [mat-dialog-close]="false">Cancel</button>
+</div>

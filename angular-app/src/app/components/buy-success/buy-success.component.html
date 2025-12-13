@@ -1,0 +1,95 @@
+<mat-card class="centered-title-card" >
+    <div>
+        <mat-card-title>
+            <table>
+                <tr>
+                    <td><mat-icon aria-hidden="false" aria-label="Thank you" style="font-size: 32px; color: darkgreen;">check_circle_outline</mat-icon></td>
+                    <td>Purchase Complete</td>
+                </tr>
+            </table>
+        </mat-card-title>
+    </div>
+</mat-card>
+
+<mat-card class="rules-card" *ngIf="this.isDayTicket">
+    <mat-card-header>
+        <mat-card-title>Thank You!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        You will shortly receive an email containing your day ticket. 
+        <br/>
+        <br/>
+        <b>When fishing, please ensure that you have either a printout of the ticket or the email on your phone.</b>
+        <br/>
+        <br/>
+        <b>Note:</b> Please check your Junk/Trash if your ticket has not arrived within one hour. <a href="/officers" target="_blank">Contact the Treasurer</a> if it has not arrived within one hour.
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="rules-card" *ngIf="this.isMembership">
+    <mat-card-header>
+        <mat-card-title>Thank You!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        You will shortly receive an email confirming your purchase. 
+        <br/>
+        <br/>
+        Your membership book will soon be prepared and will be sent to you when ready.
+        <br/>
+        <br/>
+        <p class="attention">
+            You must not fish until your membership book arrives.
+        </p>
+        
+        <br/>
+        <br/>
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="rules-card" *ngIf="this.isUnderAgeMembership">
+    <mat-card-header>
+        <mat-card-title>Thank You!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        You will shortly receive an email confirming your purchase. 
+        <br/>
+        <br/>
+        <b>Please remember</b> that a FREE OF CHARGE <a href="/assets/BDAC_NonFishingGuardian.pdf" target="_blank">Non-fishing or Guardian Application Form</a> must also be submitted.
+        <br/>
+        <br/>
+        The membership book will soon be prepared and will be sent to you when ready and on receipt of the Non-fishing or Guardian Application Form. 
+        <br/>
+        <br/>
+        <p class="attention">
+            Fishing is not permitted until membership book arrives.
+        </p>
+        <br/>
+        <br/>
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="rules-card" *ngIf="this.isPondGateKey">
+    <mat-card-header>
+        <mat-card-title>Thank You!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        You will shortly receive an email confirming your deposit. 
+        <br/>
+        <br/>
+        Your key will be sent to you when ready. 
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="rules-card" *ngIf="this.isGuestTicket">
+    <mat-card-header>
+        <mat-card-title>Thank You!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        You will shortly receive an email containing your guest's ticket. 
+        <br/>
+        <br/>
+        <b>You must fish with your guest and be responsible for them. When fishing, please ensure that you have either a printout of the ticket or the email on your phone.</b>
+        <br/>
+        <br/>
+        <b>Note:</b> Please check your Junk/Trash if your ticket has not arrived within one hour. <a href="/officers" target="_blank">Contact the Treasurer</a> if it has not arrived within one hour.    </mat-card-content>
+</mat-card>

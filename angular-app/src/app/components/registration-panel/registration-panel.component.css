@@ -1,0 +1,28 @@
+.mat-cell {
+    padding: 0 16px 0 0;
+}
+
+.first-col {
+    padding: 0 10px 0 4px !important;
+    text-align: center;
+}
+
+.last-col {
+    padding: 0 2px 0 0 !important;
+}
+
+.cell-date {
+    white-space: nowrap;
+}
+
+::ng-deep.mat-tab-label, ::ng-deep.mat-tab-label-active{
+    min-width: 0!important;
+    padding: 3px!important;
+    margin: 3px!important;
+}
+
+.edit-button {
+    background-color: #1976D2;
+    color: white;
+    
+  }

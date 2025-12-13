@@ -1,0 +1,78 @@
+<div>
+    <div style="display: flex;">
+        <h1 class="left-header">Members</h1>
+        <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']" ></span>
+        <mat-form-field class="season-selector" *ngIf="!isLoading">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="getMembers()" >
+            <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <span [ngClass]="[this.screenService.IsHandset ? '' : 'example-fill-remaining-space']" ></span>
+        <div class="edit-button-panel">
+            <button class="btn-primary" mat-stroked-button color="primary" (click)="addMember()" ><mat-icon aria-hidden="false" aria-label="Add news item">add</mat-icon> Add</button>
+        </div>
+    
+    </div>  
+
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+    <div class="mat-elevation-z8" >
+        <!-- <div class="table-container"> -->
+            <table mat-table [dataSource]="members"  matSort>
+
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Number Column -->
+                <ng-container matColumnDef="membershipNumber">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header align="left" class="first-col-header">No.</th>
+                    <td mat-cell *matCellDef="let element" > {{element.membershipNumber}} </td>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                    <td mat-cell *matCellDef="let element" > {{element.name}} </td>
+                </ng-container>
+
+                <!-- Email Column -->
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+                    <td mat-cell *matCellDef="let element" > {{element.email}} </td>
+                </ng-container>
+
+                <!-- Admin Column -->
+                <ng-container matColumnDef="admin">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Admin? </th>
+                    <td mat-cell *matCellDef="let element" ><mat-checkbox [(ngModel)]="element.admin" [disabled]="true"></mat-checkbox></td>
+                </ng-container>
+
+                <!-- Name Allowed Column -->
+                <ng-container matColumnDef="allowNameToBeUsed">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Allow Name to be used</th>
+                    <td mat-cell *matCellDef="let element" ><mat-checkbox [(ngModel)]="element.allowNameToBeUsed" [disabled]="true"></mat-checkbox></td>
+                </ng-container>
+
+                <!-- Pres Last Saved Column -->
+                <ng-container matColumnDef="preferencesLastUpdated">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Prefs Last Saved </th>
+                    <td mat-cell *matCellDef="let element" class="cell-date"> {{element.preferencesLastUpdated | date:'dd MMM YY'}} </td>
+                </ng-container>
+
+                <!-- Edit Column -->
+                <ng-container matColumnDef="edit">
+                    <th mat-header-cell *matHeaderCellDef>Action</th>
+                    <td mat-cell *matCellDef="let element" class="last-col">
+                        <!-- <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="edit(element)"><mat-icon>edit</mat-icon></button> -->
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="edit(element)" ><mat-icon aria-hidden="false" aria-label="Edit member">edit</mat-icon> Edit</button>
+                    </td>
+                </ng-container>
+    
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        <!-- </div> -->
+    </div>
+
+</div>

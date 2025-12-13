@@ -1,0 +1,95 @@
+<!-- Now included as part of membership payment
+
+<h1>Purchase Pond Gate Key Deposit online</h1>
+<div *ngIf="this.refDataService.isTreasurer() && !isLoading">
+    <div >
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="isEnabled" 
+            (click)="enable(false)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility_off</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Disable this Feature
+        </button>
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="!isEnabled" 
+            (click)="enable(true)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Enable this Feature
+        </button>
+    </div>
+</div>
+
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+<app-feature-disabled-panel *ngIf="!isEnabled"></app-feature-disabled-panel>
+
+<div *ngIf="!isLoading && isEnabled">
+
+    <mat-card class="rules-card">
+        <mat-card-header>
+            <mat-card-title>Notes</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <ul>
+                <li>Roecliffe Pond gate keys are only available to members or those applying to be members</li>
+                <li>A Key deposit is only required once, it is not required for each season</li>
+                <li>The Key deposit costs {{pondGateKey.cost| currency:'GBP'}}</li>
+            </ul>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="purchase-card">
+        <mat-card-header>
+            <mat-card-title>Key Holders Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input class="title-form-field" matInput [(ngModel)]="this.pondGateKey.name">
+            </mat-form-field>
+            <br/>
+            <mat-form-field>
+                <mat-label>Phone number</mat-label>
+                <input class="title-form-field" matInput [(ngModel)]="pondGateKey.phoneNumber">
+            </mat-form-field>
+            <div class="checkbox-wrapper">
+                <mat-checkbox [(ngModel)]="pondGateKey.potentialMember">I confirm that I am an existing member or have just applied for membership.</mat-checkbox>
+            </div>
+            <div class="checkbox-wrapper">
+                <mat-checkbox [(ngModel)]="pondGateKey.acceptPolicies">I have read and accept the clubs <a href="termsAndConditions" target="_blank">terms and conditions</a> (opens in a new window)</mat-checkbox>
+            </div>
+            <div class="errors" *ngIf="this.errorMessage != ''">
+                {{this.errorMessage}}
+            </div>
+            <div class="edit-button-panel">
+                <button 
+                    class="edit-button"
+                    [ngClass]="[!formComplete() ? 'edit-button-disabled' : '']" 
+                    [disabled]="this.isBuying || !formComplete()" 
+                    [attr.title]="!formComplete() ? 'Please complete ALL form fields' : ''" 
+                    mat-stroked-button 
+                    color="primary" 
+                    (click)="buy()">
+                        <mat-icon *ngIf="!isBuying" aria-hidden="false" aria-label="Go to Checkout">shopping_cart</mat-icon>
+                        <mat-spinner diameter="20" class="button-spinner" *ngIf="isBuying" ></mat-spinner>
+                        Go to Checkout
+                </button>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+        </mat-card-content>
+    </mat-card> 
+
+    <app-policy-panel ></app-policy-panel>
+</div>
+-->

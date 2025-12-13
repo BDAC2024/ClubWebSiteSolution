@@ -1,0 +1,104 @@
+.toolbar {
+    right: 0;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    background-color: #1976d2;
+    color: white;
+    font-weight: 600;
+  }
+
+  .toolbar .club-logo {
+    height: 80%;
+  }
+
+  .toolbar #title {
+    font-size: 0.9em;
+    font-weight: normal;
+    line-height: 150%;
+  }
+
+  .toolbar-icons {
+    margin-top: 24px;
+  }
+
+  .toolbar .hamburger {
+    margin: 0 16px 0 0;
+  }
+
+  .toolbar #facebook-logo {
+    height: 24px;
+    margin: 0 6px;
+  }
+
+  .toolbar #youtube-logo {
+    height: 24px;
+    margin: 0 6px;
+  }
+
+  .toolbar #facebook-logo:hover, 
+  .toolbar #youtube-logo:hover {
+    opacity: 0.8;
+  }
+
+  .sidenav-container {
+    height: 100%;
+  }
+  
+  .sidenav {
+    width: 200px;
+    box-shadow: 3px 0 6px rgba(0,0,0,0.24);
+  }
+  
+  
+  .mat-toolbar.mat-primary {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  .nav-content {
+    margin-left: 16px;
+    margin-right: 10px;
+    padding-top: 20px;
+  }
+  
+  .nav-content-mobile {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 10px;
+  }
+  
+  
+  .logout-button {
+    background-color: rgb(230, 230, 240); 
+    color: rgb(119, 81, 179);
+  }
+  
+  .name-mobile {
+    display: none;
+  }
+  
+  .submenu {
+    overflow-y: hidden;
+    transition: transform 300ms ease;
+    transform: scaleY(0);
+    transform-origin: top;
+    padding-left: 16px;
+  }
+  .submenu.expanded {
+    transform: scaleY(1);
+  }
+  .full-width {
+    width: 100%;
+  }
+  .menu-button {
+    transition: 300ms ease-in-out;
+    transform: rotate(0deg);
+  }
+  .menu-button.rotated {
+    transform: rotate(180deg);
+  }
+
+
+

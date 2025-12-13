@@ -1,0 +1,43 @@
+<div>
+    <h1>User Administration Contacts</h1>
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+    <b>Please Note:</b> Emails will be sent to the following addresses whenever an action is required for a user e.g. PIN resets, adding their real name etc.
+    <br/>
+    <br/>
+
+    <button class="edit-button" mat-stroked-button color="primary" (click)="addUserAdmin()" ><mat-icon aria-hidden="false" aria-label="Add new address">add</mat-icon> Add</button>
+    <br/>
+    <br/>
+
+    <div class="mat-elevation-z2">
+        <div class="table-container">
+            <table mat-table [dataSource]="userAdmins" >
+
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- emailAddress Column -->
+                <ng-container matColumnDef="emailAddress">
+                    <th mat-header-cell *matHeaderCellDef> Email Address </th>
+                    <td mat-cell *matCellDef="let element" > {{element.emailAddress}} </td>
+                </ng-container>
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef>Action</th>
+                    <td mat-cell *matCellDef="let element" class="last-col">
+                        <!-- <button mat-icon-button color="link" style="color: #1976d2;" aria-label="More" (click)="edit(element)"><mat-icon>edit</mat-icon></button> -->
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="edit(element)" ><mat-icon aria-hidden="false" aria-label="Edit address">edit</mat-icon> Edit</button>
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="delete(element)" ><mat-icon aria-hidden="false" aria-label="Delete address">delete</mat-icon> Delete</button>
+                    </td>
+                </ng-container>
+    
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+
+
+</div>

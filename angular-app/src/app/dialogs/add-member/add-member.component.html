@@ -1,0 +1,53 @@
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>Add Member</h1>
+<br/>
+<div mat-dialog-content>
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+    <div *ngIf="!isLoading">
+        <mat-form-field [ngClass]="[this.screenService.IsHandsetPortrait ? 'full-width' : 'half-width']">
+            <mat-label>Membership Number</mat-label>
+            <input class="title-form-field" type="number" matInput [(ngModel)]="data.membershipNumber" >
+        </mat-form-field>
+        <br/>
+        <br/>
+        <mat-form-field class="season-selector" *ngIf="!isLoading">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="data.seasonsActive[0]" >
+            <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br/>
+        <br/>
+        <mat-checkbox [(ngModel)]="data.admin">
+            Administrator
+        </mat-checkbox>
+        <br/>
+        <br/>
+        <mat-checkbox [(ngModel)]="data.allowNameToBeUsed">
+            Only tick this if you have a signed<br/>
+            membership form where the member<br/>
+            has allowed their name to be used.
+        </mat-checkbox>
+        <br/>
+        <br/>
+        <mat-form-field [ngClass]="[this.screenService.IsHandsetPortrait ? 'full-width' : 'half-width']">
+            <mat-label>Name (Initial.Lastname)</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="data.name">
+        </mat-form-field>
+        <br/>
+        <br/>
+        <mat-form-field [ngClass]="[this.screenService.IsHandsetPortrait ? 'full-width' : 'half-width']">
+            <mat-label>Email</mat-label>
+            <input type="email" name="email" [formControl]="emailControl" class="title-form-field" ngModel email="true" matInput [(ngModel)]="data.email">
+            <div *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)" class="alert">
+                Please enter a valid email address.
+            </div>
+        </mat-form-field>
+        <br/>
+        <br/>
+    </div>
+</div>
+<div mat-dialog-actions class="edit-button-panel">
+    <mat-spinner diameter="32" *ngIf="isSaving"></mat-spinner>
+    <button class="edit-button" *ngIf="!isSaving" mat-raised-button color="primary" [disabled]="emailControl.invalid" (click)="save()">Save</button>
+    <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Cancel</button>
+</div>

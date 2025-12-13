@@ -1,0 +1,132 @@
+<h1 [ngClass]="{'left-header': membersService.CurrentMember.admin}">Club Waters</h1>
+<div *ngIf="membersService.CurrentMember.admin">
+    <div class="edit-button-panel">
+        <button class="edit-button" mat-raised-button color="primary" *ngIf="!isPageAdmin" (click)="enableAdmin(true)" ><mat-icon aria-hidden="false" aria-label="Unlock">lock_open</mat-icon> Unlock</button>
+        <button class="edit-button" mat-raised-button color="primary" *ngIf="isPageAdmin" (click)="enableAdmin(false)" ><mat-icon aria-hidden="false" aria-label="Lock">lock</mat-icon> Lock</button>
+    </div>
+    <br/>
+    <br/>
+</div>
+<h3>PLEASE COMPLY WITH ALL NOTICE BOARDS</h3>
+<p>
+    Keep to all footpaths, do not wander from banks. All gates must be closed after being opened. Do not climb on walls. Do not cause a parking obstruction by blocking gateways etc.
+</p>
+
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+<ul>
+    <li *ngFor="let item of waters" id="water{{item.id}}">
+        <mat-card class="news-card" >
+            <mat-card-header>
+                <mat-card-title>{{item.name}}</mat-card-title>
+                <mat-card-subtitle>{{item.waterType}}</mat-card-subtitle>
+                <mat-card-subtitle>{{item.accessType}}</mat-card-subtitle>
+                <mat-card-subtitle>Main Species: {{item.species}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngIf="isPageAdmin">
+                    <div class="edit-button-panel">
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="editWater(item)" ><mat-icon aria-hidden="false" aria-label="Edit water">edit</mat-icon> Edit</button>        
+                    </div>
+                    <br/>
+                    <br/>
+                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <div [innerHTML]="item.description"></div>
+                        <h3>Directions</h3>
+                        <div title="What 3 Words divides the world into 3 metre squares and gives each square a unique combination of three words. Clicking the link will open it on a map.">
+                            What 3 Words car parking location(s):
+                            <ul>
+                                <li *ngFor="let w3w of item.w3w" style="padding-left: 20px; margin-bottom: 0;">
+                                    <a [href]="w3w.url" target="_blank" >{{w3w.carPark}}</a>
+                                </li>
+                            </ul>
+                            <br/>
+                        </div>
+                        <div [innerHTML]="item.directions"></div>
+                        <br/>
+                        <h3>Access Video</h3>
+                        <span *ngIf="!item.videoShortCode">Access video is not yet available for this water.<br/></span>
+                        <iframe *ngIf="item.videoShortCode"
+                            [src]="videoURL(item.videoShortCode)" 
+                            [width]="videoWidth" [height]="videoHeight" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                        <br/>
+                    </div>
+                    <div class="col-md-6">
+                        <a target="_blank" [href]="item.directionUrl">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.
+                        <h3>Location</h3>
+                        <table border="0">
+                            <tr>
+                                <td align="center">
+                                    <img width="20px" src='assets\car.png'>
+                                </td>
+                                <td style="width: 18px;"> </td>
+                                <td *ngIf="item.path.length > 0" align="center">
+                                    <div style="display: inline; color: lightgreen; font-weight:900;"><b>_____</b><br/><br/></div>
+                                </td>
+                                <td style="width: 18px;"> </td>
+                                <td *ngIf="item.hasLimits" align="center">
+                                    <img width="20px" src='assets\limit.png'>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    Car Parking
+                                </td>
+                                <td style="width: 18px;"> </td>
+                                <td *ngIf="item.path.length > 0" align="center">
+                                    Route
+                                </td>
+                                <td style="width: 18px;"> </td>
+                                <td *ngIf="item.hasLimits" align="center">
+                                    Limit of stretch
+                                </td>
+                            </tr>
+                        </table>
+                        <agm-map 
+                        [mapTypeId]='$any(mapType)'
+                        gestureHandling="cooperative"
+                        [scrollwheel]="false"     
+                        [disableDefaultUI]="true"
+                        [zoom]=14.5
+                        [latitude]='item.centre.lat' 
+                        [longitude]='item.centre.long'
+                        >
+                        <agm-map-type-control></agm-map-type-control> 
+                        <agm-zoom-control></agm-zoom-control> 
+                        <agm-fullscreen-control></agm-fullscreen-control> 
+    
+                        <agm-marker *ngFor="let marker of item.markers" 
+                            [iconUrl]="marker.icon"    
+                            [latitude]="marker.position.lat" 
+                            [longitude]="marker.position.long">
+                            <agm-info-window>{{marker.label}}</agm-info-window>
+                        </agm-marker> -->
+                        
+                        <agm-polyline [strokeColor]="pathColour">
+                            <agm-polyline-point *ngFor="let p of item.path" [latitude]="p.lat" [longitude]="p.long"></agm-polyline-point>
+                        </agm-polyline>
+    
+                    </agm-map>
+                            
+                    </div>
+                </div>
+                
+            </mat-card-content>
+        </mat-card>
+    </li>
+    <li *ngIf="!this.authenticationService.isLoggedIn">
+        <mat-card class="members-only-card">
+            Currently hiding members only waters.
+            <br/>
+            <br/>
+            <button mat-raised-button color="primary" (click)="memberLogin()"  >Members can log in here</button>
+        </mat-card>
+
+    </li>
+</ul>

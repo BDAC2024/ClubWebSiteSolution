@@ -1,0 +1,64 @@
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>Export to my Calendar</h1>
+<br/>
+<div mat-dialog-content>
+    <div *ngIf="canExport">
+        <p class="small-notes">
+        A calendar attachment will be sent to your email address for your selected events.<br/>
+        The email program on your phone/tablet/computer should recognise the attachment type and offer to load the events into your chosen calendar.<br/>    
+        </p>
+        <mat-form-field class="season-selector">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="data.season" >
+            <mat-option *ngFor="let season of data.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+            <mat-label>Send to Email</mat-label>
+            <!-- <input class="title-form-field" matInput [(ngModel)]="data.email"> -->
+
+            <input type="email" name="email" [formControl]="emailControl" class="title-form-field" ngModel email="true" matInput [(ngModel)]="data.email">
+            <div *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)" class="alert">
+                Please enter a valid email address.
+            </div>
+        </mat-form-field>
+        <br/>
+        <b>Please select at least one event type</b><br/>
+        <mat-checkbox [(ngModel)]="data.calendarExportTypes.all" (change)="allSelected()">
+            All Matches, Meetings and Work Parties
+        </mat-checkbox>
+        <br/>
+        <mat-checkbox [(ngModel)]="data.calendarExportTypes.meetings">
+            Meetings and Work Parties
+        </mat-checkbox>
+        <br/>
+        <mat-checkbox [(ngModel)]="data.calendarExportTypes.allMatches" (change)="allMatchesSelected()">
+            All Matches and Work Parties
+        </mat-checkbox>
+        <br/>
+        <mat-checkbox [(ngModel)]="data.calendarExportTypes.pondMatches">
+            Spring League Matches, Junior Matches and Work Parties
+        </mat-checkbox>
+        <br/>
+        <mat-checkbox [(ngModel)]="data.calendarExportTypes.riverMatches">
+            Club/River/OSU Matches and Work Parties
+        </mat-checkbox>
+        <br/>
+    </div>
+    <div *ngIf="message != ''" class="info">
+        <br/>
+        <br/>
+        <div [innerHTML]="message"></div>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+</div>
+<div mat-dialog-actions class="edit-button-panel">
+    <button  
+        *ngIf="canExport"
+        [ngClass]="[!formComplete() ? 'edit-button-disabled' : 'edit-button']" 
+        [disabled]="this.exporting || !formComplete()" 
+        mat-raised-button color="primary" (click)="export()">Export&nbsp;&nbsp;<mat-icon>calendar_today</mat-icon></button>
+    <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Close</button>
+</div>

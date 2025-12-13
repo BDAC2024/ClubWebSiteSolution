@@ -1,0 +1,17 @@
+<h2  mat-dialog-title>Reset PIN</h2>
+<mat-dialog-content class="mat-typography" *ngIf="!pinChanged">
+    Clicking "Reset" will reset the PIN for user {{this.userIdentity}}. You will need to inform them of their new PIN once complete.
+</mat-dialog-content>
+<div mat-dialog-actions class="edit-button-panel">
+    <button mat-raised-button color="primary" *ngIf="!canClose" (click)="submit()">Reset</button>
+</div>
+<div *ngIf="message != ''" class="info">
+    {{message}}
+</div>
+<div *ngIf="loading">
+    <br/>
+    <mat-spinner diameter="32" ></mat-spinner>
+</div>
+
+<br/>
+<button mat-raised-button color="primary" *ngIf="canClose" (click)="close()">Close</button>

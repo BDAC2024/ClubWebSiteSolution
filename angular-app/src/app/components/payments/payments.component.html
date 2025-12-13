@@ -1,0 +1,116 @@
+<div>
+    <div style="display: flex;">
+        <h1 class="left-header">Payments</h1>
+    </div>
+
+    <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
+        <mat-tab label="Memberships"></mat-tab>
+        <mat-tab label="Guest Tickets"></mat-tab>
+        <mat-tab label="Day Tickets"></mat-tab>
+    </mat-tab-group>
+    <br />
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+    <p *ngIf="!isLoading && payments.data.length == 0">No payments of this type have been made</p>
+</div>
+
+<button 
+    class="export-button" 
+    mat-stroked-button 
+    color="primary"
+    (click)="exporter.exportTable('csv', {fileName:this.exportName})">
+    Export&nbsp;&nbsp;<mat-icon>cloud_download</mat-icon>
+</button>
+<br/>
+<br/>
+
+<table mat-table matTableExporter #exporter="matTableExporter" [dataSource]="payments" matSort [hidden]="payments.data.length == 0" class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+    <ng-container matColumnDef="orderId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Order Id </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.orderId}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.description}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="membersName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Members Name </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.membersName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="guestsName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Guests Name </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.guestsName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ticketHoldersName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Ticket Holders Name </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.ticketHoldersName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ticketNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Ticket No.</th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.ticketNumber}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="validOn">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Valid on </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.validOn | date:'dd MMM YY'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="validOnShort">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Valid </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.validOn | date:'dd/MM'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.amount | currency:'GBP'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fee">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fee </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.fee | currency:'GBP'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="paidOn">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Paid on </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.paidOn | date:'dd MMM YY'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="paidOnShort">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Paid </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.paidOn | date:'dd/MM'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="issuedOnShort">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Issued </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.issuedOn | date:'dd/MM'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="issuedOn">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Issued on </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.issuedOn | date:'dd MMM YY'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let element" [ngClass]="element.status != 'Paid' ? 'cell-refunded' : ''"> {{element.status}} </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="view">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let element" class="last-col">
+            <button class="edit-button" mat-stroked-button color="primary" (click)="viewDetail(element)" ><mat-icon aria-hidden="false" aria-label="View Detail">visibility</mat-icon> View</button>
+        </td>
+    </ng-container>
+    
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

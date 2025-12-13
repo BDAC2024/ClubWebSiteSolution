@@ -1,0 +1,187 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false">
+    <mat-toolbar class="toolbar" ><img src="assets/FishingClubLogo3.png" title="logo" class="club-logo"></mat-toolbar>
+    <!-- <mat-nav-list *ngIf="previewService.previewCodeValid"> -->
+    <mat-nav-list >
+      <a mat-list-item routerLink="/welcome">Welcome</a>
+        <a mat-list-item routerLink="/news">
+          <div *ngIf="this.newsService.NewNews"
+              class="custom-badge" 
+                  matBadge="new" 
+                  matBadgeOverlap="false" 
+                  matBadgePosition="after" 
+                  matBadgeSize="small"
+                  matBadgeColor="accent">
+            News
+          </div>
+          <div *ngIf="!this.newsService.NewNews">
+            News
+          </div>
+        </a>
+        <a mat-list-item routerLink="/waters">Club Waters</a>
+        <a mat-list-item routerLink="/matches">Matches</a>
+        <a mat-list-item routerLink="/register">
+          <div
+              class="custom-badge-opens-menu" 
+                  matBadge="new" 
+                  matBadgeOverlap="false" 
+                  matBadgePosition="after" 
+                  matBadgeSize="small"
+                  matBadgeColor="accent">
+                  Junior Open Matches
+          </div>
+        </a>
+        <mat-list-item (click)="showStandingsSubMenu = !showStandingsSubMenu" class="parent">
+					<span class="full-width" >Standings</span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showStandingsSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showStandingsSubMenu}" *ngIf="showStandingsSubMenu">
+					<a mat-list-item routerLink="/standings">Leagues</a>
+					<a mat-list-item routerLink="/aggregateWeights">Weights</a>
+					<a mat-list-item routerLink="/trophyWinners">Trophies</a>
+				</div>
+
+        <a mat-list-item routerLink="/diary">Diary of Events</a>
+        <!-- <a mat-list-item routerLink="/photos">Photos</a> -->
+
+        <mat-list-item (click)="showPurchaseSubMenu = !showPurchaseSubMenu" class="parent ">
+					<span class="full-width" >Buy Online</span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showPurchaseSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showPurchaseSubMenu}" *ngIf="showPurchaseSubMenu">
+          <a mat-list-item routerLink="/buyMemberships">Memberships</a>
+          <a mat-list-item routerLink="/buyDayTickets">Day Tickets</a>
+					<a mat-list-item routerLink="/buyGuestTickets" *ngIf="authenticationService.isLoggedIn">Guest Tickets</a>
+					<!-- <a mat-list-item routerLink="/buySuccess"   title="CURRENTLY PREVIEWERS ONLY - WILL BE MEMBERS ONLY">
+            <div class="preview-option">
+              Success
+            </div>
+          </a> -->
+        </div>
+
+        <mat-list-item (click)="showClubInfoSubMenu = !showClubInfoSubMenu" class="parent">
+					<span class="full-width" >Club Info</span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showClubInfoSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showClubInfoSubMenu}" *ngIf="showClubInfoSubMenu">
+					<a mat-list-item routerLink="/officers">Club Officers</a>
+          <mat-list-item (click)="showRulesSubMenu = !showRulesSubMenu" *ngIf="authenticationService.isLoggedIn" class="parent">
+            <span class="full-width" >Rules</span>
+            <mat-icon class="menu-button" [ngClass]="{'rotated' : showRulesSubMenu}" >expand_more</mat-icon>
+          </mat-list-item>
+          <div class="submenu" [ngClass]="{'expanded' : showRulesSubMenu}" *ngIf="showRulesSubMenu && authenticationService.isLoggedIn">
+            <a mat-list-item routerLink="/rulesGeneral" >General</a>
+            <a mat-list-item routerLink="/rulesMatch" >Match</a>
+            <a mat-list-item routerLink="/rulesJnrGeneral">Jnr General</a>
+            <a mat-list-item routerLink="/rulesJnrMatch">Jnr Match</a>
+          </div>
+          <a mat-list-item routerLink="/forms">Club Forms</a>
+          <a mat-list-item routerLink="/dataPolicy" >
+            <div>
+              Privacy Notice
+            </div>
+          </a>
+					<a mat-list-item routerLink="/environmental">Environmental</a>
+					<a mat-list-item routerLink="/anglingTrust">Angling Trust</a>
+				</div>
+        
+        <!-- <mat-list-item (click)="showJnrSectionSubMenu = !showJnrSectionSubMenu" class="parent" *ngIf="isPreviewer()" title="WILL BE PUBLIC">
+          <span class="full-width custom-badge preview-option" 
+            matBadge="new" 
+            matBadgeOverlap="false" 
+            matBadgePosition="after" 
+            matBadgeSize="small"
+            matBadgeColor="accent" >
+            Junior Programme
+          </span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showJnrSectionSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showJnrSectionSubMenu}" *ngIf="showJnrSectionSubMenu">
+					<a mat-list-item routerLink="/juniorProgrammeIntro" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Introduction</a>
+					<a mat-list-item routerLink="/juniorSponsors" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Programme Sponsors</a>
+					<a mat-list-item routerLink="/juniorTrophies" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Junior Trophies</a>
+					<a mat-list-item routerLink="/juniorTacklePlea" *ngIf="isPreviewer()" title="WILL BE PUBLIC" class=" preview-option">Tackle Plea</a>
+					<a mat-list-item routerLink="/juniorMatches" *ngIf="isPreviewer()" title="MEMBERS ONLY" class=" preview-option">Matches</a>
+				</div> -->
+
+        <mat-list-item (click)="showAdminSubMenu = !showAdminSubMenu" *ngIf="authenticationService.isAdmin" class="parent">
+					<span class="full-width" >Admin</span>
+					<mat-icon class="menu-button" [ngClass]="{'rotated' : showAdminSubMenu}" >expand_more</mat-icon>
+				</mat-list-item>
+				<div class="submenu" [ngClass]="{'expanded' : showAdminSubMenu}" *ngIf="showAdminSubMenu && authenticationService.isAdmin">
+					<a mat-list-item routerLink="/members">Members</a>
+					<a mat-list-item routerLink="/userAdmins">User Admins</a>
+					<!-- <a mat-list-item routerLink="/guestTickets" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC"> 
+            <div class="preview-option">
+              Guest Tickets
+            </div>
+          </a>
+          -->
+					<a mat-list-item routerLink="/generateBookPrintingPages" *ngIf="this.refDataService.isMemberSecretary()">Book Printing</a>
+          <a mat-list-item routerLink="/payments">
+            <div>
+              Payments
+            </div>
+          </a>
+					<a mat-list-item routerLink="/juniorOpenRegistrations" >
+            <div>
+              Junior Open Registrations
+            </div>
+          </a>
+					<!-- <a mat-list-item routerLink="/aggregateWeights">Weights</a> -->
+				</div>
+
+        <a mat-list-item routerLink="/myDetails" *ngIf="authenticationService.isLoggedIn">My Details</a>
+        <a mat-list-item routerLink="/logout" *ngIf="authenticationService.isLoggedIn">Logout</a>
+        <a mat-list-item routerLink="/login" *ngIf="!authenticationService.isLoggedIn">Login</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="toolbar">
+      <button
+        class="hamburger"
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span id="title">Boroughbridge & District<br/>Angling Club</span>
+      <span class="example-fill-remaining-space"></span>
+
+      <!-- <div [hidden]="!this.loggedIn" ngClass.xs="name-mobile">{{userName}}</div>
+      <mat-chip-list [hidden]="!this.loggedIn" style="margin-left: 16px">
+        <mat-chip class="logout-button" (click)="logout()">Logout</mat-chip>
+      </mat-chip-list> -->
+      <div class="toolbar-icons">
+        <div>
+          <a aria-label="Club on Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/groups/boroughbridgeanglingclub" title="Club's Facebook Group">
+            <img
+                id="facebook-logo"
+                alt="Facebook Logo"
+                src="assets/FacebookLogo.png"
+            />
+          </a>
+        </div>
+        <div>
+          <a aria-label="Club on YouTube" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCYBuOPmEEqB7CQ2ABSGW6Og" title="Club's YouTube Channel">
+            <svg id="youtube-logo" height="24" width="24" data-name="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/>
+            </svg>
+          </a>
+      </div>
+    </div>
+</mat-toolbar>
+    <div class="nav-content" ngClass.xs="nav-content-mobile">
+      <!-- <router-outlet *ngIf="previewService.previewCodeValid"></router-outlet>
+      <app-preview *ngIf="!previewService.previewCodeValid"></app-preview> -->
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
