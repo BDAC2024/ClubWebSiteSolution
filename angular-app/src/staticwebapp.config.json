@@ -1,0 +1,50 @@
+{
+  "routes": [
+    {
+      "route": "/new/service-worker.js"
+    },
+    {
+      "route": "/new/service-worker-assets.js"
+    },
+    {
+      "route": "/new/manifest.json"
+    },
+    {
+      "route": "/new/appsettings.json"
+    },
+    {
+      "route": "/new/appsettings.Development.json"
+    },
+    {
+      "route": "/new/*.{css,js,wasm,woff,woff2,png,jpg,jpeg,gif,ico,svg}"
+    },
+    {
+      "route": "/new/_framework/*"
+    },
+    {
+      "route": "/new/_content/*"
+    },
+    {
+      "route": "/new/css/*"
+    },
+    {
+      "route": "/new/images/*"
+    },
+    {
+      "route": "/new",
+      "rewrite": "/new/index.html"
+    },
+    {
+      "route": "/new/*",
+      "rewrite": "/new/index.html"
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "index.html",
+    "exclude": [
+      "/assets/*",
+      "/*.{css,scss,js,wasm,png,jpg,jpeg,gif,ico,svg,woff,woff2}",
+      "/new/*"
+    ]
+  }
+}
