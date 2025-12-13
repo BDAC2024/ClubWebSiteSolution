@@ -1,0 +1,17 @@
+::ng-deep .mat-card-header-text {
+    margin-left: 0 !important;
+}
+
+ul {
+  list-style:  none;  
+  padding-left: 0;
+}
+
+li {
+    margin-bottom: 12px;
+}
+
+
+.edit-button {
+  margin-left: 12px;
+}

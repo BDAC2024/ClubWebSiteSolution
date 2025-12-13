@@ -1,0 +1,21 @@
+[mat-dialog-content] {
+    padding: 12px 24px !important;
+}
+
+[mat-dialog-title] {
+    margin: -24px -24px 0px -24px !important;
+    padding: 10px 24px;
+    background: #369;
+    color: #fff;
+    cursor: move;
+    text-align: center;
+}
+
+::ng-deep .mat-card-header-text {
+    margin-left: 0 !important;
+  }
+  
+  ::ng-deep .mat-card {
+    margin: 0;
+    max-width: 550px;
+  }

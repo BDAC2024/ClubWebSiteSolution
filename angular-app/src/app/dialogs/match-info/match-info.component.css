@@ -1,0 +1,16 @@
+td.label {
+    font-weight: 600;
+    padding-right: 16px;
+}
+
+.mat-cell {
+    padding: 0 16px 0 0;
+}
+
+.mat-header-cell {
+    padding: 0 16px 0 0;
+}
+
+.no-table-margin {
+    margin-left: -20px;
+}

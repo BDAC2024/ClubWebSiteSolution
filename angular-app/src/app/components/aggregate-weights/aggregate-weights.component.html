@@ -1,0 +1,53 @@
+<div>
+    <h1></h1>
+    <div style="display: flex;">
+        <h1 class="left-header">Aggregate Weights</h1>
+        <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']" ></span>
+        <mat-form-field class="season-selector" *ngIf="!isLoading">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="getMatches()" >
+            <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>  
+
+
+    <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
+        <mat-tab aria-label="0" *ngIf="anyOfType(0)" label="{{matchService.AggSpringTabName}}"></mat-tab>
+        <mat-tab aria-label="1" *ngIf="anyOfType(1)" label="{{matchService.AggClubRiverTabName}}"></mat-tab>
+        <mat-tab aria-label="2" *ngIf="anyOfType(2)" label="{{matchService.AggClubPondTabName}}"></mat-tab>
+        <mat-tab aria-label="4" *ngIf="anyOfType(4)" label="{{matchService.AggPairsTabName}}" ></mat-tab>
+        <mat-tab aria-label="5" *ngIf="anyOfType(5)" label="{{matchService.AggEveningTabName}}" ></mat-tab>
+    </mat-tab-group>
+    <br/>
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+    <p *ngIf="!isLoading && weights.length == 0">Not yet available</p>
+    <table mat-table [dataSource]="weights" class="mat-elevation-z8" *ngIf="weights.length > 0">
+
+        <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef class="first-col"> Position </th>
+            <td mat-cell *matCellDef="let element" class="first-col"> {{element.positionOrdinal}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="weight">
+            <th mat-header-cell *matHeaderCellDef > Total Weight </th>
+            <td mat-cell *matCellDef="let element" align="end"> {{element.weight}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+
+</div>

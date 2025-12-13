@@ -1,0 +1,333 @@
+<h1>Purchase membership online</h1>
+<div *ngIf="this.refDataService.isTreasurer() && !isLoading">
+    <div >
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="isEnabled" 
+            (click)="enable(false)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility_off</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Disable this Feature
+        </button>
+        <button 
+            class="edit-button" 
+            mat-stroked-button 
+            color="primary" 
+            *ngIf="!isEnabled" 
+            (click)="enable(true)" 
+            [disabled]="isEnabling">
+                <mat-icon *ngIf="!isEnabling" aria-hidden="false" aria-label="Disable sales">visibility</mat-icon>
+                <mat-spinner diameter="20" class="button-spinner" *ngIf="isEnabling" ></mat-spinner>
+                Enable this Feature
+        </button>
+    </div>
+</div>
+
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+<app-feature-disabled-panel *ngIf="!isEnabled"></app-feature-disabled-panel>
+
+<div *ngIf="!isLoading && isEnabled">
+    <mat-card class="rules-card">
+        <mat-card-header>
+            <mat-card-title>Notes</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <ul>
+                <li>All online membership purchases include a {{this.refData.appSettings.handlingCharge | currency:'GBP'}} handling charge (covers postage and online payment processing charges)</li>
+                <li>To avoid the {{this.refData.appSettings.handlingCharge | currency:'GBP'}} handling charge, <a href="/forms">use the postal version (including a stamped, self-addressed
+                        A5 envelope)</a></li>
+            </ul>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="purchase-card">
+        <mat-card-header>
+            <mat-card-title>Membership Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+            <mat-form-field>
+                <mat-label>Season</mat-label>
+                <mat-select [(ngModel)]="selectedSeason" >
+                    <mat-option *ngFor="let season of this.refData.seasonsForMembershipPurchase" [value]="season">
+                        From {{season.starts | date:'dd MMM YYYY'}} to {{season.ends | date:'dd MMM YYYY'}}
+                      </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div *ngIf="this.selectedSeason != null">
+                <mat-form-field>
+                    <mat-label>Membership Type</mat-label>
+                    <mat-select [(ngModel)]="selectedMembership" >
+                        <mat-option *ngFor="let sel of this.membershipList" [value]="sel" (onSelectionChange)="resetNewMembership(sel)">
+                            {{sel.description}} - {{sel.term}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="this.selectedMembership != null">
+                <p>Cost: <b>{{selectedMembership.cost | currency:'GBP'}}</b> + <b>{{this.refData.appSettings.handlingCharge | currency:'GBP'}}</b> handling charge<br/>
+                Note: A one-off charge of <b>{{this.pondGateKeyCost | currency:'GBP'}}</b> must also be paid by <b>new members</b> wanting to fish Roecliffe Pond for the key deposit.
+                </p>
+                <p *ngIf="selectedMembership.description == 'Junior'">
+                    This cost applies until the 1st of April after your 16th Birthday. Then you become an Intermediate member.
+                </p>
+                <p *ngIf="selectedMembership.description == 'Intermediate'">
+                    This cost applies until the 1st of April after your 18th Birthday. Then you become a full Adult member.
+                </p>
+                <p>Term: <b>{{selectedMembership.term}}</b> - Runs from {{selectedMembership.runs}}
+                </p>
+                <mat-card class="warning-card" *ngIf="this.is6MonthAlternativeAvailable()">
+                    <mat-card-header>
+                        <mat-card-title>Please Note</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        This membership runs from {{selectedMembership.runs}} so will expire on {{selectedSeason.ends | date:'dd MMM YYYY'}}. Please consider purchasing a 6 month membership instead.
+                    </mat-card-content>
+                </mat-card>
+
+                <div *ngIf="membershipAvailable()">
+                    <mat-form-field>
+                        <mat-label *ngIf="!isUnderAge()">Name</mat-label>
+                        <mat-label *ngIf="selectedMembership.description == 'Junior'">Name of Junior</mat-label>
+                        <mat-label *ngIf="selectedMembership.description == 'Intermediate'">Name of Intermediate</mat-label>
+                        <input class="title-form-field" matInput [(ngModel)]="newMembership.name">
+                    </mat-form-field>
+                    <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
+                        <mat-label>Date of Birth</mat-label>
+                        <input matInput [matDatepicker]="picker" [min]="this.minDate()" [max]="this.maxDate()" [(ngModel)]="newMembership.dob" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="!isUnderAge()">
+                        <mat-label>Phone number</mat-label>
+                        <input class="title-form-field" matInput [(ngModel)]="newMembership.phoneNumber">
+                    </mat-form-field>
+
+                    <div *ngIf="isUnderAge()">
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.paidForKey" class="checkbox-top">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). I understand that the key will only be provided to the parent/guardian for this person.<br/><span style="background-color: red; color: white;"><b>Note: </b>This must be purchased if you wish to fish Roecliffe Pond and do not already own a key.</span></mat-checkbox>
+                        </div>
+                        <br/>
+                        <b>Parental Consent/Disclosure</b>
+                        <br/>
+                        <mat-form-field>
+                            <mat-label>{{templateMemberName()}} can swim</mat-label>
+                            <mat-select [(ngModel)]="newMembership.childCanSwim">
+                                <mat-option value="0 metres">0 metres</mat-option>
+                                <mat-option value="25 metres">25 metres</mat-option>
+                                <mat-option value="50 metres">50 metres</mat-option>
+                                <mat-option value="100 metres or more">100 metres or more</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <br/>
+                        Whilst fishing <b>any club matches</b> or <b>pleasure fishing</b> on the Ellenthorpe waters and Roecliffe ponds {{templateMemberName()}} must be under the direct guidance of one of the following nominated responsible persons, who must have ID available on request.
+                        <br/>
+                        <br/>
+                        <b>Responsible Persons</b> (please nominate at least one)
+                        <mat-form-field>
+                            <mat-label>Name of 1st responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible1st">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Name of 2nd responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible2nd">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Name of 3rd responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible3rd">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Name of 4th responsible person</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.responsible4th">
+                        </mat-form-field>
+                        <b>Emergency Contact Details</b> (please provide at least one phone number)
+                        <mat-form-field>
+                            <mat-label>Name</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContact">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Home phone number</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContactPhoneHome">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Work phone number</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContactPhoneWork">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Mobile phone number</mat-label>
+                            <input class="title-form-field" matInput [(ngModel)]="newMembership.emergencyContactPhoneMobile">
+                        </mat-form-field>
+        
+                        <br/>
+                        <b>Declaration</b>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for {{templateMemberName()}}'s membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.<br/><br/>
+                                <p>I also agree to {{templateMemberName()}} attending the Angling Matches run by Boroughbridge & District Angling Club and agree to the club rules for those under age (below 18).</p>
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.parentalConsent" class="checkbox-top">
+                                <p>I acknowledge that {{templateMemberName()}} will behave responsibly at all times whilst using the club's waters and fishing matches.</p>
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmWaitForBook" class="checkbox-top">I understand that <span class="attention">{{templateMemberName()}} cannot fish until membership book has been received</span>.
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmNoNightFishing" class="checkbox-top">I understand that <span class="attention">night fishing is NOT permitted</span>.
+                            </mat-checkbox>
+                        </div>
+                        <br/>
+                        In the event of any misconduct on {{templateMemberName()}}'s part, the club hold the sole right to withdraw their membership and that the committee decision will be final.
+                    </div>
+
+                    <div *ngIf="isDisabled()">
+                        <b>Disability Certificate</b>
+                        <br/>
+                        <div *ngIf="isDisabledCertRequired()" class="image-upload-wrapper">
+                            <label *ngIf="screenService.HasCamera">You must upload or take a photo of your Disability Certificate</label>
+                            <label *ngIf="!screenService.HasCamera">You must upload a photo of your Disability Certificate: </label>
+                            <br/>
+                            <div class="third">
+                                <button class="edit-button"
+                                        mat-stroked-button
+                                        color="primary"
+                                        style="height: fit-content;">
+                                        <label for="disabilityCertificateUpload">
+                                            <div style="width: 100px; text-wrap: pretty; line-height: 1.2em;">
+                                                <br/>
+                                                <mat-icon aria-hidden="false" aria-label="Upload file" style="transform: scale(2);">upload_file</mat-icon>
+                                                <div style="height: 14px;"></div>
+                                                Upload your<br/>certificate
+                                            </div>
+                                        </label>
+                                </button>
+                                <input type="file" id="disabilityCertificateUpload" accept="image/*" (change)="onDisabilityCertificateUpload($event)" class="hidden" />
+                            </div>
+                            <div *ngIf="screenService.HasCamera" class="third" 
+                                    style="padding: 0 8px 0 8px;">
+                                    or                                  
+                                    <br/>
+                                    <br/>
+                            </div>
+
+                            <div class="third" *ngIf="screenService.HasCamera">
+                                <button class="edit-button"
+                                        mat-stroked-button
+                                        color="primary" 
+                                        style="height: fit-content;">
+                                        <label for="disabilityCertificatePhoto">
+                                            <div style="width: 100px; text-wrap: pretty; line-height: 1.2em;">
+                                                <br/>
+                                                <mat-icon aria-hidden="false" aria-label="Upload file" style="transform: scale(2);">photo_camera</mat-icon>
+                                                <div style="height: 14px;"></div>
+                                                Take a photo of<br/>your certificate
+                                            </div>
+                                            <div style="width: 100px; text-wrap: pretty; line-height: 1.2em;">
+                                            </div>
+                                        </label>
+                                </button>
+                                <input type="file" id="disabilityCertificatePhoto" accept="image/*" capture="environment" (change)="onDisabilityCertificateUpload($event)" class="hidden"/>
+                                <!-- <span *ngIf="disabilityCertificateFile">Selected file: {{disabilityCertificateFile.name}}</span> -->
+                            </div>
+                        </div>
+                        <div [style.display]="isDisabledCertRequired() ? 'none' : 'block' ">
+                            <img id="disabilityCertificateImage" style="width: 200px; height: auto;"/>
+                            <br/>
+                                <!-- <button class="edit-button"
+                                        mat-stroked-button
+                                        color="primary" 
+                                        style="height: fit-content;"
+                                        (click)="clearDisabilityCertificate()">
+                                            <mat-icon aria-hidden="false" aria-label="Upload file">delete</mat-icon> Delete certificate and try again
+                                </button> -->
+                        </div>
+                        <br />
+                        <br />
+                    </div>                    
+                    <div *ngIf="!isUnderAge()">
+                        <b>Options</b>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.paidForKey">Add Key Deposit for Roecliffe Pond (costs: <b>{{this.pondGateKeyCost| currency:'GBP'}}</b>). <br/><span style="background-color: red; color: white;"><b>Note: </b>This must be purchased if you wish to fish Roecliffe Pond and do not already own a key.</span></mat-checkbox>
+                        </div>
+    
+                        <div class="checkbox-wrapper">
+                        <mat-checkbox [(ngModel)]="newMembership.allowNameToBeUsed">Allow my name to be used in match results</mat-checkbox>
+                        </div>
+                        <br/>    
+                        <b>Declaration</b>
+                        <!-- <p>I hereby apply for membership of the the Boroughbridge & District Angling Club and if so accepted do agree to abide by the rules set down in the club book and club notice boards also to any such alterations that may be deemed necessary from time to time.
+                            <br/>
+                            <br/>
+                            In the event of any misconduct on my part, the club hold the sole right to withdraw my membership and that the committee decision will be final.
+                        </p> -->
+                    </div>
+                    <div *ngIf="!isUnderAge()">
+                        <!-- <div *ngIf="isDisabled()" class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="this.confirmCertificate" class="checkbox-top">Please confirm that you have your Disability Certificate because you will be contacted to view this before membership is issued. <b>Please do not pay if you do not have this</b></mat-checkbox>
+                        </div>-->
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="newMembership.acceptPolicies" class="checkbox-top">I hereby apply for membership of the above club and do agree to abide by the rules set down in the club rule book and notice boards, also to any such alterations that may be deemed necessary from time to time.</mat-checkbox>
+                        </div>
+                        <br/>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmNoNightFishing" class="checkbox-top">I understand that <span class="attention">night fishing is NOT permitted</span>.
+                            </mat-checkbox>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <mat-checkbox [(ngModel)]="confirmWaitForBook" class="checkbox-top">I understand that <span class="attention">I cannot fish until I receive my membership book</span>.
+                            </mat-checkbox>
+                        </div>
+                        <br/>
+                        <p>In the event of any misconduct on my part, the club hold the sole right to withdraw my membership and that the committee decision will be final</p>
+                    </div>
+                    <br />
+                    <div class="edit-button-panel">
+                        <button class="edit-button" [ngClass]="[!formComplete() ? 'edit-button-disabled' : '']"
+                            [disabled]="this.isBuying || !formComplete()"
+                            [attr.title]="!formComplete() ? completionMessage() : ''" mat-stroked-button
+                            color="primary" (click)="checkForKey()">
+                            <mat-icon *ngIf="!isBuying" aria-hidden="false" aria-label="Go to Checkout">shopping_cart</mat-icon>
+                            <mat-spinner diameter="20" class="button-spinner" *ngIf="isBuying"></mat-spinner>
+                            Go to Checkout
+                        </button>
+                        <div *ngIf="progress > 0">
+                            Uploading certificate: {{ progress }}%
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <div style="background-color: orange; display: none;">
+                        <b>Debug Information</b><br/>
+                        <b>UserAgent:</b> {{screenService.UserAgent}}<br/>
+                        <b>Platform:</b> {{screenService.Platform}}<br/>
+                        <b>HasCamera:</b> {{screenService.HasCamera}}<br/>
+                    </div>
+                </div>
+
+                <mat-card class="warning-card" *ngIf="!this.membershipAvailable()">
+                    <mat-card-header>
+                        <mat-card-title>Unavailable</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        Sorry, 6 month memberships are only available in the last 6 months of the season. Therefore they are unavailable for purchase until 3 weeks before the start of October for use from October onward.
+                        <br/>
+                        <br/>
+                        Please come back then.
+                    </mat-card-content>
+                </mat-card>
+                
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <app-policy-panel></app-policy-panel>
+</div>

@@ -1,0 +1,47 @@
+<h1 [ngClass]="{'left-header': membersService.CurrentMember.admin}">Latest News</h1>
+<div *ngIf="membersService.CurrentMember.admin">
+    <div class="edit-button-panel">
+        <button class="edit-button" mat-stroked-button color="primary" *ngIf="isPageAdmin" (click)="addNewsItem()" ><mat-icon aria-hidden="false" aria-label="Add news item">add</mat-icon> Add</button>
+        <button class="edit-button" mat-raised-button color="primary" *ngIf="!isPageAdmin" (click)="enableAdmin(true)" ><mat-icon aria-hidden="false" aria-label="Add news item">lock_open</mat-icon> Unlock</button>
+        <button class="edit-button" mat-raised-button color="primary" *ngIf="isPageAdmin" (click)="enableAdmin(false)" ><mat-icon aria-hidden="false" aria-label="Add news item">lock</mat-icon> Lock</button>
+    </div>
+    <br/>
+    <br/>
+</div>
+<div>
+    <ul>
+        <li *ngFor="let item of items">
+            <mat-card class="news-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <div *ngIf="this.isNew(item.date)" 
+                            class="custom-badge" 
+                                matBadge="!!!" 
+                                matBadgeOverlap="false" 
+                                matBadgePosition="after" 
+                                matBadgeSize="small"
+                                matBadgeColor="accent">
+                            {{item.title}}
+                        </div>
+                        <div *ngIf="!this.isNew(item.date)">
+                            {{item.title}}
+                        </div>
+                    </mat-card-title>
+                    <mat-card-subtitle>{{item.date | date:'dd MMM YY'}}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div [innerHTML]="item.body"></div>
+                </mat-card-content>
+                <div *ngIf="isPageAdmin">
+                    <div class="edit-button-panel">
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="deleteNewsItem(item)" ><mat-icon aria-hidden="false" aria-label="Add news item">delete</mat-icon> Delete</button>
+                        <button class="edit-button" mat-stroked-button color="primary" (click)="editNewsItem(item)" ><mat-icon aria-hidden="false" aria-label="Add news item">edit</mat-icon> Edit</button>        
+                    </div>
+                    <br/>
+                    <br/>
+                </div>
+            </mat-card>
+        </li>
+    </ul>
+    
+</div>

@@ -1,0 +1,85 @@
+<div>
+    <div style="display: flex;">
+        <h1 class="left-header">Diary of Events</h1>
+        <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']" ></span>
+        <mat-form-field class="season-selector" *ngIf="!isLoading">
+            <mat-label>Season</mat-label>
+            <mat-select [(ngModel)]="selectedSeason" (selectionChange)="getEvents()" >
+            <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <button 
+        class="export-button" 
+        mat-stroked-button 
+        color="primary"
+        (click)="exportCalendar()">
+        Export to my calendar&nbsp;&nbsp;<mat-icon>calendar_today</mat-icon>
+    </button>
+
+    <p *ngIf="!this.screenService.IsHandsetLandscape">You can see more details of matches and the results by selecting<button mat-icon-button color="link" style="color: #1976d2;"><mat-icon>info</mat-icon></button>next to each match.
+    </p>
+
+    <mat-tab-group mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
+        <mat-tab label="{{clubEventService.AllTabName}}"></mat-tab>
+        <mat-tab label="{{clubEventService.MatchTabName}}"></mat-tab>
+        <mat-tab label="{{clubEventService.WorkPartyTabName}}"></mat-tab>
+        <mat-tab label="{{clubEventService.MeetingTabName}}"></mat-tab>
+    </mat-tab-group>
+    <br/>
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+    <table mat-table [dataSource]="events" class="mat-elevation-z8" *ngIf="events.length > 0">
+
+        <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef align="center" class="first-col-header"> Date </th>
+            <td mat-cell *matCellDef="let element" align="right" [ngClass]="{'past-event': element.inThePast}" class="cell-date first-col"> {{element.date | date:'dd MMM YY'}} </td>
+        </ng-container>
+
+        <!-- Time Column -->
+        <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef> Time </th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.time}} </td>
+        </ng-container>
+
+        <!-- Day Column -->
+        <ng-container matColumnDef="day">
+            <th mat-header-cell *matHeaderCellDef> Day </th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.day}} </td>
+        </ng-container>
+
+        <!-- Venue Column -->
+        <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Description </th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.descriptionForTable}} </td>
+        </ng-container>
+
+        <!-- Cup Column -->
+        <ng-container matColumnDef="cup">
+            <th mat-header-cell *matHeaderCellDef> Cup </th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.cup}} </td>
+        </ng-container>
+
+        <!-- Number Column -->
+        <ng-container matColumnDef="number">
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell align="center" *matCellDef="let element" [ngClass]="{'past-event': element.inThePast}"> {{element.number}} </td>
+        </ng-container>
+
+        <!-- More Column -->
+        <ng-container matColumnDef="more">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" class="last-col">
+            <button mat-icon-button color="link" *ngIf="element.eventType == matchType" style="color: #1976d2;" aria-label="More" (click)="showMore(element)"><mat-icon>info</mat-icon></button>
+        </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+</div>

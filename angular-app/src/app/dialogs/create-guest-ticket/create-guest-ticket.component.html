@@ -1,0 +1,55 @@
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{title}}</h1>
+<br/>
+<mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+<div > 
+
+    <div mat-dialog-content *ngIf="!isLoading">
+
+        <mat-form-field  [ngClass]="[this.screenService.IsHandsetPortrait ? 'full-width' : 'half-width']" *ngIf="!isLoading">
+            <mat-label>Member Name</mat-label>
+            <input matInput [formControl]="myControl" ngDefaultControl placeholder="Type part of name..." [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" >
+              <mat-option *ngFor="let option of filteredOptions | async" [value]="option.name" (onSelectionChange)="updateSelectedMember(option)">
+                {{ option.name }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          
+        <br/>
+        <mat-form-field  [ngClass]="[this.screenService.IsHandsetPortrait ? 'full-width' : 'half-width']" *ngIf="!isLoading">
+            <mat-label>Email ticket to</mat-label>
+            <input type="email" [formControl]="emailControl" name="email" class="title-form-field" email="true" matInput (change)="onEmailChangeEvent($event)">
+            <div *ngIf="emailControl.invalid" class="alert">
+                Please enter a valid email address.
+            </div>
+        </mat-form-field>
+        <br/>
+        <mat-form-field  [ngClass]="[this.screenService.IsHandsetPortrait ? 'full-width' : 'half-width']" *ngIf="!isLoading">
+            <mat-label>Guest Name</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="guestTicket.guestsName" (change)="onChangeEvent($event)">
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="date-form-field" (click)="picker?.open()" style="cursor: pointer">
+            <mat-label>Ticket valid for</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="guestTicket.ticketValidOn" (dateChange)="onChangeEvent($event)">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <br/>
+    </div>
+
+    <div >
+        <canvas #viewingCanvasEl class="ticketCanvas"></canvas>
+        <canvas #printingCanvasEl class="ticketCanvas printingCanvas"></canvas>
+    </div>
+        
+    <div mat-dialog-actions class="edit-button-panel">
+        <mat-spinner diameter="32" *ngIf="isSaving"></mat-spinner>
+        <button class="edit-button" mat-raised-button color="primary" value="Confirm" *ngIf="editMode && !isSaving" [disabled]="!formComplete()" (click)="send()">Resend</button>
+        <button class="edit-button" mat-raised-button color="primary" value="Confirm" *ngIf="!editMode && !isSaving" [disabled]="!formComplete()" (click)="send()">Send</button>
+        <button class="edit-button" mat-raised-button color="primary" (click)="cancel()">Cancel</button>
+    </div>
+</div>
+
+

@@ -1,0 +1,68 @@
+<div>
+    <h1>Member's Details</h1>
+
+    <mat-spinner diameter="32" *ngIf="isLoading"></mat-spinner>
+
+    <div *ngIf="!isLoading">
+        <mat-form-field>
+            <mat-label>Membership Number</mat-label>
+            <input class="title-form-field" type="number" matInput [(ngModel)]="member.membershipNumber">
+        </mat-form-field>
+        <br/>
+        <br/>
+        <mat-checkbox [(ngModel)]="member.admin">
+            Administrator
+        </mat-checkbox>
+        <br/>
+        <br/>
+        <mat-checkbox [(ngModel)]="member.reLoginRequired">
+            Require re-login
+        </mat-checkbox>
+        <br/>
+        <br/>
+        <mat-form-field>
+            <mat-label>Name (Initial.Lastname)</mat-label>
+            <input class="title-form-field" matInput [(ngModel)]="member.name">
+        </mat-form-field>
+            <br/>
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input type="email" name="email" [formControl]="emailControl" class="title-form-field" ngModel email="true" matInput [(ngModel)]="member.email">
+            <div *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)" class="alert">
+                Please enter a valid email address.
+            </div>
+
+        </mat-form-field>
+        <br/>
+            <label class="my-mat-label" >
+                Member for Seasons
+            </label>
+        <br/>
+        <mat-selection-list dense (selectionChange)="onActiveSeasonChange($event)">
+            <cdk-virtual-scroll-viewport [itemSize]="20" class="example-viewport">
+                <mat-list-option *cdkVirtualFor="let season of refData.seasons; let odd = odd; templateCacheSize: 0" [class.example-alternate]="odd"
+                    [value]="season.season" [selected]="selection.isSelected(season.season)">{{season.name}}
+                </mat-list-option>
+            </cdk-virtual-scroll-viewport>
+        </mat-selection-list>
+        <br/>
+        <h2>Member's Info</h2>
+        <ul>
+            <li *ngIf="member.initialPin != 0">Their initial PIN is {{member.initialPin}} until they login and change it</li>
+            <li *ngIf="member.initialPin == 0">Member has reset their PIN so initial PIN is no longer visible</li>
+            <li *ngIf="!member.allowNameToBeUsed">Member does not want their name to be used</li>
+            <li *ngIf="member.allowNameToBeUsed">Member has allowed their name to be used</li>
+            <li>Member last updated their preferences on {{member.preferencesLastUpdated | date:'dd MMM YY'}}</li>
+        </ul>
+        <br/>
+        <div mat-dialog-actions >
+            <!-- <mat-spinner diameter="20" *ngIf="isSaving" style="display:inline-block"></mat-spinner> -->
+            <button class="edit-button" mat-raised-button color="primary" style="display:inline-block" *ngIf="isSaving" [disabled]="isSaving">Saving...</button>
+            <button class="edit-button" mat-raised-button color="primary" style="display:inline-block" (click)="save()" *ngIf="!isSaving" [disabled]="emailControl.invalid">Save</button>
+            <button class="edit-button" mat-raised-button color="primary"  (click)="resetPin()">Reset PIN</button>
+        </div>
+        <br/>
+        <span *ngIf="status">{{status}}</span>
+    </div>
+    <div *ngIf="message != ''" class="info">{{message}}</div>
+</div>

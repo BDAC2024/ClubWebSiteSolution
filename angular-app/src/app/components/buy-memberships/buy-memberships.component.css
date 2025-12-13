@@ -1,0 +1,31 @@
+::ng-deep .mat-card-header-text {
+  margin-left: 0 !important;
+}
+
+::ng-deep .mat-card {
+  margin: 26px;
+  max-width: 550px;
+}
+
+.edit-button {
+  background-color: #1976D2;
+  color: white;
+}
+
+input[type=file]::file-selector-button {
+  border: 2px solid #6c5ce7;
+  padding: 0 15px;
+  border-radius: .2em;
+  background-color: #1976D2;
+  color: white;
+  transition: 1s;
+  height: 36px;
+  font: 14px "Roboto", "Helvetica Neue", sans-serif;
+}
+
+input[type=file]::file-selector-button:hover {
+  cursor: pointer;
+  background-color: #3e8bd8;
+  /* background-color: #81ecec;
+  border: 2px solid #00cec9; */
+}

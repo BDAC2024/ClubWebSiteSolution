@@ -1,0 +1,148 @@
+[
+  {
+    "_id": "c7cd309a-2f10-4bd0-9f19-ab586737bfe5",
+    "colName": "Angling Club - Prod",
+    "created": "2023-04-05T15:29:40.965Z",
+    "sortNum": 10000,
+    "folders": [
+      {
+        "_id": "18e0d794-a9b4-409d-95be-448ec9f871e1",
+        "name": "_Maintenance",
+        "containerId": "",
+        "created": "2023-04-05T15:29:40.972Z",
+        "sortNum": 20000
+      },
+      {
+        "_id": "1a4d11e3-84be-4e0d-9c50-5845ab470b90",
+        "name": "Events",
+        "containerId": "",
+        "created": "2023-04-05T15:29:40.973Z",
+        "sortNum": 30000
+      },
+      {
+        "_id": "bf169497-47a1-4fac-8da5-e61d5c9e04ae",
+        "name": "Matches",
+        "containerId": "",
+        "created": "2023-04-05T15:29:40.974Z",
+        "sortNum": 40000
+      },
+      {
+        "_id": "4d1217fa-0f06-4e23-8db8-d57ed2df622d",
+        "name": "Members",
+        "containerId": "",
+        "created": "2023-04-05T15:29:40.975Z",
+        "sortNum": 50000
+      },
+      {
+        "_id": "3a6fe295-c64b-4f57-891f-f0523e7a1ee5",
+        "name": "News",
+        "containerId": "",
+        "created": "2023-04-05T15:29:40.976Z",
+        "sortNum": 60000
+      },
+      {
+        "_id": "640a1cb7-b6ff-487f-8720-a49d98ba587c",
+        "name": "Waters",
+        "containerId": "",
+        "created": "2023-04-05T15:29:40.977Z",
+        "sortNum": 70000
+      }
+    ],
+    "settings": {
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{accessToken}}"
+      },
+      "tests": [],
+      "envId": "42a1dd96-6048-4b91-a5f6-6ec1c5ab81d6"
+    }
+  },
+  {
+    "_id": "7e51905b-911d-4ff5-bef3-a31ea6fc14ca",
+    "colName": "Angling Club - Local",
+    "created": "2023-04-05T15:30:11.060Z",
+    "sortNum": 20000,
+    "folders": [
+      {
+        "_id": "8cc5067e-19e0-41bd-b4e4-40f7c1706484",
+        "name": "Auth Demos",
+        "containerId": "7082224f-ad04-47d3-89ab-84c6923ec137",
+        "created": "2023-04-05T15:30:11.067Z",
+        "sortNum": 10000
+      },
+      {
+        "_id": "7082224f-ad04-47d3-89ab-84c6923ec137",
+        "name": "_Maintenance",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.068Z",
+        "sortNum": 20000
+      },
+      {
+        "_id": "c8b7aa4e-146f-481c-b047-3ee48632a3a6",
+        "name": "Admin",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.069Z",
+        "sortNum": 25000
+      },
+      {
+        "_id": "9132a595-9b11-4f50-9d29-1ca8889a6957",
+        "name": "Common",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.070Z",
+        "sortNum": 27000
+      },
+      {
+        "_id": "2a90fc93-4bc9-40dc-9301-c391b772a8b1",
+        "name": "Events",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.071Z",
+        "sortNum": 30000
+      },
+      {
+        "_id": "9cc1592d-280e-4aa7-a044-1e277a8fc677",
+        "name": "Matches",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.072Z",
+        "sortNum": 40000
+      },
+      {
+        "_id": "4c0b588c-94ec-4120-92d5-0a9e0545aed9",
+        "name": "Members",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.073Z",
+        "sortNum": 50000
+      },
+      {
+        "_id": "53467aad-dea1-4c36-9fe6-cb4399c1e802",
+        "name": "News",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.074Z",
+        "sortNum": 60000
+      },
+      {
+        "_id": "a7053be6-e292-4976-9890-51eb6835a8af",
+        "name": "Rules",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.075Z",
+        "sortNum": 70000
+      },
+      {
+        "_id": "ba9b548b-bb4f-469d-9161-85866aca85f1",
+        "name": "Waters",
+        "containerId": "",
+        "created": "2023-04-05T15:30:11.076Z",
+        "sortNum": 90000
+      }
+    ],
+    "settings": {
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{accessToken}}"
+      },
+      "tests": [],
+      "envId": "c806245d-c822-495a-87a4-fa3045c3d049"
+    }
+  }
+]

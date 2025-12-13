@@ -1,0 +1,27 @@
+.member-button {
+    margin-right: 12px;
+}
+
+.example-viewport {
+    height: 200px;
+    width: 140px;
+    border: 1px solid black;
+  }
+  
+  .example-alternate {
+    background:rgb(217, 238, 245);
+  }
+  
+  .example-select-all {
+    float: right;
+    margin-right: 32px;
+  }
+
+  .my-mat-label {
+    color: rgba(0,0,0,.54);
+    font-size: 11px;
+  }
+  
+  .edit-button {
+    margin-left: 12px;
+}

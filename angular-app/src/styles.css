@@ -1,0 +1,327 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~bootstrap/dist/css/bootstrap-grid.min.css';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.hidden {
+    display: none;
+}
+
+.third { 
+    display: inline-block;
+    /* width: 33.33%; 
+    float: left;  */
+}
+
+.past-event {
+    font-weight: lighter;
+}
+
+.tbd {
+    font-weight: lighter;
+    font-style: italic;
+}
+
+.mat-drawer {
+    background-color:whitesmoke;
+}
+
+.mat-drawer-container {
+    background-color:whitesmoke ;
+}
+
+.info {
+    background-color: lightskyblue;
+    border-color: darkslateblue;
+    border-style: solid;
+    border-width: thin;
+    padding: 6px;
+}
+
+.warn {
+    background-color: lightgoldenrodyellow;
+    border-color: gold;
+    border-style: solid;
+    border-width: thin;
+    padding: 6px;
+}
+
+.alert {
+    color: red;
+    font-size: small;
+}
+
+.edit-button-panel {
+    float: right;
+  }
+  
+.edit-button {
+    margin-left: 12px;
+}
+  
+.left-header {
+    float: left;
+  }
+  
+.season-selector {
+    width: 100px;
+}
+
+.season-selector-margin-desktop {
+    width: 60px;
+}
+
+.example-fill-remaining-space {
+    /* This fills the remaining space, by using flexbox.
+       Every toolbar row uses a flexbox row layout. */
+    flex: 1 1 auto;
+  }
+
+.members-only-card {
+    margin-top: 0 !important;
+    background-color: rgb(247, 88, 88);
+    color: white;
+    /* text-align: center; */
+}
+
+.purchase-card {
+    background-color: white;
+}
+
+.warning-card {
+    background-color: orange;
+}
+
+.rules-card {
+    background-color: lightgreen;
+    margin-bottom: 6px;
+}
+
+.rules-card li {
+    font-size: smaller;
+}
+
+.policy-card {
+    background-color: white;
+    margin-bottom: 6px;
+}
+
+.policy-card p {
+    font-size: smaller;
+}
+
+.small-notes {
+    font-size: smaller;
+}
+
+.warning-card {
+    background-color: goldenrod;
+    color: white;
+    font-size: smaller;
+}
+
+.error-card {
+    background-color: red;
+    color: white;
+    font-size: smaller;
+}
+
+.error-alert-card {
+    /* background-color: red; */
+    color: red;
+    font-size: smaller;
+    border: 2px solid red
+}
+
+.attention {
+    color: red;
+    font-weight: bold;
+}
+
+.errors {
+    color:red;
+    font-size: smaller;
+    font-weight: bold;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.half-width {
+    width: 50%;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.button-spinner.mat-progress-spinner {
+    display: inline-block;
+}
+
+.button-spinner.mat-progress-spinner circle {
+    stroke: white;
+}
+
+.centered-title-card {
+    background-color: lightgreen;
+    margin-bottom: 6px;
+}
+
+.centered-title-card mat-card-title {
+    margin: 0;
+}
+
+.centered-title-card table {
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.centered-title-card table td {
+    padding-left: 6px; 
+    padding-right: 6px; 
+    font-size: 20px;
+}
+
+.edit-button-disabled {
+    background-color: lightgray !important;
+}
+
+.checkbox-wrapper {
+    min-height: 50px;
+    display: flex;
+}
+
+.checkbox-wrapper.mat-checkbox.mat-checkbox-layout.mat-checkbox-label {
+    white-space: unset !important;
+}
+
+.mat-checkbox-layout {
+    white-space: unset !important;
+}
+
+.mat-checkbox-label {
+    line-height: unset !important;
+}
+
+/* Danger Card */
+
+.centered-danger-card {
+    background-color: white;
+    color: red;
+    margin-bottom: 6px;
+    margin-top: 0 !important;
+}
+
+.centered-danger-card mat-card-title {
+    margin: 0;
+}
+
+.centered-danger-card table {
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.centered-danger-card table td {
+    padding-left: 6px; 
+    padding-right: 6px; 
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Preview styles */
+
+.preview-option {
+    color: red;
+    background-color: yellow;
+    /* font-weight: bold; */
+  }
+
+/* new badge */
+.custom-badge {
+    color: red;
+    .mat-badge-content {
+      width: fit-content;
+      text-align: center;
+      border-radius: 7px;
+      left: 123px;
+      top: -4px;
+      padding-left: 3px;
+      padding-right: 3px;
+      font-weight: 400;
+    }
+  }
+
+  .custom-badge-wide {
+    color: red;
+    .mat-badge-content {
+      width: fit-content;
+      text-align: center;
+      border-radius: 7px;
+      left: 163px;
+      top: 3px !important;
+      padding-left: 3px;
+      padding-right: 3px;
+      font-weight: 400;
+    }
+  }
+
+  .custom-badge-opens {
+    color: red;
+
+    .mat-badge-content {
+        width: fit-content;
+        text-align: center;
+        border-radius: 7px;
+        left: 213px;
+        top: 3px !important;
+        padding-left: 3px;
+        padding-right: 3px;
+        font-weight: 400;
+    }
+  }
+
+  .custom-badge-opens-menu {
+    color: red;
+
+    .mat-badge-content {
+        width: fit-content;
+        text-align: center;
+        border-radius: 7px;
+        left: 155px;
+        top: 3px !important;
+        padding-left: 3px;
+        padding-right: 3px;
+        font-weight: 400;
+    }
+  }
+/* Checkbox alignment */
+.checkbox-top.mat-checkbox.mat-accent .mat-checkbox-inner-container {
+    margin: 2px 8px auto 0;
+  }
+
+/* Responsiveness ****************************************************************************/
+
+@media screen and (min-width: 200px) {
+    .open-match-poster {
+        width: 100%;
+    }
+
+    .open-match-map {
+        width: 100%;
+    }
+
+}
+
+@media screen and (min-width: 900px) {
+    .open-match-poster {
+        width: 50%;
+    }
+
+    .open-match-map {
+        width: 50%;
+    }
+
+}
