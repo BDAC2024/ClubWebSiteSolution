@@ -141,15 +141,15 @@ export class ScreenService {
   }
 
   private showScreenDetails(): void {
-    console.log(`_isHandsetPortrait: ${this._isHandsetPortrait}`);
-    console.log(`_isHandsetLandscape: ${this._isHandsetLandscape}`);
-    console.log(`_isTabletPortrait: ${this._isTabletPortrait}`);
-    console.log(`_isTabletLandscape: ${this._isTabletLandscape}`);
-    console.log(`_isWebPortrait: ${this._isWebPortrait}`);
-    console.log(`_isWebLandscape: ${this._isWebLandscape}`);
+    // console.log(`_isHandsetPortrait: ${this._isHandsetPortrait}`);
+    // console.log(`_isHandsetLandscape: ${this._isHandsetLandscape}`);
+    // console.log(`_isTabletPortrait: ${this._isTabletPortrait}`);
+    // console.log(`_isTabletLandscape: ${this._isTabletLandscape}`);
+    // console.log(`_isWebPortrait: ${this._isWebPortrait}`);
+    // console.log(`_isWebLandscape: ${this._isWebLandscape}`);
 
-    console.log(`Width: ${this.Width}`);
-    console.log(`Height: ${this.Height}`);
+    // console.log(`Width: ${this.Width}`);
+    // console.log(`Height: ${this.Height}`);
   }
 
   private checkBrowserAgent(): void {

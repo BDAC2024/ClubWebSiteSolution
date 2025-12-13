@@ -7,6 +7,7 @@ import { Member } from '../../models/member';
 import { GlobalService } from './../global.service';
 import jwt_decode from 'jwt-decode';
 import { MembersService } from '../members.service';
+import { BlazorBridgeService } from '../blazor-bridge.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class AuthenticationService {
   constructor(
     private http: HttpClient,
     private globalService: GlobalService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private blazorBridge: BlazorBridgeService
     ) {
       this.getMember();
    }
@@ -119,6 +121,10 @@ export class AuthenticationService {
 
             this.membersService.memberLoggedIn(user.token);
             this.currentMemberSubject.next(user);
+
+            // send login message to Blazor bridge
+            this.blazorBridge.sendAuth(user, stayLoggedIn);
+
             return user;
         }));
   }
@@ -140,13 +146,16 @@ export class AuthenticationService {
       sessionStorage.removeItem(this.STORAGE_KEY);
       this.membersService.memberLoggedOut();
       this.currentMemberSubject.next(new Member());
+
+      this.blazorBridge.sendAuth(null, false);
   }
 
   private getMember() {
-    var memberJson = localStorage.getItem(this.STORAGE_KEY);
 
-    if (memberJson == null) {
-      memberJson = sessionStorage.getItem(this.STORAGE_KEY);
+    if (this.isRemembered()) {
+      var memberJson = localStorage.getItem(this.STORAGE_KEY);
+    } else {
+      var memberJson = sessionStorage.getItem(this.STORAGE_KEY);
     }
 
     var member = memberJson !== null ? JSON.parse(memberJson) : new Member();
@@ -157,4 +166,7 @@ export class AuthenticationService {
     this.currentMember = this.currentMemberSubject.asObservable();
   }
  
+  public isRemembered(): boolean {
+    return !!localStorage.getItem(this.STORAGE_KEY);
+  }
 }

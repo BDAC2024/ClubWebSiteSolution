@@ -44,11 +44,17 @@ import { RegistrationsComponent } from './components/registrations/registrations
 import { RegisterComponent } from './components/register/register.component';
 import { JuniorOpenRegistrationsComponent } from './components/junior-open-registrations/junior-open-registrations.component';
 import { GenerateBookPrintingPagesComponent } from './components/generate-book-printing-pages/generate-book-printing-pages.component';
+import { BlazorHostComponent } from './components/blazor-host/blazor-host.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/welcome', pathMatch: 'full'},
+  { path: '', redirectTo: '/blazor', pathMatch: 'full'},
   { path: 'login', component: LoginComponent, canDeactivate:[DeactivateGuardService]  },
   { path: 'logout', component: LogoutComponent },
+  
+  // { path: 'welcome', component: WelcomeComponent },  // Angular welcome page
+  { path: '', component: BlazorHostComponent },         // Blazor welcome page
+
+  { path: 'welcome', component: WelcomeComponent },
   { path: 'welcome', component: WelcomeComponent },
   { path: 'news', component: NewsComponent },
   { path: 'waters', component: WatersComponent },
@@ -90,6 +96,9 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent},
   { path: 'juniorOpenRegistrations', component: JuniorOpenRegistrationsComponent},
   { path: 'generateBookPrintingPages', component: GenerateBookPrintingPagesComponent},
+
+ // Single host route for “Blazor area”
+  { path: 'blazor', component: BlazorHostComponent },
 ];
 
 @NgModule({

@@ -6,8 +6,8 @@
     <mat-toolbar class="toolbar" ><img src="assets/FishingClubLogo3.png" title="logo" class="club-logo"></mat-toolbar>
     <!-- <mat-nav-list *ngIf="previewService.previewCodeValid"> -->
     <mat-nav-list >
-      <a mat-list-item routerLink="/welcome">Welcome</a>
-        <a mat-list-item routerLink="/news">
+      <a mat-list-item (click)="openBlazor('', drawer)">Welcome</a>
+        <a mat-list-item (click)="openBlazor('news', drawer)">
           <div *ngIf="this.newsService.NewNews"
               class="custom-badge" 
                   matBadge="new" 
@@ -21,8 +21,8 @@
             News
           </div>
         </a>
-        <a mat-list-item routerLink="/waters">Club Waters</a>
-        <a mat-list-item routerLink="/matches">Matches</a>
+        <a mat-list-item (click)="openBlazor('waters', drawer)">Club Waters</a>
+        <a mat-list-item (click)="openBlazor('matches', drawer)">Matches</a>
         <a mat-list-item routerLink="/register">
           <div
               class="custom-badge-opens-menu" 

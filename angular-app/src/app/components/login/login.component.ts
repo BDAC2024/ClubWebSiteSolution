@@ -14,9 +14,11 @@ import { PreviewService } from 'src/app/services/preview.service';
     styleUrls: ['./login.component.css']
   })
 export class LoginComponent implements OnInit {
+    private angularReturnUrl: string | null = null;
+    private blazorPage: string | null = null;
+
     loading = false;
     submitted = false;
-    returnUrl!: string;
     error = '';
     message  = '';
     
@@ -43,8 +45,15 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        const state = window.history.state as {
+            blazorPage?: string;
+            returnUrl?: string;
+            [key: string]: any;
+        };
+
+        this.blazorPage = state.blazorPage ?? null;
+        this.angularReturnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? null; // if you use this for Angular guards
+
     }
 
     onSubmit() {
@@ -73,11 +82,11 @@ export class LoginComponent implements OnInit {
                             const dialogRef = this.dialog.open(LoginPreferencesDialogComponent, {maxHeight: "90vh", maxWidth: "350px", data: prefs});
         
                             dialogRef.afterClosed().subscribe(result => {
-                                this.router.navigate([this.returnUrl]);
+                                this.redirect();
                             });
         
                         } else {
-                            this.router.navigate([this.returnUrl]);
+                            this.redirect();
                         }
                     }
                 },
@@ -85,6 +94,25 @@ export class LoginComponent implements OnInit {
                     this.error = error;
                     this.loading = false;
                 });
+    }
+
+    redirect() {
+        // Priority: if login was initiated by Blazor
+        if (this.blazorPage) {
+            this.router.navigate(['/blazor'], {
+                state: { blazorPage: this.blazorPage }
+            });
+            return;
+        }
+
+        // 2) If login came from an Angular guard
+        if (this.angularReturnUrl) {
+            this.router.navigateByUrl(this.angularReturnUrl);
+            return;
+        }
+
+        // Fallback: default Angular landing page
+        this.router.navigate(['/']);
     }
 
     onForgotPin() {
