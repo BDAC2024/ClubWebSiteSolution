@@ -1,4 +1,4 @@
-﻿html, body {
+html, body {
     height: 100%;
 }
 
@@ -15,7 +15,9 @@ body {
 /*-------------------------
     Splash Screen
 --------------------------*/
-.loading {
+
+/* TODO Ang to Blazor Migration - this loading class for use after migration*/
+/*.loading {
     background-color: white;
     position: absolute;
     bottom: 0;
@@ -25,7 +27,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-}
+  }
+*/
+/* TODO Ang to Blazor Migration - this loading class for use whilst migrating*/
+    .loading {
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
 
     .loading .loading-text {
         align-items: end;

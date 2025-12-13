@@ -1,23 +1,23 @@
-using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using System.Text;
 using System.Text.Json;
 
 namespace AnglingClubWebsite.Extensions
 {
-    public static class LocalStorageServiceExtension
+    public static class SessionStorageServiceExtension
     {
-        public static async Task SaveItemEncrypted<T>(this ILocalStorageService localStorageService, string key, T item)
+        public static async Task SaveItemEncrypted<T>(this ISessionStorageService sessionStorageService, string key, T item)
         {
             var itemJson = JsonSerializer.Serialize(item);
             var itemJsonBytes = Encoding.UTF8.GetBytes(itemJson);
             var base64Json = Convert.ToBase64String(itemJsonBytes);
 
-            await localStorageService.SetItemAsync(key, base64Json);
+            await sessionStorageService.SetItemAsync(key, base64Json);
         }
 
-        public static async Task<T> ReadEncryptedItem<T>(this ILocalStorageService localStorageService, string key)
+        public static async Task<T> ReadEncryptedItem<T>(this ISessionStorageService sessionStorageService, string key)
         {
-            var storageItem = await localStorageService.GetItemAsync<string>(key);
+            var storageItem = await sessionStorageService.GetItemAsync<string>(key);
             string? itemJson;
 
             if (storageItem == null)

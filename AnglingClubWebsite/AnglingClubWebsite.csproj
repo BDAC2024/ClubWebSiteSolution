@@ -4,7 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+
+    <!-- TODO Ang to Blazor Migration - Not needed until migration from ang is complete-->
+    <!-- <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest> -->
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
@@ -45,4 +49,20 @@
     </Content>
   </ItemGroup>
 
+  <!-- TODO Ang to Blazor Migration - only needed until migration from ang is complete -->
+  <ItemGroup>
+    <!-- Treat templates as non-content so they are not published -->
+    <None Include="IndexTemplates\index.dev.html" />
+    <None Include="IndexTemplates\index.prod.html" />
+  </ItemGroup>
+
+  <!-- TODO Ang to Blazor Migration - only needed until migration from ang is complete -->
+  <Target Name="SelectIndexHtml" BeforeTargets="Build">
+    <!-- Debug / local dev: base "/" -->
+    <Copy SourceFiles="IndexTemplates\index.dev.html" DestinationFiles="wwwroot\index.html" Condition="'$(Configuration)' == 'Debug'" />
+
+    <!-- Release / publish: base "/new/" -->
+    <Copy SourceFiles="IndexTemplates\index.prod.html" DestinationFiles="wwwroot\index.html" Condition="'$(Configuration)' == 'Release'" />
+  
+  </Target>
 </Project>
