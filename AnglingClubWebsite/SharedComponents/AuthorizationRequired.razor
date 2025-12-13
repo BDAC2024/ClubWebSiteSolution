@@ -1,18 +1,54 @@
-﻿@inject NavigationManager navManager;
+@inject NavigationManager navManager;
 @inject INavigationService navigationService;
+@inject IAuthenticationService authenticationService;
 
-<SfMessage Severity="MessageSeverity.Warning">
-    You must be logged in to view this page.
+<AuthorizeView>
+    <Authorized>
+        @ChildContent
+    </Authorized>
+    <NotAuthorized>
+@*         <SfMessage Severity="MessageSeverity.Warning">
+            <b>Members Only</b><br/>
+            You must be logged in to view this page.
 
-    <a @onclick="LoginThenRedirect" href="javascript:void(0)">Login</a>
+            <a @onclick="Login" href="javascript:void(0)">Login</a>
+            <a @onclick="LoginThenRedirect" href="javascript:void(0)">Login</a>
 
-</SfMessage>
+        </SfMessage>
+ *@
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Task.Delay(90);
+
+        if (firstRender && !(await authenticationService.isLoggedIn()))
+        {
+            var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
+            //Console.WriteLine($"[AuthorizeView OnAfterRenderAsync] redirect to ang login at ${returnPath}");
+            await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
+        }
+    }
 
     private void LoginThenRedirect()
     {
         navigationService.NavigateTo($"/login/{CallingRoute}");
+    }
+
+    // TODO Ang to Blazor Migration - not needed once migration complete
+    private async Task Login()
+    {
+
+        // e.g. "matches?embedded=true"
+        var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
+        //Console.WriteLine($"[AuthorizeView Login] redirect to ang login at ${returnPath}");
+        await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
     }
 
     private string CallingRoute

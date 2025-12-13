@@ -1,4 +1,4 @@
-﻿using Blazored.LocalStorage;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,6 +13,7 @@ using AnglingClubWebsite.Extensions;
 using AnglingClubShared.Entities;
 using AnglingClubShared.DTOs;
 using static System.Net.WebRequestMethods;
+using System.Text.Json;
 
 
 namespace Fishing.Client.Services
@@ -24,6 +25,9 @@ namespace Fishing.Client.Services
         private ILocalStorageService _localStorageService;
         private readonly ILogger<AuthenticationService> _logger;
         private readonly ICurrentUserService _currentUserService;
+        private readonly HostBridge _hostBridge;
+        private readonly IAuthTokenStore _authTokenStore;
+
 
         private const string JWT_KEY = nameof(JWT_KEY);
         private const string REFRESH_KEY = nameof(REFRESH_KEY);
@@ -33,13 +37,27 @@ namespace Fishing.Client.Services
 
         public event Action<string?>? LoginChange;
 
-        public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService, AuthenticationStateProvider stateProvider, ILogger<AuthenticationService> logger, ICurrentUserService currentUserService)
+        public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService, AuthenticationStateProvider stateProvider, ILogger<AuthenticationService> logger, ICurrentUserService currentUserService, HostBridge hostBridge, IAuthTokenStore authTokenStore)
         {
             _factory = factory;
             _localStorageService = localStorageService;
             _stateProvider = stateProvider;
             _logger = logger;
             _currentUserService = currentUserService;
+            _hostBridge = hostBridge;
+
+            _hostBridge.AuthUpdated += async (authResponse, rememberMe) =>
+            {
+                if (authResponse == null)
+                {
+                    await LogoutAsync();
+                }
+                else
+                {
+                    await LoginWithResponseAsync(authResponse, rememberMe);
+                }
+            };
+            _authTokenStore = authTokenStore;
         }
 
         //public async ValueTask<string> GetJwtAsync()
@@ -54,7 +72,7 @@ namespace Fishing.Client.Services
         {
             var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
 
-            await customAuthStateProvider.UpdateAuthenticationState(null);
+            await customAuthStateProvider.UpdateAuthenticationState(null, false);
 
             //_currentUserService.User = new ClientMemberDto();
 
@@ -72,11 +90,16 @@ namespace Fishing.Client.Services
 
         public async Task<ClientMemberDto> GetCurrentUser()
         {
-            var authenticatedMember = await _localStorageService.ReadEncryptedItem<AuthenticateResponse>(Constants.AUTH_KEY);
+            //_logger.LogWarning("AuthenticationService.GetCurrentUser called");
+
+            var authenticatedMember = _authTokenStore.Current;
+
             if (authenticatedMember == null)
             {
                 return new ClientMemberDto();
             }
+
+            //_logger.LogWarning($"AuthenticationService.GetCurrentUser authenticatedMember = {JsonSerializer.Serialize(authenticatedMember)}");
 
             return new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(authenticatedMember.Token));
         }
@@ -98,7 +121,7 @@ namespace Fishing.Client.Services
 
         }
 
-        public async Task<bool> LoginAsync(AuthenticateRequest model)
+        public async Task<bool> LoginAsync(AuthenticateRequest model, bool rememberMe = true)
         {
             var http = _factory.CreateClient(Constants.HTTP_CLIENT_KEY);
             http.BaseAddress = new Uri($"{http.BaseAddress!.ToString()}api/{CONTROLLER}/");
@@ -117,19 +140,7 @@ namespace Fishing.Client.Services
             {
                 var content = await response.Content.ReadFromJsonAsync<AuthenticateResponse>();
 
-                if (content == null)
-                    throw new InvalidDataException();
-
-                var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
-                await customAuthStateProvider.UpdateAuthenticationState(content);
-
-
-                //await _localStorageService.SetItemAsync(JWT_KEY, content.Token);
-                //await _localStorageService.SetItemAsync(REFRESH_KEY, content.RefreshToken);
-
-                LoginChange?.Invoke(GetUsername(content.Token));
-
-                //_currentUserService.User = await GetCurrentUser();
+                await LoginWithResponseAsync(content!, rememberMe);
 
                 return true;
 
@@ -140,6 +151,21 @@ namespace Fishing.Client.Services
                 throw;
             }
         }
+
+
+        public async Task LoginWithResponseAsync(AuthenticateResponse content, bool rememberMe)
+        {
+            if (content == null)
+            {
+                throw new InvalidDataException();
+            }
+
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
+            await customAuthStateProvider.UpdateAuthenticationState(content, rememberMe);
+
+            LoginChange?.Invoke(GetUsername(content.Token));
+        }
+
 
         /*
                 public async Task<bool> RefreshAsync()
@@ -173,4 +199,5 @@ namespace Fishing.Client.Services
                 }
         */
     }
+
 }

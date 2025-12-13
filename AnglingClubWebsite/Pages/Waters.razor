@@ -1,4 +1,4 @@
-﻿@page "/Waters"
+@page "/Waters"
 @using AnglingClubShared.DTOs
 @using AnglingClubWebsite.Extensions
 @inject NavigationManager navManager;
@@ -188,14 +188,23 @@
         <br />
         <br />
         <a @onclick="LoginThenRedirect" href="javascript:void(0)">Members can log in here</a>
+
     </SfMessage>
 }
 
-
 @code {
-    private void LoginThenRedirect()
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
+    private async Task LoginThenRedirect()
     {
-        navigationService.NavigateTo($"/login/{CallingRoute}");
+        // navigationService.NavigateTo($"/login/{CallingRoute}"); // TODO Ang to Blazor Migration - re-instate once migration complete
+
+        // TODO Ang to Blazor Migration - not needed once migration complete
+        // Note: I cannot get the redirect to work so omitting that from the call to blazorHostBridge.requestLogin - will show homepage instead
+        await JS.InvokeVoidAsync("blazorHostBridge.requestLogin");
+        //var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
+        //Console.WriteLine($"[AuthorizeView Login] redirect to ang login at ${returnPath}");
+        // await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
     }
 
     private string CallingRoute

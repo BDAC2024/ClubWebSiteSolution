@@ -4,6 +4,7 @@ using AnglingClubWebsite.Pages;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using CommunityToolkit.Mvvm.Messaging;
 using Fishing.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -26,7 +27,9 @@ builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 // Auth
+builder.Services.AddSingleton<IAuthTokenStore, AuthTokenStore>();
 builder.Services.AddBlazoredLocalStorageAsSingleton();
+builder.Services.AddBlazoredSessionStorageAsSingleton();
 builder.Services.AddTransient<AuthenticationHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddCascadingAuthenticationState();
@@ -66,4 +69,13 @@ builder.Services.AddTransient<IClubEventService, ClubEventService>();
 
 builder.Services.AddAuthorizationCore();
 
-await builder.Build().RunAsync();
+// TODO Ang to Blazor Migration - services only needed during migration
+builder.Services.AddScoped<HostBridge>();
+
+var host = builder.Build();
+
+// run initialization BEFORE the app starts rendering
+var tokenStore = host.Services.GetRequiredService<IAuthTokenStore>();
+await tokenStore.InitializeAsync();
+
+await host.RunAsync();

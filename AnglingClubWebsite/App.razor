@@ -1,7 +1,22 @@
-﻿<CascadingAuthenticationState>
+@inject NavigationManager NavigationManager
+@inject HostBridge HostBridge // TODO Ang to Blazor Migration - only needed until migation complete
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <AuthorizeRouteView RouteData="@routeData"
+                    DefaultLayout="@GetDefaultLayout()">
+                <NotAuthorized>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p>You are not authorized to access this resource.</p>
+                    </LayoutView>
+                </NotAuthorized>
+                <Authorizing>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p>Authorizing...</p>
+                    </LayoutView>
+                </Authorizing>
+            </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
@@ -12,3 +27,28 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    // TODO Ang to Blazor Migration - only needed until migation complete
+    private Type GetDefaultLayout()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var query = uri.Query ?? string.Empty;
+
+        // Use EmbeddedLayout when called from Angular iframe: /new/...?...embedded=true
+        return query.Contains("embedded=true", StringComparison.OrdinalIgnoreCase)
+            ? typeof(EmbeddedLayout)    // content-only
+            : typeof(MainLayout);       // normal shell
+    }
+
+    // TODO Ang to Blazor Migration - only needed until migation complete
+    protected override async Task OnInitializedAsync()
+    {
+        await HostBridge.InitializeAsync();
+    }
+
+    /* TODO Ang to Blazor Migration - HTML looked like this before adding GetDefaultLayout()
+      <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    */ 
+
+}

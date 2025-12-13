@@ -1,39 +1,52 @@
-﻿using AnglingClubShared;
+using AnglingClubShared;
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Models.Auth;
 using AnglingClubWebsite.Extensions;
 using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace AnglingClubWebsite.Authentication
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorageService;
+        private readonly ISessionStorageService _sessionStorageService;
         private readonly IMessenger _messenger;
         private readonly ILogger<CustomAuthenticationStateProvider> _logger;
+        private readonly IAuthTokenStore _authTokenStore;
 
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorageService, IMessenger messenger, ILogger<CustomAuthenticationStateProvider> logger)
+        public CustomAuthenticationStateProvider(
+            ILocalStorageService localStorageService,
+            IMessenger messenger,
+            ILogger<CustomAuthenticationStateProvider> logger,
+            ISessionStorageService sessionStorageService,
+            IAuthTokenStore authTokenStore)
         {
             _localStorageService = localStorageService;
             _messenger = messenger;
             _logger = logger;
+            _sessionStorageService = sessionStorageService;
+            _authTokenStore = authTokenStore;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
+            //_logger.LogWarning($"[GetAuthenticationStateAsync] called with");
             try
             {
-                var userSession = await _localStorageService.ReadEncryptedItem<AuthenticateResponse>(Constants.AUTH_KEY);
+                
+                var userSession = _authTokenStore.Current;
 
                 if (userSession == null)
                 {
-                    return await Task.FromResult(new AuthenticationState(_anonymous));
+                    return new AuthenticationState(_anonymous);
                 }
 
                 var expired = userSession.Expiration < DateTime.UtcNow;
@@ -52,8 +65,11 @@ namespace AnglingClubWebsite.Authentication
             }
         }
 
-        public async Task UpdateAuthenticationState(AuthenticateResponse? userSession)
+        public async Task UpdateAuthenticationState(AuthenticateResponse? userSession, bool rememberMe)
         {
+            var userSessionAsString = JsonSerializer.Serialize(userSession, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            //_logger.LogWarning($"[UpdateAuthenticationState] called with userSession = {userSessionAsString} and rememberMe = {rememberMe}");
+
             ClaimsPrincipal claimsPrincipal;
 
             if (userSession != null)
@@ -63,36 +79,55 @@ namespace AnglingClubWebsite.Authentication
                     new Claim("Token", userSession.Token!),
                     //new Claim(ClaimTypes.GivenName, userSession.FirstName!),
                     //new Claim(ClaimTypes.Surname, userSession.LastName!),
-                }));
+                }, "JwtAuth"));
+                
+                userSession.Expiration = DateTime.UtcNow.AddSeconds(userSession.ExpiresIn);
 
-                userSession.Expiration = DateTime.Now.AddSeconds(userSession.ExpiresIn);
+                if (rememberMe)
+                {
+                    
+                    await _localStorageService.SetItemAsStringAsync(Constants.AUTH_KEY, userSessionAsString); // TODO Ang to Blazor Migration - remove after migration
+                    //await _localStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession); // TODO Ang to Blazor Migration - re-instate after migration
+                }
+                else
+                {
+                    await _sessionStorageService.SetItemAsStringAsync(Constants.AUTH_KEY, userSessionAsString); // TODO Ang to Blazor Migration - remove after migration
+                    //await _sessionStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession); // TODO Ang to Blazor Migration - re-instate after migration
+                }
 
-                await _localStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession);
+                _authTokenStore.Current = userSession;
 
-                _messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));
+                // TODO Ang to Blazor Migration - put the following back once migration is complete
+                //_messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));
             }
             else
             {
                 claimsPrincipal = _anonymous;
 
                 await _localStorageService.RemoveItemAsync(Constants.AUTH_KEY);
+                await _sessionStorageService.RemoveItemAsync(Constants.AUTH_KEY);
+
+                _authTokenStore.Current = null;
 
                 var anonUser = new LoggedIn(new ClientMemberDto());
 
-                _messenger.Send(anonUser);
+                // TODO Ang to Blazor Migration - put the following back once migration is complete
+                //_messenger.Send(anonUser);
             }
 
-
+            //_logger.LogWarning($"[UpdateAuthenticationState] called, now calling NotifyAuthenticationStateChanged");
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }
 
         public async Task<string> GetToken()
         {
+            await Task.Delay(0);
+
             var result = string.Empty;
 
             try
             {
-                var userSession = await _localStorageService.ReadEncryptedItem<AuthenticateResponse>(Constants.AUTH_KEY);
+                var userSession = _authTokenStore.Current;
 
                 if (userSession != null)
                 {
