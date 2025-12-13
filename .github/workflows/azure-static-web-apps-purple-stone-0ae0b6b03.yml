@@ -3,11 +3,11 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - master
+      - main
 
 jobs:
   build_and_deploy_job:
@@ -19,19 +19,75 @@ jobs:
         with:
           submodules: true
           lfs: false
+
+      ######################################################################################
+      # Build Angular (now in ./angular-app) and Blazor, then merge outputs
+      # Following came from ChatGPT, up until the commented out "Build and Deploy" step
+      ######################################################################################
+
+      # Force Node version for Angular
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16.14.0"
+          cache: "npm"
+          cache-dependency-path: "angular-app/package-lock.json"
+          
+      # Build Angular (inside angular-app folder)
+      - name: Build Angular
+        run: |
+          npm ci
+          npm run build -- --configuration production
+        working-directory: ./angular-app
+
+      # Build Blazor
+      - name: Build Blazor
+        run: |
+          dotnet publish AnglingClubWebsite/AnglingClubWebsite.csproj -c Release -o blazor-publish
+
+      # Combine outputs: copy Blazor under /new in Angular dist
+      - name: Combine Angular and Blazor outputs
+        run: |
+          ANG_DIST="angular-app/dist/AnglingClubWebsiteAng"   # Angular dist now under angular-app
+          BLAZOR_WWWROOT="blazor-publish/wwwroot"
+
+          mkdir -p "$ANG_DIST/new"
+          cp --verbose --recursive "$BLAZOR_WWWROOT/." "$ANG_DIST/new"
+
+          # Copy staticwebapp.config.json into the built root if you keep it in angular-app/src
+          cp angular-app/src/staticwebapp.config.json "$ANG_DIST/" || true
+          # If you later move it to angular-app/, change the line above accordingly.
+
+      # Deploy combined site exactly as built
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_STONE_0AE0B6B03 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./angular-app" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "angular-app/dist/AnglingClubWebsiteAng" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+
+          # IMPORTANT: point at the *built* folder, not the repo root
+          app_location: "angular-app/dist/AnglingClubWebsiteAng"
+          output_location: ""          # no extra build output folder
+          skip_app_build: true         # tell SWA *not* to build again
+
+          api_location: ""
+
+      # Original template deploy (kept commented for reference)
+      # - name: Build And Deploy
+      #   id: builddeploy
+      #   uses: Azure/static-web-apps-deploy@v1
+      #   with:
+      #     azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_STONE_0AE0B6B03 }}
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+      #     action: "upload"
+      #     ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+      #     # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+      #     app_location: "/" # App source code path
+      #     api_location: "" # Api source code path - optional
+      #     output_location: "dist/AnglingClubWebsiteAng" # Built app content directory - optional
+      #     ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
