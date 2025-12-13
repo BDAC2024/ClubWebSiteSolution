@@ -11,6 +11,8 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { RefData } from 'src/app/models/refData';
 import { NewsService } from 'src/app/services/news.service';
+import { BlazorBridgeService } from 'src/app/services/blazor-bridge.service';
+import { Member } from 'src/app/models/member';
 
 @Component({
   selector: 'app-nav',
@@ -88,7 +90,8 @@ export class NavComponent implements OnInit {
       public authenticationService: AuthenticationService,
       public refDataService: RefDataService,
       public newsService: NewsService,
-      router: Router) {
+      private router: Router,
+      private blazorBridge: BlazorBridgeService) {
 
         this.title = "Boroughbridge & District Angling Club"// this.titleService.getTitle();
 
@@ -102,14 +105,14 @@ export class NavComponent implements OnInit {
           withLatestFrom(this.isHandsetPortrait$)
         ).subscribe(result => {
           screenService.IsHandsetPortrait = result[1];
-          this.globalService.log("Nav - Orientation done - portrait: " + screenService.IsHandsetPortrait );
+          //this.globalService.log("Nav - Orientation done - portrait: " + screenService.IsHandsetPortrait );
         });
 
         router.events.pipe(
           withLatestFrom(this.isHandsetLandscape$)
         ).subscribe(result => {
           screenService.IsHandsetLandscape = result[1];
-          this.globalService.log("Nav - Orientation done - landscape: " + screenService.IsHandsetLandscape );
+          //this.globalService.log("Nav - Orientation done - landscape: " + screenService.IsHandsetLandscape );
         });
 
     }
@@ -121,6 +124,7 @@ export class NavComponent implements OnInit {
    * @defaultValue ''
    */  
   public title: string;
+  isHandsetSnapshot = false;
 
   public get loggedIn(): boolean {
     return false;
@@ -131,6 +135,12 @@ export class NavComponent implements OnInit {
   ngOnInit(): void {
     this.getRefData();
     this.newsService.isThereNewNews();
+    
+    var currentUser  = this.authenticationService.currentMemberValue;
+    if (currentUser && currentUser.token) {
+      this.blazorBridge.sendAuth(currentUser, this.authenticationService.isRemembered());
+    }
+    this.isHandset$.subscribe(v => this.isHandsetSnapshot = v);
   }
 
   public getRefData() {
@@ -157,5 +167,25 @@ export class NavComponent implements OnInit {
     }
   }
 
+  // called from the menu
+  openBlazor(path: string, drawer?: MatSidenav) {
+    // If we're already on /blazor, just tell the existing iframe to navigate
+    if (this.router.url.startsWith('/blazor')) {
+      this.blazorBridge.navigate(path);
+      if (drawer && this.isHandsetSnapshot) {
+        drawer.close();
+      }
+      return;
+    }
 
+    // Coming from a pure Angular page → navigate to /blazor
+    // and pass the desired page in navigation state
+    this.router
+      .navigate(['/blazor'], { state: { blazorPage: path } })
+      .then(() => {
+        if (drawer && this.isHandsetSnapshot) {
+          drawer.close();
+        }
+      });
+  }
 }

@@ -106,6 +106,7 @@ import { RegistrationPanelComponent } from './components/registration-panel/regi
 import { GenerateBookPrintingPagesComponent } from './components/generate-book-printing-pages/generate-book-printing-pages.component';
 import { ConfirmKeyDialogComponent } from './dialogs/confirm-key-dialog/confirm-key-dialog.component';
 import { MatchBookedComponent } from './dialogs/match-booked/match-booked.component';
+import { BlazorHostComponent } from './components/blazor-host/blazor-host.component';
 
 @NgModule({
   declarations: [
@@ -174,6 +175,7 @@ import { MatchBookedComponent } from './dialogs/match-booked/match-booked.compon
     GenerateBookPrintingPagesComponent,
     ConfirmKeyDialogComponent,
     MatchBookedComponent,
+    BlazorHostComponent,
   ],
   imports: [
     BrowserModule,
