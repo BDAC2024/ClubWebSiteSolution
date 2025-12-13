@@ -47,7 +47,7 @@ import { GenerateBookPrintingPagesComponent } from './components/generate-book-p
 import { BlazorHostComponent } from './components/blazor-host/blazor-host.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/blazor', pathMatch: 'full'},
+  { path: '', redirectTo: '/welcome', pathMatch: 'full'},
   { path: 'login', component: LoginComponent, canDeactivate:[DeactivateGuardService]  },
   { path: 'logout', component: LogoutComponent },
   

@@ -4,7 +4,7 @@
 }
 
 mat-sidenav-content {
-  display: flex;
+  /*display: flex;*/ /* Temp fix for toolbar height mismatch in ang & blazor */
   flex-direction: column;
   height: 100%;
 }
