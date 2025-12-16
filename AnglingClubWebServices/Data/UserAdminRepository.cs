@@ -41,13 +41,7 @@ namespace AnglingClubWebServices.Data
 
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = userAdmin.DbKey,
-                    Attributes = attributes
-                }
-            ); 
+            base.SetupTableAttribues(request, userAdmin.DbKey, attributes);
 
             try
             {

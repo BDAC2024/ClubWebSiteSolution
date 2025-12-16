@@ -46,13 +46,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Created", Value = dateToString(DateTime.Now), Replace = true }
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = $"{IdPrefix}:{file.Id}",
-                    Attributes = attributes
-                }
-            );
+            base.SetupTableAttribues(request, "{IdPrefix}:{file.Id}", attributes);
 
             try
             {

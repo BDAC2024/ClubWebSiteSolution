@@ -1,8 +1,9 @@
 ﻿using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
-using AnglingClubWebServices.Helpers;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Models;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
@@ -73,13 +74,7 @@ namespace AnglingClubWebServices.Data
                 if (clubEvent.Number != null) { attributes.Add(new ReplaceableAttribute { Name = "Number", Value = numberToString(clubEvent.Number.Value), Replace = true }); }
                 if (clubEvent.Cup != null) { attributes.Add(new ReplaceableAttribute { Name = "Cup", Value = clubEvent.Cup, Replace = true }); }
 
-                request.Items.Add(
-                    new ReplaceableItem
-                    {
-                        Name = clubEvent.DbKey,
-                        Attributes = attributes
-                    }
-                ); 
+                base.SetupTableAttribues(request, clubEvent.DbKey, attributes);
 
                 try
                 {

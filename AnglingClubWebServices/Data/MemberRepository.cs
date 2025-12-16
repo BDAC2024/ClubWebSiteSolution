@@ -74,13 +74,7 @@ namespace AnglingClubWebServices.Data
                 attributes.Add(new ReplaceableAttribute { Name = "SeasonsActive", Value = ((int)season).ToString(), Replace = true });
             }
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = member.DbKey,
-                    Attributes = attributes
-                }
-            ); 
+            base.SetupTableAttribues(request, member.DbKey, attributes);
 
             try
             {

@@ -5,6 +5,7 @@ using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Stripe.Tax;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -47,13 +48,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "OpenMatchType", Value = ((int)match.OpenMatchType).ToString(), Replace = true },
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = match.DbKey,
-                    Attributes = attributes
-                }
-            );
+            base.SetupTableAttribues(request, match.DbKey, attributes);
 
             try
             {

@@ -3,6 +3,7 @@ using Amazon.SimpleDB.Model;
 using AnglingClubShared.Enums;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -54,13 +55,7 @@ namespace AnglingClubWebServices.Data
                 );
             }
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = registration.DbKey,
-                    Attributes = attributes
-                }
-            );
+            base.SetupTableAttribues(request, registration.DbKey, attributes);
 
             try
             {

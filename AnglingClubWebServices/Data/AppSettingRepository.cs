@@ -75,13 +75,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Value", Value = appSetting.Value, Replace = true },
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = appSetting.DbKey,
-                    Attributes = attributes
-                }
-            );
+            base.SetupTableAttribues(request, appSetting.DbKey, attributes);
 
             try
             {
