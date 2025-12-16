@@ -46,13 +46,7 @@ namespace AnglingClubWebServices.Data
 
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = newsItem.DbKey,
-                    Attributes = attributes
-                }
-            ); 
+            base.SetupTableAttribues(request, newsItem.DbKey, attributes);
 
             try
             {
@@ -168,13 +162,7 @@ namespace AnglingClubWebServices.Data
                     new ReplaceableAttribute { Name = "Body", Value = $"{index}{MultiValueSeparator}{bodySegment}", Replace = index == 0 },
                 };
 
-                request.Items.Add(
-                    new ReplaceableItem
-                    {
-                        Name = dbKey,
-                        Attributes = attributes
-                    }
-                );
+                base.SetupTableAttribues(request, dbKey, attributes);
 
                 try
                 {

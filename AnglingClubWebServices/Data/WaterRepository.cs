@@ -60,13 +60,7 @@ namespace AnglingClubWebServices.Data
 
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = water.DbKey,
-                    Attributes = attributes
-                }
-            );
+            base.SetupTableAttribues(request, water.DbKey, attributes);
 
             try
             {
@@ -120,13 +114,7 @@ namespace AnglingClubWebServices.Data
                     new ReplaceableAttribute { Name = "Description", Value = $"{index}{MultiValueSeparator}{descriptionSegment}", Replace = index == 0 },
                 };
 
-                request.Items.Add(
-                    new ReplaceableItem
-                    {
-                        Name = dbKey,
-                        Attributes = attributes
-                    }
-                );
+                base.SetupTableAttribues(request, dbKey, attributes);
 
                 try
                 {
@@ -159,13 +147,7 @@ namespace AnglingClubWebServices.Data
                     new ReplaceableAttribute { Name = "Directions", Value = $"{index}{MultiValueSeparator}{directionsSegment}", Replace = index == 0 },
                 };
 
-                request.Items.Add(
-                    new ReplaceableItem
-                    {
-                        Name = dbKey,
-                        Attributes = attributes
-                    }
-                );
+                base.SetupTableAttribues(request, dbKey, attributes);
 
                 try
                 {

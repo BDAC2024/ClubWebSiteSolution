@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -60,13 +61,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Status", Value = order.Status, Replace = true },
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = order.DbKey,
-                    Attributes = attributes
-                }
-            ); 
+            base.SetupTableAttribues(request, order.DbKey, attributes);
 
             try
             {

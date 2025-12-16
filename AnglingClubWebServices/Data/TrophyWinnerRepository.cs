@@ -58,13 +58,7 @@ namespace AnglingClubWebServices.Data
                 if (trophyWinner.AggregateType != null) { attributes.Add(new ReplaceableAttribute { Name = "AggregateType", Value = ((int)trophyWinner.AggregateType.Value).ToString(), Replace = true }); }
                 if (trophyWinner.MatchType != null) { attributes.Add(new ReplaceableAttribute { Name = "MatchType", Value = ((int)trophyWinner.MatchType.Value).ToString(), Replace = true }); }
 
-                request.Items.Add(
-                    new ReplaceableItem
-                    {
-                        Name = trophyWinner.DbKey,
-                        Attributes = attributes
-                    }
-                );
+                base.SetupTableAttribues(request, trophyWinner.DbKey, attributes);
 
                 try
                 {

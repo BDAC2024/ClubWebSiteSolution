@@ -128,6 +128,17 @@ namespace AnglingClubWebServices.Data
             return client;
         }
 
+        internal void SetupTableAttribues(BatchPutAttributesRequest request, string dbKey, List<ReplaceableAttribute> attributes)
+        {
+            request.Items = new List<ReplaceableItem>();
+            request.Items.Add(new ReplaceableItem
+            {
+                Name = dbKey,
+                Attributes = attributes
+            });
+        }
+
+
         internal string numberToString(int number)
         {
             var numString = number.ToString("0000000000");
@@ -197,6 +208,7 @@ namespace AnglingClubWebServices.Data
                 BatchPutAttributesRequest requestBatch = new BatchPutAttributesRequest();
                 requestBatch.DomainName = request.DomainName;
 
+                requestBatch.Items = new List<ReplaceableItem>();
                 requestBatch.Items.AddRange(request.Items.Take(UPDATE_BATCH_SIZE));
 
                 await storeBatchOfItems(client, requestBatch);
@@ -257,13 +269,7 @@ namespace AnglingClubWebServices.Data
 
                     };
 
-                    sysDataRequest.Items.Add(
-                        new ReplaceableItem
-                        {
-                            Name = systemData.DbKey,
-                            Attributes = sysDataAttributes
-                        }
-                    );
+                    SetupTableAttribues(sysDataRequest, systemData.DbKey, sysDataAttributes);
 
                     try
                     {
@@ -443,7 +449,7 @@ namespace AnglingClubWebServices.Data
                             var storedFileMeta = new StoredFileMeta
                             {
                                 Id = s3Object.Key,
-                                Created = metaResponse.LastModified,
+                                Created = metaResponse.LastModified.Value,
                             };
 
                             results.Add(storedFileMeta);
@@ -455,7 +461,7 @@ namespace AnglingClubWebServices.Data
                         }
                     }
 
-                    continuationToken = listResponse.IsTruncated ? listResponse.NextContinuationToken : null;
+                    continuationToken = listResponse.IsTruncated.Value ? listResponse.NextContinuationToken : null;
 
                 } while (continuationToken != null);
             }

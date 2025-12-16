@@ -6,6 +6,7 @@ using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Stripe.Climate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,13 +63,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Product", Value = membership.Product, Replace = true },
             };
 
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = membership.DbKey,
-                    Attributes = attributes
-                }
-            ); 
+            base.SetupTableAttribues(request, membership.DbKey, attributes);
 
             try
             {

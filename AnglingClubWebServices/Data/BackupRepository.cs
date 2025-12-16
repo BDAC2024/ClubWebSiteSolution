@@ -41,6 +41,7 @@ namespace AnglingClubWebServices.Data
             request.DomainName = restoreToDomain;
             List<ReplaceableAttribute> attributes = new List<ReplaceableAttribute>();
             ReplaceableItem item = null;
+            request.Items = new List<ReplaceableItem>();
 
             foreach (var line in backupLines.OrderBy(x => x.LineNumber))
             {
@@ -101,6 +102,7 @@ namespace AnglingClubWebServices.Data
                 if (itemBatch.Any())
                 {
                     BatchDeleteAttributesRequest request = new BatchDeleteAttributesRequest();
+                    request.Items = new List<DeletableItem>();
 
                     request.DomainName = domainToClear;
 

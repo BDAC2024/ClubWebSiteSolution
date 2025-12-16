@@ -86,14 +86,7 @@ namespace AnglingClubWebServices.Data
 
             };
 
-
-            request.Items.Add(
-                new ReplaceableItem
-                {
-                    Name = result.DbKey,
-                    Attributes = attributes
-                }
-            ); 
+            base.SetupTableAttribues(request, result.DbKey, attributes);
 
             try
             {

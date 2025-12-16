@@ -134,10 +134,18 @@ namespace AnglingClubWebServices.Controllers
                 var icalEvent = new CalendarEvent
                 {
                     Summary = $"BDAC {(ev.EventType == EventType.Match ? ev.MatchType.EnumDescription() : ev.EventType.EnumDescription())}: {ev.Description}",
-                    Description = desc,
-                    Start = new CalDateTime(ev.Date, "Europe/London"),
-                    IsAllDay = ev.Date.ToShortTimeString() == "00:00"
+                    Description = desc
                 };
+
+                if (ev.Date.ToShortTimeString() == "00:00")
+                {
+                    icalEvent.Start = new CalDateTime(DateOnly.FromDateTime(ev.Date));
+                    icalEvent.End = new CalDateTime(DateOnly.FromDateTime(ev.Date.AddDays(1)));
+                }
+                else
+                {
+                    icalEvent.Start = new CalDateTime(ev.Date);
+                }
 
                 calendar.Events.Add(icalEvent);
             }
@@ -147,12 +155,15 @@ namespace AnglingClubWebServices.Controllers
             {
                 //_logger.LogInformation($"{ev.EventType.EnumDescription()} - {ev.Description} - {(ev.MatchType.HasValue ? ev.MatchType.EnumDescription() : "")}");
 
+                var start = DateOnly.FromDateTime(ev.Date);
+                var end = start.AddDays(1);
+
                 var icalEvent = new CalendarEvent
                 {
                     Summary = $"BDAC {ev.MatchType.EnumDescription()}: {ev.Description}",
                     Description = $"{ev.MatchType.EnumDescription()} no.{ev.Number}{(ev.Cup.IsNullOrEmpty() ? "" : " for ")}{ev.Cup}",
-                    Start = new CalDateTime(ev.Date, "Europe/London"),
-                    IsAllDay = ev.Date.ToShortTimeString() == "00:00"
+                    Start = new CalDateTime(start),
+                    End = new CalDateTime(end)
                 };
 
                 calendar.Events.Add(icalEvent);
