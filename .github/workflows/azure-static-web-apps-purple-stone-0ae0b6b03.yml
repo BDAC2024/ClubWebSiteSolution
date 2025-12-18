@@ -58,11 +58,11 @@ jobs:
           cp angular-app/src/staticwebapp.config.json "$ANG_DIST/" || true
           # If you later move it to angular-app/, change the line above accordingly.
 
-      - name: Report deploy folder size
-        run: |
-          du -sh angular-app/dist/AnglingClubWebsiteAng
-          du -ah angular-app/dist/AnglingClubWebsiteAng | sort -hr | head -n 40
-
+      # Report deploy folder size. Useful if exceeding azure free tier limits.
+      #- name: Report deploy folder size. Useful if exceeding azure free tier limits.
+      #  run: |
+      #    du -sh angular-app/dist/AnglingClubWebsiteAng
+      #    du -ah angular-app/dist/AnglingClubWebsiteAng | sort -hr | head -n 40
 
       # Deploy combined site exactly as built
       - name: Build And Deploy

@@ -130,6 +130,9 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
       case 'REQUEST_LOGIN':
         this.handleRequestLogin(data.blazorPage);
         break;
+      case 'REQUEST_PAGE':
+        this.handleRequestPage(data.angPage);
+        break;
       default:
         console.warn('Unknown message from Blazor:', data);
     }
@@ -139,5 +142,9 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login'], {
       state: blazorPage ? { blazorPage } : undefined
     });
+  }
+
+  private handleRequestPage(angPage?: string) {
+    this.router.navigate([`/${angPage}`]);
   }
 }
