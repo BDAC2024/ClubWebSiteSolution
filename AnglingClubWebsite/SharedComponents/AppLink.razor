@@ -1,15 +1,19 @@
 ﻿@inherits MvvmLayoutComponentBase<AppLinkViewModel>
+@inject NavigationManager NavManager
 
 <a @onclick="AppRedirect" href="javascript:void(0)">@ChildContent</a>
 
 @code {
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     [Parameter] public String Href { get; set; } = "/";
 
-    private void AppRedirect()
+    private async Task AppRedirect()
     {
-        ViewModel.NavToPage(Href);
+        //ViewModel.NavToPage(Href);
+        await JS.InvokeVoidAsync("blazorHostBridge.requestAngPage", Href);
     }
 
 }
