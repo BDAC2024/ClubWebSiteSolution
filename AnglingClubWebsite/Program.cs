@@ -16,8 +16,8 @@ using Constants = AnglingClubWebsite.Constants;
 
 // Another test after transfer
 
-// 28.*.*
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzY2NDY5N0AzMjM4MmUzMDJlMzBlcTNkaVU0d1kyQXZMbzRHZnJOMGFBMngzSUs2TUU1UkU2LzYxcFZ5T2JJPQ==");
+// 32.*.*
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjGyl/VkR+XU9Ff1RDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3tSdERrWXZcc3VRRGReVE91XQ==");
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
