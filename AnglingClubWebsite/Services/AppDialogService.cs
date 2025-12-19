@@ -14,9 +14,9 @@ namespace Fishing.Client.Services
             _messenger = messenger;
         }
 
-        public void SendMessage(MessageState state, string title, string body)
+        public void SendMessage(MessageState state, string title, string body, string closeButtonTitle = "Cancel")
         {
-            _messenger.Send<ShowMessage>(new ShowMessage(state, title, body));
+            _messenger.Send<ShowMessage>(new ShowMessage(state, title, body, closeButtonTitle));
         }
     }
 }

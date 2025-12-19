@@ -1,24 +1,25 @@
+using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
+using AnglingClubShared.Models.Auth;
+using AnglingClubWebsite;
+using AnglingClubWebsite.Authentication;
+using AnglingClubWebsite.Extensions;
+using AnglingClubWebsite.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Syncfusion.Blazor.RichTextEditor;
 using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
-using AnglingClubWebsite.Services;
-using AnglingClubShared.Models.Auth;
-using AnglingClubWebsite;
-using AnglingClubWebsite.Authentication;
-using AnglingClubWebsite.Extensions;
-using AnglingClubShared.Entities;
-using AnglingClubShared.DTOs;
-using static System.Net.WebRequestMethods;
 using System.Text.Json;
+using static System.Net.WebRequestMethods;
 
 
 namespace Fishing.Client.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationService : DataServiceBase, IAuthenticationService
     {
         private readonly IHttpClientFactory _factory;
         private readonly AuthenticationStateProvider _stateProvider;
@@ -37,7 +38,15 @@ namespace Fishing.Client.Services
 
         public event Action<string?>? LoginChange;
 
-        public AuthenticationService(IHttpClientFactory factory, ILocalStorageService localStorageService, AuthenticationStateProvider stateProvider, ILogger<AuthenticationService> logger, ICurrentUserService currentUserService, HostBridge hostBridge, IAuthTokenStore authTokenStore)
+        public AuthenticationService(
+            IHttpClientFactory factory, 
+            ILocalStorageService 
+            localStorageService, 
+            AuthenticationStateProvider stateProvider, 
+            ILogger<AuthenticationService> logger, 
+            ICurrentUserService currentUserService, 
+            HostBridge hostBridge, // TODO Ang to Blazor Migration - remove when migration complete
+            IAuthTokenStore authTokenStore) : base(factory)
         {
             _factory = factory;
             _localStorageService = localStorageService;
@@ -117,7 +126,7 @@ namespace Fishing.Client.Services
 
             var jwt = await customAuthStateProvider.GetToken();
 
-            return !string.IsNullOrEmpty(jwt);
+            return !string.IsNullOrEmpty(jwt) && jwt.ToUpper() != Constants.AUTH_EXPIRED;
 
         }
 
@@ -198,6 +207,32 @@ namespace Fishing.Client.Services
                     return true;
                 }
         */
-    }
 
+        public async Task<bool> PinResetRequest(int membershipNumber)
+        {
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_PIN_RESET_REQUEST}/{membershipNumber}";
+
+            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", "");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"PinResetRequest: failed : error {response.StatusCode} - {response.ReasonPhrase}");
+            }
+            else
+            {
+                try
+                {
+                    var content = await response.Content.ReadFromJsonAsync<bool>();
+                    return content;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"PinResetRequest: {ex.Message}");
+                    throw;
+                }
+            }
+            return true;
+        }
+    }
 }
+
