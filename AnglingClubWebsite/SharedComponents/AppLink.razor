@@ -1,6 +1,7 @@
 ﻿@inherits MvvmLayoutComponentBase<AppLinkViewModel>
 @inject NavigationManager NavManager
 @inject HostBridge HostBridge // TODO Ang to Blazor Migration - only required until migration complete
+@inject IConfiguration _configuration; // TODO Ang to Blazor Migration - only required until migration complete
 
 <a @onclick="AppRedirect" href="javascript:void(0)">@ChildContent</a>
 
@@ -28,7 +29,7 @@
         }
         else
         {
-            ViewModel.NavToPage(Href); // Just retain this line when migration complete
+            ViewModel.NavToPage(_configuration["BaseHref"] + Href); // Just retain this line when migration complete
         }
     }
 }
