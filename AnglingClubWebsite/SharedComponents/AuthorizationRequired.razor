@@ -2,6 +2,7 @@
 @inject INavigationService navigationService;
 @inject IAuthenticationService authenticationService;
 @inject HostBridge HostBridge; // TODO Ang to Blazor Migration - only required until migration complete
+@inject IConfiguration _configuration; // TODO Ang to Blazor Migration - only required until migration complete
 
 <AuthorizeView>
     <Authorized>
@@ -48,7 +49,7 @@
             }
             else
             {
-                navigationService.NavigateTo($"/login/{CallingRoute}"); // Just retain this line when migration complete
+                navigationService.NavigateTo($"{_configuration["BaseHref"]}/login/{CallingRoute}"); // Just retain this line when migration complete
             }
         }
     }
