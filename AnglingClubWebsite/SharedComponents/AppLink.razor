@@ -4,16 +4,35 @@
 <a @onclick="AppRedirect" href="javascript:void(0)">@ChildContent</a>
 
 @code {
-    [Inject] IJSRuntime JS { get; set; } = default!;
+    [Inject] IJSRuntime JS { get; set; } = default!;  // TODO Ang to Blazor Migration - only required until migration complete
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     [Parameter] public String Href { get; set; } = "/";
 
+    private bool isEmbedded;  // TODO Ang to Blazor Migration - only required until migration complete
+
     private async Task AppRedirect()
     {
-        //ViewModel.NavToPage(Href);
-        await JS.InvokeVoidAsync("blazorHostBridge.requestAngPage", Href);
+        // TODO Ang to Blazor Migration - only required until migration complete
+        if (isEmbedded)
+        {
+            await JS.InvokeVoidAsync("blazorHostBridge.requestAngPage", Href);
+        }
+        else
+        {
+            ViewModel.NavToPage(Href); // Just retain this line when migration complete
+        }
     }
 
+    // TODO Ang to Blazor Migration - only required until migration complete
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isEmbedded = await JS.InvokeAsync<bool>("blazorHostBridge.isInIFrame");
+
+            StateHasChanged();
+        }
+    }
 }
