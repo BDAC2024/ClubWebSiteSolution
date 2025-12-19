@@ -1,6 +1,7 @@
 @inject NavigationManager navManager;
 @inject INavigationService navigationService;
 @inject IAuthenticationService authenticationService;
+@inject HostBridge HostBridge; // TODO Ang to Blazor Migration - only required until migration complete
 
 <AuthorizeView>
     <Authorized>
@@ -24,15 +25,31 @@
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    private bool isEmbedded;  // TODO Ang to Blazor Migration - only required until migration complete
+
+    // TODO Ang to Blazor Migration - only required until migration complete
+    protected override async Task OnInitializedAsync()
+    {
+        isEmbedded = await HostBridge.IsEmbeddedAsync();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await Task.Delay(90);
 
         if (firstRender && !(await authenticationService.isLoggedIn()))
         {
-            var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
-            //Console.WriteLine($"[AuthorizeView OnAfterRenderAsync] redirect to ang login at ${returnPath}");
-            await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
+            // TODO Ang to Blazor Migration - only required until migration complete
+            if (isEmbedded)
+            {
+                var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
+                //Console.WriteLine($"[AuthorizeView OnAfterRenderAsync] redirect to ang login at ${returnPath}");
+                await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
+            }
+            else
+            {
+                navigationService.NavigateTo($"/login/{CallingRoute}"); // Just retain this line when migration complete
+            }
         }
     }
 
