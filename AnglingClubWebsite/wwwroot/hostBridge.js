@@ -36,5 +36,13 @@ window.blazorHostBridge = {
         } else {
             console.warn('blazorHostBridge.requestAngPage: no parent frame');
         }
+    },
+    isInIFrame: function () {
+        try {
+            return window.self !== window.top;
+        } catch {
+            // Cross-origin iframe – still means "embedded"
+            return true;
+        }
     }
 };
