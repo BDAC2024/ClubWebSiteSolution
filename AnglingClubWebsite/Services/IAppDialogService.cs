@@ -4,6 +4,6 @@ namespace AnglingClubWebsite.Services
 {
     public interface IAppDialogService
     {
-        void SendMessage(MessageState state, string title, string body);
+        void SendMessage(MessageState state, string title, string body, string closeButtonTitle = "Cancel");
     }
 }

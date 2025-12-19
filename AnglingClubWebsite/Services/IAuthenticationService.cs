@@ -13,6 +13,7 @@ namespace AnglingClubWebsite.Services
         Task LogoutAsync();
         //Task<bool> RefreshAsync();
         Task<bool> isLoggedIn();
+        Task<bool> PinResetRequest(int membershipNumber);
 
         Task<ClientMemberDto> GetCurrentUser();
     }

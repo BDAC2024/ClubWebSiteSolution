@@ -51,6 +51,9 @@ namespace AnglingClubWebsite.Pages
         private LoginDetails _loginInfo = new LoginDetails();
 
         [ObservableProperty]
+        private bool _rememberMe = false;
+
+        [ObservableProperty]
         private AuthenticateRequest _loginModel = new AuthenticateRequest();
 
         [ObservableProperty]
@@ -81,7 +84,7 @@ namespace AnglingClubWebsite.Pages
 
                 try
                 {
-                    if (await _authenticationService.LoginAsync(LoginModel))
+                    if (await _authenticationService.LoginAsync(LoginModel, LoginInfo.RememberMe))
                     {
                         var target = "/" + Caller ?? "";
                         _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login about to NavPage to: {target}"));
@@ -115,11 +118,38 @@ namespace AnglingClubWebsite.Pages
             //var valid = !(LoginModel.HasErrors || Submitting);
             //return valid;
         }
+
+        public void Clear()
+        {
+            LoginInfo = new LoginDetails();
+        }
+
+        public async Task OnForgotPin()
+        {
+            LoginInfo.ValidateMembershipNumber();
+
+            Submitting = true;
+
+            if (!LoginInfo.HasErrors && int.TryParse(LoginInfo.MembershipNumber, out var enteredMembershipNumber))
+            {
+                var usingEmail = await _authenticationService.PinResetRequest(enteredMembershipNumber);
+                Submitting = false;
+
+                if (usingEmail)
+                {
+                    _appDialogService.SendMessage(MessageState.Info, "PIN Reset", "Your PIN reset has been done and sent to your registered email address.", "OK");
+                }
+                else
+                {
+                    _appDialogService.SendMessage(MessageState.Info, "PIN Reset", "Your PIN reset request has been sent. Please contact the Membership Officer to get your new PIN number (contact details in your membership book)", "OK");
+                }
+            }
+        }
     }
 
     public partial class LoginDetails : ObservableValidator
     {
-        //[Required]
+        [Required]
         //[MinLength(1)]
         //[NotifyDataErrorInfo]
         [ObservableProperty]
@@ -143,6 +173,11 @@ namespace AnglingClubWebsite.Pages
         //    set => SetProperty(ref _pin, value, true);
         //}
 
+        [ObservableProperty]
+        private bool _rememberMe = false;
+
         public void Validate() => ValidateAllProperties();
+
+        public void ValidateMembershipNumber() => ValidateProperty(MembershipNumber, nameof(MembershipNumber));
     }
 }

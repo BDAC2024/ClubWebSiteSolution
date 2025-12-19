@@ -155,7 +155,7 @@ namespace AnglingClubWebsite.Authentication
                     }
                     else
                     {
-                        return string.Empty;
+                        return Constants.AUTH_EXPIRED;
                     }
                 }
             }

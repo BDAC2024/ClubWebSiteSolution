@@ -1,0 +1,15 @@
+﻿::deep .policy-card {
+    /*background-color: orange !important;*/
+}
+
+::deep .e-card .e-card-header .e-card-header-caption .e-card-header-title {
+    font-size: 12px !important;
+    font-style: normal !important;
+    font-family: Roboto, "Helvetica Neue", sans-serif !important;
+    color: slategray !important;
+}
+
+::deep .e-card .e-card-content {
+    font-size: 11px !important;
+}
+ 

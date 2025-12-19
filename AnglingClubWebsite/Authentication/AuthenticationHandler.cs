@@ -24,14 +24,12 @@ namespace AnglingClubWebsite.Authentication
             IAuthenticationService authenticationService,
             IConfiguration configuration,
             AuthenticationStateProvider stateProvider,
-            AnonymousRoutes anonymousRoutes,
             IMessenger messenger,
             IAppDialogService appDialogService)
         {
             _authenticationService = authenticationService;
             _configuration = configuration;
             _stateProvider = stateProvider;
-            _anonymousRoutes = anonymousRoutes;
             _messenger = messenger;
             _appDialogService = appDialogService;
         }
@@ -39,11 +37,10 @@ namespace AnglingClubWebsite.Authentication
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
-            var isAnonymous = _anonymousRoutes.Contains(request);
-
+            
             var jwt = await customAuthStateProvider.GetToken();
 
-            if (string.IsNullOrEmpty(jwt) && !isAnonymous)
+            if (jwt == Constants.AUTH_EXPIRED)
             {
                 throw new UserSessionExpiredException();
             }

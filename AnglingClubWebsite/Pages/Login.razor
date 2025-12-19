@@ -2,26 +2,50 @@
 
 @inherits MvvmComponentBase<LoginViewModel>
 
-<container>
-    <div class="login">
-        <h3>Welcome - Please Sign In</h3>
 
-        @* <EditForm Model="@ViewModel.LoginInfo"> *@
-        <fieldset>
-            <SfTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginInfo.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
-            <SfTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginInfo.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
-            <div class="smt-submit">
-                <SfButton type="submit"
-                                    @onclick="() => ViewModel.LoginCommand.Execute(null)"
-                                    Disabled="ViewModel.Submitting"
-                                    CssClass="e-block e-primary">Sign In</SfButton>
+
+
+<div class="login">
+    @if (!CallingPage.IsWhiteSpace())
+    {
+        <SfMessage Severity="MessageSeverity.Info">
+            You will be redirected to the calling page once logged in.
+        </SfMessage>
+        <br/>
+    }
+
+    <SfCard class="e-card">
+        <CardContent>
+            <div>
+                <h3>Member Login</h3>
+
+                @* <EditForm Model="@ViewModel.LoginInfo"> *@
+                <fieldset>
+                    <SfTextBox Placeholder='Membership Number' @bind-Value="@ViewModel.LoginInfo.MembershipNumber" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                    <SfTextBox Placeholder='Pin' @bind-Value="@ViewModel.LoginInfo.Pin" Type="InputType.Password" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                    <br />
+                    <br />
+                    <SfCheckBox @bind-Checked="@ViewModel.LoginInfo.RememberMe" Label="Stay logged in on this device?"></SfCheckBox>
+                    <div class="smt-submit">
+                        <SfButton type="submit"
+                                            @onclick="() => ViewModel.LoginCommand.Execute(null)"
+                                            Disabled="ViewModel.Submitting"
+                                            CssClass="e-block e-primary">Sign In</SfButton>
+                    </div>
+                    <br/>
+                    @if (!ViewModel.Submitting)
+                    {
+                        <a @onclick="() => ViewModel.OnForgotPin()" href="javascript:void(0);"><b>I have forgotten my PIN</b></a>
+                    }
+                    <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary>
+                </fieldset>
+                @* </EditForm> *@
             </div>
-            @* <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary> *@
-        </fieldset>
-        @* </EditForm> *@
-    </div>
-</container>
+        </CardContent>
+    </SfCard>
 
+    <PolicyPanelNoPurchases></PolicyPanelNoPurchases>
+</div>
                                       @* Disabled="@(!ViewModel.LoginCommand.CanExecute(null))" *@
 
 @code {
@@ -31,6 +55,7 @@
     protected override void OnInitialized()
     {
         ViewModel.Caller = CallingPage;
+        ViewModel.Clear();
         base.OnInitialized();
     }
 }
