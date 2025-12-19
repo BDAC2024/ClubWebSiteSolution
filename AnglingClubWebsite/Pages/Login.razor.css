@@ -19,6 +19,7 @@ h3 {
 
 .login {
     width: 400px;
+    max-width: 90%;
 }
 
 fieldset {
