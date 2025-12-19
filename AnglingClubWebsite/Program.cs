@@ -33,7 +33,6 @@ builder.Services.AddBlazoredSessionStorageAsSingleton();
 builder.Services.AddTransient<AuthenticationHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddTransient<AnonymousRoutes>();
 
 builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""))

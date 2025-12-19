@@ -14,7 +14,6 @@ namespace AnglingClubWebsite.Authentication
         private readonly IAuthenticationService _authenticationService;
         private readonly AuthenticationStateProvider _stateProvider;
         private readonly IConfiguration _configuration;
-        private readonly AnonymousRoutes _anonymousRoutes;
         private readonly IMessenger _messenger;
         private readonly IAppDialogService _appDialogService;
 
