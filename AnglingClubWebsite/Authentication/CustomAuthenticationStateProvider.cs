@@ -19,21 +19,25 @@ namespace AnglingClubWebsite.Authentication
         private readonly IMessenger _messenger;
         private readonly ILogger<CustomAuthenticationStateProvider> _logger;
         private readonly IAuthTokenStore _authTokenStore;
+        private readonly HostBridge _hostBridge;
 
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+        private bool _isEmbedded = true;
 
         public CustomAuthenticationStateProvider(
             ILocalStorageService localStorageService,
             IMessenger messenger,
             ILogger<CustomAuthenticationStateProvider> logger,
             ISessionStorageService sessionStorageService,
-            IAuthTokenStore authTokenStore)
+            IAuthTokenStore authTokenStore,
+            HostBridge hostBridge)
         {
             _localStorageService = localStorageService;
             _messenger = messenger;
             _logger = logger;
             _sessionStorageService = sessionStorageService;
             _authTokenStore = authTokenStore;
+            _hostBridge = hostBridge;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -70,6 +74,9 @@ namespace AnglingClubWebsite.Authentication
             var userSessionAsString = JsonSerializer.Serialize(userSession, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             //_logger.LogWarning($"[UpdateAuthenticationState] called with userSession = {userSessionAsString} and rememberMe = {rememberMe}");
 
+            // TODO Ang to Blazor Migration - only needed until migration is complete
+            _isEmbedded = await _hostBridge.IsEmbeddedAsync();
+
             ClaimsPrincipal claimsPrincipal;
 
             if (userSession != null)
@@ -97,8 +104,12 @@ namespace AnglingClubWebsite.Authentication
 
                 _authTokenStore.Current = userSession;
 
-                // TODO Ang to Blazor Migration - put the following back once migration is complete
-                //_messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));
+                // TODO Ang to Blazor Migration - only needed until migration is complete
+                if (!_isEmbedded)
+                {
+                    _messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));  // TODO Ang to Blazor Migration - keep just this once migration is complete
+                }
+                
             }
             else
             {
@@ -111,8 +122,11 @@ namespace AnglingClubWebsite.Authentication
 
                 var anonUser = new LoggedIn(new ClientMemberDto());
 
-                // TODO Ang to Blazor Migration - put the following back once migration is complete
-                //_messenger.Send(anonUser);
+                // TODO Ang to Blazor Migration - only needed until migration is complete
+                if (!_isEmbedded)
+                {
+                    _messenger.Send(anonUser); // TODO Ang to Blazor Migration - keep just this once migration is complete
+                }
             }
 
             //_logger.LogWarning($"[UpdateAuthenticationState] called, now calling NotifyAuthenticationStateChanged");

@@ -1,5 +1,6 @@
 ﻿@inherits MvvmLayoutComponentBase<AppLinkViewModel>
 @inject NavigationManager NavManager
+@inject HostBridge HostBridge // TODO Ang to Blazor Migration - only required until migration complete
 
 <a @onclick="AppRedirect" href="javascript:void(0)">@ChildContent</a>
 
@@ -12,6 +13,12 @@
 
     private bool isEmbedded;  // TODO Ang to Blazor Migration - only required until migration complete
 
+    // TODO Ang to Blazor Migration - only required until migration complete
+    protected override async Task OnInitializedAsync()
+    {
+        isEmbedded = await HostBridge.IsEmbeddedAsync();
+    }
+
     private async Task AppRedirect()
     {
         // TODO Ang to Blazor Migration - only required until migration complete
@@ -22,17 +29,6 @@
         else
         {
             ViewModel.NavToPage(Href); // Just retain this line when migration complete
-        }
-    }
-
-    // TODO Ang to Blazor Migration - only required until migration complete
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            isEmbedded = await JS.InvokeAsync<bool>("blazorHostBridge.isInIFrame");
-
-            StateHasChanged();
         }
     }
 }
