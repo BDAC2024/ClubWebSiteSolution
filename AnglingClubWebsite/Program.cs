@@ -14,12 +14,15 @@ using Microsoft.VisualBasic;
 using Syncfusion.Blazor;
 using Constants = AnglingClubWebsite.Constants;
 
-// Another test after transfer
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 // 32.*.*
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("REMOVED_SYNCFUSION_KEY");
+var key = builder.Configuration["SyncfusionLicenseKey"];
+if (!string.IsNullOrWhiteSpace(key))
+{
+    Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(key);
+}
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 

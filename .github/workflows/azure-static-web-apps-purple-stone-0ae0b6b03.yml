@@ -40,6 +40,15 @@ jobs:
           npm run build -- --configuration production
         working-directory: ./angular-app
 
+      - name: Inject Syncfusion license into Blazor appsettings (build-time)
+        shell: bash
+        env:
+          SYNCFUSION_LICENSE_KEY: ${{ secrets.SYNCFUSION_LICENSE_KEY }}
+        run: |
+          FILE="AnglingClubWebsite/wwwroot/appsettings.json"
+          sed -i "s|__SYNCFUSION_LICENSE_KEY__|${SYNCFUSION_LICENSE_KEY}|g" "$FILE"
+          grep -q "SyncfusionLicenseKey" "$FILE"
+
       # Build Blazor
       - name: Build Blazor
         run: |
