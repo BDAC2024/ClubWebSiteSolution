@@ -16,7 +16,6 @@ using Constants = AnglingClubWebsite.Constants;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-// 32.*.*
 var key = builder.Configuration["SyncfusionLicenseKey"];
 if (!string.IsNullOrWhiteSpace(key))
 {
