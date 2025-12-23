@@ -214,6 +214,8 @@
 				"FallbackEmailFromName" : { "Ref" : "FallbackEmailFromName" } ,
 				"FallbackEmailFromAddress" : { "Ref" : "FallbackEmailFromAddress" } ,
 				"CORSOrigins" : { "Ref" : "CORSOrigins" } ,
+				"SwaDefaultHost" : { "Ref" : "SwaDefaultHost" } ,
+				"SwaRegion" : { "Ref" : "SwaRegion" } ,
 				"LogLevel" : { "Ref" : "LogLevel" },
 				"StripeApiKey" : { "Ref" : "StripeApiKey" },
 				"StripeWebHookEndpointSecret" : { "Ref" : "StripeWebHookEndpointSecret" }
