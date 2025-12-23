@@ -144,6 +144,16 @@
 			"Description" : "Comma separated allowed domains",
 			"MinLength" : "0"
 		},
+  		"SwaDefaultHost" : {
+			"Type" : "String",
+			"Description" : "Azure SWA without region/suffix",
+			"MinLength" : "0"
+		},
+  		"SwaRegion" : {
+			"Type" : "String",
+			"Description" : "Azure SWA e.g. 'westeurope', 'uksouth', etc.",
+			"MinLength" : "0"
+		},
 		"LogLevel" : {
 			"Type" : "String",
 			"Description" : "One of Debug, Information, Warning, Error. Defaults to Information if not given",

@@ -9,11 +9,8 @@ export class GlobalService {
   constructor() {
     this.OnLocalhost = window.location.href.indexOf("localhost") > 0 || window.location.href.indexOf(".devtunnels.ms") > 0 ? true : false;
 
-    // JUST WHILE TESTING NEW CORS SETUP
-    this.ApiUrl = "https://localhost:5001";
-
     // Use this one for normal development
-    //this.ApiUrl = this.OnLocalhost ? "https://localhost:5001" : "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod";
+    this.ApiUrl = this.OnLocalhost ? "https://localhost:5001" : "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod";
 
     // Use this one with a DevTunnel for Stripe Testing - see OneNote "Stripe TEST/LIVE Modes"
     //this.ApiUrl = this.OnLocalhost ? "https://dpnhbrrn-5001.uks1.devtunnels.ms" : "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod";
