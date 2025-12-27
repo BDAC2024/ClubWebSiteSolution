@@ -24,6 +24,7 @@ namespace AnglingClubWebsite.Pages
         private readonly IAuthenticationService _authenticationService;
         private readonly INavigationService _navigationService;
         private readonly IAppDialogService _appDialogService;
+        private readonly IConfiguration _configuration;
 
         public LoginViewModel(
             ILogger<LoginViewModel> logger,
@@ -32,7 +33,8 @@ namespace AnglingClubWebsite.Pages
             IAuthenticationService authenticationService,
             INavigationService navigationService,
             IAppDialogService appDialogService,
-            ICurrentUserService currentUserService) : base(messenger, currentUserService, authenticationService)
+            ICurrentUserService currentUserService,
+            IConfiguration configuration) : base(messenger, currentUserService, authenticationService)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
@@ -40,7 +42,7 @@ namespace AnglingClubWebsite.Pages
             _authenticationService = authenticationService;
             _navigationService = navigationService;
             _appDialogService = appDialogService;
-
+            _configuration = configuration;
         }
 
         [ObservableProperty]
@@ -86,7 +88,7 @@ namespace AnglingClubWebsite.Pages
                 {
                     if (await _authenticationService.LoginAsync(LoginModel, LoginInfo.RememberMe))
                     {
-                        var target = "/" + Caller ?? "";
+                        var target = _configuration["BaseHref"] + "/" + Caller ?? "";
                         _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login about to NavPage to: {target}"));
                         NavToPage(target);
                     }
