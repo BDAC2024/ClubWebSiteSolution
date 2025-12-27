@@ -22,7 +22,7 @@
         </div>
       </a>
       <a mat-list-item routerLink="/waters">Club Waters</a>
-      <a mat-list-item routerLink="/matches">Matches</a>
+      <a mat-list-item (click)="openBlazor('matches', drawer)">Matches</a>
       <a mat-list-item routerLink="/register">
         <div class="custom-badge-opens-menu"
              matBadge="new"
