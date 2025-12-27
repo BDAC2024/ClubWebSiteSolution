@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Stripe;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AnglingClubWebServices
 {
@@ -71,17 +74,47 @@ namespace AnglingClubWebServices
                 builder.AddFilter("Engine", LogLevel.Warning);
             });
 
-            var origins = Configuration["CORSOrigins"].Split(",");
+            var configuredOrigins = (Configuration["CORSOrigins"] ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            // Example: your Azure Static Web Apps default host prefix and region.
+            // Adjust these to YOUR actual SWA defaults.
+            // e.g. "wonderful-grass-012345678" and "westeurope"
+            var swaDefaultHost = Configuration["SwaDefaultHost"];   // without region/suffix
+            var swaRegion = Configuration["SwaRegion"];        // e.g. "westeurope", "uksouth", etc.
+
+            Regex? swaPreviewRegex = null;
+            if (!string.IsNullOrWhiteSpace(swaDefaultHost) && !string.IsNullOrWhiteSpace(swaRegion))
+            {
+                // Matches:
+                // https://<DEFAULT>-<anything>.<REGION>.azurestaticapps.net
+                // including PRs (-123) and named envs (-dev) etc.
+                var pattern = $"^https://{Regex.Escape(swaDefaultHost)}-[a-z0-9-]+\\.{Regex.Escape(swaRegion)}\\.azurestaticapps\\.net$";
+
+                swaPreviewRegex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            }
 
             services.AddCors(options =>
             {
                 options.AddPolicy(_corsPolicy, builder =>
                 {
                     builder
-                     .AllowAnyOrigin()
-                     .WithOrigins(origins)
-                     .AllowAnyHeader()
-                     .AllowAnyMethod();
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .SetIsOriginAllowed(origin =>
+                        {
+                            // 1) Explicit allowlist from config (prod, localhost, etc.)
+                            if (configuredOrigins.Contains(origin))
+                                return true;
+
+                            // 2) SWA preview allow (pattern)
+                            if (swaPreviewRegex is not null && swaPreviewRegex.IsMatch(origin))
+                                return true;
+
+                            return false;
+                        })
+                        .SetPreflightMaxAge(TimeSpan.FromHours(1));
                 });
             });
 
