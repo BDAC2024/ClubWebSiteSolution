@@ -84,6 +84,7 @@ namespace AnglingClubWebsite.Pages
 
         public override async Task Loaded()
         {
+            _logger.LogWarning("Loading...");
             await getRefData();
             await base.Loaded();
 
