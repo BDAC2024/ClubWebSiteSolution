@@ -134,6 +134,7 @@ namespace AnglingClubWebsite.Pages
             try
             {
                 _allMatches = await _clubEventService.ReadEventsForSeason(SelectedSeason);
+                _globalService.SetStoredSeason(SelectedSeason);
                 LoadMatches();
             }
             catch (Exception ex)
