@@ -53,6 +53,9 @@ namespace AnglingClubWebsite.Pages
         private bool _showCup = false;
 
         [ObservableProperty]
+        private bool _showTime = false;
+
+        [ObservableProperty]
         private ReferenceData? _refData;
 
         [ObservableProperty]
@@ -144,6 +147,7 @@ namespace AnglingClubWebsite.Pages
             {
                 Matches = new ObservableCollection<ClubEvent>(_allMatches.Where(m => m.MatchType == SelectedMatchType));
                 ShowCup = Matches.Any(x => x.Cup != "");
+                ShowTime = Matches.Any(x => x.Time != "");
 
                 SetupTabs(SelectedMatchType);
                 //this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
@@ -155,6 +159,11 @@ namespace AnglingClubWebsite.Pages
         public bool IsCupVisible(bool isDesktop)
         {
             return isDesktop && ShowCup;
+        }
+
+        public bool IsTimeVisible(bool isDesktop)
+        {
+            return ShowTime;
         }
 
         private void SetupTabs(MatchType selectedMatchType)

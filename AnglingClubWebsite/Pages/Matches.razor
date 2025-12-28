@@ -79,12 +79,12 @@
     @* <div style="position:relative; min-height: 500px;"> *@
     <div class="grid-shrinkwrap">
         <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false"  Height="100%">
-            <GridEvents DataBound="DataboundHandler" TValue="ClubEvent"></GridEvents>
+            <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" TValue="ClubEvent"></GridEvents>
             <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
-
+            
             <GridColumns>
                 <GridColumn Field=@nameof(ClubEvent.Date) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
-                <GridColumn Field=@nameof(ClubEvent.Time) HeaderText="Time" />
+                <GridColumn Field=@nameof(ClubEvent.Time) Visible="@ViewModel.IsTimeVisible(IsVisible)" HeaderText="Time" />
                 <GridColumn Field=@nameof(ClubEvent.Description) HeaderText="Venue" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-attr" } })" />
                 <GridColumn Field=@nameof(ClubEvent.Cup) Visible="@ViewModel.IsCupVisible(IsVisible)" HeaderText="Cup" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-attr" } })" />
                 <GridColumn Field=@nameof(ClubEvent.Number) HeaderText="No" Format="N0" />
@@ -144,6 +144,15 @@
         .grid-shrinkwrap .e-grid {
             width: auto !important;
         }
+
+        .e-grid .e-gridcontent .e-rowcell.date-past {
+            font-weight: 100;
+        }
+
+        .e-grid .e-gridcontent .e-rowcell.date-future {
+            font-weight: 500;
+        }
+
     </style>
 </AuthorizationRequired>
 
@@ -170,5 +179,17 @@
     public void DataboundHandler(object args)
     {
         this.Grid.AutoFitColumnsAsync();
+    }
+
+    public void QueryCellInfoHandler(Syncfusion.Blazor.Grids.QueryCellInfoEventArgs<ClubEvent> args)
+    {
+        if (args.Data.InThePast)
+        {
+            args.Cell.AddClass(new string[] { "date-past" });
+        }
+        else
+        {
+            args.Cell.AddClass(new string[] { "date-future" });
+        }
     }
 }
