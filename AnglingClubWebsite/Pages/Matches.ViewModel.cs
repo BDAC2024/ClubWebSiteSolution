@@ -120,6 +120,13 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
+        public async Task SeasonChanged()
+        {
+            SelectedTab = 0;
+            SelectedMatchType = 0;
+            await GetMatches();
+        }
+
         public async Task GetMatches()
         {
             _messenger.Send(new ShowProgress());
@@ -145,43 +152,48 @@ namespace AnglingClubWebsite.Pages
       
             if (_allMatches != null)
             {
-                Matches = new ObservableCollection<ClubEvent>(_allMatches.Where(m => m.MatchType == SelectedMatchType));
-                ShowCup = Matches.Any(x => x.Cup != "");
-                ShowTime = Matches.Any(x => x.Time != "");
+                List<ClubEvent>? selectedMatches = null;
 
-                SetupTabs(SelectedMatchType);
+                selectedMatches = _allMatches.Where(m => m.MatchType == SelectedMatchType).ToList();
+                Matches = new ObservableCollection<ClubEvent>(selectedMatches);
+                ShowCup = selectedMatches.Any(x => x.Cup != "");
+                ShowTime = selectedMatches.Any(x => x.Time != "");
+
+                SetupTabs(SelectedMatchType, _allMatches);
                 //this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
                 //this.setDisplayedColumns(this.screenService.IsHandsetPortrait);
             }
         }
 
-        public bool IsCupVisible(bool isDesktop)
+        public bool IsCupVisible(bool isSmall)
         {
-            return isDesktop && ShowCup;
+            return !isSmall && ShowCup;
         }
 
-        public bool IsTimeVisible(bool isDesktop)
+        public bool IsTimeVisible(bool isSmall)
         {
             return ShowTime;
         }
 
-        private void SetupTabs(MatchType selectedMatchType)
+        private void SetupTabs(MatchType selectedMatchType, List<ClubEvent> allMatches)
         {
-            _matchTabs = new List<MatchTabData>
-            {
-                new MatchTabData { MatchType = MatchType.Spring, Header = "Spring" },
-                new MatchTabData { MatchType = MatchType.Club, Header = "Club" },
-                new MatchTabData { MatchType = MatchType.Junior, Header = "Junior" },
-                new MatchTabData { MatchType = MatchType.OSU, Header = "OSU" },
-                new MatchTabData { MatchType = MatchType.Specials, Header = "Specials" },
-                new MatchTabData { MatchType = MatchType.Pairs, Header = "Pairs" },
-                new MatchTabData { MatchType = MatchType.Evening, Header = "Evening" },
-            };
+            _matchTabs = new List<MatchTabData>();
+
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Club, HeaderFull = "Club Match", HeaderBrief = "Club", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Junior, HeaderFull = "Junior Match", HeaderBrief = "Junior", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Specials, HeaderFull = "Specials", HeaderBrief = "Specials", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Pairs, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Visitors, HeaderFull = "Visiting Clubs", HeaderBrief = "Visitors", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Qualifier, HeaderFull = "Event Qualifiers", HeaderBrief = "Qualifiers", });
 
             MatchTabItems = new ObservableCollection<MatchTabData>(_matchTabs);
 
             var i = 0;
+            SelectedTab = 0;
             foreach (var item in _matchTabs)
             {
                 if (item.MatchType == selectedMatchType)
@@ -192,10 +204,20 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
+        private void addMatchTab(List<ClubEvent> allMatches, List<MatchTabData> matchTabs, MatchTabData tabData)
+        {
+            if (allMatches.Any(x => x.MatchType == tabData.MatchType))
+            {
+                matchTabs.Add(tabData);
+            }
+        }
+
         public class MatchTabData
         {
-            public string Header { get; set; } = "";
+            public string HeaderFull { get; set; } = "";
+            public string HeaderBrief { get; set; } = "";
             public MatchType MatchType { get; set; } = MatchType.Spring;
+            public bool Visible { get; set; } = false;
         }
 
     }
