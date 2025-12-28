@@ -50,6 +50,9 @@ namespace AnglingClubWebsite.Pages
         private bool _isMobile = false;
 
         [ObservableProperty]
+        private bool _showCup = false;
+
+        [ObservableProperty]
         private ReferenceData? _refData;
 
         [ObservableProperty]
@@ -60,6 +63,9 @@ namespace AnglingClubWebsite.Pages
 
         [ObservableProperty]
         private Season _selectedSeason = Season.S20To21;
+
+        [ObservableProperty]
+        private int _selectedTab = 0;
 
         [ObservableProperty]
         private ObservableCollection<ClubEvent> _matches = new ObservableCollection<ClubEvent>();
@@ -137,14 +143,21 @@ namespace AnglingClubWebsite.Pages
             if (_allMatches != null)
             {
                 Matches = new ObservableCollection<ClubEvent>(_allMatches.Where(m => m.MatchType == SelectedMatchType));
-                SetupTabs();
+                ShowCup = Matches.Any(x => x.Cup != "");
+
+                SetupTabs(SelectedMatchType);
                 //this.globalService.log("Matches loaded, portrait: " + this.screenService.IsHandsetPortrait);
 
                 //this.setDisplayedColumns(this.screenService.IsHandsetPortrait);
             }
         }
 
-        private void SetupTabs()
+        public bool IsCupVisible(bool isDesktop)
+        {
+            return isDesktop && ShowCup;
+        }
+
+        private void SetupTabs(MatchType selectedMatchType)
         {
             _matchTabs = new List<MatchTabData>
             {
@@ -158,6 +171,16 @@ namespace AnglingClubWebsite.Pages
             };
 
             MatchTabItems = new ObservableCollection<MatchTabData>(_matchTabs);
+
+            var i = 0;
+            foreach (var item in _matchTabs)
+            {
+                if (item.MatchType == selectedMatchType)
+                {
+                    SelectedTab = i;
+                }
+                i++;
+            }
         }
 
         public class MatchTabData
