@@ -19,7 +19,7 @@ namespace AnglingClubWebsite.Pages
         private readonly IMessenger _messenger;
         private readonly ILogger<MatchesViewModel> _logger;
         private readonly IAppDialogService _appDialogService;
-        private readonly BrowserService _browserService;
+        public readonly BrowserService _browserService;
         private readonly IRefDataService _refDataService;
         private readonly IGlobalService _globalService;
         private readonly IClubEventService _clubEventService;
