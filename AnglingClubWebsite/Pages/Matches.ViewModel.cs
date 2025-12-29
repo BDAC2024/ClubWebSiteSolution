@@ -47,9 +47,6 @@ namespace AnglingClubWebsite.Pages
         }
 
         [ObservableProperty]
-        private bool _isMobile = false;
-
-        [ObservableProperty]
         private bool _showCup = false;
 
         [ObservableProperty]
@@ -76,6 +73,9 @@ namespace AnglingClubWebsite.Pages
         [ObservableProperty]
         private ObservableCollection<MatchTabData> _matchTabItems = new ObservableCollection<MatchTabData>();
 
+        [ObservableProperty]
+        private DeviceSize _browserSize = DeviceSize.Unknown;
+
         private List<ClubEvent>? _allMatches = null;
 
         private List<MatchTabData> _matchTabs = new List<MatchTabData>();
@@ -87,8 +87,7 @@ namespace AnglingClubWebsite.Pages
 
         private void setBrowserDetails()
         {
-            IsMobile = _browserService.IsMobile;
-
+            BrowserSize = _browserService.DeviceSize;
         }
 
         public override async Task Loaded()
@@ -167,12 +166,12 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        public bool IsCupVisible(bool isSmall)
+        public bool IsCupVisible()
         {
-            return !isSmall && ShowCup;
+            return BrowserSize != DeviceSize.Small && ShowCup;
         }
 
-        public bool IsTimeVisible(bool isSmall)
+        public bool IsTimeVisible()
         {
             return ShowTime;
         }

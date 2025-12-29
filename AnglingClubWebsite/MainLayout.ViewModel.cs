@@ -15,7 +15,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase,
+    public partial class MainLayoutViewModel : ViewModelBase, 
+        IRecipient<BrowserChange>,
         IRecipient<TurnOnDebugMessages>, 
         IRecipient<ShowConsoleMessage>, 
         IRecipient<ShowProgress>, 
@@ -46,6 +47,7 @@ namespace AnglingClubWebsite
             messenger.Register<HideProgress>(this);
             messenger.Register<ShowMessage>(this);
             messenger.Register<SelectMenuItem>(this);
+            messenger.Register<BrowserChange>(this);
 
             _authenticationService = authenticationService;
             _configuration = configuration;
@@ -97,7 +99,16 @@ namespace AnglingClubWebsite
         private string _browserDevice = "UNKNOWN";
 
         [ObservableProperty]
-        private string _browserOrientation = "UNKNOWN";
+        private bool _browserPortrait = false;
+
+        [ObservableProperty]
+        private DeviceSize _browserSize = DeviceSize.Unknown;
+
+        [ObservableProperty]
+        private int _browserWidth = 0;
+
+        [ObservableProperty]
+        private int _browserHeight = 0;
 
         #region Message Handlers
 
@@ -178,6 +189,14 @@ namespace AnglingClubWebsite
         public void Receive(ShowConsoleMessage message)
         {
             ShowConsoleMessage(message.Content);
+        }
+
+        public void Receive(BrowserChange message)
+        {
+            BrowserPortrait = _browserService.IsPortrait;
+            BrowserSize = _browserService.DeviceSize;
+            BrowserWidth = _browserService.Dimensions.Width;
+            BrowserHeight = _browserService.Dimensions.Height;
         }
 
         #endregion Message Handlers
@@ -346,17 +365,8 @@ namespace AnglingClubWebsite
             await base.Loaded();
         }
 
-        public async Task SetupBrowserDetails()
-        {
-            await _browserService.GetDimensions();
-
-            BrowserOrientation = _browserService.IsPortrait ? "Portrait" : "Landscape";
-            BrowserDevice = _browserService.IsMobile ? "Mobile" : "Desktop";
-
-            _messsenger.Send(new BrowserChange());
-        }
-
         #endregion
+
     }
 
     #region Helper classes

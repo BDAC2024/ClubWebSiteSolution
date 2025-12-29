@@ -1,9 +1,39 @@
-@inherits LayoutComponentBase
+@using AnglingClubShared.Enums
+@inherits MvvmLayoutComponentBase<EmbeddedLayoutViewModel>
 
 <div class="embedded-blazor-content">
+    @if (debuggingDeviceType)
+    {
+        <span style="background-color: lightskyblue;">
+            Size: <b>@ViewModel.BrowserSize</b> Portrait: <b>@ViewModel.BrowserPortrait</b> Dims: <b>@ViewModel.BrowserWidth</b> x <b>@ViewModel.BrowserHeight</b>
+        </span>
+    }
+
     @Body
+
+    <div class="progress @(ViewModel.BrowserSize == DeviceSize.Small ? "progress-full-width" : "progress-with-menu")">
+        <SfProgressBar Type="ProgressType.Linear"
+                       Visible="ViewModel.ShowProgressBar"
+                       Height="38"
+                       Width="100%"
+                       Value="20"
+                       ProgressThickness="28"
+                       TrackThickness="28"
+                       ProgressColor="#1976d2"
+                       CornerRadius="CornerType.Round"
+                       TrackColor="#bbd9f7"
+                       IsIndeterminate="true"
+                       Minimum="0"
+                       Maximum="100">
+            <ProgressBarAnimation Enable="true" Duration="2000" Delay="0"></ProgressBarAnimation>
+            <ProgressBarMargin Left="0" Right="0"></ProgressBarMargin>
+        </SfProgressBar>
+    </div>
 </div>
+
 
 @code {
     // TODO Ang to Blazor Migration - this file only needed whilst migrating from Angular to Blazor.
+    public bool debuggingDeviceType = true;
+
 }

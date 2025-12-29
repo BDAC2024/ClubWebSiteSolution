@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using AnglingClubShared.Enums;
+using Microsoft.JSInterop;
 
 namespace AnglingClubWebsite.Services
 {
@@ -14,6 +15,25 @@ namespace AnglingClubWebsite.Services
 
         public BrowserDimension Dimensions { get; set; } = new BrowserDimension { Width = 300, Height = 240 };
         public bool IsMobile { get; set; } = false;
+
+        public DeviceSize DeviceSize 
+        { 
+            get
+            {
+                if (Dimensions.Width >= 1920)
+                {
+                    return DeviceSize.Large;
+                }
+                else if (Dimensions.Width >= 768)
+                {
+                    return DeviceSize.Medium;
+                }
+                else
+                {
+                    return DeviceSize.Small;
+                }
+            }
+        }
 
         public bool IsPortrait 
         { 

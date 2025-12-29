@@ -3,10 +3,12 @@ using AnglingClubWebsite.Authentication;
 using AnglingClubWebsite.Pages;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
+using AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using CommunityToolkit.Mvvm.Messaging;
 using Fishing.Client.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -22,6 +24,18 @@ if (!string.IsNullOrWhiteSpace(key))
     Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(key);
 }
 
+// Determine execution environment
+var nav = builder.Services.BuildServiceProvider()
+    .GetRequiredService<NavigationManager>();
+
+bool isLocalhost =
+    nav.BaseUri.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase) ||
+    nav.BaseUri.StartsWith("https://localhost", StringComparison.OrdinalIgnoreCase) ||
+    nav.BaseUri.StartsWith("http://127.0.0.1", StringComparison.OrdinalIgnoreCase);
+
+bool isDevTunnel =
+    nav.BaseUri.Contains("uks1.devtunnels.ms", StringComparison.OrdinalIgnoreCase);
+
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
@@ -36,14 +50,17 @@ builder.Services.AddTransient<AuthenticationHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddCascadingAuthenticationState();
 
+var uri = isDevTunnel ? new Uri(builder.Configuration["ServerUrlDevTunnel"] ?? "") : (new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""));
+
 builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""))
+                .ConfigureHttpClient(c => c.BaseAddress = uri)
                 .AddHttpMessageHandler<AuthenticationHandler>();
 
 // Infrastructure
-builder.Services.AddScoped<IMessenger, WeakReferenceMessenger>();
+builder.Services.AddSingleton<IMessenger, WeakReferenceMessenger>();
 
 // ViewModels
+builder.Services.AddScoped<AppViewModel>();
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<IndexViewModel>();
 builder.Services.AddScoped<DiaryViewModel>();
@@ -72,6 +89,7 @@ builder.Services.AddAuthorizationCore();
 
 // TODO Ang to Blazor Migration - services only needed during migration
 builder.Services.AddScoped<HostBridge>();
+builder.Services.AddScoped<EmbeddedLayoutViewModel>();
 
 var host = builder.Build();
 

@@ -1,6 +1,7 @@
 ﻿@using AnglingClubWebsite.SharedComponents
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Navigations
+@using AnglingClubShared.Enums
 
 @inject NavigationManager navManager;
 
@@ -16,7 +17,7 @@
         <div class="title-column">
             <div class="title-container">
                 <div class="banner-logo">
-                    @if (mobilePortrait)
+                    @if (ViewModel.BrowserSize == DeviceSize.Small && ViewModel.BrowserPortrait)
                     {
                         <img height="80" src="images/BannerLogoSmall.png" />
                     }
@@ -115,7 +116,7 @@
             @if (debuggingDeviceType)
             {
                 <span style="background-color: yellow;">
-                    DeviceType: <b>@ViewModel.BrowserDevice</b> Orientation: <b>@ViewModel.BrowserOrientation</b>
+                    Size: <b>@ViewModel.BrowserSize</b> Portrait: <b>@ViewModel.BrowserPortrait</b> Dims: <b>@ViewModel.BrowserWidth</b> x <b>@ViewModel.BrowserHeight</b>
                 </span>
             }
             <main>
@@ -126,7 +127,7 @@
         <div @onclick="HideOnClick" class="@(menuShowingOnMobile ? "overlay-dim" : "overlay-hidden")"></div>
     </div>
 
-    <div class="progress @(mobile ? "progress-full-width" : "progress-with-menu")">
+    <div class="progress @(ViewModel.BrowserSize == DeviceSize.Small ? "progress-full-width" : "progress-with-menu")">
         <SfProgressBar Type="ProgressType.Linear"
         Visible="ViewModel.ShowProgressBar"
         Height="38"
@@ -147,24 +148,16 @@
 
 </div>
 
-<SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
-
 @code {
-    public bool debuggingDeviceType = false;
+    public bool debuggingDeviceType = true;
 
     public string SidebarTarget = ".menu-and-main-wrapper";
 
-    private string activeBreakpoint { get; set; } = "";
 
     public bool menuShowingOnMobile = false;
-    public bool mobile = false;
-    public bool mobilePortrait = false;
     public bool menuIsOpen = false;
     public bool oldMenuIsOpen = false;
     public string[] selectedNodes = [];
-
-
-    private bool BrowserDetailsAvailable = false;
 
     protected override void OnInitialized()
     {
@@ -194,10 +187,10 @@
     public void ShowMenu()
     {
         ViewModel.ShowConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
-        ViewModel.ShowConsoleMessage($"Toggle:mobile - {mobile}");
+        ViewModel.ShowConsoleMessage($"Toggle:mobile - {ViewModel.BrowserSize == DeviceSize.Small}");
 
         menuIsOpen = !oldMenuIsOpen;
-        menuShowingOnMobile = mobile && menuIsOpen;
+        menuShowingOnMobile = ViewModel.BrowserSize == DeviceSize.Small && menuIsOpen;
     }
 
     public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
@@ -212,52 +205,13 @@
         ViewModel.ShowConsoleMessage("Menu closing");
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        { 
-            await SetBrowserDetails();
-        }
-    }
-
-    public async Task OnBreakpointChanged(BreakpointChangedEventArgs args)
-    {
-        // await Task.Delay(0);
-
-        if (BrowserDetailsAvailable)
-        {
-            await SetBrowserDetails();
-        }
-
-        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:Breakpoint changed - now {activeBreakpoint}");
-        mobile = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
-        mobilePortrait = activeBreakpoint == "Small";
-
-        menuIsOpen = !mobile;
-
-        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:mobile - now {mobile}");
-        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:menuIsOpen - now {menuIsOpen}");
-
-        menuShowingOnMobile = mobile && menuIsOpen;
-
-        ViewModel.ShowConsoleMessage($"OnBreakpointChanged:menuShowingOnMobile - now {menuShowingOnMobile}");
-
-    }
-
-    public async Task SetBrowserDetails()
-    {
-        await ViewModel.SetupBrowserDetails();
-        BrowserDetailsAvailable = true;
-    }
-
-
     public void MenuSelected(NodeClickEventArgs args)
     {
         bool isLeafNode = !args.NodeData.HasChildren;
 
         ViewModel.ShowConsoleMessage($"MenuSelected - leaf node {isLeafNode}");
 
-        if (mobile && isLeafNode) 
+        if (ViewModel.BrowserSize == DeviceSize.Small && isLeafNode)
         {
             menuIsOpen = false;
             menuShowingOnMobile = false;

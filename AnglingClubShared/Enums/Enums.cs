@@ -277,4 +277,13 @@ namespace AnglingClubShared.Enums
         Senior,
         Junior
     }
+
+    public enum DeviceSize
+    {
+        Unknown,
+        Small,
+        Medium,
+        Large
+    }
+
 }

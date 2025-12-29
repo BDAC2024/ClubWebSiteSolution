@@ -1,5 +1,6 @@
 @inject NavigationManager NavigationManager
 @inject HostBridge HostBridge // TODO Ang to Blazor Migration - only needed until migation complete
+@inherits MvvmLayoutComponentBase<AppViewModel>
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
@@ -28,6 +29,8 @@
     </Router>
 </CascadingAuthenticationState>
 
+<SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
+
 @code {
     // TODO Ang to Blazor Migration - only needed until migation complete
     private Type GetDefaultLayout()
@@ -50,5 +53,25 @@
     /* TODO Ang to Blazor Migration - HTML looked like this before adding GetDefaultLayout()
       <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     */ 
+
+    private string activeBreakpoint { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        SfMediaQuery.Small.MediaQuery = "(max-width: 768px)";
+        SfMediaQuery.Medium.MediaQuery = "(min-width: 768px)";
+        SfMediaQuery.Large.MediaQuery = "(min-width: 1280px)";
+        base.OnInitialized();
+    }
+
+    public async Task OnBreakpointChanged(BreakpointChangedEventArgs args)
+    {
+        // await Task.Delay(0);
+
+        await ViewModel.SetupBrowserDetails();
+
+        // mobile = activeBreakpoint == "Small" || activeBreakpoint == "Medium";
+
+    }
 
 }
