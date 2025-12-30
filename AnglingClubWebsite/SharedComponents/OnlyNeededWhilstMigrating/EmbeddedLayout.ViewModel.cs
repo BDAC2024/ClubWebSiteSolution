@@ -51,9 +51,6 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
         [ObservableProperty]
         private int _browserHeight = 0;
 
-        [ObservableProperty]
-        private bool _showProgressBar = false;
-
         #region Message Handlers
 
         public void Receive(BrowserChange message)
@@ -63,14 +60,13 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
 
         public void Receive(HideProgress message)
         {
-            ShowProgressBar = false;
+            //ShowProgressBar = false;
         }
 
         public void Receive(ShowProgress message)
         {
-            ShowProgressBar = true;
+            //ShowProgressBar = true;
 
-            ShowConsoleMessage($"ShowProgress: size = {BrowserSize}");
         }
 
         #endregion Message Handlers

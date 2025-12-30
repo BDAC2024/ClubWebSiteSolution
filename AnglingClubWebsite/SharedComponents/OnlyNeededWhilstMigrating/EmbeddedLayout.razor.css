@@ -3,18 +3,19 @@
 --------------------------*/
 .progress {
     background-color: unset;
-    position: fixed;
-    bottom: 0;
+    /*    position: fixed;
+    top: 0;
     right: 10px;
     height: 40px;
-    z-index: 2;
+*/ z-index: 2;
     margin: 0 10px;
+    display: block;
 }
 
 .progress-with-menu {
-    left: 200px;
+    /*left: 10px;*/
 }
 
 .progress-full-width {
-    left: 10px;
+    /*left: 10px;*/
 }

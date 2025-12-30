@@ -1,5 +1,4 @@
-﻿using AnglingClubShared;
-using AnglingClubShared.Enums;
+﻿using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -30,6 +29,8 @@ namespace AnglingClubWebsite.SharedComponents
             _globalService = globalService;
         }
 
+        #region Properties
+
         [ObservableProperty]
         private ReferenceData? _refData;
 
@@ -38,6 +39,10 @@ namespace AnglingClubWebsite.SharedComponents
 
         [ObservableProperty]
         private bool _refDataLoaded = false;
+
+        #endregion Properties
+
+        #region Methods
 
         public override async Task Loaded()
         {
@@ -62,6 +67,10 @@ namespace AnglingClubWebsite.SharedComponents
             }
         }
 
+        #endregion Methods
+
+        #region Events
+
         partial void OnSelectedSeasonChanged(Season? oldValue, Season? newValue)
         {
             if (oldValue != newValue && newValue != null)
@@ -74,6 +83,12 @@ namespace AnglingClubWebsite.SharedComponents
             }
         }
 
+        #endregion Events
+
+        #region Inter-component Events
+
         public Action<Season>? OnSeasonChanged { get; set; }
+
+        #endregion Inter-component Events
     }
 }

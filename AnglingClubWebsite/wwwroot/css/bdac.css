@@ -201,4 +201,47 @@ h3 {
 
 }
 
+/* Disable focused cell ring across all Syncfusion SfGrid (Bootstrap 5 theme) */
+.e-grid .e-rowcell.e-focused,
+.e-grid .e-rowcell:focus,
+.e-grid .e-rowcell:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
 
+/* Also remove focus ring from grid headers (optional but consistent) */
+.e-grid .e-headercell:focus,
+.e-grid .e-headercell.e-focused {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* The element you target the spinner to */
+#busyArea {
+    position: relative;
+    top: 10px;
+}
+
+    /* Syncfusion spinner overlay container */
+    #busyArea .e-spinner-pane,
+    #busyArea .e-spinner-pane * {
+        box-sizing: border-box;
+    }
+
+        /* This is typically the centered node */
+        #busyArea .e-spinner-pane .e-spinner-inner {
+            left: 20px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important; /* remove X translate */
+            right: auto !important;
+        }
+
+
+
+
+td.label {
+    font-weight: 600;
+    padding-right: 16px;
+    vertical-align: top;
+}

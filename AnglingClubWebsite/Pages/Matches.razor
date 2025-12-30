@@ -17,47 +17,125 @@
     </div>
     <br />
 
-    <p>You can see more details of each match and the results by selecting <i class="fa-solid fa-circle-info" style="color: #1976d2;"></i> next to each match.</p>
-
-    <SfTab ID="Tab" EnablePersistence="false" SelectedItem="ViewModel.SelectedTab">
-        <TabEvents Selected="OnTabSelected"></TabEvents>
-        <TabItems>
-            @foreach (MatchTabData Item in ViewModel.MatchTabItems)
-            {
-                <TabItem>
-                    <HeaderTemplate>
-                        @if (ViewModel.BrowserSize == DeviceSize.Small)
-                        {
-                            <div>@(Item.HeaderBrief)</div>
-                        }
-                        else
-                        {
-                            <div>@(Item.HeaderFull)</div>
-                        }
-                        
-                    </HeaderTemplate>
-                </TabItem>
-            }
-        </TabItems>
-    </SfTab>
-
-    <div class="grid-shrinkwrap">
-        <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false"  >
-            <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" TValue="ClubEvent"></GridEvents>
-            <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
-            
-            <GridColumns>
-                <GridColumn Field=@nameof(ClubEvent.Date) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
-                <GridColumn Field=@nameof(ClubEvent.Time) Visible="@ViewModel.IsTimeVisible()" HeaderText="Time" />
-                <GridColumn Field=@nameof(ClubEvent.Description) HeaderText="Venue" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-attr" } })" />
-                <GridColumn Field=@nameof(ClubEvent.Cup) Visible="@ViewModel.IsCupVisible()" HeaderText="Cup" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-attr" } })" />
-                <GridColumn Field=@nameof(ClubEvent.Number) HeaderText="No" Format="N0" />
-            </GridColumns>
-
-        </SfGrid>
-
+    <div id="busyArea">
+        <SfSpinner @bind-Visible="@ViewModel.Loading" Type="SpinnerType.Bootstrap5"></SfSpinner>
     </div>
 
+    @if (!ViewModel.Loading)
+    {
+        <p>You can see more details of each match and the results by selecting the match.</p>
+
+        <SfTab ID="Tab" EnablePersistence="false" SelectedItem="ViewModel.SelectedTab">
+            <TabEvents Selected="OnTabSelected"></TabEvents>
+            <TabItems>
+                @foreach (MatchTabData Item in ViewModel.MatchTabItems)
+                {
+                    <TabItem>
+                        <HeaderTemplate>
+                            @if (ViewModel.BrowserSize == DeviceSize.Small)
+                            {
+                                <div>@(Item.HeaderBrief)</div>
+                            }
+                            else
+                            {
+                                <div>@(Item.HeaderFull)</div>
+                            }
+
+                        </HeaderTemplate>
+                    </TabItem>
+                }
+            </TabItems>
+        </SfTab>
+
+        <div class="grid-shrinkwrap">
+            <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false">
+                <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" RowSelected="MatchSelectedHandler" TValue="ClubEvent"></GridEvents>
+                <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
+                <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
+
+                <GridColumns>
+                    <GridColumn Field=@nameof(ClubEvent.Date) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
+                    <GridColumn Field=@nameof(ClubEvent.Time) Visible="@ViewModel.IsTimeVisible()" HeaderText="Time" />
+                    <GridColumn Field=@nameof(ClubEvent.Description) HeaderText="Venue" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-attr" } })" />
+                    <GridColumn Field=@nameof(ClubEvent.Cup) Visible="@ViewModel.IsCupVisible()" HeaderText="Cup" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-attr" } })" />
+                    <GridColumn Field=@nameof(ClubEvent.Number) HeaderText="No" Format="N0" />
+                </GridColumns>
+
+            </SfGrid>
+
+        </div>
+
+        <div>
+            <SfDialog IsModal="true" Visible="@ViewModel.ShowingResults" CssClass="match-details-dialog">
+                <DialogPositionData X="center" Y="top"></DialogPositionData>
+                <DialogTemplates>
+                    <Header><SfMessage Severity="MessageSeverity.Info">Match Details</SfMessage> </Header>
+                    <Content>
+                        <div class="match-results">
+                            @if (ViewModel.BrowserPortrait)
+                            {
+                                <table>
+                                    <tr><td class="label">Match:</td><td>@ViewModel.SelectedMatch!.MatchType No. @ViewModel.SelectedMatch!.Number</td></tr>
+                                    <tr><td class="label">Date:</td><td>@ViewModel.SelectedMatch!.Day @ViewModel.SelectedMatch!.Date.ToString("dd MMM yy")</td></tr>
+                                    <tr><td class="label">Venue:</td><td>@ViewModel.SelectedMatch!.Description</td></tr>
+                                    @if (!ViewModel.SelectedMatch!.Cup.IsWhiteSpace())
+                                    {
+                                        <tr><td class="label">Cup:</td><td>@ViewModel.SelectedMatch!.Cup</td></tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <table>
+                                    <tr><td class="label">Match:</td><td>@ViewModel.SelectedMatch!.MatchType No. @ViewModel.SelectedMatch!.Number</td><td class="label">Venue:</td><td>@ViewModel.SelectedMatch!.Description</td></tr>
+                                    <tr>
+                                        <td class="label">Date:</td>
+                                        <td>@ViewModel.SelectedMatch!.Day @ViewModel.SelectedMatch!.Date.ToString("dd MMM yy")</td>
+                                        @if (!ViewModel.SelectedMatch!.Cup.IsWhiteSpace())
+                                        {
+                                            <td class="label">Cup:</td>
+                                            <td>@ViewModel.SelectedMatch!.Cup</td>
+                                        }
+                                    </tr>
+                                </table>
+                            }
+                            <br />
+                            <h6>Results</h6>
+                            <div id="busyArea">
+                                <SfSpinner @bind-Visible="@ViewModel.LoadingResults" Type="SpinnerType.Bootstrap5"></SfSpinner>
+                            </div>
+                            <ul>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                                <li>A result</li>
+                            </ul>
+                        </div>
+                    </Content>
+                </DialogTemplates>
+                <DialogButtons>
+                    <DialogButton Content="Close" IsPrimary="true" OnClick="(() => ViewModel.ShowingResults = false)" />
+                </DialogButtons>
+            </SfDialog>
+        </div>
+
+    }
 
     <!-- Note: For some reason, these styles only work when applied in the html file.
     They get ignored in both scoped CSS and app-level CSS.
@@ -104,10 +182,10 @@
             max-width: 100%;
         }
 
-        /* ensure grid isn't forced back to 100% */
-        .grid-shrinkwrap .e-grid {
-            width: auto !important;
-        }
+            /* ensure grid isn't forced back to 100% */
+            .grid-shrinkwrap .e-grid {
+                width: auto !important;
+            }
 
         .e-grid .e-gridcontent .e-rowcell.date-past {
             font-weight: 300;
@@ -117,11 +195,29 @@
             font-weight: 500;
         }
 
+        .e-grid .e-rowcell.e-focused {
+            box-shadow: none !important;
+        }
+
+        .match-details-dialog.e-dialog {
+            width: fit-content;
+            max-width: 80vw;
+            margin-top: 20px; /* offset from top when Y=top */
+        }
+
+        .match-details-dialog .e-dlg-content {
+            overflow-x: auto;
+        }
+
+        .match-results {
+            font-size: smaller;
+        }
+
     </style>
 </AuthorizationRequired>
 
 @code {
-    private SfGrid<ClubEvent> Grid;
+    private SfGrid<ClubEvent>? Grid;
 
     public void OnTabSelected(SelectEventArgs args)
     {
@@ -133,12 +229,14 @@
 
     public void DataboundHandler(object args)
     {
-        this.Grid.AutoFitColumnsAsync();
+        this.Grid!.AutoFitColumnsAsync();
     }
 
     public void QueryCellInfoHandler(Syncfusion.Blazor.Grids.QueryCellInfoEventArgs<ClubEvent> args)
     {
-        if (args.Data.InThePast)
+        var match = args.Data;
+
+        if (match.InThePast)
         {
             args.Cell.AddClass(new string[] { "date-past" });
         }
@@ -147,4 +245,10 @@
             args.Cell.AddClass(new string[] { "date-future" });
         }
     }
+
+    public void MatchSelectedHandler(RowSelectEventArgs<ClubEvent> args)
+    {
+        ViewModel.ShowResults(args.Data);
+    }
+
 }

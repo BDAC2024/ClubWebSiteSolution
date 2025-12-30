@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.RichTextEditor;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using MatchType = AnglingClubShared.Enums.MatchType;
 
@@ -23,6 +24,9 @@ namespace AnglingClubWebsite.Pages
         private readonly IRefDataService _refDataService;
         private readonly IGlobalService _globalService;
         private readonly IClubEventService _clubEventService;
+
+        private List<ClubEvent>? _allMatches = null;
+        private List<MatchTabData> _matchTabs = new List<MatchTabData>();
 
         public MatchesViewModel(
             IAuthenticationService authenticationService,
@@ -48,6 +52,8 @@ namespace AnglingClubWebsite.Pages
             BrowserSize = _browserService.DeviceSize;
         }
 
+        #region Properties
+
         [ObservableProperty]
         private bool _showCup = false;
 
@@ -58,7 +64,10 @@ namespace AnglingClubWebsite.Pages
         private ReferenceData? _refData;
 
         [ObservableProperty]
-        private bool _refDataLoaded = false;
+        private bool _loading = true;
+
+        [ObservableProperty]
+        private bool _loadingResults = true;
 
         [ObservableProperty]
         private MatchType _selectedMatchType = MatchType.Spring;
@@ -70,24 +79,32 @@ namespace AnglingClubWebsite.Pages
         private ObservableCollection<ClubEvent> _matches = new ObservableCollection<ClubEvent>();
 
         [ObservableProperty]
+        private bool _showingResults = false;
+
+        [ObservableProperty]
+        private ClubEvent? _selectedMatch = null;
+
+        [ObservableProperty]
         private ObservableCollection<MatchTabData> _matchTabItems = new ObservableCollection<MatchTabData>();
 
         [ObservableProperty]
         private DeviceSize _browserSize = DeviceSize.Unknown;
 
-        private List<ClubEvent>? _allMatches = null;
+        [ObservableProperty]
+        private bool _browserPortrait = false;
 
-        private List<MatchTabData> _matchTabs = new List<MatchTabData>();
+        #endregion Properties
+
+        #region Message Handlers
 
         public void Receive(BrowserChange message)
         {
             setBrowserDetails();
         }
 
-        private void setBrowserDetails()
-        {
-            BrowserSize = _browserService.DeviceSize;
-        }
+        #endregion Message Handlers
+
+        #region Methods
 
         public override async Task Loaded()
         {
@@ -97,61 +114,19 @@ namespace AnglingClubWebsite.Pages
 
         }
 
-        private async Task getInitialData()
+        public bool IsCupVisible()
         {
-            _messenger.Send(new ShowProgress());
-
-            try
-            {
-                RefData = await _refDataService.ReadReferenceData();
-                await GetMatches(_globalService.GetStoredSeason(RefData!.CurrentSeason));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"getRefData: {ex.Message}");
-            }
-            finally
-            {
-                RefDataLoaded = true;
-                _messenger.Send(new HideProgress());
-            }
+            return BrowserSize != DeviceSize.Small && ShowCup;
         }
 
-        /// <summary>
-        /// This is invoked from the shared SeasonSelector
-        /// </summary>
-        /// <param name="season"></param>
-        /// <returns></returns>
-        public async Task SeasonChanged(Season season)
+        public bool IsTimeVisible()
         {
-            SelectedTab = 0;
-            SelectedMatchType = 0;
-            await GetMatches(season);
-        }
-
-        public async Task GetMatches(Season season)
-        {
-            _messenger.Send(new ShowProgress());
-
-            try
-            {
-                _allMatches = await _clubEventService.ReadEventsForSeason(season);
-                LoadMatchesForSelectedType();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"getMatches: {ex.Message}");
-            }
-            finally
-            {
-                RefDataLoaded = true;
-                _messenger.Send(new HideProgress());
-            }
+            return ShowTime;
         }
 
         public void LoadMatchesForSelectedType()
         {
-      
+
             if (_allMatches != null)
             {
                 List<ClubEvent>? selectedMatches = null;
@@ -168,14 +143,69 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        public bool IsCupVisible()
+        public async void ShowResults(ClubEvent match)
         {
-            return BrowserSize != DeviceSize.Small && ShowCup;
+            BrowserPortrait = _browserService.IsPortrait;
+            _logger.LogWarning($"Selected match {match.Id} on {match.Date.ToShortDateString()}");
+            ShowingResults = true;
+            SelectedMatch = match;
+            _logger.LogWarning($"Portrait {BrowserPortrait}");
         }
 
-        public bool IsTimeVisible()
+        #endregion Methods
+
+        #region Helper Methods
+
+        private void setBrowserDetails()
         {
-            return ShowTime;
+            BrowserSize = _browserService.DeviceSize;
+            BrowserPortrait = _browserService.IsPortrait;
+        }
+
+        private async Task getInitialData()
+        {
+            Loading = true;
+
+            _messenger.Send(new ShowProgress());
+
+            try
+            {
+                RefData = await _refDataService.ReadReferenceData();
+                await GetMatches(_globalService.GetStoredSeason(RefData!.CurrentSeason));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"getRefData: {ex.Message}");
+            }
+            finally
+            {
+                Loading = false;
+                _messenger.Send(new HideProgress());
+            }
+        }
+
+        private async Task GetMatches(Season season)
+        {
+            Loading = true;
+
+            _messenger.Send(new ShowProgress());
+
+            //await Task.Delay(2000);
+
+            try
+            {
+                _allMatches = await _clubEventService.ReadEventsForSeason(season);
+                LoadMatchesForSelectedType();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"getMatches: {ex.Message}");
+            }
+            finally
+            {
+                Loading = false;
+                _messenger.Send(new HideProgress());
+            }
         }
 
         private void SetupTabs(MatchType selectedMatchType, List<ClubEvent> allMatches)
@@ -214,6 +244,26 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
+        #endregion Helper Methods
+
+        #region Inter-component Methods
+
+        /// <summary>
+        /// This is invoked from the shared SeasonSelector
+        /// </summary>
+        /// <param name="season"></param>
+        /// <returns></returns>
+        public async Task SeasonChanged(Season season)
+        {
+            SelectedTab = 0;
+            SelectedMatchType = 0;
+            await GetMatches(season);
+        }
+
+        #endregion Inter-component Methods
+
+        #region Helper Classes
+
         public class MatchTabData
         {
             public string HeaderFull { get; set; } = "";
@@ -221,6 +271,8 @@ namespace AnglingClubWebsite.Pages
             public MatchType MatchType { get; set; } = MatchType.Spring;
             public bool Visible { get; set; } = false;
         }
+
+        #endregion Helper Classes
 
     }
 }
