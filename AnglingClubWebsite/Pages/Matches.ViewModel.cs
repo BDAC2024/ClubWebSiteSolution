@@ -64,9 +64,6 @@ namespace AnglingClubWebsite.Pages
         private MatchType _selectedMatchType = MatchType.Spring;
 
         [ObservableProperty]
-        private Season _selectedSeason = Season.S20To21;
-
-        [ObservableProperty]
         private int _selectedTab = 0;
 
         [ObservableProperty]
@@ -95,20 +92,19 @@ namespace AnglingClubWebsite.Pages
         public override async Task Loaded()
         {
             //_logger.LogWarning("Loading...");
-            await getRefData();
+            await getInitialData();
             await base.Loaded();
 
         }
 
-        private async Task getRefData()
+        private async Task getInitialData()
         {
             _messenger.Send(new ShowProgress());
 
             try
             {
                 RefData = await _refDataService.ReadReferenceData();
-                SelectedSeason = _globalService.GetStoredSeason(RefData!.CurrentSeason);
-                await GetMatches();
+                await GetMatches(_globalService.GetStoredSeason(RefData!.CurrentSeason));
             }
             catch (Exception ex)
             {
@@ -121,22 +117,26 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        public async Task SeasonChanged()
+        /// <summary>
+        /// This is invoked from the shared SeasonSelector
+        /// </summary>
+        /// <param name="season"></param>
+        /// <returns></returns>
+        public async Task SeasonChanged(Season season)
         {
             SelectedTab = 0;
             SelectedMatchType = 0;
-            await GetMatches();
+            await GetMatches(season);
         }
 
-        public async Task GetMatches()
+        public async Task GetMatches(Season season)
         {
             _messenger.Send(new ShowProgress());
 
             try
             {
-                _allMatches = await _clubEventService.ReadEventsForSeason(SelectedSeason);
-                _globalService.SetStoredSeason(SelectedSeason);
-                LoadMatches();
+                _allMatches = await _clubEventService.ReadEventsForSeason(season);
+                LoadMatchesForSelectedType();
             }
             catch (Exception ex)
             {
@@ -149,7 +149,7 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        public void LoadMatches()
+        public void LoadMatchesForSelectedType()
         {
       
             if (_allMatches != null)

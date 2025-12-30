@@ -1,0 +1,41 @@
+﻿@using AnglingClubShared.Enums
+@using AnglingClubShared.Models
+@inherits MvvmComponentBase<SeasonSelectorViewModel>
+
+<div class="desktop-season-selector">
+    @if (ViewModel.RefDataLoaded)
+    {
+        <span style="display: inline-flex">Season</span>
+        <SfDropDownList TValue="Season?"
+                        TItem="SeasonInfo"
+                        Placeholder="Season"
+                        Width="100px"
+                        FloatLabelType="FloatLabelType.Never"
+                        DataSource="@ViewModel.RefData!.Seasons"
+                        @bind-Value="@ViewModel.SelectedSeason">
+            <DropDownListFieldSettings Value="Season" Text="Name"></DropDownListFieldSettings>
+            @* <DropDownListEvents TValue="Season" TItem="SeasonInfo" ValueChange="OnSeasonChange"></DropDownListEvents> *@
+        </SfDropDownList>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public Action<Season>? OnSeasonChanged
+    {
+        get
+        {
+            return ViewModel.OnSeasonChanged;
+        }
+        set
+        {
+            if (ViewModel.OnSeasonChanged == null)
+            {
+                ViewModel.OnSeasonChanged = value;
+                //Console.WriteLine($"Setting OnAdded to {value} in setter");
+            }
+        }
+    }
+
+}

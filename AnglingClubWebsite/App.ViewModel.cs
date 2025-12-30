@@ -11,17 +11,25 @@ namespace AnglingClubWebsite
         private readonly IMessenger _messsenger;
         private readonly IAuthenticationService _authenticationService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IRefDataService _refDataService;
 
         public AppViewModel(
-            BrowserService browserService, 
-            IMessenger messsenger, 
-            IAuthenticationService authenticationService, 
-            ICurrentUserService currentUserService) : base(messsenger, currentUserService, authenticationService)
+            BrowserService browserService,
+            IMessenger messsenger,
+            IAuthenticationService authenticationService,
+            ICurrentUserService currentUserService,
+            IRefDataService refDataService) : base(messsenger, currentUserService, authenticationService)
         {
             _browserService = browserService;
             _messsenger = messsenger;
             _authenticationService = authenticationService;
             _currentUserService = currentUserService;
+            _refDataService = refDataService;
+        }
+
+        public async Task InitRefData()
+        {
+            await _refDataService.InitializeAsync();
         }
 
         public async Task SetupBrowserDetails()

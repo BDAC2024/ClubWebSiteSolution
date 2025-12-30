@@ -12,22 +12,8 @@
     <div style="display: block !important;">
         <h3 class="left-header">Matches</h3>
 
-        <div class="desktop-season-selector">
-            @if (ViewModel.RefDataLoaded)
-            {
-                <span style="display: inline-flex">Season</span>
-                <SfDropDownList TValue="Season"
-                                TItem="SeasonInfo"
-                                Placeholder="Season"
-                                Width="100px"
-                                FloatLabelType="FloatLabelType.Never"
-                                DataSource="@ViewModel.RefData!.Seasons"
-                                @bind-Value="@ViewModel.SelectedSeason">
-                    <DropDownListFieldSettings Value="Season" Text="Name"></DropDownListFieldSettings>
-                    <DropDownListEvents TValue="Season" TItem="SeasonInfo" ValueChange="OnSeasonChange"></DropDownListEvents>
-                </SfDropDownList>
-            }
-        </div>
+        <SeasonSelector OnSeasonChanged="@(async (season) => await ViewModel.SeasonChanged(season))"></SeasonSelector>
+
     </div>
     <br />
 
@@ -142,14 +128,7 @@
         var selected = ViewModel.MatchTabItems.ToArray()[args.SelectedIndex].MatchType;
         Console.WriteLine($"Selected item: {args.SelectedIndex} - {selected}");
         ViewModel.SelectedMatchType = selected;
-        ViewModel.LoadMatches();
-    }
-
-    public async Task OnSeasonChange(ChangeEventArgs<Season, SeasonInfo> args)
-    {
-        Console.WriteLine("The DropDownList Value is: ", args.Value);
-        await ViewModel.SeasonChanged();
-
+        ViewModel.LoadMatchesForSelectedType();
     }
 
     public void DataboundHandler(object args)

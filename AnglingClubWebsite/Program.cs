@@ -69,6 +69,8 @@ builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
 builder.Services.AddScoped<WatersViewModel>();
 builder.Services.AddScoped<MatchesViewModel>();
+builder.Services.AddScoped<SeasonSelectorViewModel>();
+
 
 // Component ViewModels
 builder.Services.AddScoped<AppLinkViewModel>();
@@ -82,7 +84,7 @@ builder.Services.AddTransient<IAppDialogService, AppDialogService>();
 builder.Services.AddTransient<INavigationService, NavigationService>();
 builder.Services.AddTransient<INewsService, NewsService>();
 builder.Services.AddTransient<IWatersService, WatersService>();
-builder.Services.AddTransient<IRefDataService, RefDataService>();
+builder.Services.AddScoped<IRefDataService, RefDataService>();
 builder.Services.AddTransient<IClubEventService, ClubEventService>();
 
 builder.Services.AddAuthorizationCore();

@@ -44,10 +44,11 @@
             : typeof(MainLayout);       // normal shell
     }
 
-    // TODO Ang to Blazor Migration - only needed until migation complete
+    
     protected override async Task OnInitializedAsync()
     {
-        await HostBridge.InitializeAsync();
+        await ViewModel.InitRefData();
+        await HostBridge.InitializeAsync(); // TODO Ang to Blazor Migration - only needed until migation complete
     }
 
     /* TODO Ang to Blazor Migration - HTML looked like this before adding GetDefaultLayout()
