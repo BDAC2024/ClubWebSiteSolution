@@ -30,7 +30,7 @@
         </div>
         <div class="icon-column">
             <div class="icons">
-                <a aria-label="Club on Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/groups/309517003231207" title="Club's Facebook Group">
+                <a aria-label="Club on Facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/groups/boroughbridgeanglingclub" title="Club's Facebook Group">
                     <img id="facebook-logo" class="icon"
                     alt="Facebook Logo"
                     src="images/FacebookLogo.png" />
@@ -181,6 +181,8 @@
             ViewModel.ShowConsoleMessage("HideOnClick: Menu closing");
             menuIsOpen = false;
             menuShowingOnMobile = false;
+
+            //ViewModel.ShowConsoleMessage($"HideOnClick - menuIsOpen {menuIsOpen}");
         }
     }
 
@@ -191,6 +193,9 @@
 
         menuIsOpen = !oldMenuIsOpen;
         menuShowingOnMobile = ViewModel.BrowserSize == DeviceSize.Small && menuIsOpen;
+
+        //ViewModel.ShowConsoleMessage($"ShowMenu - menuIsOpen {menuIsOpen}");
+
     }
 
     public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
@@ -215,6 +220,8 @@
         {
             menuIsOpen = false;
             menuShowingOnMobile = false;
+
+            //ViewModel.ShowConsoleMessage($"MenuSelected - menuIsOpen {menuIsOpen}");
         }
     }
 

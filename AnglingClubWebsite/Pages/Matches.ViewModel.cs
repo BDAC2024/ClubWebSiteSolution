@@ -44,6 +44,8 @@ namespace AnglingClubWebsite.Pages
             _refDataService = refDataService;
             _globalService = globalService;
             _clubEventService = clubEventService;
+
+            BrowserSize = _browserService.DeviceSize;
         }
 
         [ObservableProperty]
@@ -92,7 +94,7 @@ namespace AnglingClubWebsite.Pages
 
         public override async Task Loaded()
         {
-            _logger.LogWarning("Loading...");
+            //_logger.LogWarning("Loading...");
             await getRefData();
             await base.Loaded();
 

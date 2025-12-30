@@ -3,6 +3,7 @@ using AnglingClubShared.Enums;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Data.Common;
 
 namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
 {
@@ -18,6 +19,8 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
         private readonly IMessenger _messenger;
         private readonly BrowserService _browserService;
 
+        private const bool ShowDebugMessages = false;
+
         public EmbeddedLayoutViewModel(
             IAuthenticationService authenticationService,
             ICurrentUserService currentUserService,
@@ -32,6 +35,8 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
             messenger.Register<BrowserChange>(this); 
             messenger.Register<ShowProgress>(this); 
             messenger.Register<HideProgress>(this);
+
+            setBrowserDetails();
         }
 
         [ObservableProperty]
@@ -53,11 +58,7 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
 
         public void Receive(BrowserChange message)
         {
-            BrowserPortrait = _browserService.IsPortrait ;
-            BrowserSize = _browserService.DeviceSize;
-            BrowserWidth = _browserService.Dimensions.Width;
-            BrowserHeight = _browserService.Dimensions.Height;
-
+            setBrowserDetails();
         }
 
         public void Receive(HideProgress message)
@@ -68,8 +69,26 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
         public void Receive(ShowProgress message)
         {
             ShowProgressBar = true;
+
+            ShowConsoleMessage($"ShowProgress: size = {BrowserSize}");
         }
 
         #endregion Message Handlers
+
+        public void ShowConsoleMessage(string message)
+        {
+            if (ShowDebugMessages)
+            {
+                Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
+            }
+        }
+
+        private void setBrowserDetails()
+        {
+            BrowserPortrait = _browserService.IsPortrait;
+            BrowserSize = _browserService.DeviceSize;
+            BrowserWidth = _browserService.Dimensions.Width;
+            BrowserHeight = _browserService.Dimensions.Height;
+        }
     }
 }

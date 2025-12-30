@@ -1,17 +1,10 @@
 using AnglingClubShared;
-using AnglingClubWebsite.SharedComponents;
 using AnglingClubShared.Enums;
+using AnglingClubWebsite.Services;
+using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Notifications;
-using AnglingClubShared.Entities;
-using AnglingClubWebsite.Services;
-using AnglingClubShared.DTOs;
-using Syncfusion.Blazor.Lists;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using Syncfusion.Blazor.Navigations;
-using Microsoft.AspNetCore.Components;
 
 namespace AnglingClubWebsite
 {
@@ -57,6 +50,8 @@ namespace AnglingClubWebsite
             _currentUserService = currentUserService;
             _browserService = browserService;
             _messsenger = messenger;
+
+            setBrowserDetails();
         }
 
         [ObservableProperty]
@@ -193,10 +188,7 @@ namespace AnglingClubWebsite
 
         public void Receive(BrowserChange message)
         {
-            BrowserPortrait = _browserService.IsPortrait;
-            BrowserSize = _browserService.DeviceSize;
-            BrowserWidth = _browserService.Dimensions.Width;
-            BrowserHeight = _browserService.Dimensions.Height;
+            setBrowserDetails();
         }
 
         #endregion Message Handlers
@@ -339,6 +331,14 @@ namespace AnglingClubWebsite
         private string menuUrl(string item)
         {
             return _configuration["BaseHref"] + item;
+        }
+
+        private void setBrowserDetails()
+        {
+            BrowserPortrait = _browserService.IsPortrait;
+            BrowserSize = _browserService.DeviceSize;
+            BrowserWidth = _browserService.Dimensions.Width;
+            BrowserHeight = _browserService.Dimensions.Height;
         }
 
         #endregion Helper Methods

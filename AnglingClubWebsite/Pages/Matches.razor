@@ -11,7 +11,8 @@
 <AuthorizationRequired>
     <div style="display: block !important;">
         <h3 class="left-header">Matches</h3>
-        <div class="@(ViewModel.BrowserSize == DeviceSize.Small ? "edit-button-panel" : "desktop-season-selector")">
+
+        <div class="desktop-season-selector">
             @if (ViewModel.RefDataLoaded)
             {
                 <span style="display: inline-flex">Season</span>
@@ -54,26 +55,8 @@
         </TabItems>
     </SfTab>
 
-    <!--
-        <SfGrid DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false" AllowTextWrap="true"
-                Height="100%" Width="@Width">
-
-            <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
-
-            <GridColumns>
-                <GridColumn Field=@nameof(ClubEvent.Date) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" Width="85" />
-                <GridColumn Field=@nameof(ClubEvent.Time) HeaderText="Time" Width="65" />
-                <GridColumn Field=@nameof(ClubEvent.Description) HeaderText="Venue" />
-                <GridColumn Field=@nameof(ClubEvent.Cup) Visible="@IsVisible" HeaderText="Cup" />
-                <GridColumn Field=@nameof(ClubEvent.Number) HeaderText="No" Format="N0" Width="50" />
-            </GridColumns>
-
-        </SfGrid>
-
-    -->
-    @* <div style="position:relative; min-height: 500px;"> *@
     <div class="grid-shrinkwrap">
-        <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false"  Height="100%">
+        <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false"  >
             <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" TValue="ClubEvent"></GridEvents>
             <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
             
