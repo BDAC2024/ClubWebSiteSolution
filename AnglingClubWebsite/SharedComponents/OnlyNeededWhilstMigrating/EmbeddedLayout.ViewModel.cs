@@ -9,15 +9,14 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
 {
 
     public partial class EmbeddedLayoutViewModel : ViewModelBase, 
-        IRecipient<BrowserChange>,
-        IRecipient<ShowProgress>,
-        IRecipient<HideProgress>
+        IRecipient<BrowserChange>
     {
 
         private readonly IAuthenticationService _authenticationService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMessenger _messenger;
         private readonly BrowserService _browserService;
+        private readonly IGlobalService _globalService;
 
         private const bool ShowDebugMessages = false;
 
@@ -25,18 +24,20 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
             IAuthenticationService authenticationService,
             ICurrentUserService currentUserService,
             IMessenger messenger,
-            BrowserService browserService) : base(messenger, currentUserService, authenticationService)
+            BrowserService browserService,
+            IGlobalService globalService) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _currentUserService = currentUserService;
             _messenger = messenger;
             _browserService = browserService;
 
-            messenger.Register<BrowserChange>(this); 
-            messenger.Register<ShowProgress>(this); 
-            messenger.Register<HideProgress>(this);
+            messenger.Register<BrowserChange>(this);
 
             setBrowserDetails();
+            _globalService = globalService;
+
+            _globalService.IsEmbedded = true;
         }
 
         [ObservableProperty]
@@ -56,17 +57,6 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
         public void Receive(BrowserChange message)
         {
             setBrowserDetails();
-        }
-
-        public void Receive(HideProgress message)
-        {
-            //ShowProgressBar = false;
-        }
-
-        public void Receive(ShowProgress message)
-        {
-            //ShowProgressBar = true;
-
         }
 
         #endregion Message Handlers

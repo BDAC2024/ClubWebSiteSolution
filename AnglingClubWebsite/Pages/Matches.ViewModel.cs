@@ -20,10 +20,11 @@ namespace AnglingClubWebsite.Pages
         private readonly IMessenger _messenger;
         private readonly ILogger<MatchesViewModel> _logger;
         private readonly IAppDialogService _appDialogService;
-        public readonly BrowserService _browserService;
+        private readonly BrowserService _browserService;
         private readonly IRefDataService _refDataService;
-        private readonly IGlobalService _globalService;
         private readonly IClubEventService _clubEventService;
+
+        public readonly IGlobalService GlobalService;
 
         private List<ClubEvent>? _allMatches = null;
         private List<MatchTabData> _matchTabs = new List<MatchTabData>();
@@ -46,7 +47,7 @@ namespace AnglingClubWebsite.Pages
             messenger.Register<BrowserChange>(this);
             _browserService = browserService;
             _refDataService = refDataService;
-            _globalService = globalService;
+            GlobalService = globalService;
             _clubEventService = clubEventService;
 
             BrowserSize = _browserService.DeviceSize;
@@ -64,10 +65,10 @@ namespace AnglingClubWebsite.Pages
         private ReferenceData? _refData;
 
         [ObservableProperty]
-        private bool _loading = true;
+        private bool _dataLoaded = false;
 
         [ObservableProperty]
-        private bool _loadingResults = true;
+        private bool _resultsLoaded = false;
 
         [ObservableProperty]
         private MatchType _selectedMatchType = MatchType.Spring;
@@ -164,14 +165,12 @@ namespace AnglingClubWebsite.Pages
 
         private async Task getInitialData()
         {
-            Loading = true;
-
-            _messenger.Send(new ShowProgress());
+            DataLoaded = false;
 
             try
             {
                 RefData = await _refDataService.ReadReferenceData();
-                await GetMatches(_globalService.GetStoredSeason(RefData!.CurrentSeason));
+                await GetMatches(GlobalService.GetStoredSeason(RefData!.CurrentSeason));
             }
             catch (Exception ex)
             {
@@ -179,16 +178,14 @@ namespace AnglingClubWebsite.Pages
             }
             finally
             {
-                Loading = false;
-                _messenger.Send(new HideProgress());
+                DataLoaded = true;
             }
         }
 
         private async Task GetMatches(Season season)
         {
-            Loading = true;
+            DataLoaded = false;
 
-            _messenger.Send(new ShowProgress());
 
             //await Task.Delay(2000);
 
@@ -203,8 +200,7 @@ namespace AnglingClubWebsite.Pages
             }
             finally
             {
-                Loading = false;
-                _messenger.Send(new HideProgress());
+                DataLoaded = true;
             }
         }
 

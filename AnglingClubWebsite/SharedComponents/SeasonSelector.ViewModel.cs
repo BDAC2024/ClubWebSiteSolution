@@ -75,8 +75,6 @@ namespace AnglingClubWebsite.SharedComponents
         {
             if (oldValue != newValue && newValue != null)
             {
-                //_logger.LogWarning($"Venue {newValue!.Value} selected in VM.OnSelectedItemIdChanged");
-                //Console.WriteLine($"Venue {newValue!.Value} selected in VM.OnSelectedItemIdChanged");
                 _globalService.SetStoredSeason(newValue!.Value);
 
                 OnSeasonChanged!.Invoke(newValue!.Value);

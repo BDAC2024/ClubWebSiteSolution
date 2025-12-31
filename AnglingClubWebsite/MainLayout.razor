@@ -127,25 +127,6 @@
         <div @onclick="HideOnClick" class="@(menuShowingOnMobile ? "overlay-dim" : "overlay-hidden")"></div>
     </div>
 
-    <div class="progress @(ViewModel.BrowserSize == DeviceSize.Small ? "progress-full-width" : "progress-with-menu")">
-        <SfProgressBar Type="ProgressType.Linear"
-        Visible="ViewModel.ShowProgressBar"
-        Height="38"
-        Width="100%"
-        Value="20"
-        ProgressThickness="28"
-        TrackThickness="28"
-        ProgressColor="#1976d2"
-        CornerRadius="CornerType.Round"
-        TrackColor="#bbd9f7"
-        IsIndeterminate="true"
-        Minimum="0"
-        Maximum="100">
-            <ProgressBarAnimation Enable="true" Duration="2000" Delay="0"></ProgressBarAnimation>
-            <ProgressBarMargin Left="0" Right="0"></ProgressBarMargin>
-        </SfProgressBar>
-    </div>
-
 </div>
 
 @code {

@@ -14,8 +14,10 @@ namespace AnglingClubShared
 
     public record class BrowserChange();
 
-    public record class ShowProgress();
-    public record class HideProgress();
+    // No longer used, each ViewModel handles its own progress indication
+    //public record class ShowProgress();
+    //public record class HideProgress();
+
     public record class SelectMenuItem(string NavigateUrl);
 
     public record class ShowConsoleMessage(string Content);

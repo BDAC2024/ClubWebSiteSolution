@@ -245,3 +245,99 @@ td.label {
     padding-right: 16px;
     vertical-align: top;
 }
+
+/* shrink-wrap the grid to its content width */
+.grid-shrinkwrap {
+    display: inline-block; /* key: shrink-to-fit */
+    max-width: 100%;
+}
+
+    /* ensure grid isn't forced back to 100% */
+    .grid-shrinkwrap .e-grid {
+        width: auto !important;
+    }
+
+
+
+.e-grid .e-gridcontent .e-rowcell.date-past {
+    font-weight: 300;
+}
+
+.e-grid .e-gridcontent .e-rowcell.date-future {
+    font-weight: 500;
+}
+
+.e-grid .e-rowcell.e-focused {
+    box-shadow: none !important;
+}
+
+/* Active tab underline */
+.e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
+    border-bottom: 3px solid #1976d2 !important;
+}
+
+    /* Active tab text */
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active .e-tab-text,
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active a,
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active span {
+        color: #1976d2 !important;
+        font-weight: 700 !important;
+    }
+
+
+/* Tab item wrap */
+.e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+    color: #62b4fd !important;
+    padding: 0 6px !important;
+}
+
+/* Bottom border line under the header */
+.e-tab .e-tab-header::before {
+    border-color: #CCFBF1 !important;
+}
+
+/* Active item border */
+.e-tab .e-tab-header .e-toolbar-item.e-active {
+    border: 1px solid #CCFBF1 !important;
+}
+
+/* Tab text (non-active) */
+.e-tab .e-tab-header .e-toolbar-item .e-tab-text {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: darkslategray !important;
+}
+
+/* Tab text (active) */
+.e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: black !important;
+}
+
+.e-grid .e-rowcell.e-attr {
+    white-space: normal;
+}
+
+/* 1) Target the actual rendered dialog element */
+.e-dialog.e-popup.details-dialog {
+    width: fit-content !important;
+    max-width: 80vw !important;
+    min-width: unset !important;
+    margin-top: 20px; /* offset from top when Y=top */
+}
+
+/* 2) Some versions apply sizing to the container instead */
+.e-dlg-container:has(.details-dialog) .e-dialog.e-popup.details-dialog {
+    width: fit-content !important;
+    max-width: 80vw !important;
+    min-width: unset !important;
+    margin-top: 20px; /* offset from top when Y=top */
+}
+
+/* 3) Ensure content can scroll horizontally when constrained by max-width */
+.e-dialog.e-popup.details-dialog .e-dlg-content {
+    overflow-x: auto;
+}
+
+

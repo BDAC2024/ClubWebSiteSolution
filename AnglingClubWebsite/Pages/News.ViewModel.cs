@@ -49,6 +49,9 @@ namespace AnglingClubWebsite.Pages
         private bool _isAdding = false;
 
         [ObservableProperty]
+        private bool _dataLoaded = false;
+
+        [ObservableProperty]
         private bool _submitting = false;
 
         public override async Task Loaded()
@@ -65,7 +68,7 @@ namespace AnglingClubWebsite.Pages
 
         private async Task getNews(bool unlockAfterwards = false)
         {
-            _messenger.Send(new ShowProgress());
+            DataLoaded = false;
 
             try
             {
@@ -89,7 +92,7 @@ namespace AnglingClubWebsite.Pages
                     Unlock(true);
                 }
 
-                _messenger.Send(new HideProgress());
+                DataLoaded = true;
             }
         }
 
@@ -116,7 +119,7 @@ namespace AnglingClubWebsite.Pages
         [RelayCommand(CanExecute = nameof(CanWeSave))]
         private async Task Save()
         {
-            _messenger.Send<ShowProgress>();
+            DataLoaded = false;
 
             try
             {
@@ -136,7 +139,7 @@ namespace AnglingClubWebsite.Pages
             {
                 Submitting = false;
                 NewsItem = null;
-                _messenger.Send<HideProgress>();
+                DataLoaded = true;
             }
         }
 
@@ -170,7 +173,7 @@ namespace AnglingClubWebsite.Pages
                         Label = "Yes",
                         OnConfirmed = async () =>
                         {
-                            _messenger.Send<ShowProgress>();
+                            DataLoaded = false;
 
                             try
                             {
@@ -188,7 +191,7 @@ namespace AnglingClubWebsite.Pages
                             finally
                             {
                                 Submitting = false;
-                                _messenger.Send<HideProgress>();
+                                DataLoaded = true;
                             }
 
                         }

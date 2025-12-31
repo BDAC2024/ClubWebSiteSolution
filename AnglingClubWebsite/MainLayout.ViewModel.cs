@@ -12,8 +12,6 @@ namespace AnglingClubWebsite
         IRecipient<BrowserChange>,
         IRecipient<TurnOnDebugMessages>, 
         IRecipient<ShowConsoleMessage>, 
-        IRecipient<ShowProgress>, 
-        IRecipient<HideProgress>, 
         IRecipient<ShowMessage>, 
         IRecipient<LoggedIn>,
         IRecipient<SelectMenuItem>
@@ -36,8 +34,6 @@ namespace AnglingClubWebsite
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<LoggedIn>(this);
             messenger.Register<ShowConsoleMessage>(this);
-            messenger.Register<ShowProgress>(this);
-            messenger.Register<HideProgress>(this);
             messenger.Register<ShowMessage>(this);
             messenger.Register<SelectMenuItem>(this);
             messenger.Register<BrowserChange>(this);
@@ -62,9 +58,6 @@ namespace AnglingClubWebsite
 
         [ObservableProperty]
         private bool _showDebugMessages = true;
-
-        [ObservableProperty]
-        private bool _showProgressBar = false;
 
         [ObservableProperty]
         private MessageSeverity _messageSeverity = MessageSeverity.Normal;
@@ -138,16 +131,6 @@ namespace AnglingClubWebsite
         public void Receive(TurnOnDebugMessages message)
         {
             ShowDebugMessages = message.YesOrNo;
-        }
-
-        public void Receive(HideProgress message)
-        {
-            ShowProgressBar = false;
-        }
-
-        public void Receive(ShowProgress message)
-        {
-            ShowProgressBar = true;
         }
 
         public void Receive(ShowMessage message)

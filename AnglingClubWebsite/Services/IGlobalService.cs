@@ -7,5 +7,6 @@ namespace AnglingClubWebsite.Services
         Season GetStoredSeason(Season defaultIfEmpty);
         void SetStoredSeason(Season season);
 
+        bool IsEmbedded { get; set; }
     }
 }

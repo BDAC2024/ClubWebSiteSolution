@@ -26,11 +26,13 @@
     <br />
 }
 
+<BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
+
 @if (ViewModel.IsAdding)
 {
     <EditableCard Submitting = "ViewModel.Submitting"
-                CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
-                SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
+    CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
+    SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
         <EditableNewsCardContent Item="@ViewModel.NewsItem"></EditableNewsCardContent>
     </EditableCard>
 }
@@ -40,23 +42,23 @@
     @if (ViewModel.NewsItem != null && ViewModel.NewsItem.DbKey == item.DbKey)
     {
         <EditableCard Submitting = "ViewModel.Submitting"
-                        CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
-                        SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
+        CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
+        SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
             <EditableNewsCardContent Item="@ViewModel.NewsItem"></EditableNewsCardContent>
         </EditableCard>
     }
     else
     {
         <NewsCard ItemId="@item.DbKey"
-                  Title="@item.Title"
-                  SubTitle="@item.Date.ToString("dd MMM yy")"
-                  IsNew="ViewModel.IsNew(item.Date)"
-                  Button1Text="@(ViewModel.IsUnlocked ? "Delete" : "")"
-                  Button1Icon="@(ViewModel.IsUnlocked ? "fa-trash" : "")"
-                  Button1Action="@(async (string itemId) => await ViewModel.OnNewsItemDeleted(item))"
-                  Button2Text="@(ViewModel.IsUnlocked ? "Edit" : "")"
-                  Button2Icon="@(ViewModel.IsUnlocked ? "fa-pencil" : "")"
-                  Button2Action="@(async (string itemId) => await ViewModel.OnNewsItemEdited(itemId))">
+        Title="@item.Title"
+        SubTitle="@item.Date.ToString("dd MMM yy")"
+        IsNew="ViewModel.IsNew(item.Date)"
+        Button1Text="@(ViewModel.IsUnlocked ? "Delete" : "")"
+        Button1Icon="@(ViewModel.IsUnlocked ? "fa-trash" : "")"
+        Button1Action="@(async (string itemId) => await ViewModel.OnNewsItemDeleted(item))"
+        Button2Text="@(ViewModel.IsUnlocked ? "Edit" : "")"
+        Button2Icon="@(ViewModel.IsUnlocked ? "fa-pencil" : "")"
+        Button2Action="@(async (string itemId) => await ViewModel.OnNewsItemEdited(itemId))">
             @((MarkupString)item.Body)
         </NewsCard>
     }

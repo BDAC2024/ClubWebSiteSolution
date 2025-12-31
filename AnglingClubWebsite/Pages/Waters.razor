@@ -24,10 +24,13 @@
     <br />
     <br />
 }
+
 <h6>PLEASE COMPLY WITH ALL NOTICE BOARDS</h6>
 <p>
     Keep to all footpaths, do not wander from banks. All gates must be closed after being opened. Do not climb on walls. Do not cause a parking obstruction by blocking gateways etc.
 </p>
+
+<BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
 
 @foreach (var item in ViewModel.Items)
 {
@@ -181,7 +184,7 @@
     */
 }
 
-@if (!ViewModel.IsLoggedIn && !ViewModel.Loading)
+@if (!ViewModel.IsLoggedIn && ViewModel.DataLoaded)
 {
     <SfMessage Severity="MessageSeverity.Warning">
         Currently hiding members only waters.

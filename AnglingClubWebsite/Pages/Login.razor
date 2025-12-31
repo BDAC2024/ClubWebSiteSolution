@@ -9,7 +9,7 @@
     @if (!CallingPage.IsWhiteSpace())
     {
         <SfMessage Severity="MessageSeverity.Info">
-            You will be redirected to the calling page once logged in.
+            You will be redirected to the requested page after login.
         </SfMessage>
         <br/>
     }
@@ -32,11 +32,18 @@
                                             Disabled="ViewModel.Submitting"
                                             CssClass="e-block e-primary">Sign In</SfButton>
                     </div>
-                    <br/>
+
                     @if (!ViewModel.Submitting)
                     {
                         <a @onclick="() => ViewModel.OnForgotPin()" href="javascript:void(0);"><b>I have forgotten my PIN</b></a>
                     }
+                    else
+                    {
+                        <br />
+                        <BusyIndicator IsReady="!ViewModel.Submitting"></BusyIndicator>
+                        <br />
+                    }
+
                     <MvvmValidationSummary Context="ViewModel.LoginInfo"></MvvmValidationSummary>
                 </fieldset>
                 @* </EditForm> *@

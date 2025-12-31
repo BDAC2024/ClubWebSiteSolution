@@ -17,11 +17,9 @@
     </div>
     <br />
 
-    <div id="busyArea">
-        <SfSpinner @bind-Visible="@ViewModel.Loading" Type="SpinnerType.Bootstrap5"></SfSpinner>
-    </div>
+    <BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
 
-    @if (!ViewModel.Loading)
+    @if (ViewModel.DataLoaded)
     {
         <p>You can see more details of each match and the results by selecting the match.</p>
 
@@ -66,8 +64,11 @@
         </div>
 
         <div>
-            <SfDialog IsModal="true" Visible="@ViewModel.ShowingResults" CssClass="match-details-dialog">
-                <DialogPositionData X="center" Y="top"></DialogPositionData>
+            <SfDialog IsModal="true" Visible="@ViewModel.ShowingResults" CssClass="details-dialog" >
+                @if (ViewModel.GlobalService.IsEmbedded)
+                {
+                    <DialogPositionData X="center" Y="top"></DialogPositionData>
+                }
                 <DialogTemplates>
                     <Header><SfMessage Severity="MessageSeverity.Info">Match Details</SfMessage> </Header>
                     <Content>
@@ -102,30 +103,13 @@
                             <br />
                             <h6>Results</h6>
                             <div id="busyArea">
-                                <SfSpinner @bind-Visible="@ViewModel.LoadingResults" Type="SpinnerType.Bootstrap5"></SfSpinner>
+                                <BusyIndicator IsReady="@ViewModel.ResultsLoaded"></BusyIndicator>
                             </div>
-                            <ul>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                                <li>A result</li>
-                            </ul>
+                            <br />
+
+
+
+                            <br />
                         </div>
                     </Content>
                 </DialogTemplates>
@@ -136,85 +120,12 @@
         </div>
 
     }
-
-    <!-- Note: For some reason, these styles only work when applied in the html file.
-    They get ignored in both scoped CSS and app-level CSS.
-    -->
-    <style>
-        .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
-            border-bottom: 3px solid #1976d2;
-            color: #6610f2 !important;
-            font-weight: bold !important;
-        }
-
-        .e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
-            color: #62b4fd;
-            padding: 0 6px;
-        }
-
-        .e-tab .e-tab-header::before {
-            border-color: #CCFBF1;
-        }
-
-        .e-tab .e-tab-header .e-toolbar-item.e-active {
-            border: 1px solid #CCFBF1;
-        }
-
-        .e-tab-text {
-            font-size: 12px !important;
-            font-weight: 600 !important;
-            color: darkslategray !important;
-        }
-
-        .e-active .e-tab-text {
-            font-size: 12px !important;
-            font-weight: bold !important;
-            color: black !important;
-        }
-
-        .e-grid .e-rowcell.e-attr {
-            white-space: normal;
-        }
-
-        /* shrink-wrap the grid to its content width */
-        .grid-shrinkwrap {
-            display: inline-block; /* key: shrink-to-fit */
-            max-width: 100%;
-        }
-
-            /* ensure grid isn't forced back to 100% */
-            .grid-shrinkwrap .e-grid {
-                width: auto !important;
-            }
-
-        .e-grid .e-gridcontent .e-rowcell.date-past {
-            font-weight: 300;
-        }
-
-        .e-grid .e-gridcontent .e-rowcell.date-future {
-            font-weight: 500;
-        }
-
-        .e-grid .e-rowcell.e-focused {
-            box-shadow: none !important;
-        }
-
-        .match-details-dialog.e-dialog {
-            width: fit-content;
-            max-width: 80vw;
-            margin-top: 20px; /* offset from top when Y=top */
-        }
-
-        .match-details-dialog .e-dlg-content {
-            overflow-x: auto;
-        }
-
-        .match-results {
-            font-size: smaller;
-        }
-
-    </style>
 </AuthorizationRequired>
+
+<style>
+
+
+</style>
 
 @code {
     private SfGrid<ClubEvent>? Grid;
