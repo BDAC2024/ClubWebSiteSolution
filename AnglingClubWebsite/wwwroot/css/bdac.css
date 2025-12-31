@@ -341,3 +341,12 @@ td.label {
 }
 
 
+.floating-panel {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    background: rgba(5, 225, 25, 0.25);
+    /*box-shadow: 0 10px 30px rgba(0,0,0,0.25);*/
+    border-radius: 2px;
+    z-index: 500;
+}

@@ -115,7 +115,7 @@
         <div class="main-content">
             @if (debuggingDeviceType)
             {
-                <span style="background-color: yellow;">
+                <span class="floating-panel">
                     Size: <b>@ViewModel.BrowserSize</b> Portrait: <b>@ViewModel.BrowserPortrait</b> Dims: <b>@ViewModel.BrowserWidth</b> x <b>@ViewModel.BrowserHeight</b>
                 </span>
             }
@@ -130,7 +130,7 @@
 </div>
 
 @code {
-    public bool debuggingDeviceType = true;
+    public bool debuggingDeviceType = false;
 
     public string SidebarTarget = ".menu-and-main-wrapper";
 

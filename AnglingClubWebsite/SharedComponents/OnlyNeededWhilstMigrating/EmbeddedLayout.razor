@@ -5,7 +5,7 @@
 
     @if (debuggingDeviceType)
     {
-        <span style="background-color: lightskyblue;">
+        <span class="floating-panel">
             Size: <b>@ViewModel.BrowserSize</b> Portrait: <b>@ViewModel.BrowserPortrait</b> Dims: <b>@ViewModel.BrowserWidth</b> x <b>@ViewModel.BrowserHeight</b>
         </span>
     }
@@ -17,6 +17,6 @@
 
 @code {
     // TODO Ang to Blazor Migration - this file only needed whilst migrating from Angular to Blazor.
-    public bool debuggingDeviceType = true;
+    public bool debuggingDeviceType = false;
 
 }
