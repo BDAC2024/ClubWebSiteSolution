@@ -1,4 +1,5 @@
 ﻿using AnglingClubShared;
+using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
@@ -23,6 +24,7 @@ namespace AnglingClubWebsite.Pages
         private readonly BrowserService _browserService;
         private readonly IRefDataService _refDataService;
         private readonly IClubEventService _clubEventService;
+        private readonly IMatchResultsService _matchResultsService;
 
         public readonly IGlobalService GlobalService;
 
@@ -38,7 +40,8 @@ namespace AnglingClubWebsite.Pages
             BrowserService browserService,
             IRefDataService refDataService,
             IGlobalService globalService,
-            IClubEventService clubEventService) : base(messenger, currentUserService, authenticationService)
+            IClubEventService clubEventService,
+            IMatchResultsService matchResultsService) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
@@ -51,6 +54,7 @@ namespace AnglingClubWebsite.Pages
             _clubEventService = clubEventService;
 
             BrowserSize = _browserService.DeviceSize;
+            _matchResultsService = matchResultsService;
         }
 
         #region Properties
@@ -78,6 +82,12 @@ namespace AnglingClubWebsite.Pages
 
         [ObservableProperty]
         private ObservableCollection<ClubEvent> _matches = new ObservableCollection<ClubEvent>();
+
+        [ObservableProperty]
+        private ObservableCollection<MatchResultOutputDto> _matchResults = new ObservableCollection<MatchResultOutputDto>();
+
+        [ObservableProperty]
+        private bool _showPeg = true;
 
         [ObservableProperty]
         private bool _showingResults = false;
@@ -147,10 +157,11 @@ namespace AnglingClubWebsite.Pages
         public async void ShowResults(ClubEvent match)
         {
             BrowserPortrait = _browserService.IsPortrait;
-            _logger.LogWarning($"Selected match {match.Id} on {match.Date.ToShortDateString()}");
+            //_logger.LogWarning($"Selected match {match.Id} on {match.Date.ToShortDateString()}");
             ShowingResults = true;
             SelectedMatch = match;
-            _logger.LogWarning($"Portrait {BrowserPortrait}");
+            //_logger.LogWarning($"Portrait {BrowserPortrait}");
+            await GetMatchResults(match.Id);
         }
 
         #endregion Methods
@@ -201,6 +212,26 @@ namespace AnglingClubWebsite.Pages
             finally
             {
                 DataLoaded = true;
+            }
+        }
+
+        private async Task GetMatchResults(string matchId)
+        {
+            ResultsLoaded = false;
+
+            try
+            {
+                var resultsFromService = await _matchResultsService.GetResultsForMatch(matchId);
+                var results = (resultsFromService ?? new List<MatchResultOutputDto>()).ToList();
+                MatchResults = new ObservableCollection<MatchResultOutputDto>(results);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"GetMatchResults: {ex.Message}");
+            }
+            finally
+            {
+                ResultsLoaded = true;
             }
         }
 

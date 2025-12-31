@@ -86,6 +86,7 @@ builder.Services.AddTransient<INewsService, NewsService>();
 builder.Services.AddTransient<IWatersService, WatersService>();
 builder.Services.AddScoped<IRefDataService, RefDataService>();
 builder.Services.AddTransient<IClubEventService, ClubEventService>();
+builder.Services.AddTransient<IMatchResultsService, MatchResultsService>();
 
 builder.Services.AddAuthorizationCore();
 

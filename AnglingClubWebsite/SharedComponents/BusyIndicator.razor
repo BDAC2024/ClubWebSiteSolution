@@ -1,8 +1,9 @@
-﻿<div id="busyArea">
-    <SfSpinner @bind-Visible="isBusy" Type="SpinnerType.Bootstrap5"></SfSpinner>
-</div>
-
-
+﻿@if (isBusy)
+{
+    <div id="busyArea">
+        <SfSpinner @bind-Visible="isBusy" Type="SpinnerType.Bootstrap5"></SfSpinner>
+    </div>
+}
 @code {
     [Parameter] public bool IsReady { get; set; }
 

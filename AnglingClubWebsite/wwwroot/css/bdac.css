@@ -220,7 +220,8 @@ h3 {
 /* The element you target the spinner to */
 #busyArea {
     position: relative;
-    top: 10px;
+    /*top: 1px;*/
+    padding-bottom: 20px;
 }
 
     /* Syncfusion spinner overlay container */
@@ -315,9 +316,12 @@ td.label {
     color: black !important;
 }
 
-.e-grid .e-rowcell.e-attr {
+.e-grid .e-rowcell.e-wrap {
     white-space: normal;
+    overflow-wrap: normal; /* instead of anywhere */
+    word-break: normal;
 }
+
 
 /* 1) Target the actual rendered dialog element */
 .e-dialog.e-popup.details-dialog {
@@ -330,7 +334,7 @@ td.label {
 /* 2) Some versions apply sizing to the container instead */
 .e-dlg-container:has(.details-dialog) .e-dialog.e-popup.details-dialog {
     width: fit-content !important;
-    max-width: 80vw !important;
+    max-width: 90vw !important;
     min-width: unset !important;
     margin-top: 20px; /* offset from top when Y=top */
 }

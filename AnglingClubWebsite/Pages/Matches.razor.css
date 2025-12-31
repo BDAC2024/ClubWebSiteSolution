@@ -4,6 +4,24 @@
     font-size: smaller;
 }
 
+/*.results-grid ::deep .e-rowcell {
+    font-size: 11px;
+    padding: 0 6px;
+}
+*/
+.results-grid ::deep .e-headertext {
+    font-size: 13px;
+    padding: 0;
+}
 
+.results-grid ::deep .e-grid .e-rowcell,
+.results-grid ::deep .e-grid .e-headercell {
+    font-size: 13px;
+    padding: 4px 8px;
+}
 
-
+    .results-grid ::deep .e-grid .e-rowcell.e-wrap {
+        white-space: normal;
+        overflow-wrap: normal; /* instead of anywhere */
+        word-break: normal;
+    }
