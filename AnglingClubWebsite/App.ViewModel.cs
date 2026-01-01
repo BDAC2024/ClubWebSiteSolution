@@ -27,11 +27,6 @@ namespace AnglingClubWebsite
             _refDataService = refDataService;
         }
 
-        public async Task InitRefData()
-        {
-            await _refDataService.InitializeAsync();
-        }
-
         public async Task SetupBrowserDetails()
         {
             await _browserService.GetDimensions();

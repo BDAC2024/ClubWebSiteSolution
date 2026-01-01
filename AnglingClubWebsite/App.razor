@@ -47,7 +47,6 @@
     
     protected override async Task OnInitializedAsync()
     {
-        await ViewModel.InitRefData();
         await HostBridge.InitializeAsync(); // TODO Ang to Blazor Migration - only needed until migation complete
     }
 

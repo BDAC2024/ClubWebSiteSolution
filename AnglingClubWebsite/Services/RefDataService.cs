@@ -27,14 +27,6 @@ namespace AnglingClubWebsite.Services
             _authenticationService = authenticationService;
         }
 
-        public async Task InitializeAsync()
-        {
-            if (_cachedData == null)
-            {
-                _cachedData = await LoadReferenceData();
-            }
-        }
-
         public async Task<ReferenceData?> ReadReferenceData()
         {
             if (_cachedData == null)
