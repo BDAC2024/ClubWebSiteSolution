@@ -173,7 +173,7 @@
         </div>
       </div>
     </mat-toolbar>
-    <div class="nav-content" ngClass.xs="nav-content-mobile">
+    <div ngClass.xs="nav-content-mobile" [class.nav-content]="!blazorRequested" [class.nav-content-blazor]="blazorRequested">
       <!-- <router-outlet *ngIf="previewService.previewCodeValid"></router-outlet>
       <app-preview *ngIf="!previewService.previewCodeValid"></app-preview> -->
       <router-outlet></router-outlet>

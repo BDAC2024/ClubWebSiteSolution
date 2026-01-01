@@ -32,6 +32,8 @@ export class NavComponent implements OnInit {
   showJnrSectionSubMenu: boolean = false;
   // isShowing = false;
 
+  blazorRequested: boolean = false;
+
   @ViewChild('drawer', { static: false })
   drawer!: MatSidenav;
 
@@ -115,6 +117,14 @@ export class NavComponent implements OnInit {
           //this.globalService.log("Nav - Orientation done - landscape: " + screenService.IsHandsetLandscape );
         });
 
+      this.router.events
+        .pipe(filter(e => e instanceof NavigationEnd))
+        .subscribe(() => {
+          this.blazorRequested = this.router.url.startsWith('/blazor');
+        });
+
+      // also set it immediately on load (refresh/deep-link)
+      this.blazorRequested = this.router.url.startsWith('/blazor');
     }
   
       // Properties
@@ -169,6 +179,7 @@ export class NavComponent implements OnInit {
 
   // called from the menu
   openBlazor(path: string, drawer?: MatSidenav) {
+
     // If we're already on /blazor, just tell the existing iframe to navigate
     if (this.router.url.startsWith('/blazor')) {
       this.blazorBridge.navigate(path);

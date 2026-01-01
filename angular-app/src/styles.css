@@ -23,6 +23,15 @@ app-root {
   padding: 20px 16px 0 16px;  /* optional padding if you want some space */
 }
 
+.nav-content-for-blazor {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0; /* important so children can grow/shrink */
+  margin: 0 !important; /* remove margins so iframe can be full width */
+  padding: 0 !important;
+  /*padding: 20px 16px 0 16px;*/ /* optional padding if you want some space */
+}
+
 /* app-blazor-host is the element that replaces <router-outlet> */
 app-blazor-host {
   flex: 1 1 auto;
