@@ -9,7 +9,13 @@ body {
     background-color: whitesmoke !important; /* Teal 400 */
     font-size: 14px !important;
     font-family: Roboto, "Helvetica Neue", sans-serif !important;
+    color: #000000DE;
+
     /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+}
+
+.e-control, .e-css, .e-application {
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
 
 /*-------------------------
@@ -268,8 +274,6 @@ td.label {
         width: auto !important;
     }
 
-
-
 .e-grid .e-gridcontent .e-rowcell.date-past {
     font-weight: 300;
 }
@@ -326,34 +330,22 @@ td.label {
     color: black !important;
 }
 
-.e-grid .e-rowcell.e-wrap {
-    white-space: normal;
-    overflow-wrap: normal; /* instead of anywhere */
-    word-break: normal;
+
+.match-results {
+    font-size: smaller;
 }
 
 
-/* 1) Target the actual rendered dialog element */
-.e-dialog.e-popup.details-dialog {
-    width: fit-content !important;
-    max-width: 80vw !important;
-    min-width: unset !important;
-    margin-top: 20px; /* offset from top when Y=top */
+.grid-compact .e-headertext {
+    font-size: 12px;
+    padding: 0;
 }
 
-/* 2) Some versions apply sizing to the container instead */
-.e-dlg-container:has(.details-dialog) .e-dialog.e-popup.details-dialog {
-    width: fit-content !important;
-    max-width: 90vw !important;
-    min-width: unset !important;
-    margin-top: 20px; /* offset from top when Y=top */
+.grid-compact .e-grid .e-rowcell,
+.grid-compact .e-grid .e-headercell {
+    font-size: 12px;
+    padding: 4px 8px !important;
 }
-
-/* 3) Ensure content can scroll horizontally when constrained by max-width */
-.e-dialog.e-popup.details-dialog .e-dlg-content {
-    overflow-x: auto;
-}
-
 
 .floating-panel {
     position: absolute;
@@ -364,3 +356,29 @@ td.label {
     border-radius: 2px;
     z-index: 500;
 }
+
+/* Dialog content shrink-to-fit */
+.match-dialog.e-dialog {
+    width: fit-content;
+    max-width: 90vw;
+}
+
+    .match-dialog.e-dialog .e-dlg-content {
+        display: inline-block;
+        width: fit-content;
+        max-width: 90vw;
+        min-width: 0;
+    }
+
+/* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
+.match-dialog .e-grid .e-content,
+.match-dialog .e-grid .e-gridcontent {
+    overflow-x: auto;
+}
+
+.match-dialog .e-grid .e-table {
+    table-layout: auto;
+    width: max-content; /* content-sized */
+    max-width: 90vw; /* clamp with dialog */
+}
+

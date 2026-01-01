@@ -1,27 +1,54 @@
 ﻿
 
-.match-results {
+/*.match-results {
     font-size: smaller;
-}
+}*/
 
-/*.results-grid ::deep .e-rowcell {
+/*.grid-compact ::deep .e-rowcell {
     font-size: 11px;
     padding: 0 6px;
 }
 */
-.results-grid ::deep .e-headertext {
+/*.grid-compact ::deep .e-headertext {
     font-size: 13px;
     padding: 0;
 }
 
-.results-grid ::deep .e-grid .e-rowcell,
-.results-grid ::deep .e-grid .e-headercell {
+.grid-compact ::deep .e-grid .e-rowcell,
+.grid-compact ::deep .e-grid .e-headercell {
     font-size: 13px;
     padding: 4px 8px;
 }
 
-    .results-grid ::deep .e-grid .e-rowcell.e-wrap {
-        white-space: normal;
-        overflow-wrap: normal; /* instead of anywhere */
-        word-break: normal;
+.grid-compact ::deep .e-grid .e-wrap.e-rowcell {
+    white-space: normal !important;
+    overflow-wrap: anywhere;*/ /* allows break between lb / oz if needed */
+    /*word-break: normal;
+}*/
+
+
+.match-table th,
+.match-table td {
+    padding: 0 6px;
+}
+
+
+.match-table td {
+    white-space: normal; /* can wrap */
+    overflow-wrap: anywhere;
+}
+
+    .match-table th.left-align,
+    .match-table td.left-align {
+        text-align: left;
+    }
+
+    .match-table th.right-align,
+    .match-table td.right-align {
+        text-align: right;
+    }
+
+    .match-table th.center-align,
+    .match-table td.center-align {
+        text-align: center;
     }

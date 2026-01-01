@@ -65,7 +65,7 @@
         </div>
 
         <div>
-            <SfDialog IsModal="true" Visible="@ViewModel.ShowingResults" CssClass="details-dialog" >
+            <SfDialog IsModal="true" Visible="@ViewModel.ShowingResults" CssClass="match-dialog" >
                 @if (ViewModel.GlobalService.IsEmbedded)
                 {
                     <DialogPositionData X="center" Y="top"></DialogPositionData>
@@ -79,10 +79,11 @@
                                 <div style="float: right;">
                                     <SfCheckBox Label="Show peg" @bind-Checked="@ViewModel.ShowPeg"></SfCheckBox>
                                 </div>
+                                <br />
                             }
                             @if (ViewModel.BrowserPortrait)
                             {
-                                <table>
+                                <table class="match-table">
                                     <tr><td class="label">Match:</td><td>@ViewModel.SelectedMatch!.MatchType No. @ViewModel.SelectedMatch!.Number</td></tr>
                                     <tr><td class="label">Date:</td><td>@ViewModel.SelectedMatch!.Day @ViewModel.SelectedMatch!.Date.ToString("dd MMM yy")</td></tr>
                                     <tr><td class="label">Venue:</td><td>@ViewModel.SelectedMatch!.Description</td></tr>
@@ -94,7 +95,7 @@
                             }
                             else
                             {
-                                <table>
+                                <table class="match-table">
                                     <tr><td class="label">Match:</td><td>@ViewModel.SelectedMatch!.MatchType No. @ViewModel.SelectedMatch!.Number</td><td class="label">Venue:</td><td>@ViewModel.SelectedMatch!.Description</td></tr>
                                     <tr>
                                         <td class="label">Date:</td>
@@ -108,26 +109,41 @@
                                 </table>
                             }
                             <br />
-                            <h6>Results</h6>
+                            <h3>Results</h3>
                             <BusyIndicator IsReady="@ViewModel.ResultsLoaded"></BusyIndicator>
                             @if (ViewModel.ResultsLoaded)
                             {
                                 @if (ViewModel.MatchResults.Any())
                                 {
-                                    <div class="results-grid">
-                                        <SfGrid @ref="ResultsGrid" DataSource="@ViewModel.MatchResults" AllowSorting="false" AllowTextWrap="true" AllowFiltering="false" >
-                                            <GridTextWrapSettings WrapMode="WrapMode.Content" />
-
-                                            <GridColumns>
-                                                <GridColumn Field=@nameof(MatchResultOutputDto.PositionOrdinal) HeaderText="Pos" Width="50"  />
-                                                <GridColumn Field=@nameof(MatchResultOutputDto.Name) HeaderText="Name" CustomAttributes="@(new Dictionary<string, object> { ["class"] = "e-wrap" })" />
-                                                <GridColumn Field=@nameof(MatchResultOutputDto.Peg) Visible="@ViewModel.ShowPeg" HeaderText="Peg" Format="N0" TextAlign="TextAlign.Right" Width="50" />
-                                                <GridColumn Field=@nameof(MatchResultOutputDto.Weight) HeaderText="Weight" CustomAttributes="@(new Dictionary<string, object> { ["class"] = "e-wrap" })" Width="80" />
-                                                <GridColumn Field=@nameof(MatchResultOutputDto.Points) HeaderText="Pts" Format="N0" TextAlign="TextAlign.Right" Width="40"/>
-                                            </GridColumns>
-
-                                        </SfGrid>
-                                    </div>
+                                    <table class="match-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="left-align">Pos</th>
+                                                <th class="left-align">Name</th>
+                                                @if (ViewModel.ShowPeg)
+                                                {
+                                                    <th class="right-align">Peg</th>
+                                                }
+                                                <th class="left-align col-weight">Weight</th>
+                                                <th class="center-align">Pts</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var r in ViewModel.MatchResults)
+                                            {
+                                                <tr>
+                                                    <td class="left-align"><nobr>@r.PositionOrdinal</nobr></td>
+                                                    <td class="left-align">@r.Name</td>
+                                                    @if (ViewModel.ShowPeg)
+                                                    {
+                                                        <td class="right-align">@r.Peg</td>
+                                                    }
+                                                    <td class="left-align col-weight">@r.Weight</td>
+                                                    <td class="center-align">@r.Points</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
                                 }
                                 else
                                 {
@@ -151,9 +167,11 @@
 
 </style>
 
-@code {
+    @code {
     private SfGrid<ClubEvent>? Grid; 
     private SfGrid<MatchResultOutputDto>? ResultsGrid;
+
+    private bool _autoFitDone = false;
 
     public void OnTabSelected(SelectEventArgs args)
     {
@@ -168,10 +186,44 @@
         this.Grid!.AutoFitColumnsAsync();
     }
 
-    public void ResultsDataboundHandler(object args)
-    {
-        this.ResultsGrid!.AutoFitColumnsAsync();
-    }
+    // private void OnResultsGridDataBound(object args)
+    // {
+    //     if (_autoFitDone)
+    //     {
+    //         return;
+    //     }
+
+    //     _autoFitDone = true;
+
+    //     // Fire-and-forget safely (captures exceptions)
+    //     _ = InvokeAsync(AutoFitResultsGridAsyncSafe);
+    // }
+
+    // private async Task AutoFitResultsGridAsyncSafe()
+    // {
+    //     try
+    //     {
+    //         if (ResultsGrid is null) return;
+
+    //         // Optional: allow the DOM/layout to settle
+    //         await Task.Yield();
+
+    //         // Auto-fit only compact columns. Do NOT auto-fit wrap-intended columns.
+    //         await ResultsGrid.AutoFitColumnsAsync(new[]
+    //         {
+    //             //nameof(MatchResultOutputDto.PositionOrdinal),
+    //             //nameof(MatchResultOutputDto.Name),
+    //             nameof(MatchResultOutputDto.Peg),
+    //             //nameof(MatchResultOutputDto.Weight),
+    //             //nameof(MatchResultOutputDto.Points)
+    //         });
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         // Log this somewhere you can see it (ILogger, Console, etc.)
+    //         Console.Error.WriteLine(ex);
+    //     }
+    // }
 
     public void QueryCellInfoHandler(Syncfusion.Blazor.Grids.QueryCellInfoEventArgs<ClubEvent> args)
     {
@@ -189,6 +241,7 @@
 
     public void MatchSelectedHandler(RowSelectEventArgs<ClubEvent> args)
     {
+        _autoFitDone = false;
         ViewModel.ShowResults(args.Data);
     }
 
