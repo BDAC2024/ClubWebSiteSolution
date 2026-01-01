@@ -10,7 +10,7 @@
 @inherits MvvmComponentBase<MatchesViewModel>
 
 <AuthorizationRequired>
-    <div style="display: block !important;">
+    <div style="display: block !important; padding-bottom: 10px;">
         <h3 class="left-header">Matches</h3>
 
         <SeasonSelector OnSeasonChanged="@(async (season) => await ViewModel.SeasonChanged(season))"></SeasonSelector>
@@ -46,11 +46,12 @@
             </TabItems>
         </SfTab>
 
-        <div class="grid-shrinkwrap">
-            <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false">
+        <div class="matches grid-shrinkwrap">
+            <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false">
                 <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" RowSelected="MatchSelectedHandler" TValue="ClubEvent"></GridEvents>
                 <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
                 <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
+                <GridTextWrapSettings WrapMode="WrapMode.Content" />
 
                 <GridColumns>
                     <GridColumn Field=@nameof(ClubEvent.Date) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
@@ -181,49 +182,10 @@
         ViewModel.LoadMatchesForSelectedType();
     }
 
-    public void DataboundHandler(object args)
+    public async Task DataboundHandler(object args)
     {
-        this.Grid!.AutoFitColumnsAsync();
+        await this.Grid!.AutoFitColumnsAsync();
     }
-
-    // private void OnResultsGridDataBound(object args)
-    // {
-    //     if (_autoFitDone)
-    //     {
-    //         return;
-    //     }
-
-    //     _autoFitDone = true;
-
-    //     // Fire-and-forget safely (captures exceptions)
-    //     _ = InvokeAsync(AutoFitResultsGridAsyncSafe);
-    // }
-
-    // private async Task AutoFitResultsGridAsyncSafe()
-    // {
-    //     try
-    //     {
-    //         if (ResultsGrid is null) return;
-
-    //         // Optional: allow the DOM/layout to settle
-    //         await Task.Yield();
-
-    //         // Auto-fit only compact columns. Do NOT auto-fit wrap-intended columns.
-    //         await ResultsGrid.AutoFitColumnsAsync(new[]
-    //         {
-    //             //nameof(MatchResultOutputDto.PositionOrdinal),
-    //             //nameof(MatchResultOutputDto.Name),
-    //             nameof(MatchResultOutputDto.Peg),
-    //             //nameof(MatchResultOutputDto.Weight),
-    //             //nameof(MatchResultOutputDto.Points)
-    //         });
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         // Log this somewhere you can see it (ILogger, Console, etc.)
-    //         Console.Error.WriteLine(ex);
-    //     }
-    // }
 
     public void QueryCellInfoHandler(Syncfusion.Blazor.Grids.QueryCellInfoEventArgs<ClubEvent> args)
     {

@@ -2,7 +2,7 @@
 @using AnglingClubShared.Models
 @inherits MvvmComponentBase<SeasonSelectorViewModel>
 
-<div class="desktop-season-selector">
+<div class="@(ViewModel.BrowserSize == DeviceSize.Small ? "edit-button-panel" : "desktop-season-selector")">
     @if (ViewModel.RefDataLoaded)
     {
         <span style="display: inline-flex">Season</span>
