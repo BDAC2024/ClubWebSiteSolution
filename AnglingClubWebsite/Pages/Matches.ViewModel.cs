@@ -93,7 +93,7 @@ namespace AnglingClubWebsite.Pages
         private bool _showingResults = false;
 
         [ObservableProperty]
-        private ClubEvent? _selectedMatch = null;
+        private ClubEvent _selectedMatch;
 
         [ObservableProperty]
         private ObservableCollection<MatchTabData> _matchTabItems = new ObservableCollection<MatchTabData>();
@@ -154,15 +154,15 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        public async void ShowResults(ClubEvent match)
-        {
-            BrowserPortrait = _browserService.IsPortrait;
-            //_logger.LogWarning($"Selected match {match.Id} on {match.Date.ToShortDateString()}");
-            ShowingResults = true;
-            SelectedMatch = match;
-            //_logger.LogWarning($"Portrait {BrowserPortrait}");
-            await GetMatchResults(match.Id);
-        }
+        //public async void ShowResults(ClubEvent match)
+        //{
+        //    BrowserPortrait = _browserService.IsPortrait;
+        //    //_logger.LogWarning($"Selected match {match.Id} on {match.Date.ToShortDateString()}");
+        //    ShowingResults = true;
+        //    SelectedMatch = match;
+        //    //_logger.LogWarning($"Portrait {BrowserPortrait}");
+        //    await GetMatchResults(match.Id);
+        //}
 
         #endregion Methods
 
@@ -215,25 +215,6 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        private async Task GetMatchResults(string matchId)
-        {
-            ResultsLoaded = false;
-
-            try
-            {
-                var resultsFromService = await _matchResultsService.GetResultsForMatch(matchId);
-                var results = (resultsFromService ?? new List<MatchResultOutputDto>()).ToList();
-                MatchResults = new ObservableCollection<MatchResultOutputDto>(results);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"GetMatchResults: {ex.Message}");
-            }
-            finally
-            {
-                ResultsLoaded = true;
-            }
-        }
 
         private void SetupTabs(MatchType selectedMatchType, List<ClubEvent> allMatches)
         {

@@ -65,100 +65,8 @@
 
         </div>
 
-        <div>
-            <SfDialog IsModal="true" Visible="@ViewModel.ShowingResults" CssClass="match-dialog" >
-                @if (ViewModel.GlobalService.IsEmbedded)
-                {
-                    <DialogPositionData X="center" Y="top"></DialogPositionData>
-                }
-                <DialogTemplates>
-                    <Header>Match Details</Header>
-                    <Content>
-                        <div class="match-results">
-                            @if (ViewModel.CurrentUser.Admin && ViewModel.ResultsLoaded && ViewModel.MatchResults.Any())
-                            {
-                                <div style="float: right;">
-                                    <SfCheckBox Label="Show peg" @bind-Checked="@ViewModel.ShowPeg"></SfCheckBox>
-                                </div>
-                                <br />
-                            }
-                            @if (ViewModel.BrowserPortrait)
-                            {
-                                <table class="match-table">
-                                    <tr><td class="label">Match:</td><td>@ViewModel.SelectedMatch!.MatchType No. @ViewModel.SelectedMatch!.Number</td></tr>
-                                    <tr><td class="label">Date:</td><td>@ViewModel.SelectedMatch!.Day @ViewModel.SelectedMatch!.Date.ToString("dd MMM yy")</td></tr>
-                                    <tr><td class="label">Venue:</td><td>@ViewModel.SelectedMatch!.Description</td></tr>
-                                    @if (!ViewModel.SelectedMatch!.Cup.IsWhiteSpace())
-                                    {
-                                        <tr><td class="label">Cup:</td><td>@ViewModel.SelectedMatch!.Cup</td></tr>
-                                    }
-                                </table>
-                            }
-                            else
-                            {
-                                <table class="match-table">
-                                    <tr><td class="label">Match:</td><td>@ViewModel.SelectedMatch!.MatchType No. @ViewModel.SelectedMatch!.Number</td><td class="label">Venue:</td><td>@ViewModel.SelectedMatch!.Description</td></tr>
-                                    <tr>
-                                        <td class="label">Date:</td>
-                                        <td>@ViewModel.SelectedMatch!.Day @ViewModel.SelectedMatch!.Date.ToString("dd MMM yy")</td>
-                                        @if (!ViewModel.SelectedMatch!.Cup.IsWhiteSpace())
-                                        {
-                                            <td class="label">Cup:</td>
-                                            <td>@ViewModel.SelectedMatch!.Cup</td>
-                                        }
-                                    </tr>
-                                </table>
-                            }
-                            <br />
-                            <h3>Results</h3>
-                            <BusyIndicator IsReady="@ViewModel.ResultsLoaded"></BusyIndicator>
-                            @if (ViewModel.ResultsLoaded)
-                            {
-                                @if (ViewModel.MatchResults.Any())
-                                {
-                                    <table class="match-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="left-align">Pos</th>
-                                                <th class="left-align">Name</th>
-                                                @if (ViewModel.ShowPeg)
-                                                {
-                                                    <th class="right-align">Peg</th>
-                                                }
-                                                <th class="left-align col-weight">Weight</th>
-                                                <th class="center-align">Pts</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var r in ViewModel.MatchResults)
-                                            {
-                                                <tr>
-                                                    <td class="left-align"><nobr>@r.PositionOrdinal</nobr></td>
-                                                    <td class="left-align">@r.Name</td>
-                                                    @if (ViewModel.ShowPeg)
-                                                    {
-                                                        <td class="right-align">@r.Peg</td>
-                                                    }
-                                                    <td class="left-align col-weight">@r.Weight</td>
-                                                    <td class="center-align">@r.Points</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
-                                else
-                                {
-                                    <p>Sorry, not available</p>
-                                }
-                            }
-                        </div>
-                    </Content>
-                </DialogTemplates>
-                <DialogButtons>
-                    <DialogButton Content="Close" IsPrimary="true" OnClick="(() => ViewModel.ShowingResults = false)" />
-                </DialogButtons>
-            </SfDialog>
-        </div>
+        @* Note the 2-way binding of the Visible property *@
+        <MatchResultsPopup @bind-Visible="ViewModel.ShowingResults" SelectedMatch="@ViewModel.SelectedMatch"></MatchResultsPopup>
 
     }
 </AuthorizationRequired>
@@ -170,9 +78,6 @@
 
     @code {
     private SfGrid<ClubEvent>? Grid; 
-    private SfGrid<MatchResultOutputDto>? ResultsGrid;
-
-    private bool _autoFitDone = false;
 
     public void OnTabSelected(SelectEventArgs args)
     {
@@ -203,8 +108,8 @@
 
     public void MatchSelectedHandler(RowSelectEventArgs<ClubEvent> args)
     {
-        _autoFitDone = false;
-        ViewModel.ShowResults(args.Data);
+        ViewModel.SelectedMatch = args.Data;
+        ViewModel.ShowingResults = true;
     }
 
 }
