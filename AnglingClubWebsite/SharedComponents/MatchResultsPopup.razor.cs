@@ -51,6 +51,8 @@ namespace AnglingClubWebsite.SharedComponents
         private bool ResultsLoaded = false;
         private bool ShowPeg = true;
 
+        private string cachedMatchId = "";
+
         protected override async Task OnParametersSetAsync()
         {
             if (SelectedMatch == null)
@@ -58,7 +60,11 @@ namespace AnglingClubWebsite.SharedComponents
                 return; 
             }
 
-            await GetMatchResults(SelectedMatch.Id);
+            if (cachedMatchId != SelectedMatch.Id)
+            {
+                cachedMatchId = SelectedMatch.Id;
+                await GetMatchResults(SelectedMatch.Id);
+            }
 
             await base.OnParametersSetAsync();
         }
