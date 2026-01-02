@@ -1,12 +1,8 @@
 ﻿@inherits RazorComponentBase
 
-<SfDialog IsModal="true" Visible="@Visible" CssClass="match-dialog">
-    @if (GlobalService.IsEmbedded)
-    {
-        <DialogPositionData X="center" Y="top"></DialogPositionData>
-    }
+<SfDialog IsModal="true" Visible="@Visible" CssClass="match-dialog" >
     <DialogTemplates>
-        <Header>Match Details (component)</Header>
+        <Header>Match Details</Header>
         <Content>
              <div class="match-results">
                 @if (CurrentUser.Admin && ResultsLoaded && MatchResults.Any())

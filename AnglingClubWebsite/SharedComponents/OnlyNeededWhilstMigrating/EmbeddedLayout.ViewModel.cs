@@ -15,7 +15,7 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
         private readonly IAuthenticationService _authenticationService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMessenger _messenger;
-        private readonly BrowserService _browserService;
+        public readonly BrowserService BrowserService;
         private readonly IGlobalService _globalService;
 
         private const bool ShowDebugMessages = false;
@@ -30,7 +30,7 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
             _authenticationService = authenticationService;
             _currentUserService = currentUserService;
             _messenger = messenger;
-            _browserService = browserService;
+            BrowserService = browserService;
 
             messenger.Register<BrowserChange>(this);
 
@@ -69,12 +69,12 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
             }
         }
 
-        private void setBrowserDetails()
+        public void setBrowserDetails()
         {
-            BrowserPortrait = _browserService.IsPortrait;
-            BrowserSize = _browserService.DeviceSize;
-            BrowserWidth = _browserService.Dimensions.Width;
-            BrowserHeight = _browserService.Dimensions.Height;
+            BrowserPortrait = BrowserService.IsPortrait;
+            BrowserSize = BrowserService.DeviceSize;
+            BrowserWidth = BrowserService.Dimensions.Width;
+            BrowserHeight = BrowserService.Dimensions.Height;
         }
     }
 }
