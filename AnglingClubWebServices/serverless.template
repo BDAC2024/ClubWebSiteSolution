@@ -168,6 +168,11 @@
 			"Type" : "String",
 			"Description" : "Webhook secret for Stripe",
 			"MinLength" : "0"
+		},
+		"SyncfusionLicenseKey" : {
+			"Type" : "String",
+			"Description" : "API key for Word PDF generation",
+			"MinLength" : "0"
 		}
   },
   "Conditions": {},
@@ -218,7 +223,8 @@
 				"SwaRegion" : { "Ref" : "SwaRegion" } ,
 				"LogLevel" : { "Ref" : "LogLevel" },
 				"StripeApiKey" : { "Ref" : "StripeApiKey" },
-				"StripeWebHookEndpointSecret" : { "Ref" : "StripeWebHookEndpointSecret" }
+				"StripeWebHookEndpointSecret" : { "Ref" : "StripeWebHookEndpointSecret" },
+				"SyncfusionLicenseKey" : { "Ref" : "SyncfusionLicenseKey" }
 			}
 		},
         "Events": {
