@@ -277,4 +277,9 @@ namespace AnglingClubShared.Enums
         Senior,
         Junior
     }
+
+    public enum DocumentType
+    {
+        MeetingMinutes
+    }
 }
