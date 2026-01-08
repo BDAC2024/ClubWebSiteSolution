@@ -31,7 +31,7 @@ namespace AnglingClubWebServices.Data
         {
             _options = options;
             _logger = loggerFactory.CreateLogger<RepositoryBase>();
-            
+
             if (!checkDomainExists(_options.SimpleDbDomain).Result)
             {
                 createDomain(_options.SimpleDbDomain).Wait();
@@ -120,6 +120,14 @@ namespace AnglingClubWebServices.Data
 
             return nextId;
         }
+
+        internal AmazonS3Client GetS3Client()
+        {
+            AmazonS3Client client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+
+            return client;
+        }
+
 
         internal AmazonSimpleDBClient GetClient()
         {
@@ -366,36 +374,44 @@ namespace AnglingClubWebServices.Data
         {
             var backupAsString = JsonConvert.SerializeObject(backupData);
 
-            AmazonS3Client s3Client;
-
-            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
-
-            await s3Client.PutObjectAsync(new Amazon.S3.Model.PutObjectRequest 
+            using (var s3Client = GetS3Client())
             {
-                BucketName = _options.BackupBucket,
-                Key = $"Backup_{Domain}_{DateTime.Now:yyyy-MM-dd}.json",
-                ContentType = "application/json",
-                ContentBody = backupAsString
+                await s3Client.PutObjectAsync(new Amazon.S3.Model.PutObjectRequest
+                {
+                    BucketName = _options.BackupBucket,
+                    Key = $"Backup_{Domain}_{DateTime.Now:yyyy-MM-dd}.json",
+                    ContentType = "application/json",
+                    ContentBody = backupAsString
 
-            });
+                });
+            }
+        }
 
+        protected async Task<MemoryStream> getFile(string fileName, string bucketName)
+        {
+            var ms = new MemoryStream();
+
+            using (var s3Client = GetS3Client())
+            {
+                var fileContents = await s3Client.GetObjectAsync(new Amazon.S3.Model.GetObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = fileName
+                });
+
+                using var responseStream = fileContents.ResponseStream;
+                await responseStream.CopyToAsync(ms);
+
+            }
+
+            ms.Position = 0;
+            return ms;
         }
 
         protected async Task<string> getFileAsBase64(string fileName, string bucketName)
         {
-            AmazonS3Client s3Client;
+            var ms = await getFile(fileName, bucketName);
 
-            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
-
-            var fileContents = await s3Client.GetObjectAsync(new Amazon.S3.Model.GetObjectRequest
-            {
-                BucketName = bucketName,
-                Key = fileName
-            });
-
-            using var responseStream = fileContents.ResponseStream;
-            using var ms = new MemoryStream();
-            await responseStream.CopyToAsync(ms);
             var bytes = ms.ToArray();
             var contentBase64 = Convert.ToBase64String(bytes);
 
@@ -404,71 +420,71 @@ namespace AnglingClubWebServices.Data
 
         protected async Task<List<StoredFileMeta>> getFilesFromS3(string bucketName)
         {
-            AmazonS3Client s3Client;
-
-            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
-
             var results = new List<StoredFileMeta>();
 
-            try
+            using (var s3Client = GetS3Client())
             {
-                string continuationToken = null;
 
-                do
+                try
                 {
-                    var listRequest = new ListObjectsV2Request
+                    string continuationToken = null;
+
+                    do
                     {
-                        BucketName = bucketName,
-                        ContinuationToken = continuationToken,
-                        MaxKeys = 1000
-                    };
-
-                    var listResponse = await s3Client.ListObjectsV2Async(listRequest);
-
-                    foreach (var s3Object in listResponse.S3Objects)
-                    {
-                        try
+                        var listRequest = new ListObjectsV2Request
                         {
-                            // Get metadata for each object
-                            var metaResponse = await s3Client.GetObjectMetadataAsync(new GetObjectMetadataRequest
-                            {
-                                BucketName = bucketName,
-                                Key = s3Object.Key
-                            });
+                            BucketName = bucketName,
+                            ContinuationToken = continuationToken,
+                            MaxKeys = 1000
+                        };
 
-                            var meta = new
-                            {
-                                Key = s3Object.Key,
-                                Size = metaResponse.ContentLength,
-                                LastModified = metaResponse.LastModified,
-                                ContentType = metaResponse.Headers.ContentType,
-                                ETag = metaResponse.ETag,
-                                UserMetadata = metaResponse.Metadata // IDictionary<string,string>
-                            };
+                        var listResponse = await s3Client.ListObjectsV2Async(listRequest);
 
-                            var storedFileMeta = new StoredFileMeta
-                            {
-                                Id = s3Object.Key,
-                                Created = metaResponse.LastModified.Value,
-                            };
-
-                            results.Add(storedFileMeta);
-                        }
-                        catch (AmazonS3Exception s3Ex)
+                        foreach (var s3Object in listResponse.S3Objects)
                         {
-                            _logger.LogError(s3Ex, $"Failed to get metadata for S3 object {s3Object.Key} in bucket {bucketName}");
-                            // skip problematic object but continue
+                            try
+                            {
+                                // Get metadata for each object
+                                var metaResponse = await s3Client.GetObjectMetadataAsync(new GetObjectMetadataRequest
+                                {
+                                    BucketName = bucketName,
+                                    Key = s3Object.Key
+                                });
+
+                                var meta = new
+                                {
+                                    Key = s3Object.Key,
+                                    Size = metaResponse.ContentLength,
+                                    LastModified = metaResponse.LastModified,
+                                    ContentType = metaResponse.Headers.ContentType,
+                                    ETag = metaResponse.ETag,
+                                    UserMetadata = metaResponse.Metadata // IDictionary<string,string>
+                                };
+
+                                var storedFileMeta = new StoredFileMeta
+                                {
+                                    Id = s3Object.Key,
+                                    Created = metaResponse.LastModified.Value,
+                                };
+
+                                results.Add(storedFileMeta);
+                            }
+                            catch (AmazonS3Exception s3Ex)
+                            {
+                                _logger.LogError(s3Ex, $"Failed to get metadata for S3 object {s3Object.Key} in bucket {bucketName}");
+                                // skip problematic object but continue
+                            }
                         }
-                    }
 
-                    continuationToken = listResponse.IsTruncated.Value ? listResponse.NextContinuationToken : null;
+                        continuationToken = listResponse.IsTruncated.Value ? listResponse.NextContinuationToken : null;
 
-                } while (continuationToken != null);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to list objects in bucket {bucketName}");
-                throw;
+                    } while (continuationToken != null);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to list objects in bucket {bucketName}");
+                    throw;
+                }
             }
 
             return results;
@@ -476,13 +492,14 @@ namespace AnglingClubWebServices.Data
 
         protected async Task deleteFile(string fileName, string bucketName)
         {
-            AmazonS3Client s3Client;
-            s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
-            await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
+            using (var s3Client = GetS3Client())
             {
-                BucketName = bucketName,
-                Key = fileName
-            });
+                await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = fileName
+                });
+            }
         }
 
         /// <summary>
@@ -496,20 +513,86 @@ namespace AnglingClubWebServices.Data
         /// <returns></returns>
         protected async Task<string> getPreSignedUploadUrl(string filename, string contentType, string bucketName)
         {
-            AmazonS3Client s3Client = new AmazonS3Client(_options.AWSAccessId, _options.AWSSecret, Amazon.RegionEndpoint.GetBySystemName(_options.AWSRegion));
+            string url = null;
 
-            var requestModel = new GetPreSignedUrlRequest
+            using (var s3Client = GetS3Client())
             {
-                BucketName = bucketName,
-                Key = filename,
-                Verb = HttpVerb.PUT,
-                ContentType = contentType,
-                Expires = DateTime.UtcNow.AddMinutes(5)
-            };
+                var requestModel = new GetPreSignedUrlRequest
+                {
+                    BucketName = bucketName,
+                    Key = filename,
+                    Verb = HttpVerb.PUT,
+                    ContentType = contentType,
+                    Expires = DateTime.UtcNow.AddMinutes(5)
+                };
 
-            var url = await s3Client.GetPreSignedURLAsync(requestModel);
+                url = await s3Client.GetPreSignedURLAsync(requestModel);
+            }
 
             return url;
+        }
+
+        /// <summary>
+        /// Store a file in an S3 bucket
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="fileBytes"></param>
+        /// <param name="contentType"></param>
+        /// <param name="bucketName"></param>
+        /// <param name="useEncryption"></param>
+        /// <returns></returns>
+        protected async Task saveFile(string fileName, byte[] fileBytes, string contentType, string bucketName, bool useEncryption = true)
+        {
+            using (var s3Client = GetS3Client())
+            {
+
+                var requestModel = new PutObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = fileName,
+                    ContentType = contentType,
+                    InputStream = new MemoryStream(fileBytes)
+                };
+
+                if (useEncryption)
+                {
+                    requestModel.ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256;
+                }
+
+                await s3Client.PutObjectAsync(requestModel);
+            }
+        }
+
+        /// <summary>
+        /// Get a short-lived presigned URL to download a file from S3
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="bucketName"></param>
+        /// <param name="contentType"></param>
+        /// <param name="minutesBeforeExpiry"></param>
+        /// <returns></returns>
+        protected string getFilePresignedUrl(string fileName, string bucketName, string contentType, int minutesBeforeExpiry)
+        {
+            string presignedUrl = null;
+
+            using (var s3Client = GetS3Client())
+            {
+                presignedUrl = s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
+                {
+                    BucketName = bucketName,
+                    Key = fileName,
+                    Expires = DateTime.UtcNow.AddMinutes(minutesBeforeExpiry),
+                    Verb = HttpVerb.GET,
+                    ResponseHeaderOverrides = new ResponseHeaderOverrides
+                    {
+                        ContentType = contentType,
+                        ContentDisposition = $"attachment; filename={fileName}"
+                    }
+                });
+
+            }
+
+            return presignedUrl;
         }
     }
 }

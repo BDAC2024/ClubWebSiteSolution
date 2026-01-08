@@ -58,6 +58,11 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Email", Value = member.Email?? "", Replace = true },
                 new ReplaceableAttribute { Name = "MembershipNumber", Value = member.MembershipNumber.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Admin", Value = member.Admin ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "Treasurer", Value = member.Treasurer ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "CommitteeMember", Value = member.CommitteeMember ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "Secretary", Value = member.Secretary ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "MembershipSecretary", Value = member.MembershipSecretary ? "1" : "0", Replace = true },
+                new ReplaceableAttribute { Name = "Previewer", Value = member.Previewer ? "1" : "0", Replace = true },
                 new ReplaceableAttribute { Name = "InitialPin", Value = member.InitialPin.ToString(), Replace = true },
                 new ReplaceableAttribute { Name = "Pin", Value = member.Pin, Replace = true },
                 new ReplaceableAttribute { Name = "AllowNameToBeUsed", Value = member.AllowNameToBeUsed ? "1" : "0", Replace = true },
@@ -123,6 +128,26 @@ namespace AnglingClubWebServices.Data
 
                         case "Admin":
                             member.Admin = attribute.Value == "0" ? false : true;
+                            break;
+
+                        case "Treasurer":
+                            member.Treasurer = attribute.Value == "0" ? false : true;
+                            break;
+
+                        case "CommitteeMember":
+                            member.CommitteeMember = attribute.Value == "0" ? false : true;
+                            break;
+
+                        case "Secretary":
+                            member.Secretary = attribute.Value == "0" ? false : true;
+                            break;
+
+                        case "MembershipSecretary":
+                            member.MembershipSecretary = attribute.Value == "0" ? false : true;
+                            break;
+
+                        case "Previewer":
+                            member.Previewer = attribute.Value == "0" ? false : true;
                             break;
 
                         case "SeasonsActive":

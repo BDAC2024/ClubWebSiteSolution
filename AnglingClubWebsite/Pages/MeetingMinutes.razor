@@ -1,0 +1,25 @@
+﻿@page "/MeetingMinutes"
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+    <h3>Meeting Minutes</h3>
+
+    <i>Work in progress...</i>
+@*     <p>
+        Below are the minutes from our meetings. Click on a meeting to view the detailed minutes.
+    </p>
+
+    @if (CurrentUser.Secretary)
+    {
+        <div class="edit-button-panel">
+                <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
+        </div>
+        <br />
+        <br />
+
+        <AddMinutes @bind-Visible="AddingMinutes" ></AddMinutes>
+    }
+ *@
+
+</AuthorizationRequired>

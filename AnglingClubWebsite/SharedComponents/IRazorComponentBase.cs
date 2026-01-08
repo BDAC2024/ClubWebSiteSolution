@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace AnglingClubWebsite.SharedComponents
+﻿namespace AnglingClubWebsite.SharedComponents
 {
     public interface IRazorComponentBase
     {

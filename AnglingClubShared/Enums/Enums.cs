@@ -286,4 +286,9 @@ namespace AnglingClubShared.Enums
         Large
     }
 
+
+    public enum DocumentType
+    {
+        MeetingMinutes
+    }
 }

@@ -23,9 +23,6 @@ export class AppSettings {
     guestTicketCost!: number;
     dayTicketCost!: number;
     handlingCharge!: number;
-    previewers!: number[];
-    treasurers!: number[];
-    membershipSecretaries!: number[];
     dayTicketsEnabled!: boolean;
     guestTicketsEnabled!: boolean;
     membershipsEnabled!: boolean;

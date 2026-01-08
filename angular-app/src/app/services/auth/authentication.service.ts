@@ -47,43 +47,61 @@ export class AuthenticationService {
     }
    }
 
-   public isPreviewer(previewers: number[]): boolean {
+   public get isPreviewer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-
-      return previewers.includes(parseInt(tokenDecoded.MembershipNumber));
-
+      return JSON.parse(tokenDecoded.Previewer.toLowerCase());
     } else {
       return false;
     }
 
    }
 
-   public isTreasurer(treasurers: number[]): boolean {
+   public get isTreasurer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-
-      return treasurers.includes(parseInt(tokenDecoded.MembershipNumber));
-
+      return JSON.parse(tokenDecoded.Treasurer.toLowerCase());
     } else {
       return false;
     }
 
    }
 
-   public isMemberSecretary(memberSecretaries: number[]): boolean {
+   public get isMemberSecretary(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-
-      return memberSecretaries.includes(parseInt(tokenDecoded.MembershipNumber));
-
+      return JSON.parse(tokenDecoded.MembershipSecretary.toLowerCase());
     } else {
       return false;
     }
 
    }
 
-   public get isDeveloper(): boolean {
+  public get isSecretary(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return JSON.parse(tokenDecoded.Secretary.toLowerCase());
+    } else {
+      return false;
+    }
+
+  }
+
+  public get isCommitteeMember(): boolean {
+    console.log("isCommitteeMember called");
+    if (this.isLoggedIn) {
+      console.log("isCommitteeMember: isLoggedin");
+
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return JSON.parse(tokenDecoded.CommitteeMember.toLowerCase());
+    } else {
+      console.log("isCommitteeMember: is NOT Loggedin");
+      return false;
+    }
+
+  }
+
+  public get isDeveloper(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       if (tokenDecoded.Developer) {

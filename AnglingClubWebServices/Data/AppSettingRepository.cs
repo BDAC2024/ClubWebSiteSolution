@@ -43,10 +43,6 @@ namespace AnglingClubWebServices.Data
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductPondGateKey", Value = appSettings.ProductPondGateKey });
             await AddOrUpdateAppSetting(new AppSetting { Name = "ProductHandlingCharge", Value = appSettings.ProductHandlingCharge });
             
-            await AddOrUpdateAppSetting(new AppSetting { Name = "Previewers", Value = String.Join(",", appSettings.Previewers.ToArray()) });
-            await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipSecretaries", Value = String.Join(",", appSettings.MembershipSecretaries.ToArray()) });
-            await AddOrUpdateAppSetting(new AppSetting { Name = "Treasurers", Value = String.Join(",", appSettings.Treasurers.ToArray()) });
-
             await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketClosureTimesPerMonth", Value = appSettings.DayTicketClosureTimesPerMonth });
         }
 
@@ -174,37 +170,6 @@ namespace AnglingClubWebServices.Data
 
                     case "dayticketclosuretimespermonth":
                         appSettings.DayTicketClosureTimesPerMonth = settingValue;
-                        break;
-
-                        
-                    case "previewers":
-                        if (settingValue != "")
-                        {
-                            foreach (var previewer in settingValue.Split(","))
-                            {
-                                appSettings.Previewers.Add(Convert.ToInt32(previewer));
-                            }
-                        }
-                        break;
-
-                    case "membershipsecretaries":
-                        if (settingValue != "")
-                        {
-                            foreach (var membershipSecretary in settingValue.Split(","))
-                            {
-                                appSettings.MembershipSecretaries.Add(Convert.ToInt32(membershipSecretary));
-                            }
-                        }
-                        break;
-
-                    case "treasurers":
-                        if (settingValue != "")
-                        {
-                            foreach (var treasurer in settingValue.Split(","))
-                            {
-                                appSettings.Treasurers.Add(Convert.ToInt32(treasurer));
-                            }
-                        }
                         break;
 
                     default:

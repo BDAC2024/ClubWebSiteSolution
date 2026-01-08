@@ -2,15 +2,12 @@ using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
-using AutoMapper.Execution;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using static NodaTime.TimeZones.ZoneEqualityComparer;
 
 namespace AnglingClubWebServices.Data
 {
@@ -46,7 +43,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Created", Value = dateToString(DateTime.Now), Replace = true }
             };
 
-            base.SetupTableAttribues(request, "{IdPrefix}:{file.Id}", attributes);
+            base.SetupTableAttribues(request, $"{IdPrefix}:{file.Id}", attributes);
 
             try
             {
@@ -59,7 +56,7 @@ namespace AnglingClubWebServices.Data
                 throw;
             }
 
-            await PurgeTmpFiles();
+            //await PurgeTmpFiles();
         }
 
 
@@ -207,5 +204,16 @@ namespace AnglingClubWebServices.Data
             return await base.getPreSignedUploadUrl(filename, contentType, _options.TmpFilesBucket);
         }
 
+        public async Task SaveTmpFile(string fileName, byte[] fileBytes, string contentType)
+        {
+            await base.saveFile(fileName, fileBytes, contentType, _options.TmpFilesBucket, false);
+        }
+
+        public async Task<string> GetFilePresignedUrl(string fileName, string contentType, int minutesBeforeExpiry)
+        {
+            await Task.Delay(0);
+
+            return base.getFilePresignedUrl(fileName, _options.TmpFilesBucket, contentType, minutesBeforeExpiry);
+        }
     }
 }
