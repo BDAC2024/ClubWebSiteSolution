@@ -337,6 +337,11 @@ namespace AnglingClubWebServices.Controllers
                 member.SeasonsActive = memberDto.SeasonsActive;
 
                 member.Admin = memberDto.Admin;
+                member.Treasurer = memberDto.Treasurer;
+                member.CommitteeMember = memberDto.CommitteeMember;
+                member.Secretary = memberDto.Secretary;
+                member.MembershipSecretary = memberDto.MembershipSecretary;
+                member.Previewer = memberDto.Previewer;
                 member.MembershipNumber = memberDto.MembershipNumber;
                 member.ReLoginRequired = memberDto.ReLoginRequired;
                 member.Email = memberDto.Email;
@@ -521,9 +526,7 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            var memberSecretaries = _referenceDataRepository.GetReferenceData().AppSettings.MembershipSecretaries;
-
-            if (!memberSecretaries.Contains(CurrentUser.MembershipNumber))
+            if (!CurrentUser.MembershipSecretary)
             {
                 return BadRequest("Only Member Secretary can access this.");
             }

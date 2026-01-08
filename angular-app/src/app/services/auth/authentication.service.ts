@@ -47,43 +47,57 @@ export class AuthenticationService {
     }
    }
 
-   public isPreviewer(previewers: number[]): boolean {
+   public isPreviewer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-
-      return previewers.includes(parseInt(tokenDecoded.MembershipNumber));
-
+      return JSON.parse(tokenDecoded.Previewer.toLowerCase());
     } else {
       return false;
     }
 
    }
 
-   public isTreasurer(treasurers: number[]): boolean {
+   public isTreasurer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-
-      return treasurers.includes(parseInt(tokenDecoded.MembershipNumber));
-
+      return JSON.parse(tokenDecoded.Treasurer.toLowerCase());
     } else {
       return false;
     }
 
    }
 
-   public isMemberSecretary(memberSecretaries: number[]): boolean {
+   public isMemberSecretary(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-
-      return memberSecretaries.includes(parseInt(tokenDecoded.MembershipNumber));
-
+      return JSON.parse(tokenDecoded.MembershipSecretary.toLowerCase());
     } else {
       return false;
     }
 
    }
 
-   public get isDeveloper(): boolean {
+  public isSecretary(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return JSON.parse(tokenDecoded.Secretary.toLowerCase());
+    } else {
+      return false;
+    }
+
+  }
+
+  public isCommitteeMember(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return JSON.parse(tokenDecoded.CommitteeMember.toLowerCase());
+    } else {
+      return false;
+    }
+
+  }
+
+  public get isDeveloper(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       if (tokenDecoded.Developer) {

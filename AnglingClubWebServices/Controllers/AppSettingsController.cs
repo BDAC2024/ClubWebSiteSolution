@@ -115,109 +115,109 @@ namespace AnglingClubWebServices.Controllers
         /// Prepopulates the CommitteeMembers appSettings with standard values.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("PopulateCommitteeMembers")]
-        public async Task<IActionResult> PopulateCommitteeMembers([FromBody] AppSettingListDto committeeMembers)
-        {
-            if (CurrentUser.Name != _authService.GetDeveloperName())
-            {
-                return Unauthorized();
-            }
+        //[HttpGet("PopulateCommitteeMembers")]
+        //public async Task<IActionResult> PopulateCommitteeMembers([FromBody] AppSettingListDto committeeMembers)
+        //{
+        //    if (CurrentUser.Name != _authService.GetDeveloperName())
+        //    {
+        //        return Unauthorized();
+        //    }
 
-            var missingMembers = new List<string>();
-            var foundMembers = new List<string>();
+        //    var missingMembers = new List<string>();
+        //    var foundMembers = new List<string>();
 
-            var allMembers = await _memberRepository.GetMembers(EnumUtils.CurrentSeason());
-            var committeeMemberIds = new List<int>();
-            foreach (var name in committeeMembers.Names)
-            {
-                var member = allMembers.Find(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                if (member != null)
-                {
-                    committeeMemberIds.Add(member.MembershipNumber);
-                    foundMembers.Add(name);
-                }
-                else 
-                { 
-                    missingMembers.Add(name);
-                }
-            }
+        //    var allMembers = await _memberRepository.GetMembers(EnumUtils.CurrentSeason());
+        //    var committeeMemberIds = new List<int>();
+        //    foreach (var name in committeeMembers.Names)
+        //    {
+        //        var member = allMembers.Find(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        //        if (member != null)
+        //        {
+        //            committeeMemberIds.Add(member.MembershipNumber);
+        //            foundMembers.Add(name);
+        //        }
+        //        else 
+        //        { 
+        //            missingMembers.Add(name);
+        //        }
+        //    }
 
-            if (committeeMembers.AbortOnMissingNames && missingMembers.Any())
-            {
-                return BadRequest($"Aborting, only found: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
-            }
+        //    if (committeeMembers.AbortOnMissingNames && missingMembers.Any())
+        //    {
+        //        return BadRequest($"Aborting, only found: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
+        //    }
 
-            var currentSettings = await _appSettingRepository.GetAppSettings();
-            if (currentSettings != null)
-            {
-                currentSettings.CommitteeMembers = committeeMemberIds;
-                await _appSettingRepository.AddOrUpdateAppSettings(currentSettings);
-            }
+        //    var currentSettings = await _appSettingRepository.GetAppSettings();
+        //    if (currentSettings != null)
+        //    {
+        //        currentSettings.CommitteeMembers = committeeMemberIds;
+        //        await _appSettingRepository.AddOrUpdateAppSettings(currentSettings);
+        //    }
 
-            if (missingMembers.Any())
-            {
-                return Ok($"For info, only added: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
-            }
-            else
-            {
-                return Ok();
-            }
+        //    if (missingMembers.Any())
+        //    {
+        //        return Ok($"For info, only added: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
+        //    }
+        //    else
+        //    {
+        //        return Ok();
+        //    }
 
-        }
+        //}
 
         /// <summary>
         /// Prepopulates the Secretaries appSettings with standard values.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("PopulateSecretaries")]
-        public async Task<IActionResult> PopulateSecretaries([FromBody] AppSettingListDto secretaries)
-        {
-            if (CurrentUser.Name != _authService.GetDeveloperName())
-            {
-                return Unauthorized();
-            }
+        //[HttpGet("PopulateSecretaries")]
+        //public async Task<IActionResult> PopulateSecretaries([FromBody] AppSettingListDto secretaries)
+        //{
+        //    if (CurrentUser.Name != _authService.GetDeveloperName())
+        //    {
+        //        return Unauthorized();
+        //    }
 
-            var missingMembers = new List<string>();
-            var foundMembers = new List<string>();
+        //    var missingMembers = new List<string>();
+        //    var foundMembers = new List<string>();
 
-            var allMembers = await _memberRepository.GetMembers(EnumUtils.CurrentSeason());
-            var secretaryMemberIds = new List<int>();
-            foreach (var name in secretaries.Names)
-            {
-                var member = allMembers.Find(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                if (member != null)
-                {
-                    secretaryMemberIds.Add(member.MembershipNumber);
-                    foundMembers.Add(name);
-                }
-                else
-                {
-                    missingMembers.Add(name);
-                }
-            }
+        //    var allMembers = await _memberRepository.GetMembers(EnumUtils.CurrentSeason());
+        //    var secretaryMemberIds = new List<int>();
+        //    foreach (var name in secretaries.Names)
+        //    {
+        //        var member = allMembers.Find(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        //        if (member != null)
+        //        {
+        //            secretaryMemberIds.Add(member.MembershipNumber);
+        //            foundMembers.Add(name);
+        //        }
+        //        else
+        //        {
+        //            missingMembers.Add(name);
+        //        }
+        //    }
 
-            if (secretaries.AbortOnMissingNames && missingMembers.Any())
-            {
-                return BadRequest($"Aborting, only found: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
-            }
+        //    if (secretaries.AbortOnMissingNames && missingMembers.Any())
+        //    {
+        //        return BadRequest($"Aborting, only found: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
+        //    }
 
-            var currentSettings = await _appSettingRepository.GetAppSettings();
-            if (currentSettings != null)
-            {
-                currentSettings.Secretaries = secretaryMemberIds;
-                await _appSettingRepository.AddOrUpdateAppSettings(currentSettings);
-            }
+        //    var currentSettings = await _appSettingRepository.GetAppSettings();
+        //    if (currentSettings != null)
+        //    {
+        //        currentSettings.Secretaries = secretaryMemberIds;
+        //        await _appSettingRepository.AddOrUpdateAppSettings(currentSettings);
+        //    }
 
-            if (missingMembers.Any())
-            {
-                return Ok($"For info, only added: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
-            }
-            else
-            {
-                return Ok();
-            }
+        //    if (missingMembers.Any())
+        //    {
+        //        return Ok($"For info, only added: {String.Join(",", foundMembers.ToArray())}. These members not found: {String.Join(",", missingMembers.ToArray())}");
+        //    }
+        //    else
+        //    {
+        //        return Ok();
+        //    }
 
-        }
+        //}
 
     }
 }

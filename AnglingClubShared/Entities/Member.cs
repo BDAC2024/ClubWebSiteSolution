@@ -24,6 +24,11 @@ namespace AnglingClubShared.Entities
 
         public int MembershipNumber { get; set; }
         public bool Admin { get; set; } = false;
+        public bool Treasurer { get; set; } = false;
+        public bool CommitteeMember { get; set; } = false;
+        public bool Secretary { get; set; } = false;
+        public bool MembershipSecretary { get; set; } = false;
+        public bool Previewer { get; set; } = false;
         /// <summary>
         /// Will be set to 0 once user has set a new pin
         /// </summary>

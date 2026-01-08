@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
 
   public isPreviewer(): boolean {
     if (this.refData != null) {
-      return this.authenticationService.isPreviewer(this.refData.appSettings.previewers);
+      return this.authenticationService.isPreviewer();
     } else {
       return false;
     }

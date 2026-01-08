@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared.Enums;
 using System;
 using System.ComponentModel;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
 
@@ -123,5 +124,27 @@ namespace AnglingClubShared.Extensions
         {
             return s == null || s.Length == 0;
         }
+
+        /// <summary>
+        /// Gets a boolean claim from a JWT token, returns false if not found or invalid
+        /// </summary>
+        /// <param name="principal"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool GetBoolClaim(this JwtSecurityToken principal, string type)
+        {
+            var requiredClaim = principal.Claims.FirstOrDefault(c => c.Type == type);
+
+            if (requiredClaim != null &&
+                bool.TryParse(requiredClaim.Value, out var requiredValue))
+            {
+                return requiredValue;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }

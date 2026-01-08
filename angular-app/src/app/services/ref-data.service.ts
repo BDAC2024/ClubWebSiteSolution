@@ -47,7 +47,7 @@ export class RefDataService {
 
   public isPreviewer(): boolean {
     if (this.refData != null) {
-      return this.authenticationService.isPreviewer(this.refData.appSettings.previewers);
+      return this.authenticationService.isPreviewer();
     } else {
       return false;
     }
@@ -55,7 +55,7 @@ export class RefDataService {
 
   public isTreasurer(): boolean {
     if (this.refData != null) {
-      return this.authenticationService.isPreviewer(this.refData.appSettings.treasurers);
+      return this.authenticationService.isPreviewer();
     } else {
       return false;
     }
@@ -63,7 +63,7 @@ export class RefDataService {
 
   public isMemberSecretary(): boolean {
     if (this.refData != null) {
-      return this.authenticationService.isPreviewer(this.refData.appSettings.membershipSecretaries);
+      return this.authenticationService.isPreviewer();
     } else {
       return false;
     }
