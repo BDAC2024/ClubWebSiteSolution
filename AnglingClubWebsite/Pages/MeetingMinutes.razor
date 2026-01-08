@@ -3,10 +3,21 @@
 @inherits RazorComponentBase;
 
 <AuthorizationRequired>
-        <h3 class="left-header">Meeting Minutes</h3>
-
-        <p>
+    <h3>Meeting Minutes</h3>
+    <p>
         Below are the minutes from our meetings. Click on a meeting to view the detailed minutes.
-        </p>
+    </p>
+
+    @if (CurrentUser.Secretary)
+    {
+        <div class="edit-button-panel">
+                <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
+        </div>
+        <br />
+        <br />
+
+        <AddMinutes @bind-Visible="AddingMinutes" ></AddMinutes>
+    }
+
 
 </AuthorizationRequired>

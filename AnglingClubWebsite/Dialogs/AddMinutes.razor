@@ -1,0 +1,19 @@
+﻿@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+
+    <SfDialog IsModal="true" Visible="@Visible" CssClass="match-dialog">
+        <DialogTemplates>
+            <Header>Upload Minutes</Header>
+            <Content>
+                <div class="match-results">
+                    Here is some content to test the width
+                </div>
+            </Content>
+        </DialogTemplates>
+        <DialogButtons>
+            <DialogButton Content="Close" IsPrimary="true" OnClick="CloseAsync" />
+        </DialogButtons>
+    </SfDialog>
+
+</AuthorizationRequired>
