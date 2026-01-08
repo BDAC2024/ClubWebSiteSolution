@@ -49,7 +49,7 @@ export class Member {
     }
   }
 
-  private static getBoolClaim(tokenClaim: any): boolean {
+  public static getBoolClaim(tokenClaim: any): boolean {
 
     if (tokenClaim) {
       return JSON.parse(tokenClaim.toLowerCase());

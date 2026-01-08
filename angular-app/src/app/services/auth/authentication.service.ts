@@ -24,63 +24,63 @@ export class AuthenticationService {
     private globalService: GlobalService,
     private membersService: MembersService,
     private blazorBridge: BlazorBridgeService
-    ) {
-      this.getMember();
-   }
+  ) {
+    this.getMember();
+  }
 
-   public get currentMemberValue(): Member {
+  public get currentMemberValue(): Member {
     this.getMember();
     return this.currentMemberSubject.value;
-   }
+  }
 
-   public get isLoggedIn(): boolean {
+  public get isLoggedIn(): boolean {
     this.getMember();
     return this.currentMemberSubject.value.token != undefined;
-   }
+  }
 
-   public get isAdmin(): boolean {
+  public get isAdmin(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-      return JSON.parse(tokenDecoded.Admin.toLowerCase());
+      return Member.getBoolClaim(tokenDecoded.Admin);
     } else {
       return false;
     }
-   }
+  }
 
-   public get isPreviewer(): boolean {
+  public get isPreviewer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-      return JSON.parse(tokenDecoded.Previewer.toLowerCase());
-    } else {
-      return false;
-    }
-
-   }
-
-   public get isTreasurer(): boolean {
-    if (this.isLoggedIn) {
-      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-      return JSON.parse(tokenDecoded.Treasurer.toLowerCase());
+      return Member.getBoolClaim(tokenDecoded.Previewer);
     } else {
       return false;
     }
 
-   }
+  }
 
-   public get isMemberSecretary(): boolean {
+  public get isTreasurer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-      return JSON.parse(tokenDecoded.MembershipSecretary.toLowerCase());
+      return Member.getBoolClaim(tokenDecoded.Treasurer);
     } else {
       return false;
     }
 
-   }
+  }
+
+  public get isMemberSecretary(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return Member.getBoolClaim(tokenDecoded.MembershipSecretary);
+    } else {
+      return false;
+    }
+
+  }
 
   public get isSecretary(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-      return JSON.parse(tokenDecoded.Secretary.toLowerCase());
+      return Member.getBoolClaim(tokenDecoded.Secretary);
     } else {
       return false;
     }
@@ -88,14 +88,10 @@ export class AuthenticationService {
   }
 
   public get isCommitteeMember(): boolean {
-    console.log("isCommitteeMember called");
     if (this.isLoggedIn) {
-      console.log("isCommitteeMember: isLoggedin");
-
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
-      return JSON.parse(tokenDecoded.CommitteeMember.toLowerCase());
+      return Member.getBoolClaim(tokenDecoded.CommitteeMember);
     } else {
-      console.log("isCommitteeMember: is NOT Loggedin");
       return false;
     }
 
@@ -109,49 +105,49 @@ export class AuthenticationService {
       } else {
         return false;
       }
-      
+
     } else {
       return false;
     }
-   }
+  }
 
-   public get allowNameToBeUsed(): boolean {
+  public get allowNameToBeUsed(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       return JSON.parse(tokenDecoded.AllowNameToBeUsed.toLowerCase());
     } else {
       return false;
     }
-   }
+  }
 
-   login(membershipNumber: number, pin: number, stayLoggedIn: boolean) {
+  login(membershipNumber: number, pin: number, stayLoggedIn: boolean) {
 
     var loginDetails = new LoginDetails(membershipNumber, pin);
 
     return this.http.post<any>(`${this.globalService.ApiUrl}/api/members/authenticate`, loginDetails)
-        .pipe(map(user => {
-            // store user details and jwt token in local storage to keep user logged in between page refreshes
-            if (stayLoggedIn) {
-              localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
-            } else {
-              sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
-            }
+      .pipe(map(user => {
+        // store user details and jwt token in local storage to keep user logged in between page refreshes
+        if (stayLoggedIn) {
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+        } else {
+          sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+        }
 
-            this.membersService.memberLoggedIn(user.token);
-            this.currentMemberSubject.next(user);
+        this.membersService.memberLoggedIn(user.token);
+        this.currentMemberSubject.next(user);
 
-            // send login message to Blazor bridge
-            this.blazorBridge.sendAuth(user, stayLoggedIn);
+        // send login message to Blazor bridge
+        this.blazorBridge.sendAuth(user, stayLoggedIn);
 
-            return user;
-        }));
+        return user;
+      }));
   }
 
   pinResetRequest(membershipNumber: number) {
     return this.http.post<boolean>(`${this.globalService.ApiUrl}/api/members/pinresetrequest/${membershipNumber}`, '')
-    .pipe(
-      map(result => {return result})
-    );
+      .pipe(
+        map(result => { return result })
+      );
   }
 
   setNewPin(newPin: number) {
@@ -159,13 +155,13 @@ export class AuthenticationService {
   }
 
   logout() {
-      // remove user from local storage to log user out
-      localStorage.removeItem(this.STORAGE_KEY);
-      sessionStorage.removeItem(this.STORAGE_KEY);
-      this.membersService.memberLoggedOut();
-      this.currentMemberSubject.next(new Member());
+    // remove user from local storage to log user out
+    localStorage.removeItem(this.STORAGE_KEY);
+    sessionStorage.removeItem(this.STORAGE_KEY);
+    this.membersService.memberLoggedOut();
+    this.currentMemberSubject.next(new Member());
 
-      this.blazorBridge.sendAuth(null, false);
+    this.blazorBridge.sendAuth(null, false);
   }
 
   private getMember() {
@@ -183,7 +179,7 @@ export class AuthenticationService {
     this.currentMemberSubject = new BehaviorSubject<Member>(member);
     this.currentMember = this.currentMemberSubject.asObservable();
   }
- 
+
   public isRemembered(): boolean {
     return !!localStorage.getItem(this.STORAGE_KEY);
   }
