@@ -46,6 +46,8 @@ namespace AnglingClubWebServices.Data
             await AddOrUpdateAppSetting(new AppSetting { Name = "Previewers", Value = String.Join(",", appSettings.Previewers.ToArray()) });
             await AddOrUpdateAppSetting(new AppSetting { Name = "MembershipSecretaries", Value = String.Join(",", appSettings.MembershipSecretaries.ToArray()) });
             await AddOrUpdateAppSetting(new AppSetting { Name = "Treasurers", Value = String.Join(",", appSettings.Treasurers.ToArray()) });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "CommitteeMembers", Value = String.Join(",", appSettings.CommitteeMembers.ToArray()) });
+            await AddOrUpdateAppSetting(new AppSetting { Name = "Secretaries", Value = String.Join(",", appSettings.Secretaries.ToArray()) });
 
             await AddOrUpdateAppSetting(new AppSetting { Name = "DayTicketClosureTimesPerMonth", Value = appSettings.DayTicketClosureTimesPerMonth });
         }
@@ -196,13 +198,33 @@ namespace AnglingClubWebServices.Data
                             }
                         }
                         break;
-
+                        
                     case "treasurers":
                         if (settingValue != "")
                         {
                             foreach (var treasurer in settingValue.Split(","))
                             {
                                 appSettings.Treasurers.Add(Convert.ToInt32(treasurer));
+                            }
+                        }
+                        break;
+
+                    case "committeemembers":
+                        if (settingValue != "")
+                        {
+                            foreach (var committeeMember in settingValue.Split(","))
+                            {
+                                appSettings.CommitteeMembers.Add(Convert.ToInt32(committeeMember));
+                            }
+                        }
+                        break;
+
+                    case "secretaries":
+                        if (settingValue != "")
+                        {
+                            foreach (var secretary in settingValue.Split(","))
+                            {
+                                appSettings.Secretaries.Add(Convert.ToInt32(secretary));
                             }
                         }
                         break;
