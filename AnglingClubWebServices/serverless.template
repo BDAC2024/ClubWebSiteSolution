@@ -168,6 +168,16 @@
 			"Type" : "String",
 			"Description" : "Webhook secret for Stripe",
 			"MinLength" : "0"
+		},
+		"SyncfusionLicenseKey" : {
+			"Type" : "String",
+			"Description" : "API key for Word PDF generation",
+			"MinLength" : "0"
+		},
+		"DocumentBucket" : {
+			"Type" : "String",
+			"Description" : "S3 bucket for Documents",
+			"MinLength" : "0"
 		}
   },
   "Conditions": {},
@@ -178,8 +188,8 @@
         "Handler": "AnglingClubWebServices::AnglingClubWebServices.LambdaEntryPoint::FunctionHandlerAsync",
         "Runtime": "dotnet8",
         "CodeUri": "",
-        "MemorySize": 256,
-        "Timeout": 30,
+        "MemorySize": 1024,
+        "Timeout": 60,
         "Role": null,
         "Policies": [
           "AWSLambda_FullAccess"
@@ -218,7 +228,9 @@
 				"SwaRegion" : { "Ref" : "SwaRegion" } ,
 				"LogLevel" : { "Ref" : "LogLevel" },
 				"StripeApiKey" : { "Ref" : "StripeApiKey" },
-				"StripeWebHookEndpointSecret" : { "Ref" : "StripeWebHookEndpointSecret" }
+				"StripeWebHookEndpointSecret" : { "Ref" : "StripeWebHookEndpointSecret" },
+				"SyncfusionLicenseKey" : { "Ref" : "SyncfusionLicenseKey" },
+				"DocumentBucket" : { "Ref" : "DocumentBucket" }
 			}
 		},
         "Events": {
@@ -237,8 +249,8 @@
             }
           }
         }
-      }
-    }
+	  }
+	}
   },
   "Outputs": {
     "ApiURL": {

@@ -10,10 +10,6 @@ namespace AnglingClubShared.Models
         public decimal PondGateKeyCost { get; set; }
         public decimal HandlingCharge { get; set; }
 
-        public List<int> Previewers { get; set; } = new List<int>();
-        public List<int> MembershipSecretaries { get; set; } = new List<int>();
-        public List<int> Treasurers { get; set; } = new List<int>();
-
         public bool MembershipsEnabled { get; set; } = false;
         public bool GuestTicketsEnabled { get; set; } = false;
         public bool DayTicketsEnabled { get; set; } = false;
@@ -22,7 +18,7 @@ namespace AnglingClubShared.Models
         /// <summary>
         /// List of closure times per month, comma separated, 1st item is January, 2nd February etc.
         /// </summary>
-        public string DayTicketClosureTimesPerMonth { get; set; }
+        public string DayTicketClosureTimesPerMonth { get; set; } = "";
 
         [JsonIgnore]
         public string ProductDayTicket { get; set; } = "";

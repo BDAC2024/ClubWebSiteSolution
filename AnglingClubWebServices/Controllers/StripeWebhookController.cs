@@ -214,17 +214,18 @@ namespace AnglingClubWebServices.Controllers
 
                                     _logger.LogWarning($" log 131 - membership - getting appSettings");
 
-                                    if (appSettings.MembershipSecretaries.Any())
+                                    var membershipSecretaries = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => x.MembershipSecretary = true);
+
+                                    if (membershipSecretaries.Any())
                                     {
                                         _logger.LogWarning($" log 132 - membership - getting MembershipSecretaries");
 
-                                        var members = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => appSettings.MembershipSecretaries.Contains(x.MembershipNumber));
 
-                                        if (members.Any())
+                                        if (membershipSecretaries.Any())
                                         {
                                             _logger.LogWarning($" log 133 - membership - starting email composition");
 
-                                            var emails = members.Select(x => x.Email).ToList();
+                                            var emails = membershipSecretaries.Select(x => x.Email).ToList();
                                             var body = "";
                                             List<ImageAttachment> attachments = new List<ImageAttachment>();
 
@@ -326,33 +327,30 @@ namespace AnglingClubWebServices.Controllers
                                     var appSettings = _appSettingRepository.GetAppSettings().Result;
                                     var notificationSent = false;
 
-                                    if (appSettings.MembershipSecretaries.Any())
+                                    var membershipSecretaries = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => x.MembershipSecretary = true);
+
+                                    if (membershipSecretaries.Any())
                                     {
-                                        var members = _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason()).Result.Where(x => appSettings.MembershipSecretaries.Contains(x.MembershipNumber));
+                                        var emails = membershipSecretaries.Select(x => x.Email).ToList();
 
-                                        if (members.Any())
-                                        {
-                                            var emails = members.Select(x => x.Email).ToList();
+                                        _emailService.SendEmail(
+                                            emails,
+                                            $"New Pond Gate Key deposit has been purchased",
+                                            $"A new <b>Pond Gate Key deposit</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
+                                                "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
+                                                "Boroughbridge & District Angling Club"
+                                        );
 
-                                            _emailService.SendEmail(
-                                                emails,
-                                                $"New Pond Gate Key deposit has been purchased",
-                                                $"A new <b>Pond Gate Key deposit</b> has been purchased by/for <b>{order.MembersName}</b>.<br/>" +
-                                                    "Full details can be found in the 'Payments' section of the Admin area of the website.<br/><br/>" +
-                                                    "Boroughbridge & District Angling Club"
-                                            );
+                                        _emailService.SendEmail(
+                                            new List<string> { paymentIntent.ReceiptEmail },
+                                            $"Confirmation of pond gate key deposit purchase",
+                                            $"Thank you for purchasing <b>Pond Gate Key deposit</b> .<br/>" +
+                                                "Your key will be sent to you when ready.<br/><br/>" +
+                                                "Tight lines!,<br/>" +
+                                                "Boroughbridge & District Angling Club"
+                                        );
 
-                                            _emailService.SendEmail(
-                                                new List<string> { paymentIntent.ReceiptEmail },
-                                                $"Confirmation of pond gate key deposit purchase",
-                                                $"Thank you for purchasing <b>Pond Gate Key deposit</b> .<br/>" +
-                                                    "Your key will be sent to you when ready.<br/><br/>" +
-                                                    "Tight lines!,<br/>" +
-                                                    "Boroughbridge & District Angling Club"
-                                            );
-
-                                            notificationSent = true;
-                                        }
+                                        notificationSent = true;
                                     }
 
                                     if (!notificationSent)

@@ -120,6 +120,12 @@ namespace AnglingClubWebsite
                 {
                     setupAdminMenu();
                 }
+
+                if (_currentUserService.User.CommitteeMember)
+                {
+                    setupCommitteeMenu();
+                }
+
             }
             else
             {
@@ -282,6 +288,19 @@ namespace AnglingClubWebsite
             Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
+        public void setupCommitteeMenu()
+        {
+            ShowConsoleMessage($"setupCommitteeMenu");
+
+            List<MenuItem> menuItems = new List<MenuItem>();
+
+            menuItems.Add(new MenuItem { Id = "075", Name = "Meetings", HasSubMenu = true });
+            menuItems.Add(new MenuItem { Id = "075.1", ParentId = "075", Name = "Minutes", NavigateUrl = menuUrl("/MeetingMinutes") });
+
+            Menu.AddRange(menuItems);
+            Menu = Menu.OrderBy(x => x.Id).ToList();
+        }
+
         public void SelectMenuItem(string navigateUrl)
         {
             var menuItem = Menu.FirstOrDefault(x => x.NavigateUrl != null && (x.NavigateUrl.ToLower() == navigateUrl.ToLower()));
@@ -340,6 +359,11 @@ namespace AnglingClubWebsite
                 if (_currentUserService.User.Admin)
                 {
                     setupAdminMenu();
+                }
+
+                if (_currentUserService.User.CommitteeMember)
+                {
+                    setupCommitteeMenu();
                 }
             }
 

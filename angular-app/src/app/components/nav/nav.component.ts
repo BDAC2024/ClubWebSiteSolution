@@ -25,6 +25,7 @@ export class NavComponent implements OnInit {
   
   // isExpanded = true;
   showStandingsSubMenu: boolean = false;
+  showMeetingsSubMenu: boolean = false;
   showAdminSubMenu: boolean = false;
   showRulesSubMenu: boolean = false;
   showClubInfoSubMenu: boolean = false;
@@ -161,7 +162,7 @@ export class NavComponent implements OnInit {
 
   public isPreviewer(): boolean {
     if (this.refData != null) {
-      return this.authenticationService.isPreviewer(this.refData.appSettings.previewers);
+      return this.authenticationService.isPreviewer;
     } else {
       return false;
     }

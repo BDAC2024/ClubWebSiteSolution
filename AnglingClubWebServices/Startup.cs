@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Stripe;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -34,6 +33,12 @@ namespace AnglingClubWebServices
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
+            var key = Configuration["SyncfusionLicenseKey"];
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(key);
+            }
+
             services.AddControllers();
 
             services.AddLogging(builder =>
@@ -43,7 +48,7 @@ namespace AnglingClubWebServices
                 LogLevel logLevel = LogLevel.Information; // Default
 
                 var tst = Configuration["TestSecret"];
-                
+
                 switch (Configuration[Startup.LogLevelKey].ToLower())
                 {
                     case "debug":
@@ -148,13 +153,14 @@ namespace AnglingClubWebServices
             services.AddTransient<IOpenMatchRepository, OpenMatchRepository>();
             services.AddTransient<IOpenMatchRegistrationRepository, OpenMatchRegistrationRepository>();
             services.AddTransient<ITmpFileRepository, TmpFileRepository>();
+            services.AddTransient<IDocumentRepository, DocumentRepository>();
 
             services.AddTransient<IPaymentsService, PaymentService>();
             services.AddTransient<ITicketService, TicketService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUtilityService, UtilityService>();
-
+            services.AddScoped<IDocumentService, DocumentService>();
 
         }
 

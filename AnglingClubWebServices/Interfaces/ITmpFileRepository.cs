@@ -11,5 +11,7 @@ namespace AnglingClubWebServices.Interfaces
         Task<StoredFile> GetTmpFile(string id);
         Task DeleteTmpFile(string id, bool deleteFromS3 = true);
         Task<string> GetTmpFileUploadUrl(string filename, string contentType);
+        Task SaveTmpFile(string fileName, byte[] fileBytes, string contentType);
+        Task<string> GetFilePresignedUrl(string fileName, string contentType, int minutesBeforeExpiry);
     }
 }

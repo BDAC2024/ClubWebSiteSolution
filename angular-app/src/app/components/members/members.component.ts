@@ -66,7 +66,7 @@ export class MembersComponent implements OnInit, AfterViewInit {
 
   public addMember() {
     var member: Member = {
-      dbKey: "", id: '', membershipNumber: 0, admin: false, allowNameToBeUsed: false, name: '', email: '', seasonsActive: [], pinResetRequired: true, preferencesLastUpdated: new Date(), reLoginRequired: false, initialPin: 0,
+      dbKey: "", id: '', membershipNumber: 0, admin: false, treasurer: false, committeeMember: false, secretary: false, membershipSecretary: false, previewer: false, allowNameToBeUsed: false, name: '', email: '', seasonsActive: [], pinResetRequired: true, preferencesLastUpdated: new Date(), reLoginRequired: false, initialPin: 0,
       surname: ''
     };
 
