@@ -1,5 +1,6 @@
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
@@ -43,6 +44,7 @@ namespace AnglingClubWebServices.Data
                     new ReplaceableAttribute { Name = "Id", Value = file.Id, Replace = true },
                     new ReplaceableAttribute { Name = "Created", Value = dateToString(DateTime.Now), Replace = true },
                     new ReplaceableAttribute { Name = "Name", Value = file.Name, Replace = true },
+                    new ReplaceableAttribute { Name = "Notes", Value = file.Notes, Replace = true },
                     new ReplaceableAttribute { Name = "DocumentType", Value = file.DocumentType.ToString(), Replace = true }
                 };
 
@@ -89,6 +91,10 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Name":
+                            doc.Name = attribute.Value;
+                            break;
+
+                        case "Notes":
                             doc.Name = attribute.Value;
                             break;
 

@@ -367,6 +367,7 @@ td.label {
 .match-dialog.e-dialog {
     width: fit-content;
     max-width: 90vw;
+    background-color: whitesmoke;
 }
 
     .match-dialog.e-dialog .e-dlg-content {
@@ -374,6 +375,7 @@ td.label {
         width: fit-content;
         max-width: 90vw;
         min-width: 0;
+        background-color: whitesmoke;
     }
 
 /* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
@@ -430,3 +432,25 @@ td.label {
             overflow: auto;
         }
 */
+
+
+.bdac-table {
+    /*box-shadow: 0 5px 5px -3px #0003,0 8px 10px 1px #00000024,0 3px 14px 2px #0000001f;*/
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+    .bdac-table th,
+    .bdac-table td {
+        border-bottom: 1px solid #ddd;
+    }
+
+fieldset {
+    border: 0;
+}
+
+.e-upload .e-file-select-wrap .e-btn {
+    background-color: #0d6efd;
+    color: white;
+}

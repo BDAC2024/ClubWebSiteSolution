@@ -6,13 +6,26 @@
         <DialogTemplates>
             <Header>Upload Minutes</Header>
             <Content>
-                <div class="match-results">
-                    Here is some content to test the width
-                </div>
+                <SfUploader AutoUpload="true" AllowedExtensions=".doc,.docx" AllowMultiple="false" EnableHtmlSanitizer="true">
+                    <UploaderEvents ValueChange="UploadHandler" OnRemove="RemoveHandler" ></UploaderEvents>
+                </SfUploader>
+                <SfDatePicker TValue="DateTime"
+                                    Placeholder="Meeting Date"
+                                    @bind-Value="@DocumentInfo.Created"
+                                    FloatLabelType='@FloatLabelType.Auto'
+                                    Format="dd MMM yyyy"></SfDatePicker>
+                <SfTextBox Placeholder='Notes (optional)' @bind-Value="@DocumentInfo.Notes" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                @if (!ErrorMessage.IsWhiteSpace())
+                {
+                    <br />
+                    <br />
+                    <SfMessage Severity="MessageSeverity.Error">@ErrorMessage</SfMessage>
+                }
             </Content>
         </DialogTemplates>
         <DialogButtons>
-            <DialogButton Content="Close" IsPrimary="true" OnClick="CloseAsync" />
+            <DialogButton Content="Cancel" IsPrimary="true" OnClick="CloseAsync" />
+            <DialogButton Content="Save" IsPrimary="true" OnClick="SaveAsync" />
         </DialogButtons>
     </SfDialog>
 
