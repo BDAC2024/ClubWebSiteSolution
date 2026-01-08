@@ -24,12 +24,14 @@ namespace AnglingClubWebsite.SharedComponents
 
         protected ClientMemberDto CurrentUser = new ClientMemberDto();
 
-        public virtual async Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
             _currentUserService.User = await _authenticationService.GetCurrentUser();
             CurrentUser = _currentUserService.User;
 
             await Loaded().ConfigureAwait(true);
+
+            await base.OnInitializedAsync();
         }
 
         public virtual async Task Loaded()
