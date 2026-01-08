@@ -47,7 +47,7 @@ export class AuthenticationService {
     }
    }
 
-   public isPreviewer(): boolean {
+   public get isPreviewer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       return JSON.parse(tokenDecoded.Previewer.toLowerCase());
@@ -57,7 +57,7 @@ export class AuthenticationService {
 
    }
 
-   public isTreasurer(): boolean {
+   public get isTreasurer(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       return JSON.parse(tokenDecoded.Treasurer.toLowerCase());
@@ -67,7 +67,7 @@ export class AuthenticationService {
 
    }
 
-   public isMemberSecretary(): boolean {
+   public get isMemberSecretary(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       return JSON.parse(tokenDecoded.MembershipSecretary.toLowerCase());
@@ -77,7 +77,7 @@ export class AuthenticationService {
 
    }
 
-  public isSecretary(): boolean {
+  public get isSecretary(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       return JSON.parse(tokenDecoded.Secretary.toLowerCase());
@@ -87,11 +87,15 @@ export class AuthenticationService {
 
   }
 
-  public isCommitteeMember(): boolean {
+  public get isCommitteeMember(): boolean {
+    console.log("isCommitteeMember called");
     if (this.isLoggedIn) {
+      console.log("isCommitteeMember: isLoggedin");
+
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
       return JSON.parse(tokenDecoded.CommitteeMember.toLowerCase());
     } else {
+      console.log("isCommitteeMember: is NOT Loggedin");
       return false;
     }
 

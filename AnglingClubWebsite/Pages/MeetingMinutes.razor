@@ -1,4 +1,12 @@
 ﻿@page "/MeetingMinutes"
 
-<h3>MeetingMinutes</h3>
+@inherits RazorComponentBase;
 
+<AuthorizationRequired>
+        <h3 class="left-header">Meeting Minutes</h3>
+
+        <p>
+        Below are the minutes from our meetings. Click on a meeting to view the detailed minutes.
+        </p>
+
+</AuthorizationRequired>

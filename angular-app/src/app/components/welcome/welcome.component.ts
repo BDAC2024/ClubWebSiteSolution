@@ -33,7 +33,7 @@ export class WelcomeComponent implements OnInit {
 
   public isPreviewer(): boolean {
     if (this.refData != null) {
-      return this.authenticationService.isPreviewer();
+      return this.authenticationService.isPreviewer;
     } else {
       return false;
     }
