@@ -129,7 +129,7 @@ namespace AnglingClubWebServices.Data
         private async Task<bool> DbNotEmpty(string domainToCheck, AmazonSimpleDBClient client)
         {
             SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT count(*) FROM {domainToCheck}";
+            request.SelectExpression = $"SELECT count(*) FROM `{domainToCheck}`";
 
             SelectResponse response = await client.SelectAsync(request);
 

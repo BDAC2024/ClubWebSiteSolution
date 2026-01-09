@@ -36,6 +36,34 @@ bool isLocalhost =
 bool isDevTunnel =
     nav.BaseUri.Contains("uks1.devtunnels.ms", StringComparison.OrdinalIgnoreCase);
 
+bool isStaging =
+    nav.BaseUri.Contains("purple-stone-0ae0b6b03-", StringComparison.OrdinalIgnoreCase);
+
+Uri uri = new Uri("");
+
+if (isDevTunnel)
+{
+    uri = new Uri(builder.Configuration["ServerUrlDevTunnel"] ?? "");
+}
+else 
+{
+    if (isStaging)
+    {
+        uri = new Uri(builder.Configuration["ServerUrlStaging"] ?? "");
+    }
+    else
+    {
+        uri = new Uri(builder.Configuration["ServerUrl"] ?? "");
+    }
+}
+
+    //var uri = isDevTunnel ? new Uri(builder.Configuration["ServerUrlDevTunnel"] ?? "") : (new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""));
+
+builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
+                .ConfigureHttpClient(c => c.BaseAddress = uri)
+                .AddHttpMessageHandler<AuthenticationHandler>();
+
+// The app
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
@@ -49,12 +77,6 @@ builder.Services.AddBlazoredSessionStorageAsSingleton();
 builder.Services.AddTransient<AuthenticationHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddCascadingAuthenticationState();
-
-var uri = isDevTunnel ? new Uri(builder.Configuration["ServerUrlDevTunnel"] ?? "") : (new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""));
-
-builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
-                .ConfigureHttpClient(c => c.BaseAddress = uri)
-                .AddHttpMessageHandler<AuthenticationHandler>();
 
 // Infrastructure
 builder.Services.AddSingleton<IMessenger, WeakReferenceMessenger>();
