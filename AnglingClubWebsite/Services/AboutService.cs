@@ -41,6 +41,8 @@ namespace AnglingClubWebsite.Services
                 try
                 {
                     var content = await response.Content.ReadFromJsonAsync<AboutDto>();
+                    content!.API = Http.BaseAddress?.ToString() ?? "Unknown";
+
                     return content;
                 }
                 catch (Exception ex)
