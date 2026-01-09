@@ -1,2 +1,19 @@
+<!--<div class="env-watermark" *ngIf="runningOn == 'localhost'">
+  LOCAL DEV / NOT LIVE
+</div>-->
+<!--<div class="env-watermark" *ngIf="runningOn == 'localhost'">
+  STAGING / NOT LIVE
+</div>-->
+
+<div class="env-watermark" *ngIf="envMessage != ''">
+  {{envMessage}}
+</div>
+
+<div class="env-badge" *ngIf="envMessage != ''">
+  {{envMessage}}
+</div>
+
+<router-outlet></router-outlet>
+
 <app-nav></app-nav>
 
