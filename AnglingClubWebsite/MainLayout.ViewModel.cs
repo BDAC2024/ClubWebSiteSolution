@@ -125,6 +125,12 @@ namespace AnglingClubWebsite
                     setupCommitteeMenu();
                 }
 
+
+                if (_currentUserService.User.Developer)
+                {
+                    setupDeveloperMenu();
+                }
+
             }
             else
             {
@@ -282,6 +288,18 @@ namespace AnglingClubWebsite
             Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
+        public void setupDeveloperMenu()
+        {
+            ShowConsoleMessage($"setupDeveloperMenu");
+
+            List<MenuItem> menuItems = new List<MenuItem>();
+
+            menuItems.Add(new MenuItem { Id = "105", Name = "About", NavigateUrl = menuUrl("/About") });
+
+            Menu.AddRange(menuItems);
+            Menu = Menu.OrderBy(x => x.Id).ToList();
+        }
+
         public void setupCommitteeMenu()
         {
             ShowConsoleMessage($"setupCommitteeMenu");
@@ -366,6 +384,11 @@ namespace AnglingClubWebsite
                 if (_currentUserService.User.CommitteeMember)
                 {
                     setupCommitteeMenu();
+                }
+
+                if (_currentUserService.User.Developer)
+                {
+                    setupDeveloperMenu();
                 }
             }
 

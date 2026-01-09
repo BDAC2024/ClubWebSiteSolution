@@ -142,6 +142,7 @@
       </div>
 
       <a mat-list-item routerLink="/myDetails" *ngIf="authenticationService.isLoggedIn">My Details</a>
+      <a mat-list-item (click)="openBlazor('About', drawer)" *ngIf="authenticationService.isDeveloper">About</a>
       <a mat-list-item routerLink="/logout" *ngIf="authenticationService.isLoggedIn">Logout</a>
       <a mat-list-item routerLink="/login" *ngIf="!authenticationService.isLoggedIn">Login</a>
     </mat-nav-list>

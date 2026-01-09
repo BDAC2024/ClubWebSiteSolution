@@ -1,0 +1,30 @@
+﻿@page "/About"
+
+@inherits RazorComponentBase;
+
+<h3>About</h3>
+
+<p></p>
+
+<table>
+    @if (IsDeveloper)
+    {
+        <tr>
+            <td><strong>Database:</strong></td>
+            <td>@AboutInfo.Database</td>
+        </tr>
+        <tr>
+            <td><strong>BackupBucket:</strong></td>
+            <td>@AboutInfo.BackupBucket</td>
+        </tr>
+        <tr>
+            <td><strong>DocumentBucket:</strong></td>
+            <td>@AboutInfo.DocumentBucket</td>
+        </tr>
+        <tr>
+            <td><strong>TmpFilesBucket:</strong></td>
+            <td>@AboutInfo.TmpFilesBucket</td>
+        </tr>
+    }
+</table>
+
