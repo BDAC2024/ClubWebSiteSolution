@@ -39,28 +39,35 @@ bool isDevTunnel =
 bool isStaging =
     nav.BaseUri.Contains("purple-stone-0ae0b6b03-", StringComparison.OrdinalIgnoreCase);
 
-Uri uri = new Uri("");
+string apiBaseUrl = "";
 
 if (isDevTunnel)
 {
-    uri = new Uri(builder.Configuration["ServerUrlDevTunnel"] ?? "");
+    apiBaseUrl = builder.Configuration["ServerUrlDevTunnel"] ?? "";
 }
 else 
 {
     if (isStaging)
     {
-        uri = new Uri(builder.Configuration["ServerUrlStaging"] ?? "");
+        apiBaseUrl = builder.Configuration["ServerUrlStaging"] ?? "";
     }
     else
     {
-        uri = new Uri(builder.Configuration["ServerUrl"] ?? "");
+        apiBaseUrl = builder.Configuration["ServerUrl"] ?? "";
     }
 }
 
-    //var uri = isDevTunnel ? new Uri(builder.Configuration["ServerUrlDevTunnel"] ?? "") : (new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""));
+//var uri = isDevTunnel ? new Uri(builder.Configuration["ServerUrlDevTunnel"] ?? "") : (new Uri(builder.Configuration[Constants.API_ROOT_KEY] ?? ""));
+if (string.IsNullOrWhiteSpace(apiBaseUrl))
+{
+    throw new InvalidOperationException(
+        "Configuration error: 'apiBaseUrl' is required but could not be determined.");
+}
+
+var apiUri = new Uri(apiBaseUrl);
 
 builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
-                .ConfigureHttpClient(c => c.BaseAddress = uri)
+                .ConfigureHttpClient(c => c.BaseAddress = apiUri)
                 .AddHttpMessageHandler<AuthenticationHandler>();
 
 // The app
