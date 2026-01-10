@@ -1,7 +1,7 @@
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
+using AnglingClubShared.Models;
 using AnglingClubShared.Models.Auth;
-using AnglingClubWebsite;
 using AnglingClubWebsite.Authentication;
 using AnglingClubWebsite.Extensions;
 using AnglingClubWebsite.Services;

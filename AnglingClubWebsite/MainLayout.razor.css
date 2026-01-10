@@ -211,15 +211,7 @@
         height: 14px !important;
     }
 
-/*-------------------------
-    App main context, where pages are displayed
---------------------------*/
-.main-content {
-    font-size: 14px !important;
-    padding: 20px 20px;
-    z-index: 0;
-    text-align: left;
-}
+
 
 /*-------------------------
     Progress bar

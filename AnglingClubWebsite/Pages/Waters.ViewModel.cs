@@ -60,7 +60,7 @@ namespace AnglingClubWebsite.Pages
         private WaterOutputDto? _water = null;
 
         [ObservableProperty]
-        private bool _loading = false;
+        private bool _dataLoaded = false;
 
         [ObservableProperty]
         private bool _submitting = false;
@@ -119,8 +119,7 @@ namespace AnglingClubWebsite.Pages
 
         private async Task getWaters(bool unlockAfterwards = false)
         {
-            _messenger.Send(new ShowProgress());
-            Loading = true;
+            DataLoaded = false;
 
             try
             {
@@ -144,9 +143,8 @@ namespace AnglingClubWebsite.Pages
                     Unlock(true);
                 }
 
-                Loading = false;
+                DataLoaded = true;
 
-                _messenger.Send(new HideProgress());
             }
         }
 
@@ -168,7 +166,7 @@ namespace AnglingClubWebsite.Pages
         [RelayCommand(CanExecute = nameof(CanWeSave))]
         private async Task Save()
         {
-            _messenger.Send<ShowProgress>();
+            DataLoaded = false;
 
             try
             {
@@ -185,7 +183,7 @@ namespace AnglingClubWebsite.Pages
             {
                 Submitting = false;
                 Water = null;
-                _messenger.Send<HideProgress>();
+                DataLoaded = true;
             }
         }
 

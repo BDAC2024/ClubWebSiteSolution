@@ -1,5 +1,6 @@
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
@@ -42,7 +43,8 @@ namespace AnglingClubWebServices.Data
                 {
                     new ReplaceableAttribute { Name = "Id", Value = file.Id, Replace = true },
                     new ReplaceableAttribute { Name = "Created", Value = dateToString(DateTime.Now), Replace = true },
-                    new ReplaceableAttribute { Name = "Name", Value = file.Name, Replace = true },
+                    new ReplaceableAttribute { Name = "Name", Value = file.OriginalFileName, Replace = true },
+                    new ReplaceableAttribute { Name = "Notes", Value = file.Notes, Replace = true },
                     new ReplaceableAttribute { Name = "DocumentType", Value = file.DocumentType.ToString(), Replace = true }
                 };
 
@@ -89,7 +91,11 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Name":
-                            doc.Name = attribute.Value;
+                            doc.OriginalFileName = attribute.Value;
+                            break;
+
+                        case "Notes":
+                            doc.OriginalFileName = attribute.Value;
                             break;
 
                         default:
@@ -112,6 +118,19 @@ namespace AnglingClubWebServices.Data
             DocioFontSubstitution.AttachLatoSubstitution(wordDoc);
 
             return wordDoc;
+        }
+
+        /// <summary>
+        /// Initial attempts to upload the file as an arg to a web api call failed on AWS with a 413 (content too large) error.
+        /// The approach here is to get a pre-signed URL from the web api, then use that URL to upload the file directly to S3.
+        /// The solution was obtained from ChatGPT
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
+        public async Task<string> GetDocumentUploadUrl(string filename, string contentType)
+        {
+            return await base.getPreSignedUploadUrl(filename, contentType, _options.DocumentBucket);
         }
 
     }

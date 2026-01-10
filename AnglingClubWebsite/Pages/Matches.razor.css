@@ -1,1 +1,29 @@
 ﻿
+
+/*.match-results {
+    font-size: smaller;
+}*/
+
+/*.grid-compact ::deep .e-rowcell {
+    font-size: 11px;
+    padding: 0 6px;
+}
+*/
+/*.grid-compact ::deep .e-headertext {
+    font-size: 13px;
+    padding: 0;
+}
+
+.grid-compact ::deep .e-grid .e-rowcell,
+.grid-compact ::deep .e-grid .e-headercell {
+    font-size: 13px;
+    padding: 4px 8px;
+}
+
+.grid-compact ::deep .e-grid .e-wrap.e-rowcell {
+    white-space: normal !important;
+    overflow-wrap: anywhere;*/ /* allows break between lb / oz if needed */
+    /*word-break: normal;
+}*/
+
+

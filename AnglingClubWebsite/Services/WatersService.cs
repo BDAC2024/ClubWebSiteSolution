@@ -2,6 +2,7 @@
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Exceptions;
+using AnglingClubShared.Models;
 using AnglingClubShared.Models.Auth;
 using CommunityToolkit.Mvvm.Messaging;
 using Fishing.Client.Services;

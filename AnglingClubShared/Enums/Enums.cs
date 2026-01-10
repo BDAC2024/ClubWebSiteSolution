@@ -278,6 +278,15 @@ namespace AnglingClubShared.Enums
         Junior
     }
 
+    public enum DeviceSize
+    {
+        Unknown,
+        Small,
+        Medium,
+        Large
+    }
+
+
     public enum DocumentType
     {
         MeetingMinutes

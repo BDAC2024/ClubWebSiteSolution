@@ -1,4 +1,4 @@
-﻿using AnglingClubWebServices.Models;
+﻿using AnglingClubShared.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

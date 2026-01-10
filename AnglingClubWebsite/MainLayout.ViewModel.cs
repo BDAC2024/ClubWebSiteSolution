@@ -1,25 +1,17 @@
 using AnglingClubShared;
-using AnglingClubWebsite.SharedComponents;
 using AnglingClubShared.Enums;
+using AnglingClubWebsite.Services;
+using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Notifications;
-using AnglingClubShared.Entities;
-using AnglingClubWebsite.Services;
-using AnglingClubShared.DTOs;
-using Syncfusion.Blazor.Lists;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using Syncfusion.Blazor.Navigations;
-using Microsoft.AspNetCore.Components;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase,
+    public partial class MainLayoutViewModel : ViewModelBase, 
+        IRecipient<BrowserChange>,
         IRecipient<TurnOnDebugMessages>, 
         IRecipient<ShowConsoleMessage>, 
-        IRecipient<ShowProgress>, 
-        IRecipient<HideProgress>, 
         IRecipient<ShowMessage>, 
         IRecipient<LoggedIn>,
         IRecipient<SelectMenuItem>
@@ -42,10 +34,9 @@ namespace AnglingClubWebsite
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<LoggedIn>(this);
             messenger.Register<ShowConsoleMessage>(this);
-            messenger.Register<ShowProgress>(this);
-            messenger.Register<HideProgress>(this);
             messenger.Register<ShowMessage>(this);
             messenger.Register<SelectMenuItem>(this);
+            messenger.Register<BrowserChange>(this);
 
             _authenticationService = authenticationService;
             _configuration = configuration;
@@ -55,6 +46,8 @@ namespace AnglingClubWebsite
             _currentUserService = currentUserService;
             _browserService = browserService;
             _messsenger = messenger;
+
+            setBrowserDetails();
         }
 
         [ObservableProperty]
@@ -65,9 +58,6 @@ namespace AnglingClubWebsite
 
         [ObservableProperty]
         private bool _showDebugMessages = true;
-
-        [ObservableProperty]
-        private bool _showProgressBar = false;
 
         [ObservableProperty]
         private MessageSeverity _messageSeverity = MessageSeverity.Normal;
@@ -97,7 +87,16 @@ namespace AnglingClubWebsite
         private string _browserDevice = "UNKNOWN";
 
         [ObservableProperty]
-        private string _browserOrientation = "UNKNOWN";
+        private bool _browserPortrait = false;
+
+        [ObservableProperty]
+        private DeviceSize _browserSize = DeviceSize.Unknown;
+
+        [ObservableProperty]
+        private int _browserWidth = 0;
+
+        [ObservableProperty]
+        private int _browserHeight = 0;
 
         #region Message Handlers
 
@@ -126,6 +125,12 @@ namespace AnglingClubWebsite
                     setupCommitteeMenu();
                 }
 
+
+                if (_currentUserService.User.Developer)
+                {
+                    setupDeveloperMenu();
+                }
+
             }
             else
             {
@@ -138,16 +143,6 @@ namespace AnglingClubWebsite
         public void Receive(TurnOnDebugMessages message)
         {
             ShowDebugMessages = message.YesOrNo;
-        }
-
-        public void Receive(HideProgress message)
-        {
-            ShowProgressBar = false;
-        }
-
-        public void Receive(ShowProgress message)
-        {
-            ShowProgressBar = true;
         }
 
         public void Receive(ShowMessage message)
@@ -184,6 +179,11 @@ namespace AnglingClubWebsite
         public void Receive(ShowConsoleMessage message)
         {
             ShowConsoleMessage(message.Content);
+        }
+
+        public void Receive(BrowserChange message)
+        {
+            setBrowserDetails();
         }
 
         #endregion Message Handlers
@@ -288,6 +288,18 @@ namespace AnglingClubWebsite
             Menu = Menu.OrderBy(x => x.Id).ToList();
         }
 
+        public void setupDeveloperMenu()
+        {
+            ShowConsoleMessage($"setupDeveloperMenu");
+
+            List<MenuItem> menuItems = new List<MenuItem>();
+
+            menuItems.Add(new MenuItem { Id = "105", Name = "About", NavigateUrl = menuUrl("/About") });
+
+            Menu.AddRange(menuItems);
+            Menu = Menu.OrderBy(x => x.Id).ToList();
+        }
+
         public void setupCommitteeMenu()
         {
             ShowConsoleMessage($"setupCommitteeMenu");
@@ -341,6 +353,14 @@ namespace AnglingClubWebsite
             return _configuration["BaseHref"] + item;
         }
 
+        private void setBrowserDetails()
+        {
+            BrowserPortrait = _browserService.IsPortrait;
+            BrowserSize = _browserService.DeviceSize;
+            BrowserWidth = _browserService.Dimensions.Width;
+            BrowserHeight = _browserService.Dimensions.Height;
+        }
+
         #endregion Helper Methods
 
         #region Events
@@ -365,22 +385,18 @@ namespace AnglingClubWebsite
                 {
                     setupCommitteeMenu();
                 }
+
+                if (_currentUserService.User.Developer)
+                {
+                    setupDeveloperMenu();
+                }
             }
 
             await base.Loaded();
         }
 
-        public async Task SetupBrowserDetails()
-        {
-            await _browserService.GetDimensions();
-
-            BrowserOrientation = _browserService.IsPortrait ? "Portrait" : "Landscape";
-            BrowserDevice = _browserService.IsMobile ? "Mobile" : "Desktop";
-
-            _messsenger.Send(new BrowserChange());
-        }
-
         #endregion
+
     }
 
     #region Helper classes

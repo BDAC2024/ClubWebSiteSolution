@@ -6,6 +6,7 @@ using AnglingClubShared;
 using CommunityToolkit.Mvvm.Messaging;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Exceptions;
+using AnglingClubShared.Models;
 
 namespace AnglingClubWebsite.Authentication
 {
@@ -49,11 +50,13 @@ namespace AnglingClubWebsite.Authentication
 
             var isToServer = request.RequestUri?.AbsoluteUri.StartsWith(_configuration[Constants.API_ROOT_KEY] ?? "") ?? false;
 
+            var isToDevTunnel = request.RequestUri?.AbsoluteUri.Contains(_configuration["uks1.devtunnels.ms"] ?? "") ?? false;
+
             //Console.WriteLine($"... result: {isToServer}");
 
             //Console.WriteLine($"Is jwt NOT null : {!string.IsNullOrEmpty(jwt)}");
 
-            if (isToServer && !string.IsNullOrEmpty(jwt))
+            if ((isToServer || isToDevTunnel) && !string.IsNullOrEmpty(jwt))
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
             //Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");

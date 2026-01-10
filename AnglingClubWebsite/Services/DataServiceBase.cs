@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using AnglingClubShared.Models;
+using System.Net.Http;
 
 namespace AnglingClubWebsite.Services
 {

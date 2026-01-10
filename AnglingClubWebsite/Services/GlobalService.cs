@@ -20,5 +20,7 @@ namespace AnglingClubWebsite.Services
         {
             _storedSeason = season;
         }
+
+        public bool IsEmbedded { get; set; }
     }
 }

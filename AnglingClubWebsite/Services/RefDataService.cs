@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Models;
+using AnglingClubShared.Models.Auth;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Net.Http.Json;
 
@@ -12,6 +13,8 @@ namespace AnglingClubWebsite.Services
         private readonly ILogger<RefDataService> _logger;
         private readonly IMessenger _messenger;
         private readonly IAuthenticationService _authenticationService;
+
+        private ReferenceData? _cachedData = null;
 
         public RefDataService(
             IHttpClientFactory httpClientFactory,
@@ -26,15 +29,25 @@ namespace AnglingClubWebsite.Services
 
         public async Task<ReferenceData?> ReadReferenceData()
         {
+            if (_cachedData == null)
+            {
+                _cachedData = await LoadReferenceData();
+            }
+
+            return _cachedData;
+        }
+
+        public async Task<ReferenceData?> LoadReferenceData()
+        {
             var relativeEndpoint = $"{CONTROLLER}{Constants.API_REF_DATA}";
 
-            _logger.LogInformation($"ReadReferenceData: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            _logger.LogInformation($"LoadReferenceData: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
             var response = await Http.GetAsync($"{relativeEndpoint}");
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"ReadReferenceData: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                _logger.LogWarning($"LoadReferenceData: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
                 return null;
             }
             else
@@ -46,7 +59,7 @@ namespace AnglingClubWebsite.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"ReadReferenceData: {ex.Message}");
+                    _logger.LogError($"LoadReferenceData: {ex.Message}");
                     throw;
                 }
             }

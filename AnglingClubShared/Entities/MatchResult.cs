@@ -1,15 +1,13 @@
-﻿using AnglingClubShared.Entities;
-using AnglingClubShared.Extensions;
-using System;
+﻿using AnglingClubShared.Extensions;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Entities
 {
 
     public class MatchResultBase : TableBase
     {
-        public string MatchId { get; set; }
+        public string MatchId { get; set; } = "";
         public int MembershipNumber { get; set; }
-        public string Peg { get; set; }
+        public string Peg { get; set; } = "";
         public float Points { get; set; }
     }
 

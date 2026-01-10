@@ -37,15 +37,15 @@ namespace AnglingClubShared.Entities
         {
             get
             {
-                //if (EventType != EventType.Match)
-                //{
+                if (EventType != EventType.Match || (EventType == EventType.Match && MatchType == AnglingClubShared.Enums.MatchType.Evening))
+                {
                     var formatted = Date.ToString("HH:mm");
                     return formatted == "00:00" ? "" : formatted;
-                //}
-                //else
-                //{
-                //    return "";
-                //}
+                }
+                else
+                {
+                    return "";
+                }
             }
         }
 

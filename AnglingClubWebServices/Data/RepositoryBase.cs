@@ -213,6 +213,7 @@ namespace AnglingClubWebServices.Data
             {
                 batchNumber++;
 
+                _logger.LogInformation($"Restoring batch: {batchNumber}, done {(batchNumber - 1) * UPDATE_BATCH_SIZE} items so far");
                 BatchPutAttributesRequest requestBatch = new BatchPutAttributesRequest();
                 requestBatch.DomainName = request.DomainName;
 

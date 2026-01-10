@@ -82,8 +82,6 @@ namespace AnglingClubWebsite.Pages
 
             if (!LoginModel.HasErrors)
             {
-                _messenger.Send<ShowProgress>();
-
                 try
                 {
                     if (await _authenticationService.LoginAsync(LoginModel, LoginInfo.RememberMe))
@@ -95,7 +93,6 @@ namespace AnglingClubWebsite.Pages
                     else
                     {
                         _appDialogService.SendMessage(MessageState.Warn, "Login Failed", "Invalid Membership No. or PIN");
-                        _messenger.Send<HideProgress>();
                     }
 
                 }
@@ -109,7 +106,6 @@ namespace AnglingClubWebsite.Pages
                 finally
                 {
                     Submitting = false;
-                    _messenger.Send<HideProgress>();
                 }
             }
         }
