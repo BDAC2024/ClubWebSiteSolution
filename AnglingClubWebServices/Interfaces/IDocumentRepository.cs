@@ -10,5 +10,6 @@ namespace AnglingClubWebServices.Interfaces
         Task AddOrUpdateTmpFile(DocumentMeta file);
         Task<List<DocumentMeta>> Get();
         Task<WordDocument> GetWordDocument(string fileName);
+        Task<string> GetDocumentUploadUrl(string filename, string contentType);
     }
 }

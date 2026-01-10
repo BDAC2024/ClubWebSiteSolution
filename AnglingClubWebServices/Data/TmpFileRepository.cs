@@ -56,7 +56,7 @@ namespace AnglingClubWebServices.Data
                 throw;
             }
 
-            //await PurgeTmpFiles();
+            await PurgeTmpFiles();
         }
 
 

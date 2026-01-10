@@ -9,23 +9,26 @@
                 <SfUploader AutoUpload="true" AllowedExtensions=".doc,.docx" AllowMultiple="false" EnableHtmlSanitizer="true">
                     <UploaderEvents ValueChange="UploadHandler" OnRemove="RemoveHandler" ></UploaderEvents>
                 </SfUploader>
+                <SfTextBox Placeholder='Title' @bind-Value="@DocumentInfo.Title" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
                 <SfDatePicker TValue="DateTime"
                                     Placeholder="Meeting Date"
                                     @bind-Value="@DocumentInfo.Created"
                                     FloatLabelType='@FloatLabelType.Auto'
                                     Format="dd MMM yyyy"></SfDatePicker>
                 <SfTextBox Placeholder='Notes (optional)' @bind-Value="@DocumentInfo.Notes" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
-                @if (!ErrorMessage.IsWhiteSpace())
+                @if (!string.IsNullOrEmpty(ErrorMessage.Value))
                 {
                     <br />
                     <br />
-                    <SfMessage Severity="MessageSeverity.Error">@ErrorMessage</SfMessage>
+                    <SfMessage Severity="MessageSeverity.Error" >@ErrorMessage</SfMessage>
                 }
+                <BusyIndicator IsReady="!Uploading"></BusyIndicator>
+
             </Content>
         </DialogTemplates>
         <DialogButtons>
-            <DialogButton Content="Cancel" IsPrimary="true" OnClick="CloseAsync" />
-            <DialogButton Content="Save" IsPrimary="true" OnClick="SaveAsync" />
+            <DialogButton Content="Cancel" IsPrimary="true" Disabled="Uploading" OnClick="CloseAsync" />
+            <DialogButton Content="Save" IsPrimary="true" Disabled="Uploading" OnClick="SaveAsync" />
         </DialogButtons>
     </SfDialog>
 

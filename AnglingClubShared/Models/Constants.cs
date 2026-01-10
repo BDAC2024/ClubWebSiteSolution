@@ -1,4 +1,4 @@
-﻿namespace AnglingClubWebsite
+﻿namespace AnglingClubShared.Models
 {
     public static class Constants
     {
@@ -19,7 +19,10 @@
         public const string API_CLUB_EVENTS = ""; 
         public const string API_WATERS_UPDATE = "UpdateDescription";
 
+        public const string API_DOCUMENT = "";
+        public const string API_DOCUMENT_GETUPLOADURL = "GetUploadUrl";
 
+        
 
     }
 }

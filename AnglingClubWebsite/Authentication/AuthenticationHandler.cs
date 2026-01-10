@@ -6,6 +6,7 @@ using AnglingClubShared;
 using CommunityToolkit.Mvvm.Messaging;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Exceptions;
+using AnglingClubShared.Models;
 
 namespace AnglingClubWebsite.Authentication
 {

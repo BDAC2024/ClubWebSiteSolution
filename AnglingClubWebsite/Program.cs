@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.VisualBasic;
 using Syncfusion.Blazor;
-using Constants = AnglingClubWebsite.Constants;
+using Constants = AnglingClubShared.Models.Constants;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -117,6 +117,7 @@ builder.Services.AddScoped<IRefDataService, RefDataService>();
 builder.Services.AddTransient<IClubEventService, ClubEventService>();
 builder.Services.AddTransient<IMatchResultsService, MatchResultsService>();
 builder.Services.AddTransient<IAboutService, AboutService>();
+builder.Services.AddTransient<IDocumentService, DocumentService>();
 
 builder.Services.AddAuthorizationCore();
 

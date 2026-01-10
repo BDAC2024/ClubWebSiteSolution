@@ -8,7 +8,13 @@ namespace AnglingClubShared.Entities
     {
         public string Id { get; set; } = "";
         public DateTime Created { get; set; }
-        public string Name { get; set; } = "";
+        /// <summary>
+        /// Membership number of the person who uploaded the document
+        /// </summary>
+        public int UploadedBy { get; set; } 
+        public string StoredFileName { get; set; } = "";
+        public string OriginalFileName { get; set; } = "";
+        public string Title { get; set; } = "";
         public string Notes { get; set; } = "";
         public DocumentType DocumentType { get; set; }
     }

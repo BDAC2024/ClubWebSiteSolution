@@ -1,4 +1,5 @@
 using AnglingClubShared.DTOs;
+using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -13,20 +14,20 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace AnglingClubWebServices.Controllers
 {
     [Route("api/[controller]")]
-    public class TmpFileController : ControllerBase
+    public class DocumentController : ControllerBase
     {
-        private readonly ILogger<TmpFileController> _logger;
-        private readonly ITmpFileRepository _tmpFileRepository;
+        private readonly ILogger<DocumentController> _logger;
+        private readonly IDocumentRepository _documentRepository;
         private readonly IMapper _mapper;
 
-        public TmpFileController(
+        public DocumentController(
             IMapper mapper,
             ILoggerFactory loggerFactory,
-            ITmpFileRepository tmpFileRepository)
+            IDocumentRepository documentRepository)
         {
             _mapper = mapper;
-            _logger = loggerFactory.CreateLogger<TmpFileController>();
-            _tmpFileRepository = tmpFileRepository;
+            _logger = loggerFactory.CreateLogger<DocumentController>();
+            _documentRepository = documentRepository;
         }
 
         /// <summary>
@@ -34,15 +35,16 @@ namespace AnglingClubWebServices.Controllers
         /// The approach here is to get a pre-signed URL from the web api, then use that URL to upload the file directly to S3.
         /// The solution was obtained from ChatGPT
         /// </summary>
-        /// <param name="tmpFileUploadUrlDto"></param>
+        /// <param name="docUploadUrlDto"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("GetUploadUrl")]
-        public async Task<IActionResult> GetUploadUrl([FromBody] FileUploadUrlDto tmpFileUploadUrlDto)
+        public async Task<IActionResult> GetUploadUrl([FromBody] FileUploadUrlDto docUploadUrlDto)
         {
-            var fileId = Guid.NewGuid().ToString();
+            var seperator = docUploadUrlDto.Path.IsNullOrEmpty() ? "" : (docUploadUrlDto.Path.EndsWith("/") ? "" : "/");
+            var fileId = $"{docUploadUrlDto.Path}{seperator}{Guid.NewGuid().ToString()}";
 
-            var url = await _tmpFileRepository.GetTmpFileUploadUrl(fileId, tmpFileUploadUrlDto.ContentType);
+            var url = await _documentRepository.GetDocumentUploadUrl(fileId, docUploadUrlDto.ContentType);
 
 
             return Ok(new FileUploadUrlResult { UploadUrl = url, UploadedFileName = fileId });

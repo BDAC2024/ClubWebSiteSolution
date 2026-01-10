@@ -1,5 +1,5 @@
+using AnglingClubShared.Models;
 using AnglingClubShared.Models.Auth;
-using AnglingClubWebsite;
 using AnglingClubWebsite.Extensions;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
