@@ -1,12 +1,13 @@
-﻿using AnglingClubShared.DTOs;
+﻿using AnglingClubShared;
+using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Exceptions;
 using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
-using System.Diagnostics;
 using System.Net.Http.Json;
-using System.Reflection;
 
 namespace AnglingClubWebsite.Services
 {
@@ -27,6 +28,61 @@ namespace AnglingClubWebsite.Services
             _logger = logger;
             _messenger = messenger;
             _authenticationService = authenticationService;
+        }
+
+        public async Task<List<DocumentListItem>?> ReadDocuments(DocumentType docType)
+        {
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/{Convert.ToInt32(docType)}";
+
+            _logger.LogInformation($"ReadDocuments: Accessing {Http.BaseAddress}{relativeEndpoint}");
+
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"ReadDocuments: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                return null;
+            }
+            else
+            {
+                try
+                {
+                    var content = await response.Content.ReadFromJsonAsync<List<DocumentListItem>>();
+                    return content;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"ReadDocuments: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+
+        public async Task SaveDocument(DocumentMeta item)
+        {
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}";
+
+            _logger.LogInformation($"SaveDocument: Accessing {Http.BaseAddress}{relativeEndpoint}");
+
+            try
+            {
+                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<DocumentMeta> { item });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning($"SaveDocument: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                    _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Error, "Error", "Failed to save document", "OK"));
+                    throw new Exception("Failed to save document");
+
+                }
+            }
+            catch (UserSessionExpiredException)
+            {
+                _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
+                await _authenticationService.LogoutAsync();
+            }
+
+            return;
         }
 
         public async Task<FileUploadUrlResult?> GetDocumentUploadUrl(UploadFiles file, DocumentType docType)

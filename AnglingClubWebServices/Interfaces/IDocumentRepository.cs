@@ -7,7 +7,7 @@ namespace AnglingClubWebServices.Interfaces
 {
     public interface IDocumentRepository
     {
-        Task AddOrUpdateTmpFile(DocumentMeta file);
+        Task AddOrUpdateDocument(DocumentMeta file);
         Task<List<DocumentMeta>> Get();
         Task<WordDocument> GetWordDocument(string fileName);
         Task<string> GetDocumentUploadUrl(string filename, string contentType);

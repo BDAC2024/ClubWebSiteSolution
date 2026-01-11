@@ -196,7 +196,10 @@ namespace AnglingClubWebServices.Data
                 SelectResponse response = await client.SelectAsync(request);
                 nextToken = response.NextToken;
 
-                items.AddRange(response.Items);
+                if (response.Items != null && response.Items.Count > 0)
+                {
+                    items.AddRange(response.Items);
+                }
 
             } while (nextToken != null);
 

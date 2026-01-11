@@ -100,20 +100,32 @@ namespace AnglingClubWebsite.Dialogs
 
             DocumentInfo.DocumentType = DocumentType.MeetingMinutes;
 
-            var uploadUrlDetails = await _documentService.GetDocumentUploadUrl(_meetingMinutesFile!, DocumentInfo.DocumentType);
-
-            if (uploadUrlDetails == null)
+            try
             {
-                ErrorMessage = new MarkupString("There was an error getting the upload URL. Please try again later.");
-                return;
+                var uploadUrlDetails = await _documentService.GetDocumentUploadUrl(_meetingMinutesFile!, DocumentInfo.DocumentType);
+
+                if (uploadUrlDetails == null)
+                {
+                    ErrorMessage = new MarkupString("There was an error getting the upload URL. Please try again later.");
+                    return;
+                }
+
+                DocumentInfo.StoredFileName = uploadUrlDetails.UploadedFileName;
+
+                // Store the uploaded doc 
+                await _documentService.UploadDocumentWithPresignedUrl(uploadUrlDetails.UploadUrl, _meetingMinutesFile!);
+
+                // Create a doc record in the database
+                await _documentService.SaveDocument(DocumentInfo);
+
+                // Tell the parent to update its source of truth
+                await VisibleChanged.InvokeAsync(false);
+            }
+            catch (Exception)
+            {
+                Uploading = false;
             }
 
-            DocumentInfo.StoredFileName = uploadUrlDetails.UploadedFileName;
-
-            await _documentService.UploadDocumentWithPresignedUrl(uploadUrlDetails.UploadUrl, _meetingMinutesFile!);
-
-            // Tell the parent to update its source of truth
-            await VisibleChanged.InvokeAsync(false);
         }
 
         private async Task CloseAsync()

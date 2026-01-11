@@ -1,5 +1,9 @@
 ﻿@page "/MeetingMinutes"
 
+@using AnglingClubShared.Entities
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Grids
+
 @inherits RazorComponentBase;
 
 <AuthorizationRequired>
@@ -18,6 +22,32 @@
         <br />
 
         <AddMinutes @bind-Visible="AddingMinutes" ></AddMinutes>
+
+        <div class="ZZmatches ZZgrid-shrinkwrap">
+            <SfGrid DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="true" AutoFit="true">
+                @* <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" RowSelected="MatchSelectedHandler" TValue="DocumentListItem"></GridEvents> *@
+                <GridEvents TValue="DocumentListItem"></GridEvents>
+                <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
+                <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
+                <GridTextWrapSettings WrapMode="WrapMode.Content" />
+                <GridSortSettings>
+                    <GridSortColumns>
+                        <GridSortColumn Field=@nameof(DocumentListItem.Created)
+                                        Direction="SortDirection.Descending" />
+                    </GridSortColumns>
+                </GridSortSettings>
+
+                <GridColumns>
+                    <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Meeting Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
+                    <GridColumn Field=@nameof(DocumentListItem.UploadedBy) HeaderText="Created by" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
+                    <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
+                    <GridColumn Field=@nameof(DocumentListItem.Notes) HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
+                </GridColumns>
+
+            </SfGrid>
+
+        </div>
+
     }
 
 

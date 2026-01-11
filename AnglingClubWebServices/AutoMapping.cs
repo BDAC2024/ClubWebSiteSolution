@@ -14,6 +14,7 @@ namespace AnglingClubWebServices
             CreateMap<MatchResult, MatchResultOutputDto>().ReverseMap();
             CreateMap<PaymentMetaData, OrderDetailDto>().ReverseMap();
             CreateMap<Order, OrderDetailDto>().ReverseMap();
+            CreateMap<DocumentMeta, DocumentListItem>().ReverseMap();
         }
     }
 }

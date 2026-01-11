@@ -27,13 +27,14 @@ namespace AnglingClubWebServices.Data
             _logger = loggerFactory.CreateLogger<DocumentRepository>();
         }
 
-        public async Task AddOrUpdateTmpFile(DocumentMeta file)
+        public async Task AddOrUpdateDocument(DocumentMeta file)
         {
             using (var client = GetClient())
             {
-
-                if (string.IsNullOrEmpty(file.Id))
-                    throw new ArgumentException("Document Id cannot be null or empty.");
+                if (file.IsNewItem)
+                {
+                    file.DbKey = file.GenerateDbKey(IdPrefix);
+                }
 
                 // Store the Id as a main attribute
                 BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -41,19 +42,21 @@ namespace AnglingClubWebServices.Data
 
                 var attributes = new List<ReplaceableAttribute>
                 {
-                    new ReplaceableAttribute { Name = "Id", Value = file.Id, Replace = true },
-                    new ReplaceableAttribute { Name = "Created", Value = dateToString(DateTime.Now), Replace = true },
-                    new ReplaceableAttribute { Name = "Name", Value = file.OriginalFileName, Replace = true },
+                    new ReplaceableAttribute { Name = "UploadedBy", Value = file.UploadedByMembershipNumber.ToString(), Replace = true },
+                    new ReplaceableAttribute { Name = "StoredFileName", Value = file.StoredFileName, Replace = true },
+                    new ReplaceableAttribute { Name = "OriginalFileName", Value = file.OriginalFileName, Replace = true },
+                    new ReplaceableAttribute { Name = "Created", Value = dateToString(file.Created), Replace = true },
+                    new ReplaceableAttribute { Name = "Title", Value = file.Title, Replace = true },
                     new ReplaceableAttribute { Name = "Notes", Value = file.Notes, Replace = true },
-                    new ReplaceableAttribute { Name = "DocumentType", Value = file.DocumentType.ToString(), Replace = true }
+                    new ReplaceableAttribute { Name = "DocumentType", Value = ((int)file.DocumentType).ToString(), Replace = true }
                 };
 
-                base.SetupTableAttribues(request, $"{IdPrefix}:{file.Id}", attributes);
+                base.SetupTableAttribues(request, file.DbKey, attributes);
 
                 try
                 {
                     await WriteInBatches(request, client);
-                    _logger.LogDebug($"Document meta added/updated: {file.Id}");
+                    _logger.LogDebug($"Document meta added: {file.DbKey} - {file.Title}");
                 }
                 catch (AmazonSimpleDBException ex)
                 {
@@ -66,7 +69,7 @@ namespace AnglingClubWebServices.Data
         public async Task<List<DocumentMeta>> Get()
         {
             var files = new List<DocumentMeta>();
-            var items = await GetData(IdPrefix, "AND Id > ''", "ORDER BY Id");
+            var items = await GetData(IdPrefix);
 
             foreach (var item in items)
             {
@@ -78,8 +81,16 @@ namespace AnglingClubWebServices.Data
                 {
                     switch (attribute.Name)
                     {
-                        case "Id":
-                            doc.Id = attribute.Value;
+                        case "UploadedBy":
+                            doc.UploadedByMembershipNumber = Convert.ToInt32(attribute.Value);
+                            break;
+
+                        case "StoredFileName":
+                            doc.StoredFileName = attribute.Value;
+                            break;
+
+                        case "OriginalFileName":
+                            doc.OriginalFileName = attribute.Value;
                             break;
 
                         case "Created":
@@ -90,12 +101,12 @@ namespace AnglingClubWebServices.Data
                             doc.DocumentType = (DocumentType)(Convert.ToInt32(attribute.Value));
                             break;
 
-                        case "Name":
-                            doc.OriginalFileName = attribute.Value;
+                        case "Title":
+                            doc.Title = attribute.Value;
                             break;
 
                         case "Notes":
-                            doc.OriginalFileName = attribute.Value;
+                            doc.Notes = attribute.Value;
                             break;
 
                         default:
@@ -105,7 +116,6 @@ namespace AnglingClubWebServices.Data
 
                 files.Add(doc);
             }
-
             return files;
         }
 
