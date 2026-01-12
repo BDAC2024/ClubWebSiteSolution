@@ -19,6 +19,8 @@ namespace AnglingClubWebsite.Dialogs
         /// </summary>
         [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
 
+        // Signal to parent: “refresh your grid”
+        [Parameter] public EventCallback RefreshRequested { get; set; }
 
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
@@ -117,6 +119,9 @@ namespace AnglingClubWebsite.Dialogs
 
                 // Create a doc record in the database
                 await _documentService.SaveDocument(DocumentInfo);
+
+                // Tell parent to refresh
+                await RefreshRequested.InvokeAsync();
 
                 // Tell the parent to update its source of truth
                 await VisibleChanged.InvokeAsync(false);

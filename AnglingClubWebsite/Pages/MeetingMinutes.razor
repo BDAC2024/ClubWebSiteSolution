@@ -15,18 +15,19 @@
 
     @if (CurrentUser.Secretary)
     {
-        <div class="edit-button-panel">
+        <br />
+        <br />
+
+        <AddMinutes @bind-Visible="AddingMinutes" RefreshRequested="RefreshGridAsync"></AddMinutes>
+
+        <div class="matches grid-shrinkwrap">
+            <div class="edit-button-panel">
                 <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
-        </div>
-        <br />
-        <br />
-
-        <AddMinutes @bind-Visible="AddingMinutes" ></AddMinutes>
-
-        <div class="ZZmatches ZZgrid-shrinkwrap">
-            <SfGrid DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="true" AutoFit="true">
-                @* <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" RowSelected="MatchSelectedHandler" TValue="DocumentListItem"></GridEvents> *@
-                <GridEvents TValue="DocumentListItem"></GridEvents>
+            </div>
+            <br />
+            <br />
+            <SfGrid @ref="Grid" DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false">
+                <GridEvents DataBound="DataboundHandler" TValue="DocumentListItem"></GridEvents>
                 <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
                 <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
                 <GridTextWrapSettings WrapMode="WrapMode.Content" />
@@ -38,10 +39,10 @@
                 </GridSortSettings>
 
                 <GridColumns>
-                    <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Meeting Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
-                    <GridColumn Field=@nameof(DocumentListItem.UploadedBy) HeaderText="Created by" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
-                    <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
-                    <GridColumn Field=@nameof(DocumentListItem.Notes) HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
+                    <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Meeting on" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
+                    <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
+                    <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" />
+                    <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
                 </GridColumns>
 
             </SfGrid>
