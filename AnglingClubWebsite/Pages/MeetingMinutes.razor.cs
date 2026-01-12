@@ -37,8 +37,12 @@ namespace AnglingClubWebsite.Pages
         private SfGrid<DocumentListItem>? Grid;
 
         public bool AddingMinutes = false;
+        public bool ShowingMeeting = false;
 
         public List<DocumentListItem> Documents { get; set; } = new List<DocumentListItem>();
+
+        public DocumentListItem? SelectedMeeting { get; set; }
+
 
         public DeviceSize BrowserSize = DeviceSize.Unknown;
 
@@ -67,6 +71,14 @@ namespace AnglingClubWebsite.Pages
         {
             AddingMinutes = true;
         }
+
+        
+        public void MeetingSelectedHandler(RowSelectEventArgs<DocumentListItem> args)
+        {
+            SelectedMeeting = args.Data;
+            ShowingMeeting = true;
+        }
+
 
         private async Task RefreshGridAsync()
         {

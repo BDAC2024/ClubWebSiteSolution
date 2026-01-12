@@ -2,7 +2,10 @@ using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
+using AnglingClubShared.Models;
+using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
+using AnglingClubWebServices.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
@@ -21,19 +26,25 @@ namespace AnglingClubWebServices.Controllers
         private readonly ILogger<DocumentController> _logger;
         private readonly IDocumentRepository _documentRepository;
         private readonly IMemberRepository _memberRepository;
+        private readonly IDocumentService _documentService;
+        private readonly ITmpFileRepository _tmpFileRepository;
         private readonly IMapper _mapper;
 
         public DocumentController(
             IMapper mapper,
             ILoggerFactory loggerFactory,
             IDocumentRepository documentRepository,
-            IMemberRepository memberRepository)
+            IMemberRepository memberRepository,
+            IDocumentService documentService,
+            ITmpFileRepository tmpFileRepository)
         {
             _mapper = mapper;
             _logger = loggerFactory.CreateLogger<DocumentController>();
             _documentRepository = documentRepository;
             base.Logger = _logger;
             _memberRepository = memberRepository;
+            _documentService = documentService;
+            _tmpFileRepository = tmpFileRepository;
         }
 
         [HttpGet("{docType}")]
@@ -101,6 +112,38 @@ namespace AnglingClubWebServices.Controllers
 
 
             return Ok(new FileUploadUrlResult { UploadUrl = url, UploadedFileName = fileId });
+        }
+
+        [HttpGet("minutes/readonly/{id}")]
+        public async Task<IActionResult> GetReadOnlyMinutes(string id)
+        {
+            var doc = (await _documentRepository.Get()).SingleOrDefault(x => x.DbKey == id);
+
+            if (doc == null)
+            {
+                return BadRequest("Document could not be found.");
+            }
+
+            var effectiveSeason = EnumUtils.SeasonForDate(doc.Created).Value;
+            var member = (await _memberRepository.GetMembers(effectiveSeason)).FirstOrDefault(x => x.MembershipNumber == doc.UploadedByMembershipNumber);
+
+            var name = member != null ? member.Name : "";
+            var fileName = doc.StoredFileName;
+            var requestedAt = DateTime.Now;
+
+            var pdfBytes = await _documentService.GenerateWatermarkedPdfFromWordDocument(
+                fileName: fileName,
+                watermarkText: $"COPY FOR {name.ToUpper()}",
+                footerText: $"Requested by {name} on {requestedAt.ToString("dd MMM yyyy")} at {requestedAt.ToString("hh:mm tt")}",
+                ct: HttpContext.RequestAborted);
+
+            var pdfFileName = Path.ChangeExtension(fileName, ".pdf");
+
+            await _tmpFileRepository.SaveTmpFile(pdfFileName, pdfBytes, "application/pdf");
+
+            var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, "application/pdf", Constants.MINUTES_TO_EXPIRE_LINKS);
+
+            return Ok(url);
         }
 
     }

@@ -590,7 +590,7 @@ namespace AnglingClubWebServices.Data
                     ResponseHeaderOverrides = new ResponseHeaderOverrides
                     {
                         ContentType = contentType,
-                        ContentDisposition = $"attachment; filename={fileName}"
+                        ContentDisposition = $"inline; filename={fileName}"
                     }
                 });
 

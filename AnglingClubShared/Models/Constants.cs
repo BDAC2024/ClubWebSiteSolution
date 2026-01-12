@@ -22,7 +22,7 @@
         public const string API_DOCUMENT = "";
         public const string API_DOCUMENT_GETUPLOADURL = "GetUploadUrl";
 
-        
+        public const int MINUTES_TO_EXPIRE_LINKS = 5;
 
     }
 }

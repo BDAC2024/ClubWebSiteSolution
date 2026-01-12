@@ -7,6 +7,7 @@ using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
+using System.Data;
 using System.Net.Http.Json;
 
 namespace AnglingClubWebsite.Services
@@ -83,6 +84,39 @@ namespace AnglingClubWebsite.Services
             }
 
             return;
+        }
+
+        /// <summary>
+        /// Gets a watermarked PDF of the word document
+        /// </summary>
+        /// <param name="id">The dbKey of the document</param>
+        /// <returns></returns>
+        public async Task<string?> GetReadOnlyUrl(string id)
+        {
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/minutes/readOnly/{id}";
+
+            _logger.LogInformation($"GetReadOnlyUrl: Accessing {Http.BaseAddress}{relativeEndpoint}");
+
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning($"GetReadOnlyUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                return null;
+            }
+            else
+            {
+                try
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return content;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"GetReadOnlyUrl: {ex.Message}");
+                    throw;
+                }
+            }
         }
 
         public async Task<FileUploadUrlResult?> GetDocumentUploadUrl(UploadFiles file, DocumentType docType)

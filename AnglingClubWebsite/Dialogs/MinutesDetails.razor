@@ -1,0 +1,49 @@
+﻿@using AnglingClubShared.Models
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+
+    <SfDialog IsModal="true" Visible="@Visible" CssClass="match-dialog">
+        <DialogTemplates>
+            <Header>View Minutes</Header>
+            <Content>
+
+                <table class="match-table">
+                    <tr><td class="label">Title:</td><td>@SelectedMeeting.Title</td></tr>
+                    <tr><td class="label">Meeting Date:</td><td>@SelectedMeeting.Created.ToString("dd MMM yy")</td></tr>
+                    <tr><td class="label">Created by:</td><td>@SelectedMeeting.UploadedBy</td></tr>
+                    <tr><td class="label">Notes:</td><td>@SelectedMeeting.Notes</td></tr>
+                </table>
+
+                <BusyIndicator IsReady="MinutesAvailable"></BusyIndicator>
+
+                @if (MinutesAvailable)
+                {
+
+                    @if (ReadOnlyUrl.IsWhiteSpace())
+                    {
+                        <p>The minutes document is not available.</p>
+                    }
+                    else
+                    {
+                        <br />
+                        <p>Please note that the following link will expire in @Constants.MINUTES_TO_EXPIRE_LINKS minutes.</p>
+                        @* <a href="@ReadOnlyUrl" target="_blank">View Meeting Minutes</a> *@
+                        <a href="@ReadOnlyUrl" target="_blank" rel="noopener noreferrer">View Meeting Minutes</a>
+                    }
+                }
+
+                @if (!string.IsNullOrEmpty(ErrorMessage.Value))
+                {
+                    <br />
+                    <br />
+                    <SfMessage Severity="MessageSeverity.Error" >@ErrorMessage</SfMessage>
+                }
+            </Content>
+        </DialogTemplates>
+        <DialogButtons>
+            <DialogButton Content="Close" IsPrimary="true" OnClick="CloseAsync" />
+        </DialogButtons>
+    </SfDialog>
+
+</AuthorizationRequired>

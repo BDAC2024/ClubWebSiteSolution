@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;
 using System.Collections.ObjectModel;
 
-namespace AnglingClubWebsite.SharedComponents
+namespace AnglingClubWebsite.Dialogs
 {
     public partial class MatchResultsPopup
     {

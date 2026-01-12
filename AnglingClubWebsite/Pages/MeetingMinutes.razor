@@ -10,46 +10,46 @@
     <h3>Meeting Minutes</h3>
 
     <p>
-        Below are the minutes from our meetings. Click on a meeting to view the detailed minutes.
+        Below are the minutes from the club's meetings. Click on a meeting to view the detailed minutes.
     </p>
 
-    @if (CurrentUser.Secretary)
-    {
-        <br />
-        <br />
 
-        <AddMinutes @bind-Visible="AddingMinutes" RefreshRequested="RefreshGridAsync"></AddMinutes>
-
-        <div class="matches grid-shrinkwrap">
+    <div class="matches grid-shrinkwrap">
+        @if (CurrentUser.Secretary)
+        {
             <div class="edit-button-panel">
                 <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
             </div>
             <br />
             <br />
-            <SfGrid @ref="Grid" DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false">
-                <GridEvents DataBound="DataboundHandler" TValue="DocumentListItem"></GridEvents>
-                <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
-                <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
-                <GridTextWrapSettings WrapMode="WrapMode.Content" />
-                <GridSortSettings>
-                    <GridSortColumns>
-                        <GridSortColumn Field=@nameof(DocumentListItem.Created)
-                                        Direction="SortDirection.Descending" />
-                    </GridSortColumns>
-                </GridSortSettings>
+        }
 
-                <GridColumns>
-                    <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Meeting on" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
-                    <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
-                    <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" />
-                    <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
-                </GridColumns>
+        <SfGrid @ref="Grid" DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false">
+            <GridEvents DataBound="DataboundHandler" RowSelected="MeetingSelectedHandler" TValue="DocumentListItem"></GridEvents>
+            <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
+            <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
+            <GridTextWrapSettings WrapMode="WrapMode.Content" />
+            <GridSortSettings>
+                <GridSortColumns>
+                    <GridSortColumn Field=@nameof(DocumentListItem.Created)
+                                    Direction="SortDirection.Descending" />
+                </GridSortColumns>
+            </GridSortSettings>
 
-            </SfGrid>
+            <GridColumns>
+                <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Meeting on" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
+                <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
+                <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" />
+                <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })"  />
+            </GridColumns>
 
-        </div>
+        </SfGrid>
 
-    }
+    </div>
 
+    <AddMinutes @bind-Visible="AddingMinutes" RefreshRequested="RefreshGridAsync"></AddMinutes>
+
+    @* Note the 2-way binding of the Visible property *@
+    <MinutesDetails @bind-Visible="ShowingMeeting" SelectedMeeting="SelectedMeeting"></MinutesDetails>
 
 </AuthorizationRequired>
