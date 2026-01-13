@@ -3,9 +3,7 @@ using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
-using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
-using AnglingClubWebServices.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
@@ -144,6 +141,29 @@ namespace AnglingClubWebServices.Controllers
             var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, "application/pdf", Constants.MINUTES_TO_EXPIRE_LINKS);
 
             return Ok(url);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public async Task<IActionResult> Delete(string id)
+        {
+            StartTimer();
+
+            try
+            {
+                await _documentRepository.DeleteDocument(id);
+                return Ok();
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            finally
+            {
+                ReportTimer("Deleting document");
+            }
+
         }
 
     }

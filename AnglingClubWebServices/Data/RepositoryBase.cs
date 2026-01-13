@@ -2,7 +2,6 @@
 using Amazon.S3.Model;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
-using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -503,13 +503,31 @@ namespace AnglingClubWebServices.Data
 
         protected async Task deleteFile(string fileName, string bucketName)
         {
+            bool exists;
+
             using (var s3Client = GetS3Client())
             {
-                await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
+                try
                 {
-                    BucketName = bucketName,
-                    Key = fileName
-                });
+                    await s3Client.GetObjectMetadataAsync(bucketName, fileName);
+                    exists = true;
+                }
+                catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    exists = false;
+                    throw new Exception($"Unable to delete {fileName}, it does not exist");
+                }
+
+                if (exists)
+                {
+                    {
+                        await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
+                        {
+                            BucketName = bucketName,
+                            Key = fileName
+                        });
+                    }
+                }
             }
         }
 

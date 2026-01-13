@@ -5,8 +5,6 @@ using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.Popups;
-using Syncfusion.Blazor.RichTextEditor;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -16,13 +14,15 @@ namespace AnglingClubWebsite.Pages
         private readonly IMessenger _messenger;
         private readonly IDocumentService _documentService;
         private readonly BrowserService _browserService;
+        private readonly IAppDialogService _appDialogService;
 
         public MeetingMinutes(
                         ICurrentUserService currentUserService,
                         IAuthenticationService authenticationService,
                         IMessenger messenger,
                         IDocumentService documentService,
-                        BrowserService browserService) : base(messenger, currentUserService, authenticationService)
+                        BrowserService browserService,
+                        IAppDialogService appDialogService) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
@@ -32,6 +32,7 @@ namespace AnglingClubWebsite.Pages
             messenger.Register<BrowserChange>(this);
 
             BrowserSize = _browserService.DeviceSize;
+            _appDialogService = appDialogService;
         }
 
         #region Properties
@@ -44,8 +45,9 @@ namespace AnglingClubWebsite.Pages
 
         public DocumentListItem? SelectedMeeting { get; set; }
 
-
         public DeviceSize BrowserSize = DeviceSize.Unknown;
+
+        public bool DataLoaded { get; set; } = false;
 
         #endregion Properties
 
@@ -54,6 +56,7 @@ namespace AnglingClubWebsite.Pages
         protected override async Task OnParametersSetAsync()
         {
             await ReadMeetings();
+            DataLoaded = true;
 
             await base.OnParametersSetAsync();
         }
@@ -73,7 +76,7 @@ namespace AnglingClubWebsite.Pages
             AddingMinutes = true;
         }
 
-        
+
         public void MeetingSelectedHandler(RowSelectEventArgs<DocumentListItem> args)
         {
             SelectedMeeting = args.Data;
@@ -87,21 +90,44 @@ namespace AnglingClubWebsite.Pages
 
         private async Task DeleteAsync(DocumentListItem doc)
         {
-            //bool confirmed = await DialogService.ConfirmAsync(
-            //    $"Delete '{doc.Name}'?",
-            //    "Confirm delete");
+            _messenger.Send<ShowMessage>(
+                new ShowMessage
+                (
+                    MessageState.Warn,
+                    "Please confirm",
+                    $"Do you really want to delete the minutes for '{doc.Title}'?",
+                    "Cancel",
+                    new MessageButton
+                    {
+                        Label = "Yes",
+                        OnConfirmed = async () =>
+                        {
+                            DataLoaded = false;
 
-            //if (!confirmed)
-            //    return;
+                            try
+                            {
+                                await _documentService.DeleteDocument(doc.DbKey);
+                                await RefreshGridAsync();
 
-            //await DocumentService.DeleteAsync(doc.Id);
-
-            await Grid!.Refresh();
+                            }
+                            catch (Exception)
+                            {
+                                _appDialogService.SendMessage(MessageState.Error, "Deletion Failed", "Unable to delete minutes");
+                            }
+                            finally
+                            {
+                                DataLoaded = true;
+                            }
+                        }
+                    }
+                )
+            );
         }
-
 
         private async Task RefreshGridAsync()
         {
+            DataLoaded = false;
+
             // Option A: re-query and rebind
             await ReadMeetings();
             StateHasChanged();
@@ -111,6 +137,8 @@ namespace AnglingClubWebsite.Pages
             {
                 await Grid.Refresh();
             }
+
+            DataLoaded = true;
         }
 
         public void Receive(BrowserChange message)

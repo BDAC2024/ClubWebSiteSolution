@@ -11,5 +11,6 @@ namespace AnglingClubWebServices.Interfaces
         Task<List<DocumentMeta>> Get();
         Task<WordDocument> GetWordDocument(string fileName);
         Task<string> GetDocumentUploadUrl(string filename, string contentType);
+        Task DeleteDocument(string id);
     }
 }

@@ -13,63 +13,75 @@
         Below are the minutes from the club's meetings. Click on a meeting to view the detailed minutes.
     </p>
 
+    <BusyIndicator IsReady="DataLoaded" />
 
-    <div class="matches grid-shrinkwrap">
-        @if (CurrentUser.Secretary)
+    @if (Documents.Any())
+    {
+        <div class="matches grid-shrinkwrap">
+            @if (CurrentUser.Secretary)
+            {
+                <div class="edit-button-panel">
+                    <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
+                </div>
+                <br />
+                <br />
+            }
+
+            <SfGrid @ref="Grid" DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false" TItem="DocumentListItem">
+                <GridEvents DataBound="DataboundHandler" RowSelected="MeetingSelectedHandler" TValue="DocumentListItem"></GridEvents>
+                <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
+                <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
+                <GridTextWrapSettings WrapMode="WrapMode.Content" />
+                <GridSortSettings>
+                    <GridSortColumns>
+                        <GridSortColumn Field=@nameof(DocumentListItem.Created)
+                                        Direction="SortDirection.Descending" />
+                    </GridSortColumns>
+                </GridSortSettings>
+
+                <GridColumns>
+                    <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Meeting on" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
+                    <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
+                    <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
+                    <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
+                    <GridColumn HeaderText="Action"
+                                Width="110"
+                                AllowSorting="false"
+                                AllowFiltering="false"
+                                TextAlign="TextAlign.Center">
+                        <Template Context="rowObj">
+                            @{
+                                var row = (DocumentListItem)rowObj;
+                            }
+
+                            <span @onclick:stopPropagation>
+                                <SfButton CssClass="grid-action-btn"
+                                          IconCss="fa-solid fa-download"
+                                          Title="Download"
+                                          OnClick="@(async () => await DownloadAsync(row))" />
+
+                                <SfButton CssClass="grid-action-btn grid-action-btn--danger"
+                                          IconCss="fa-solid fa-trash"
+                                          Title="Delete"
+                                          OnClick="@(async () => await DeleteAsync(row))" />
+                            </span>
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+
+            </SfGrid>
+
+        </div>
+    }
+    else
+    {   
+        @if (DataLoaded)
         {
-            <div class="edit-button-panel">
-                <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
-            </div>
-            <br />
-            <br />
+            <p>No minutes found</p>
         }
+    }
 
-        <SfGrid @ref="Grid" DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false" TItem="DocumentListItem">
-            <GridEvents DataBound="DataboundHandler" RowSelected="MeetingSelectedHandler" TValue="DocumentListItem"></GridEvents>
-            <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
-            <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
-            <GridTextWrapSettings WrapMode="WrapMode.Content" />
-            <GridSortSettings>
-                <GridSortColumns>
-                    <GridSortColumn Field=@nameof(DocumentListItem.Created)
-                                    Direction="SortDirection.Descending" />
-                </GridSortColumns>
-            </GridSortSettings>
-
-            <GridColumns>
-                <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Meeting on" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
-                <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
-                <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
-                <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
-                <GridColumn HeaderText="Action"
-                            Width="110"
-                            AllowSorting="false"
-                            AllowFiltering="false"
-                            TextAlign="TextAlign.Center">
-                    <Template Context="rowObj">
-                        @{
-                            var row = (DocumentListItem)rowObj;
-                        }
-
-                        <SfButton CssClass="grid-action-btn"
-                                  IconCss="fa-solid fa-download"
-                                  Title="Download"
-                                  @onclick:stopPropagation />
-
-                        <SfButton CssClass="grid-action-btn grid-action-btn--danger"
-                                  IconCss="fa-solid fa-trash"
-                                  Title="Delete"
-                                  @onclick:stopPropagation />
-                    </Template>
-                </GridColumn>
-            </GridColumns>
-
-        </SfGrid>
-
-    </div>
-
-    @* @onclick="async () => await DownloadAsync(row)" *@
-    @* @onclick="async () => await DeleteAsync(row)" *@
+    
 
     <AddMinutes @bind-Visible="AddingMinutes" RefreshRequested="RefreshGridAsync"></AddMinutes>
 

@@ -7,7 +7,6 @@ using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
-using System.Data;
 using System.Net.Http.Json;
 
 namespace AnglingClubWebsite.Services
@@ -185,6 +184,23 @@ namespace AnglingClubWebsite.Services
             }
 
         }
+
+        public async Task DeleteDocument(string id)
+        {
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/{id}";
+
+            _logger.LogInformation($"DeleteDocument: Accessing {Http.BaseAddress}{relativeEndpoint}");
+
+            var response = await Http.DeleteAsync($"{relativeEndpoint}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var ex = new Exception($"Unable to delete document: {id}");
+                _logger.LogError(ex, $"Failed to delete");
+                throw ex;
+            }
+        }
+
 
     }
 

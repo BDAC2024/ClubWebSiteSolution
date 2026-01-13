@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -141,6 +142,37 @@ namespace AnglingClubWebServices.Data
         public async Task<string> GetDocumentUploadUrl(string filename, string contentType)
         {
             return await base.getPreSignedUploadUrl(filename, contentType, _options.DocumentBucket);
+        }
+
+        public async Task DeleteDocument(string id)
+        {
+            var client = GetClient();
+
+            var doc = (await Get()).Single(x => x.DbKey == id);
+
+            DeleteAttributesRequest request = new DeleteAttributesRequest
+            {
+                DomainName = Domain,
+                //ItemName = $"{id}"
+                ItemName = $"{IdPrefix}:{id}"
+            };
+
+            try
+            {
+                //await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
+                await base.deleteFile(id, _options.DocumentBucket);
+                await client.DeleteAttributesAsync(request);
+            }
+            catch (AmazonSimpleDBException ex)
+            {
+                _logger.LogError(ex, $"DeleteDocument Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"DeleteDocument failed");
+                throw;
+            }
         }
 
     }

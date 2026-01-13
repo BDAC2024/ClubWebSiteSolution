@@ -487,3 +487,8 @@ fieldset {
     .e-grid .grid-action-btn--danger:focus {
         background-color: rgba(220, 53, 69, 0.08);
     }
+
+/* Reduce visual weight when row is not hovered */
+.e-grid tr:not(:hover) .grid-action-btn {
+    opacity: 0.85;
+}
