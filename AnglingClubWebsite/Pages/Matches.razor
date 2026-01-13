@@ -13,7 +13,7 @@
     <div style="display: block !important; padding-bottom: 10px;">
         <h3 class="left-header">Matches</h3>
 
-        <SeasonSelector OnSeasonChanged="@(async (season) => await ViewModel.SeasonChanged(season))"></SeasonSelector>
+        <SeasonSelector OnSeasonChanged="ViewModel.SeasonChanged" />
 
     </div>
     <br />

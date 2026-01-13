@@ -3,12 +3,11 @@ using AnglingClubShared.Enums;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using System.Data.Common;
 
 namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
 {
 
-    public partial class EmbeddedLayoutViewModel : ViewModelBase, 
+    public partial class EmbeddedLayoutViewModel : ViewModelBase,
         IRecipient<BrowserChange>
     {
 
@@ -65,7 +64,9 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
         {
             if (ShowDebugMessages)
             {
+#pragma warning disable CS0162 // Unreachable code detected
                 Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
+#pragma warning restore CS0162 // Unreachable code detected
             }
         }
 

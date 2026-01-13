@@ -1,7 +1,4 @@
 ﻿using AnglingClubShared.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AnglingClubShared.Enums
 {
@@ -53,7 +50,7 @@ namespace AnglingClubShared.Enums
         /// <returns></returns>
         public static Season NextSeason()
         {
-            return SeasonForDate(DateTime.Now.AddYears(1)).Value;
+            return SeasonForDate(DateTime.Now.AddYears(1))!.Value;
         }
 
         /// <summary>
@@ -65,10 +62,10 @@ namespace AnglingClubShared.Enums
             var seasons = new List<Season>();
             var now = DateTime.Now;
 
-            seasons.Add(SeasonForDate(now).Value);
+            seasons.Add(SeasonForDate(now)!.Value);
             if (now.Month < 4)
             {
-                seasons.Add(SeasonForDate(now.AddYears(1)).Value);
+                seasons.Add(SeasonForDate(now.AddYears(1))!.Value);
             }
 
             return seasons;

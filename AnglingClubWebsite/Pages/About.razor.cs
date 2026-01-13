@@ -23,7 +23,7 @@ namespace AnglingClubWebsite.Pages
 
         #region Properties
 
-        public AboutDto AboutInfo { get; set; }
+        public AboutDto AboutInfo { get; set; } = new AboutDto();
         public bool IsDeveloper { get; set; } = false;
 
         #endregion Properties

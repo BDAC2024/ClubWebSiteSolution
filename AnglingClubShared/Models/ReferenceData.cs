@@ -14,8 +14,8 @@ namespace AnglingClubShared.Models
         /// Matches that are scheduled on day ticket waters.
         /// </summary>
         public List<ClubEvent> DayTicketMatches { get; set; } = new List<ClubEvent>();
-        
-        public AppSettings AppSettings { get; set; }
+
+        public AppSettings AppSettings { get; set; } = new AppSettings();
     }
 
     public class SeasonInfo

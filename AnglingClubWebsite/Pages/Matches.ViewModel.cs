@@ -7,10 +7,7 @@ using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Syncfusion.Blazor.RichTextEditor;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using MatchType = AnglingClubShared.Enums.MatchType;
 
 namespace AnglingClubWebsite.Pages
@@ -93,7 +90,7 @@ namespace AnglingClubWebsite.Pages
         private bool _showingResults = false;
 
         [ObservableProperty]
-        private ClubEvent _selectedMatch;
+        private ClubEvent _selectedMatch = new ClubEvent();
 
         [ObservableProperty]
         private ObservableCollection<MatchTabData> _matchTabItems = new ObservableCollection<MatchTabData>();

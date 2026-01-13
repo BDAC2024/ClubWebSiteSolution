@@ -120,11 +120,11 @@ namespace AnglingClubWebsite.Dialogs
                 // Create a doc record in the database
                 await _documentService.SaveDocument(DocumentInfo);
 
-                // Tell parent to refresh
-                await RefreshRequested.InvokeAsync();
-
                 // Tell the parent to update its source of truth
                 await VisibleChanged.InvokeAsync(false);
+
+                // Tell parent to refresh
+                await RefreshRequested.InvokeAsync();
             }
             catch (Exception)
             {

@@ -15,6 +15,7 @@ namespace AnglingClubWebsite.SharedComponents
 
         private readonly IRefDataService _refDataService;
         private readonly IGlobalService _globalService;
+        private readonly ILogger<SeasonSelectorViewModel> _logger;
 
         private readonly BrowserService _browserService;
 
@@ -24,7 +25,8 @@ namespace AnglingClubWebsite.SharedComponents
             ICurrentUserService currentUserService,
             IRefDataService refDataService,
             IGlobalService globalService,
-            BrowserService browserService) : base(messenger, currentUserService, authenticationService)
+            BrowserService browserService,
+            ILogger<SeasonSelectorViewModel> logger) : base(messenger, currentUserService, authenticationService)
         {
             _messenger = messenger;
             _authenticationService = authenticationService;
@@ -36,6 +38,7 @@ namespace AnglingClubWebsite.SharedComponents
             messenger.Register<BrowserChange>(this);
 
             setBrowserDetails();
+            _logger = logger;
         }
 
         #region Properties
@@ -79,7 +82,7 @@ namespace AnglingClubWebsite.SharedComponents
             }
             catch (Exception ex)
             {
-                //_logger.LogError($"getRefData: {ex.Message}");
+                _logger.LogError($"getRefData: {ex.Message}");
             }
             finally
             {
@@ -96,13 +99,29 @@ namespace AnglingClubWebsite.SharedComponents
 
         #region Events
 
-        partial void OnSelectedSeasonChanged(Season? oldValue, Season? newValue)
+        async partial void OnSelectedSeasonChanged(Season? oldValue, Season? newValue)
         {
-            if (oldValue != newValue && newValue != null)
+            if (oldValue == newValue || newValue is null)
             {
-                _globalService.SetStoredSeason(newValue!.Value);
+                return;
+            }
 
-                OnSeasonChanged!.Invoke(newValue!.Value);
+            _globalService.SetStoredSeason(newValue.Value);
+
+            var handler = OnSeasonChanged;
+            if (handler is null)
+            {
+                return;
+            }
+
+            try
+            {
+                await handler(newValue.Value);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle – async void exceptions will otherwise crash the app
+                _logger?.LogError(ex, "OnSeasonChanged failed");
             }
         }
 
@@ -110,7 +129,7 @@ namespace AnglingClubWebsite.SharedComponents
 
         #region Inter-component Events
 
-        public Action<Season>? OnSeasonChanged { get; set; }
+        public Func<Season, Task>? OnSeasonChanged { get; set; }
 
         #endregion Inter-component Events
     }

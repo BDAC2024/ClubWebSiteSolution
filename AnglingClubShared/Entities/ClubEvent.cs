@@ -7,7 +7,7 @@ namespace AnglingClubShared.Entities
 
     public class ClubEventBase : TableBase
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = "";
         public Season Season { get; set; }
         public DateTime Date { get; set; }
         public EventType EventType { get; set; }

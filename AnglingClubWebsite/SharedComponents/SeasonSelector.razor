@@ -21,20 +21,12 @@
 @code {
 
     [Parameter]
-    public Action<Season>? OnSeasonChanged
+    public EventCallback<Season> OnSeasonChanged { get; set; }
+
+    protected override void OnParametersSet()
     {
-        get
-        {
-            return ViewModel.OnSeasonChanged;
-        }
-        set
-        {
-            if (ViewModel.OnSeasonChanged == null)
-            {
-                ViewModel.OnSeasonChanged = value;
-                //Console.WriteLine($"Setting OnAdded to {value} in setter");
-            }
-        }
+        // If you truly need a "set once" bridge into the VM:
+        ViewModel.OnSeasonChanged ??= async season => await OnSeasonChanged.InvokeAsync(season);
     }
 
 }

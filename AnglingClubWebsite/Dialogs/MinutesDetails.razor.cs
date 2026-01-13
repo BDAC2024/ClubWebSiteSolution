@@ -17,7 +17,7 @@ namespace AnglingClubWebsite.Dialogs
         /// </summary>
         [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
 
-        [Parameter] required public DocumentListItem SelectedMeeting { get; set; }
+        [Parameter] required public DocumentListItem? SelectedMeeting { get; set; }
 
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
@@ -61,6 +61,8 @@ namespace AnglingClubWebsite.Dialogs
         {
             // Tell the parent to update its source of truth
             await VisibleChanged.InvokeAsync(false);
+
+            reset();
         }
 
         #region Helper Methods
@@ -78,7 +80,7 @@ namespace AnglingClubWebsite.Dialogs
         {
             try
             {
-                ReadOnlyUrl = await _documentService.GetReadOnlyUrl(SelectedMeeting.DbKey);
+                ReadOnlyUrl = await _documentService.GetReadOnlyUrl(SelectedMeeting!.DbKey);
             }
             catch (Exception ex)
             {
@@ -89,6 +91,13 @@ namespace AnglingClubWebsite.Dialogs
 
             // Ensure UI updates when done
             await InvokeAsync(StateHasChanged);
+        }
+
+        private void reset()
+        {
+            MinutesAvailable = false;
+            ReadOnlyUrl = "";
+            SelectedMeeting = null;
         }
 
         #endregion Helper Methods
