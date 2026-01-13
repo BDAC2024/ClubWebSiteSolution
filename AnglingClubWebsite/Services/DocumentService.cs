@@ -5,6 +5,7 @@ using AnglingClubShared.Enums;
 using AnglingClubShared.Exceptions;
 using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
+using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
 using System.Net.Http.Json;
@@ -71,14 +72,14 @@ namespace AnglingClubWebsite.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogWarning($"SaveDocument: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                    _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Error, "Error", "Failed to save document", "OK"));
+                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Error", "Failed to save document", "OK"));
                     throw new Exception("Failed to save document");
 
                 }
             }
             catch (UserSessionExpiredException)
             {
-                _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
+                _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Session expired", "You must log in again", "OK"));
                 await _authenticationService.LogoutAsync();
             }
 

@@ -3,6 +3,7 @@ using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,7 +18,6 @@ namespace AnglingClubWebsite.Pages
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
         private readonly ILogger<MatchesViewModel> _logger;
-        private readonly IAppDialogService _appDialogService;
         private readonly BrowserService _browserService;
         private readonly IRefDataService _refDataService;
         private readonly IClubEventService _clubEventService;
@@ -33,7 +33,6 @@ namespace AnglingClubWebsite.Pages
             IMessenger messenger,
             ICurrentUserService currentUserService,
             ILogger<MatchesViewModel> logger,
-            IAppDialogService appDialogService,
             BrowserService browserService,
             IRefDataService refDataService,
             IGlobalService globalService,
@@ -43,7 +42,6 @@ namespace AnglingClubWebsite.Pages
             _authenticationService = authenticationService;
             _messenger = messenger;
             _logger = logger;
-            _appDialogService = appDialogService;
             messenger.Register<BrowserChange>(this);
             _browserService = browserService;
             _refDataService = refDataService;

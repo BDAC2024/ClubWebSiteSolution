@@ -44,11 +44,13 @@
                     <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
                     <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
                     <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
+                    
                     <GridColumn HeaderText="Action"
-                                Width="110"
-                                AllowSorting="false"
-                                AllowFiltering="false"
-                                TextAlign="TextAlign.Center">
+                        Visible="CurrentUser.Secretary"
+                        Width="110"
+                        AllowSorting="false"
+                        AllowFiltering="false"
+                        TextAlign="TextAlign.Center">
                         <Template Context="rowObj">
                             @{
                                 var row = (DocumentListItem)rowObj;
@@ -56,14 +58,14 @@
 
                             <span @onclick:stopPropagation>
                                 <SfButton CssClass="grid-action-btn"
-                                          IconCss="fa-solid fa-download"
-                                          Title="Download"
-                                          OnClick="@(async () => await DownloadAsync(row))" />
+                                IconCss="fa-solid fa-download"
+                                Title="Download"
+                                OnClick="@(async () => await DownloadAsync(row))" />
 
                                 <SfButton CssClass="grid-action-btn grid-action-btn--danger"
-                                          IconCss="fa-solid fa-trash"
-                                          Title="Delete"
-                                          OnClick="@(async () => await DeleteAsync(row))" />
+                                IconCss="fa-solid fa-trash"
+                                Title="Delete"
+                                OnClick="@(async () => await DeleteAsync(row))" />
                             </span>
                         </Template>
                     </GridColumn>

@@ -95,22 +95,6 @@
         </ChildContent>
     </SfSidebar>
 
-    <div>
-        <SfDialog Width="250px" IsModal="true" Visible="@ViewModel.MessageVisible" class="smt-dialog">
-            <DialogTemplates>
-                <Header><SfMessage Severity="@ViewModel.MessageSeverity">@ViewModel.MessageTitle</SfMessage> </Header>
-                <Content>@ViewModel.MessageBody</Content>
-            </DialogTemplates>
-            <DialogButtons>
-                <DialogButton Content="@ViewModel.MessageCloseButtonTitle" IsPrimary="true" OnClick="(()=> ViewModel.MessageVisible = false)" />
-                @if (ViewModel.ConfirmationButton != null)
-                {
-                    <DialogButton Content="@ViewModel.ConfirmationButton.Label" IsPrimary="false" OnClick="(async ()=> await ViewModel.OnConfirm())" />
-                }
-            </DialogButtons>
-        </SfDialog>
-    </div>
-
     <div class="menu-and-main-wrapper">
         <div class="main-content">
             @if (debuggingDeviceType)

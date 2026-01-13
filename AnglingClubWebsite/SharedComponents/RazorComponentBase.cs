@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared;
 using AnglingClubShared.DTOs;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;

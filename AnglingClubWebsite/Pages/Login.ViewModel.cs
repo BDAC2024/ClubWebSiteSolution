@@ -13,6 +13,7 @@ using AnglingClubShared;
 using AnglingClubShared.Enums;
 using System.ComponentModel.DataAnnotations;
 using AnglingClubShared.Extensions;
+using AnglingClubWebsite.Models;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -23,7 +24,6 @@ namespace AnglingClubWebsite.Pages
         private readonly IMessenger _messenger;
         private readonly IAuthenticationService _authenticationService;
         private readonly INavigationService _navigationService;
-        private readonly IAppDialogService _appDialogService;
         private readonly IConfiguration _configuration;
 
         public LoginViewModel(
@@ -32,7 +32,6 @@ namespace AnglingClubWebsite.Pages
             IMessenger messenger,
             IAuthenticationService authenticationService,
             INavigationService navigationService,
-            IAppDialogService appDialogService,
             ICurrentUserService currentUserService,
             IConfiguration configuration) : base(messenger, currentUserService, authenticationService)
         {
@@ -41,7 +40,6 @@ namespace AnglingClubWebsite.Pages
             _messenger = messenger;
             _authenticationService = authenticationService;
             _navigationService = navigationService;
-            _appDialogService = appDialogService;
             _configuration = configuration;
         }
 
@@ -92,7 +90,7 @@ namespace AnglingClubWebsite.Pages
                     }
                     else
                     {
-                        _appDialogService.SendMessage(MessageState.Warn, "Login Failed", "Invalid Membership No. or PIN");
+                        _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Login Failed", "Invalid Membership No. or PIN"));
                     }
 
                 }
@@ -100,7 +98,7 @@ namespace AnglingClubWebsite.Pages
                 {
                     //_logger.LogError(ex, $"Login failed: {ex.Message}");
                     _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login failed: {ex.Message}"));
-                    _appDialogService.SendMessage(MessageState.Error, "Login Failed", "An unexpected error occurred");
+                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Login Failed", "An unexpected error occurred"));
 
                 }
                 finally
@@ -135,11 +133,11 @@ namespace AnglingClubWebsite.Pages
 
                 if (usingEmail)
                 {
-                    _appDialogService.SendMessage(MessageState.Info, "PIN Reset", "Your PIN reset has been done and sent to your registered email address.", "OK");
+                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Info, "PIN Reset", "Your PIN reset has been done and sent to your registered email address.", "OK"));
                 }
                 else
                 {
-                    _appDialogService.SendMessage(MessageState.Info, "PIN Reset", "Your PIN reset request has been sent. Please contact the Membership Officer to get your new PIN number (contact details in your membership book)", "OK");
+                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Info, "PIN Reset", "Your PIN reset request has been sent. Please contact the Membership Officer to get your new PIN number (contact details in your membership book)", "OK"));
                 }
             }
         }

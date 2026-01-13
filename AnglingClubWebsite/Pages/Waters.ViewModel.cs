@@ -14,6 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 using Fishing.Client.Services;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using AnglingClubWebsite.Models;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -26,7 +27,6 @@ namespace AnglingClubWebsite.Pages
         private readonly ILogger<WatersViewModel> _logger;
         private readonly BrowserService _browserService;
         private readonly IJSRuntime _js;
-        private readonly IAppDialogService _appDialogService;
 
         public WatersViewModel(
             IMessenger messenger,
@@ -35,8 +35,7 @@ namespace AnglingClubWebsite.Pages
             IWatersService watersService,
             ILogger<WatersViewModel> logger,
             BrowserService browserService,
-            IJSRuntime js,
-            IAppDialogService appDialogService) : base(messenger, currentUserService, authenticationService)
+            IJSRuntime js) : base(messenger, currentUserService, authenticationService)
         {
             _messenger = messenger;
             _currentUserService = currentUserService;
@@ -47,7 +46,6 @@ namespace AnglingClubWebsite.Pages
             messenger.Register<BrowserChange>(this);
             _browserService = browserService;
             _js = js;
-            _appDialogService = appDialogService;
         }
 
         [ObservableProperty]
@@ -176,7 +174,7 @@ namespace AnglingClubWebsite.Pages
             }
             catch (Exception ex)
             {
-                _appDialogService.SendMessage(MessageState.Error, "Save Failed", "Unable to save Water");
+                _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Save Failed", "Unable to save Water"));
                 _logger.LogError(ex, "Failed to save water");
             }
             finally

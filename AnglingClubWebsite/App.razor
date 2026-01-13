@@ -2,6 +2,8 @@
 @inject HostBridge HostBridge // TODO Ang to Blazor Migration - only needed until migation complete
 @inherits MvvmLayoutComponentBase<AppViewModel>
 
+<DialogHost />
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">

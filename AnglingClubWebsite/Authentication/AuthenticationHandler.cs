@@ -16,7 +16,6 @@ namespace AnglingClubWebsite.Authentication
         private readonly AuthenticationStateProvider _stateProvider;
         private readonly IConfiguration _configuration;
         private readonly IMessenger _messenger;
-        private readonly IAppDialogService _appDialogService;
 
         private bool _refreshing = false;
 
@@ -24,14 +23,12 @@ namespace AnglingClubWebsite.Authentication
             IAuthenticationService authenticationService,
             IConfiguration configuration,
             AuthenticationStateProvider stateProvider,
-            IMessenger messenger,
-            IAppDialogService appDialogService)
+            IMessenger messenger)
         {
             _authenticationService = authenticationService;
             _configuration = configuration;
             _stateProvider = stateProvider;
             _messenger = messenger;
-            _appDialogService = appDialogService;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

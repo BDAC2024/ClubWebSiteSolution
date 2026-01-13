@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
@@ -14,7 +15,7 @@ namespace AnglingClubWebsite.Pages
         private readonly IMessenger _messenger;
         private readonly IDocumentService _documentService;
         private readonly BrowserService _browserService;
-        private readonly IAppDialogService _appDialogService;
+        private readonly IDialogQueue _dialogQueue;
 
         public MeetingMinutes(
                         ICurrentUserService currentUserService,
@@ -22,7 +23,7 @@ namespace AnglingClubWebsite.Pages
                         IMessenger messenger,
                         IDocumentService documentService,
                         BrowserService browserService,
-                        IAppDialogService appDialogService) : base(messenger, currentUserService, authenticationService)
+                        IDialogQueue dialogQueue) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
@@ -32,7 +33,7 @@ namespace AnglingClubWebsite.Pages
             messenger.Register<BrowserChange>(this);
 
             BrowserSize = _browserService.DeviceSize;
-            _appDialogService = appDialogService;
+            _dialogQueue = dialogQueue;
         }
 
         #region Properties
@@ -90,44 +91,33 @@ namespace AnglingClubWebsite.Pages
 
         private async Task DeleteAsync(DocumentListItem doc)
         {
-            _messenger.Send<ShowMessage>(
-                new ShowMessage
-                (
-                    MessageState.Warn,
-                    "Please confirm",
-                    $"Do you really want to delete the minutes for '{doc.Title}'?",
-                    "Cancel",
-                    new MessageButton
+            _dialogQueue.Enqueue(new DialogRequest
+            {
+                Kind = DialogKind.Confirm,
+                Severity = DialogSeverity.Warn,
+                Title = "Please confirm",
+                Message = $"Do you really want to delete the minutes for '{doc.Title}' on {doc.Created.ToString("dd MMM yy")}?",
+                CancelText = "Cancel",
+                ConfirmText = "Yes",
+                OnConfirmAsync = async () =>
+                {
+                    try
                     {
-                        Label = "Yes",
-                        OnConfirmed = async () =>
-                        {
-                            DataLoaded = false;
+                        await _documentService.DeleteDocument(doc.DbKey);
+                        await RefreshGridAsync();
 
-                            try
-                            {
-                                await _documentService.DeleteDocument(doc.DbKey);
-                                await RefreshGridAsync();
-
-                            }
-                            catch (Exception)
-                            {
-                                _appDialogService.SendMessage(MessageState.Error, "Deletion Failed", "Unable to delete minutes");
-                            }
-                            finally
-                            {
-                                DataLoaded = true;
-                            }
-                        }
+                        _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Success, "Success", "Requested minutes have been deleted"));
                     }
-                )
-            );
+                    catch (Exception)
+                    {
+                        _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Deletion Failed", "Unable to delete requested minutes"));
+                    }
+                }
+            });
         }
 
         private async Task RefreshGridAsync()
         {
-            DataLoaded = false;
-
             // Option A: re-query and rebind
             await ReadMeetings();
             StateHasChanged();
@@ -137,8 +127,6 @@ namespace AnglingClubWebsite.Pages
             {
                 await Grid.Refresh();
             }
-
-            DataLoaded = true;
         }
 
         public void Receive(BrowserChange message)

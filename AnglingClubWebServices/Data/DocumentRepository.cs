@@ -153,14 +153,12 @@ namespace AnglingClubWebServices.Data
             DeleteAttributesRequest request = new DeleteAttributesRequest
             {
                 DomainName = Domain,
-                //ItemName = $"{id}"
-                ItemName = $"{IdPrefix}:{id}"
+                ItemName = $"{id}"
             };
 
             try
             {
-                //await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
-                await base.deleteFile(id, _options.DocumentBucket);
+                await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
                 await client.DeleteAttributesAsync(request);
             }
             catch (AmazonSimpleDBException ex)

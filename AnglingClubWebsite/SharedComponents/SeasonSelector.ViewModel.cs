@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;

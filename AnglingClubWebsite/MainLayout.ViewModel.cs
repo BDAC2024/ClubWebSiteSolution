@@ -1,5 +1,6 @@
 using AnglingClubShared;
 using AnglingClubShared.Enums;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,7 +13,6 @@ namespace AnglingClubWebsite
         IRecipient<BrowserChange>,
         IRecipient<TurnOnDebugMessages>, 
         IRecipient<ShowConsoleMessage>, 
-        IRecipient<ShowMessage>, 
         IRecipient<LoggedIn>,
         IRecipient<SelectMenuItem>
     {
@@ -34,7 +34,6 @@ namespace AnglingClubWebsite
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<LoggedIn>(this);
             messenger.Register<ShowConsoleMessage>(this);
-            messenger.Register<ShowMessage>(this);
             messenger.Register<SelectMenuItem>(this);
             messenger.Register<BrowserChange>(this);
 
@@ -59,23 +58,7 @@ namespace AnglingClubWebsite
         [ObservableProperty]
         private bool _showDebugMessages = true;
 
-        [ObservableProperty]
-        private MessageSeverity _messageSeverity = MessageSeverity.Normal;
 
-        [ObservableProperty]
-        private string _messageTitle = "";
-
-        [ObservableProperty]
-        private string _messageBody = "";
-
-        [ObservableProperty]
-        private string _messageCloseButtonTitle = "";
-
-        [ObservableProperty]
-        private MessageButton? _confirmationButton;
-
-        [ObservableProperty]
-        private bool _messageVisible = false;
 
         [ObservableProperty]
         private string[] _selectedItems = new string[] { "01" };
@@ -145,37 +128,6 @@ namespace AnglingClubWebsite
             ShowDebugMessages = message.YesOrNo;
         }
 
-        public void Receive(ShowMessage message)
-        {
-            switch (message.State)
-            {
-                case MessageState.Info:
-                    MessageSeverity = MessageSeverity.Info;
-                    break;
-
-                case MessageState.Error:
-                    MessageSeverity = MessageSeverity.Error;
-                    break;
-
-                case MessageState.Warn:
-                    MessageSeverity = MessageSeverity.Warning;
-                    break;
-
-                case MessageState.Success:
-                    MessageSeverity = MessageSeverity.Success;
-                    break;
-
-                default:
-                    break;
-            }
-
-            MessageTitle = message.Title;
-            MessageBody = message.Body;
-            MessageCloseButtonTitle = message.CloseButtonTitle!;
-            ConfirmationButton = message.confirmationButtonDetails;
-            MessageVisible = true;
-        }
-
         public void Receive(ShowConsoleMessage message)
         {
             ShowConsoleMessage(message.Content);
@@ -200,8 +152,8 @@ namespace AnglingClubWebsite
 
         public async Task OnConfirm()
         {
-            await ConfirmationButton!.OnConfirmed!();
-            MessageVisible = false;
+            //await ConfirmationButton!.OnConfirmed!();
+            //MessageVisible = false;
         }
 
         public void defineStartupMenu()
