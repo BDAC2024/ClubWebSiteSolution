@@ -2,6 +2,7 @@
 using Amazon.S3.Model;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -226,6 +227,12 @@ namespace AnglingClubWebServices.Data
                 await storeBatchOfItems(client, requestBatch);
 
                 request.Items.RemoveRange(0, request.Items.Count() < UPDATE_BATCH_SIZE ? request.Items.Count() : UPDATE_BATCH_SIZE);
+            }
+
+            if (_options.Stage.ToLower() != "prod")
+            {
+                _logger.LogWarning($"Backup disabled as running in {_options.Stage}");
+                return;
             }
 
             // If backup is older than today - generate a new backup file
