@@ -456,3 +456,34 @@ fieldset {
 }
 
 
+/* Base flat icon button inside SfGrid */
+.e-grid .grid-action-btn {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 4px 6px;
+    min-width: unset;
+    color: #0d6efd;
+}
+
+    /* Hover / focus subtle flat effect */
+    .e-grid .grid-action-btn:hover,
+    .e-grid .grid-action-btn:focus {
+        background-color: rgba(13, 110, 253, 0.08);
+    }
+
+    /* Ensure Font Awesome icon inherits colour */
+    .e-grid .grid-action-btn .e-btn-icon,
+    .e-grid .grid-action-btn i {
+        color: inherit;
+    }
+
+/* Danger variant */
+.e-grid .grid-action-btn--danger {
+    color: #dc3545;
+}
+
+    .e-grid .grid-action-btn--danger:hover,
+    .e-grid .grid-action-btn--danger:focus {
+        background-color: rgba(220, 53, 69, 0.08);
+    }

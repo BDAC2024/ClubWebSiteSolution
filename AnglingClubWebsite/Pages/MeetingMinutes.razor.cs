@@ -5,6 +5,7 @@ using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Grids;
+using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.RichTextEditor;
 
 namespace AnglingClubWebsite.Pages
@@ -77,6 +78,25 @@ namespace AnglingClubWebsite.Pages
         {
             SelectedMeeting = args.Data;
             ShowingMeeting = true;
+        }
+
+        private async Task DownloadAsync(DocumentListItem doc)
+        {
+            //await DocumentService.DownloadAsync(doc.Id);
+        }
+
+        private async Task DeleteAsync(DocumentListItem doc)
+        {
+            //bool confirmed = await DialogService.ConfirmAsync(
+            //    $"Delete '{doc.Name}'?",
+            //    "Confirm delete");
+
+            //if (!confirmed)
+            //    return;
+
+            //await DocumentService.DeleteAsync(doc.Id);
+
+            await Grid!.Refresh();
         }
 
 
