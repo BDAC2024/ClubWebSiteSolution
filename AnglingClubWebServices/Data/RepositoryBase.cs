@@ -2,6 +2,7 @@
 using Amazon.S3.Model;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Enums;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -597,26 +598,32 @@ namespace AnglingClubWebServices.Data
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="bucketName"></param>
-        /// <param name="contentType"></param>
         /// <param name="minutesBeforeExpiry"></param>
+        /// <param name="downloadAs"></param>
+        /// <param name="returnedFileName">Optional: name of file sent back to browser</param>
+        /// <param name="contentType">Optional: mime type of file</param>
         /// <returns></returns>
-        protected string getFilePresignedUrl(string fileName, string bucketName, string contentType, int minutesBeforeExpiry)
+        protected string getFilePresignedUrl(string fileName, string bucketName, int minutesBeforeExpiry, DownloadType downloadAs, string returnedFileName = "", string contentType = "")
         {
             string presignedUrl = null;
 
             using (var s3Client = GetS3Client())
             {
+                var headers = new ResponseHeaderOverrides();
+
+                if (contentType != "")
+                {
+                    headers.ContentType = contentType;
+                }
+                headers.ContentDisposition = $"{downloadAs.ToString()}; filename={(returnedFileName != "" ? returnedFileName : fileName)}";
+
                 presignedUrl = s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = bucketName,
                     Key = fileName,
                     Expires = DateTime.UtcNow.AddMinutes(minutesBeforeExpiry),
                     Verb = HttpVerb.GET,
-                    ResponseHeaderOverrides = new ResponseHeaderOverrides
-                    {
-                        ContentType = contentType,
-                        ContentDisposition = $"inline; filename={fileName}"
-                    }
+                    ResponseHeaderOverrides = headers
                 });
 
             }

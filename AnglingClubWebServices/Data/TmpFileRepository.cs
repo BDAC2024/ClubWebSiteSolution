@@ -1,5 +1,6 @@
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Enums;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
@@ -209,11 +210,11 @@ namespace AnglingClubWebServices.Data
             await base.saveFile(fileName, fileBytes, contentType, _options.TmpFilesBucket, false);
         }
 
-        public async Task<string> GetFilePresignedUrl(string fileName, string contentType, int minutesBeforeExpiry)
+        public async Task<string> GetFilePresignedUrl(string fileName, int minutesBeforeExpiry, string contentType)
         {
             await Task.Delay(0);
 
-            return base.getFilePresignedUrl(fileName, _options.TmpFilesBucket, contentType, minutesBeforeExpiry);
+            return base.getFilePresignedUrl(fileName, _options.TmpFilesBucket, minutesBeforeExpiry, DownloadType.inline);
         }
     }
 }

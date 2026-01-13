@@ -14,5 +14,6 @@ namespace AnglingClubWebsite.Services
         Task UploadDocumentWithPresignedUrl(string uploadUrl, UploadFiles selectedFile);
         Task<string?> GetReadOnlyUrl(string id);
         Task DeleteDocument(string id);
+        Task<string?> Download(string id);
     }
 }

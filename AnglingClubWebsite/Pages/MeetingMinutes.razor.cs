@@ -5,6 +5,7 @@ using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 
 namespace AnglingClubWebsite.Pages
@@ -16,6 +17,7 @@ namespace AnglingClubWebsite.Pages
         private readonly IDocumentService _documentService;
         private readonly BrowserService _browserService;
         private readonly IDialogQueue _dialogQueue;
+        private readonly INavigationService _navigationService;
 
         public MeetingMinutes(
                         ICurrentUserService currentUserService,
@@ -23,7 +25,8 @@ namespace AnglingClubWebsite.Pages
                         IMessenger messenger,
                         IDocumentService documentService,
                         BrowserService browserService,
-                        IDialogQueue dialogQueue) : base(messenger, currentUserService, authenticationService)
+                        IDialogQueue dialogQueue,
+                        INavigationService navigationService) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
@@ -34,6 +37,7 @@ namespace AnglingClubWebsite.Pages
 
             BrowserSize = _browserService.DeviceSize;
             _dialogQueue = dialogQueue;
+            _navigationService = navigationService;
         }
 
         #region Properties
@@ -86,7 +90,23 @@ namespace AnglingClubWebsite.Pages
 
         private async Task DownloadAsync(DocumentListItem doc)
         {
-            //await DocumentService.DownloadAsync(doc.Id);
+            try
+            {
+                var url = await _documentService.Download(doc.DbKey);
+
+                if (url != null)
+                {
+                    _navigationService.NavigateTo(url, forceLoad: true);
+                }
+                else
+                {
+                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Download Failed", "Unable to download requested minutes"));
+                }
+            }
+            catch (Exception)
+            {
+                _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Download Failed", "Unable to download requested minutes"));
+            }
         }
 
         private async Task DeleteAsync(DocumentListItem doc)

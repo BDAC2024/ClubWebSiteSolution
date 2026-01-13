@@ -138,7 +138,27 @@ namespace AnglingClubWebServices.Controllers
 
             await _tmpFileRepository.SaveTmpFile(pdfFileName, pdfBytes, "application/pdf");
 
-            var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, "application/pdf", Constants.MINUTES_TO_EXPIRE_LINKS);
+            var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, Constants.MINUTES_TO_EXPIRE_LINKS, "application/pdf");
+
+            return Ok(url);
+        }
+
+        [HttpGet("download/{id}")]
+        public async Task<IActionResult> Download(string id)
+        {
+            var doc = (await _documentRepository.Get()).SingleOrDefault(x => x.DbKey == id);
+
+            if (doc == null)
+            {
+                return BadRequest("Document could not be found.");
+            }
+
+            if (doc.DocumentType == DocumentType.MeetingMinutes && !CurrentUser.Secretary)
+            {
+                return Unauthorized("Only club secretaries can download meeting minutes.");
+            }
+
+            var url = await _documentRepository.GetFilePresignedUrl(doc.StoredFileName, doc.OriginalFileName, Constants.MINUTES_TO_EXPIRE_LINKS);
 
             return Ok(url);
         }

@@ -173,5 +173,13 @@ namespace AnglingClubWebServices.Data
             }
         }
 
+        public async Task<string> GetFilePresignedUrl(string storedFileName, string returnedFileName, int minutesBeforeExpiry)
+        {
+            await Task.Delay(0);
+
+            return base.getFilePresignedUrl(storedFileName, _options.DocumentBucket, minutesBeforeExpiry, DownloadType.attachment, returnedFileName);
+        }
+
+
     }
 }

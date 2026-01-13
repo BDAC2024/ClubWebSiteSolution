@@ -2,6 +2,12 @@
 
 namespace AnglingClubShared.Enums
 {
+    public enum DownloadType
+    {
+        inline = 0,
+        attachment
+    }
+
     public enum EventType
     {
         All = 0,

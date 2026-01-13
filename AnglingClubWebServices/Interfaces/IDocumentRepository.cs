@@ -12,5 +12,6 @@ namespace AnglingClubWebServices.Interfaces
         Task<WordDocument> GetWordDocument(string fileName);
         Task<string> GetDocumentUploadUrl(string filename, string contentType);
         Task DeleteDocument(string id);
+        Task<string> GetFilePresignedUrl(string storedFileName, string returnedFileName, int minutesBeforeExpiry);
     }
 }
