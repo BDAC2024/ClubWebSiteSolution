@@ -6,7 +6,10 @@ using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Syncfusion.Blazor.Grids;
+using Syncfusion.Blazor.Inputs;
+using System.Linq.Expressions;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -42,12 +45,17 @@ namespace AnglingClubWebsite.Pages
 
         #region Properties
         private SfGrid<DocumentListItem>? Grid;
+        private SfTextBox? SearchComponent { get; set; }
 
         public bool AddingMinutes = false;
         public bool ShowingMeeting = false;
 
         public List<DocumentListItem> Documents { get; set; } = new List<DocumentListItem>();
 
+        public string SearchText { get; set; } = "";
+        private SearchModel _model = new();
+        private EditContext? _editContext;
+        private ValidationMessageStore? _messages;
         public DocumentListItem? SelectedMeeting { get; set; }
 
         public DeviceSize BrowserSize = DeviceSize.Unknown;
@@ -57,6 +65,12 @@ namespace AnglingClubWebsite.Pages
         #endregion Properties
 
         #region Events
+
+        protected override void OnInitialized()
+        {
+            _editContext = new EditContext(_model);
+            _messages = new ValidationMessageStore(_editContext);
+        }
 
         protected override async Task OnParametersSetAsync()
         {
@@ -69,6 +83,15 @@ namespace AnglingClubWebsite.Pages
         public async Task DataboundHandler(object args)
         {
             await this.Grid!.AutoFitColumnsAsync();
+        }
+
+        private async void AddSearchIcon()
+        {
+            if (SearchComponent != null)
+            {
+                //Add icon to the TextBox
+                await SearchComponent.AddIconAsync("append", "e-icons e-search");
+            }
         }
 
         public bool IsWide()
@@ -136,6 +159,23 @@ namespace AnglingClubWebsite.Pages
             });
         }
 
+        private async Task Search(ChangedEventArgs args)
+        {
+            _messages!.Clear();
+
+            if (!string.IsNullOrWhiteSpace(_model.SearchText) &&
+                _model.SearchText.Length < 3)
+            {
+                _messages.Add(
+                    () => _model.SearchText,
+                    "Must be at least 3 characters"
+                );
+            }
+
+            _editContext!.NotifyValidationStateChanged();
+            //_messenger.Send<ShowMessage>(new ShowMessage(MessageState.Info, "You entered", args.Value));
+        }
+
         private async Task RefreshGridAsync()
         {
             // Option A: re-query and rebind
@@ -160,5 +200,14 @@ namespace AnglingClubWebsite.Pages
         {
             Documents = await _documentService.ReadDocuments(DocumentType.MeetingMinutes) ?? new List<DocumentListItem>();
         }
+
+        #region Helper Classes
+
+        public class SearchModel
+        {
+            public string? SearchText { get; set; }
+        }
+
+        #endregion Helper Classes
     }
 }

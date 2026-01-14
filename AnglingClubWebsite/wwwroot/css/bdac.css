@@ -498,3 +498,9 @@ fieldset {
     height: 36px;
     /*background-color: yellow;*/
 }
+
+.validation-message {
+    color: #dc3545; /* Bootstrap danger red */
+    font-size: 0.8rem; /* Smaller text */
+    margin-top: 0.25rem;
+}

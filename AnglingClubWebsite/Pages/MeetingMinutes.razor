@@ -18,7 +18,21 @@
 
     @if (Documents.Any())
     {
+        <div class="edit-button-panel">
+            <EditForm EditContext="_editContext">
+                <SfTextBox @ref="@SearchComponent"
+                           Created="@AddSearchIcon"
+                           Placeholder="Search text"
+                           ValueChange="@Search"
+                           @bind-Value="_model.SearchText"
+                           Width="200px">
+                </SfTextBox>
+                <ValidationMessage For="@(() => _model.SearchText)" />
+            </EditForm>
+            <br/>
+        </div>
         <div class="matches grid-shrinkwrap">
+
             @if (CurrentUser.Secretary)
             {
                 <div class="edit-button-panel">
@@ -45,13 +59,13 @@
                     <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
                     <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
                     <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Summary" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
-                    
+
                     <GridColumn HeaderText="Action"
-                        Visible="CurrentUser.Secretary"
-                        Width="110"
-                        AllowSorting="false"
-                        AllowFiltering="false"
-                        TextAlign="TextAlign.Center">
+                                Visible="CurrentUser.Secretary"
+                                Width="110"
+                                AllowSorting="false"
+                                AllowFiltering="false"
+                                TextAlign="TextAlign.Center">
                         <Template Context="rowObj">
                             @{
                                 var row = (DocumentListItem)rowObj;
@@ -59,14 +73,14 @@
 
                             <span @onclick:stopPropagation>
                                 <SfButton CssClass="grid-action-btn"
-                                IconCss="fa-solid fa-download"
-                                Title="Download"
-                                OnClick="@(async () => await DownloadAsync(row))" />
+                                          IconCss="fa-solid fa-download"
+                                          Title="Download"
+                                          OnClick="@(async () => await DownloadAsync(row))" />
 
                                 <SfButton CssClass="grid-action-btn grid-action-btn--danger"
-                                IconCss="fa-solid fa-trash"
-                                Title="Delete"
-                                OnClick="@(async () => await DeleteAsync(row))" />
+                                          IconCss="fa-solid fa-trash"
+                                          Title="Delete"
+                                          OnClick="@(async () => await DeleteAsync(row))" />
                             </span>
                         </Template>
                     </GridColumn>
@@ -77,14 +91,14 @@
         </div>
     }
     else
-    {   
+    {
         @if (DataLoaded)
         {
             <p>No minutes found</p>
         }
     }
 
-    
+
 
     <AddMinutes @bind-Visible="AddingMinutes" RefreshRequested="RefreshGridAsync"></AddMinutes>
 
