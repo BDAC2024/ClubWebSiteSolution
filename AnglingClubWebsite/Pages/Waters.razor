@@ -8,23 +8,25 @@
 
 @inherits MvvmComponentBase<WatersViewModel>
 
-<h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Club Waters</h3>
+<div class="page-header">
+    <h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Club Waters</h3>
 
-@if (ViewModel.CurrentUser.Admin)
-{
-    <div class="edit-button-panel">
-        @if (!ViewModel.IsUnlocked)
-        {
-            <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(true))"><i class="fa-solid fa-lock-open" /> Unlock</SfButton>
-        }
-        else
-        {
-            <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
-        }
-    </div>
-    <br />
-    <br />
-}
+    @if (ViewModel.CurrentUser.Admin)
+    {
+        <div class="edit-button-panel">
+            @if (!ViewModel.IsUnlocked)
+            {
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(true))"><i class="fa-solid fa-lock-open" /> Unlock</SfButton>
+            }
+            else
+            {
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
+            }
+        </div>
+        <br />
+        <br />
+    }
+</div>
 
 <h6>PLEASE COMPLY WITH ALL NOTICE BOARDS</h6>
 <p>

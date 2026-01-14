@@ -2,29 +2,31 @@
 
 @inherits MvvmComponentBase<NewsViewModel>
 
-<h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Latest News</h3>
+<div class="page-header">
+    <h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Latest News</h3>
 
-@if (
-    ViewModel.CurrentUser.Admin)
-{
-    <div class="edit-button-panel">
-        @if (ViewModel.IsUnlocked)
-        {
-            <SfButton CssClass="e-primary edit-button" @onclick="ViewModel.AddNewsItem"><i class="fa-solid fa-add" /> Add news item</SfButton>
-        }
+    @if (
+        ViewModel.CurrentUser.Admin)
+    {
+        <div class="edit-button-panel">
+            @if (ViewModel.IsUnlocked)
+            {
+                <SfButton CssClass="e-primary edit-button" @onclick="ViewModel.AddNewsItem"><i class="fa-solid fa-add" /> Add news item</SfButton>
+            }
 
-        @if (!ViewModel.IsUnlocked)
-        {
-            <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(true))"><i class="fa-solid fa-lock-open"/> Unlock</SfButton>
-        }
-        else
-        {
-            <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
-        }
-    </div>
-    <br />
-    <br />
-}
+            @if (!ViewModel.IsUnlocked)
+            {
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(true))"><i class="fa-solid fa-lock-open"/> Unlock</SfButton>
+            }
+            else
+            {
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
+            }
+        </div>
+        <br />
+        <br />
+    }
+</div>
 
 <BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
 

@@ -10,13 +10,12 @@
 @inherits MvvmComponentBase<MatchesViewModel>
 
 <AuthorizationRequired>
-    <div style="display: block !important; padding-bottom: 10px;">
+    <div class="page-header">
         <h3 class="left-header">Matches</h3>
 
         <SeasonSelector OnSeasonChanged="ViewModel.SeasonChanged" />
 
     </div>
-    <br />
 
     <BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
 

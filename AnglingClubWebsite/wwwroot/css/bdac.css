@@ -492,3 +492,9 @@ fieldset {
 .e-grid tr:not(:hover) .grid-action-btn {
     opacity: 0.85;
 }
+
+.page-header {
+    display: block !important;
+    height: 36px;
+    /*background-color: yellow;*/
+}
