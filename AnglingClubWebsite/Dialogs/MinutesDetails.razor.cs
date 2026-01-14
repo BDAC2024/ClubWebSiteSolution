@@ -44,12 +44,25 @@ namespace AnglingClubWebsite.Dialogs
 
         string? ReadOnlyUrl { get; set; } = "";
 
+        private string _loadedForMeetingId = "";
+
         protected override async Task OnParametersSetAsync()
         {
             if (SelectedMeeting == null)
             {
                 return;
             }
+
+            var key = SelectedMeeting.DbKey;
+
+            if (key == _loadedForMeetingId)
+            {
+                return;
+            }
+
+            _loadedForMeetingId = key;
+
+            MinutesAvailable = false;
 
             // Start load without awaiting so the spinner can render
             _loadTask = LoadAsync();
@@ -59,10 +72,12 @@ namespace AnglingClubWebsite.Dialogs
 
         private async Task CloseAsync()
         {
-            // Tell the parent to update its source of truth
-            await VisibleChanged.InvokeAsync(false);
 
             reset();
+            await InvokeAsync(StateHasChanged);
+
+            // Tell the parent to update its source of truth
+            await VisibleChanged.InvokeAsync(false);
         }
 
         #region Helper Methods

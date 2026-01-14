@@ -44,23 +44,14 @@ namespace AnglingClubWebServices.Controllers
             _tmpFileRepository = tmpFileRepository;
         }
 
-        [HttpGet("{docType}")]
+        [HttpPost("GetDocuments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DocumentListItem>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public async Task<IActionResult> Get(DocumentType docType)
+        public async Task<IActionResult> GetDocuments([FromBody]DocumentSearchRequest req)
         {
             StartTimer();
 
-            var members = await _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason());
-
-            var dbItems = await _documentRepository.Get();
-
-            var items = _mapper.Map<List<DocumentListItem>>(dbItems.Where(x => x.DocumentType == docType));
-
-            foreach (var item in items)
-            {
-                item.UploadedBy = members.First(x => x.MembershipNumber == item.UploadedByMembershipNumber).Name;
-            }
+            var items = await _documentService.GetDocuments(req);
 
             ReportTimer("Getting document items");
 
@@ -77,8 +68,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 foreach (var docItem in docItems)
                 {
-                    docItem.UploadedByMembershipNumber = CurrentUser.MembershipNumber;
-                    await _documentRepository.AddOrUpdateDocument(docItem);
+                    await _documentService.SaveDocument(docItem, CurrentUser.MembershipNumber);
                 }
                 ReportTimer("Posting document item");
                 return Ok();

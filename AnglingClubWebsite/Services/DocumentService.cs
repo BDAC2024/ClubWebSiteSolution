@@ -15,6 +15,7 @@ namespace AnglingClubWebsite.Services
     public class DocumentService : DataServiceBase, IDocumentService
     {
         private static string CONTROLLER = "Document";
+        private const long MaxUploadBytes = 20 * 1024 * 1024; // 20 MB
 
         private readonly ILogger<DocumentService> _logger;
         private readonly IMessenger _messenger;
@@ -31,13 +32,13 @@ namespace AnglingClubWebsite.Services
             _authenticationService = authenticationService;
         }
 
-        public async Task<List<DocumentListItem>?> ReadDocuments(DocumentType docType)
+        public async Task<List<DocumentListItem>?> ReadDocuments(DocumentSearchRequest req)
         {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/{Convert.ToInt32(docType)}";
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENT_READ}";
 
             _logger.LogInformation($"ReadDocuments: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
-            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", req);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -95,20 +96,25 @@ namespace AnglingClubWebsite.Services
         {
             var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/minutes/readOnly/{id}";
 
-            _logger.LogInformation($"GetReadOnlyUrl: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            _logger.LogInformation($"GetReadOnlyUrl: Accessing {HttpLongRunning.BaseAddress}{relativeEndpoint}");
 
-            var response = await Http.GetAsync($"{relativeEndpoint}");
+            _logger.LogInformation("HttpClient.Timeout is {Timeout}", HttpLongRunning.Timeout);
+
+            // Allow e.g. 10 minutes for conversion
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10));
+
+            var response = await HttpLongRunning.GetAsync($"{relativeEndpoint}", cts.Token);
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning($"GetReadOnlyUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+            _logger.LogWarning($"GetReadOnlyUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
                 return null;
             }
             else
             {
                 try
                 {
-                    var content = await response.Content.ReadAsStringAsync();
+                    var content = await response.Content.ReadAsStringAsync(cts.Token);
                     return content;
                 }
                 catch (Exception ex)
@@ -192,8 +198,9 @@ namespace AnglingClubWebsite.Services
 
         public async Task UploadDocumentWithPresignedUrl(string uploadUrl, UploadFiles selectedFile)
         {
+            
             // IMPORTANT: Syncfusion provides a stream
-            await using var fileStream = selectedFile.File.OpenReadStream();
+            await using var fileStream = selectedFile.File.OpenReadStream(MaxUploadBytes);
 
             using var content = new StreamContent(fileStream);
 

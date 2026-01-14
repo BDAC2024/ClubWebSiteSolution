@@ -2,13 +2,18 @@ using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using AutoMapper.Execution;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Utilities.Collections;
+using Stripe;
 using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +22,8 @@ namespace AnglingClubWebServices.Data
     public class DocumentRepository : RepositoryBase, IDocumentRepository
     {
         private const string IdPrefix = "Document";
+        private const string SearchDataPath = "Search";
+
         private readonly ILogger<DocumentRepository> _logger;
         private readonly RepositoryOptions _options;
 
@@ -26,6 +33,22 @@ namespace AnglingClubWebServices.Data
         {
             _options = opts.Value;
             _logger = loggerFactory.CreateLogger<DocumentRepository>();
+        }
+
+        public async Task AddOrUpdateAndIndexDocument(DocumentMeta file)
+        {
+            var wordStream = await base.getFile(file.StoredFileName, _options.DocumentBucket);
+
+            var docText = WordTextExtractor.ExtractAndNormalizeText(wordStream, Syncfusion.DocIO.FormatType.Automatic);
+
+            var compressedText = TextCompression.GzipCompressUtf8(docText);
+
+            file.Searchable = true;
+
+            await AddOrUpdateDocument(file);
+            var searchDataFileName = getSearchDataFileName(file.StoredFileName);
+
+            await base.saveFile(searchDataFileName, compressedText, "application/text", _options.DocumentBucket);
         }
 
         public async Task AddOrUpdateDocument(DocumentMeta file)
@@ -49,7 +72,8 @@ namespace AnglingClubWebServices.Data
                     new ReplaceableAttribute { Name = "Created", Value = dateToString(file.Created), Replace = true },
                     new ReplaceableAttribute { Name = "Title", Value = file.Title, Replace = true },
                     new ReplaceableAttribute { Name = "Notes", Value = file.Notes, Replace = true },
-                    new ReplaceableAttribute { Name = "DocumentType", Value = ((int)file.DocumentType).ToString(), Replace = true }
+                    new ReplaceableAttribute { Name = "DocumentType", Value = ((int)file.DocumentType).ToString(), Replace = true },
+                    new ReplaceableAttribute { Name = "Searchable", Value = file.Searchable ? "1" : "0", Replace = true },
                 };
 
                 base.SetupTableAttribues(request, file.DbKey, attributes);
@@ -110,6 +134,10 @@ namespace AnglingClubWebServices.Data
                             doc.Notes = attribute.Value;
                             break;
 
+                        case "Searchable":
+                            doc.Searchable = attribute.Value == "0" ? false : true;
+                            break;
+                            
                         default:
                             break;
                     }
@@ -118,6 +146,16 @@ namespace AnglingClubWebServices.Data
                 files.Add(doc);
             }
             return files;
+        }
+
+        public async Task<string> GetRawText(DocumentMeta doc)
+        {
+
+            var compressedContent = await base.getFile(getSearchDataFileName(doc.StoredFileName), _options.DocumentBucket);
+
+            var uncompressedText = TextCompression.GzipDecompressUtf8(compressedContent.GetBuffer());
+
+            return uncompressedText;
         }
 
         public async Task<WordDocument> GetWordDocument(string fileName)
@@ -158,7 +196,28 @@ namespace AnglingClubWebServices.Data
 
             try
             {
-                await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
+                if (doc.Searchable)
+                {
+                    var searchDataFile = getSearchDataFileName(doc.StoredFileName);
+                    try
+                    {
+                        await base.deleteFile(searchDataFile, _options.DocumentBucket);
+                    }
+                    catch (Exception)
+                    {
+                        //Fail silently if unable to delete search data
+                        _logger.LogWarning($"Failed to delete search data {searchDataFile}");
+                    }
+                }
+                try
+                {
+                    await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
+                }
+                catch (Exception)
+                {
+                    //Fail silently if unable to delete doc file
+                    _logger.LogWarning($"Failed to delete document file {doc.StoredFileName}");
+                }
                 await client.DeleteAttributesAsync(request);
             }
             catch (AmazonSimpleDBException ex)
@@ -180,6 +239,9 @@ namespace AnglingClubWebServices.Data
             return base.getFilePresignedUrl(storedFileName, _options.DocumentBucket, minutesBeforeExpiry, DownloadType.attachment, returnedFileName);
         }
 
-
+        private string getSearchDataFileName(string storedFileName)
+        {
+            return $@"{Path.GetDirectoryName(storedFileName)}\{SearchDataPath}\{Path.GetFileName(storedFileName)}".Replace('\\', '/');
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace AnglingClubWebsite.Services
 {
     public interface IDocumentService
     {
-        Task<List<DocumentListItem>?> ReadDocuments(DocumentType docType);
+        Task<List<DocumentListItem>?> ReadDocuments(DocumentSearchRequest req);
         Task SaveDocument(DocumentMeta item);
 
         Task<FileUploadUrlResult?> GetDocumentUploadUrl(UploadFiles file, DocumentType docType);

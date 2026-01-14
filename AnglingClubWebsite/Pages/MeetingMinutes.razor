@@ -16,22 +16,24 @@
 
     <BusyIndicator IsReady="DataLoaded" />
 
-    @if (Documents.Any())
+    @if (Documents.Any() || !_model.SearchText.IsWhiteSpace())
     {
-        <div class="edit-button-panel">
-            <EditForm EditContext="_editContext">
-                <SfTextBox @ref="@SearchComponent"
-                           Created="@AddSearchIcon"
-                           Placeholder="Search text"
-                           ValueChange="@Search"
-                           @bind-Value="_model.SearchText"
-                           Width="200px">
-                </SfTextBox>
-                <ValidationMessage For="@(() => _model.SearchText)" />
-            </EditForm>
-            <br/>
-        </div>
         <div class="matches grid-shrinkwrap">
+
+            <EditForm EditContext="_editContext">
+                <div class="edit-button-panel">
+                    <SfTextBox @ref="@SearchComponent"
+                               Created="@AddSearchIcon"
+                               Placeholder="Search content & Summary"
+                               ValueChange="@Search"
+                               @bind-Value="_model.SearchText"
+                               Width="300px">
+                    </SfTextBox>
+                    <ValidationMessage For="@(() => _model.SearchText)" />
+                </div>
+                <br />
+                <br />
+            </EditForm>
 
             @if (CurrentUser.Secretary)
             {

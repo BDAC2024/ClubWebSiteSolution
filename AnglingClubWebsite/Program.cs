@@ -70,6 +70,10 @@ builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
                 .ConfigureHttpClient(c => c.BaseAddress = apiUri)
                 .AddHttpMessageHandler<AuthenticationHandler>();
 
+builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY_LONG_RUNNING)
+                .ConfigureHttpClient(c => c.BaseAddress = apiUri)
+                .AddHttpMessageHandler<AuthenticationHandler>();
+
 // The app
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");

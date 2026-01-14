@@ -14,10 +14,23 @@ namespace AnglingClubShared.Entities
         public string Title { get; set; } = "";
         public string Notes { get; set; } = "";
         public DocumentType DocumentType { get; set; }
+        public bool Searchable { get; set; } = false;
     }
 
     public class DocumentListItem : DocumentMeta
     {
         public string UploadedBy { get; set; } = "";
     }
+
+    public class DocumentSearchRequest
+    {
+        public DocumentType DocType { get; set; }
+        public string SearchText { get; set; } = "";
+    }
+
+    public class SearchableDocument : DocumentMeta
+    {
+        public string RawContent { get; set; } = "";
+    }
+
 }

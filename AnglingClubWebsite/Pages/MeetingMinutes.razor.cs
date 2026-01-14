@@ -173,7 +173,13 @@ namespace AnglingClubWebsite.Pages
             }
 
             _editContext!.NotifyValidationStateChanged();
-            //_messenger.Send<ShowMessage>(new ShowMessage(MessageState.Info, "You entered", args.Value));
+
+            DataLoaded = false;
+
+            await ReadMeetings();
+            await RefreshGridAsync();
+
+            DataLoaded = true;
         }
 
         private async Task RefreshGridAsync()
@@ -198,7 +204,13 @@ namespace AnglingClubWebsite.Pages
 
         private async Task ReadMeetings()
         {
-            Documents = await _documentService.ReadDocuments(DocumentType.MeetingMinutes) ?? new List<DocumentListItem>();
+            var req = new DocumentSearchRequest
+            {
+                DocType = DocumentType.MeetingMinutes,
+                SearchText = _model.SearchText ?? ""
+            };
+
+            Documents = await _documentService.ReadDocuments(req) ?? new List<DocumentListItem>();
         }
 
         #region Helper Classes

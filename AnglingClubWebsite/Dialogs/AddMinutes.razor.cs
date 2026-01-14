@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;
@@ -113,6 +114,7 @@ namespace AnglingClubWebsite.Dialogs
                 }
 
                 DocumentInfo.StoredFileName = uploadUrlDetails.UploadedFileName;
+                DocumentInfo.Searchable = true;
 
                 // Store the uploaded doc 
                 await _documentService.UploadDocumentWithPresignedUrl(uploadUrlDetails.UploadUrl, _meetingMinutesFile!);
@@ -128,6 +130,7 @@ namespace AnglingClubWebsite.Dialogs
             }
             catch (Exception)
             {
+                _messenger.Send(new ShowMessage(MessageState.Warn, "Save failed", "Unable to save the docunent"));
                 Uploading = false;
             }
 
