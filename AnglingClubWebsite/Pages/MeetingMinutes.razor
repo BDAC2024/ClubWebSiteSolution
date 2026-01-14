@@ -43,7 +43,7 @@
                     <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
                     <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
                     <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
-                    <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Notes" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
+                    <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Summary" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
                     
                     <GridColumn HeaderText="Action"
                         Visible="CurrentUser.Secretary"

@@ -107,7 +107,6 @@ namespace AnglingClubWebServices.Controllers
 
             var url = await _documentRepository.GetDocumentUploadUrl(fileId, docUploadUrlDto.ContentType);
 
-
             return Ok(new FileUploadUrlResult { UploadUrl = url, UploadedFileName = fileId });
         }
 

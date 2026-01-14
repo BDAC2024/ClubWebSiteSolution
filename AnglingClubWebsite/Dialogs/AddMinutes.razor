@@ -15,7 +15,7 @@
                                     @bind-Value="@DocumentInfo.Created"
                                     FloatLabelType='@FloatLabelType.Auto'
                                     Format="dd MMM yyyy"></SfDatePicker>
-                <SfTextBox Placeholder='Notes (optional)' @bind-Value="@DocumentInfo.Notes" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                <SfTextBox Placeholder='Summary (optional)' @bind-Value="@DocumentInfo.Notes" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
                 @if (!string.IsNullOrEmpty(ErrorMessage.Value))
                 {
                     <br />
