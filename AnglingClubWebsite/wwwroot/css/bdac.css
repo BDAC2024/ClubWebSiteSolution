@@ -10,7 +10,7 @@ body {
     font-size: 14px !important;
     font-family: Roboto, "Helvetica Neue", sans-serif !important;
     color: #000000DE;
-
+    line-height: 20px;
     /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
 }
 
