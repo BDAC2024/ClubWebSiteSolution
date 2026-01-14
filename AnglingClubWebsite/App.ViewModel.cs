@@ -1,11 +1,14 @@
 ﻿using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AnglingClubWebsite
 {
-    public class AppViewModel : ViewModelBase,
+    public partial class AppViewModel : ViewModelBase,
+        IRecipient<TurnOnDebugMessages>,
+        IRecipient<ShowConsoleMessage>,
         IRecipient<ShowMessage>
     {
         private readonly BrowserService _browserService;
@@ -29,9 +32,19 @@ namespace AnglingClubWebsite
             _currentUserService = currentUserService;
             _refDataService = refDataService;
 
+            messenger.Register<TurnOnDebugMessages>(this);
+            messenger.Register<ShowConsoleMessage>(this);
             messenger.Register<ShowMessage>(this);
+
             _dialogQueue = dialogQueue;
         }
+
+        #region Properties
+
+        [ObservableProperty]
+        private bool _showDebugMessages = true;
+
+        #endregion Properties
 
         public async Task SetupBrowserDetails()
         {
@@ -39,6 +52,8 @@ namespace AnglingClubWebsite
 
             _messenger.Send(new BrowserChange());
         }
+
+        #region Messaging
 
         public void Receive(ShowMessage message)
         {
@@ -52,5 +67,28 @@ namespace AnglingClubWebsite
 
         }
 
+        public void Receive(TurnOnDebugMessages message)
+        {
+            ShowDebugMessages = message.YesOrNo;
+        }
+
+        public void Receive(ShowConsoleMessage message)
+        {
+            ShowConsoleMessage(message.Content);
+        }
+
+        #endregion Messaging
+
+        #region Helpers
+
+        public void ShowConsoleMessage(string message)
+        {
+            if (ShowDebugMessages)
+            {
+                Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
+            }
+        }
+
+        #endregion Helpers
     }
 }
