@@ -9,7 +9,9 @@ namespace AnglingClubWebsite
     public partial class AppViewModel : ViewModelBase,
         IRecipient<TurnOnDebugMessages>,
         IRecipient<ShowConsoleMessage>,
-        IRecipient<ShowMessage>
+        IRecipient<ShowMessage>,
+        IRecipient<ShowToast>
+
     {
         private readonly BrowserService _browserService;
         private readonly IMessenger _messenger;
@@ -35,6 +37,7 @@ namespace AnglingClubWebsite
             messenger.Register<TurnOnDebugMessages>(this);
             messenger.Register<ShowConsoleMessage>(this);
             messenger.Register<ShowMessage>(this);
+            messenger.Register<ShowToast>(this);
 
             _dialogQueue = dialogQueue;
         }
@@ -63,6 +66,17 @@ namespace AnglingClubWebsite
                 Severity = message.State.GetDialogSeverity(),
                 Title = message.Title,
                 Message = message.Body,
+            });
+
+        }
+
+        public void Receive(ShowToast message)
+        {
+            _dialogQueue.Enqueue(new DialogRequest
+            {
+                Kind = DialogKind.Toast,
+                Severity = message.State.GetDialogSeverity(),
+                Message = message.Message,
             });
 
         }

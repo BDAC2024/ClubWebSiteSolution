@@ -10,7 +10,9 @@ namespace AnglingClubWebsite.SharedComponents
     public partial class DialogHost: RazorComponentBase
     {
         private DialogRequest? Current;
+        private DialogRequest? _lastToastShown;
         private bool Busy;
+        SfToast? ToastObj;
 
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
@@ -34,6 +36,54 @@ namespace AnglingClubWebsite.SharedComponents
             _dialogQueue.Changed += OnQueueChanged;
             TryShowNext();
         }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (Current is null || Current.Kind != DialogKind.Toast)
+                return;
+
+            // Guard against re-showing on subsequent renders
+            if (ReferenceEquals(Current, _lastToastShown))
+                return;
+
+            _lastToastShown = Current;
+
+            await ShowToastAndAdvanceAsync(Current);
+        }
+
+        private async Task ShowToastAndAdvanceAsync(DialogRequest toastRequest)
+        {
+            if (ToastObj is null)
+                return;
+
+            await ToastObj.ShowAsync(new ToastModel
+            {
+                Content = toastRequest.Message,
+                Icon = toastRequest.Severity switch
+                {
+                    DialogSeverity.Success => "e-circle-check",
+                    DialogSeverity.Warn => "e-warning",
+                    DialogSeverity.Error => "e-circle-close",
+                    _ => "e-circle-info"
+                },
+
+                CssClass = toastRequest.Severity switch
+                {
+                    DialogSeverity.Success => "e-toast-success",
+                    DialogSeverity.Warn => "e-toast-warning",
+                    DialogSeverity.Error => "e-toast-danger",
+                    _ => "e-toast-info"
+                }
+            });
+
+            // Give the renderer/JS a chance to apply the show operation before advancing.
+            await Task.Yield();
+
+            Current = null;
+            TryShowNext();
+            await InvokeAsync(StateHasChanged);
+        }
+
 
         private void OnQueueChanged()
         {

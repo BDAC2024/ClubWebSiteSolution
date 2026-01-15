@@ -149,7 +149,7 @@ namespace AnglingClubWebsite.Pages
                         await _documentService.DeleteDocument(doc.DbKey);
                         await RefreshGridAsync();
 
-                        _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Success, "Success", "Requested minutes have been deleted"));
+                        _messenger.Send<ShowToast>(new ShowToast(MessageState.Success, "Requested minutes have been deleted"));
                     }
                     catch (Exception)
                     {

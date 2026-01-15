@@ -504,3 +504,17 @@ fieldset {
     font-size: 0.8rem; /* Smaller text */
     margin-top: 0.25rem;
 }
+
+.app-snackbar {
+    min-width: 320px;
+    border-radius: 4px;
+    padding: 30px;
+    margin: 30px;
+}
+
+/* Ensure Syncfusion toast always sits above dialogs/overlays/iframes */
+.e-toast-container,
+.e-toast {
+    z-index: 2147483647 !important;
+    padding: 20px;
+}

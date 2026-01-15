@@ -5,7 +5,8 @@ namespace AnglingClubWebsite.Models
     public enum DialogKind
     {
         Confirm,
-        Alert
+        Alert,
+        Toast
     }
 
     public enum DialogSeverity

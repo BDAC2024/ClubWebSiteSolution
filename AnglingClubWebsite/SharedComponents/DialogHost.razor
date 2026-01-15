@@ -2,27 +2,38 @@
 
 @inherits RazorComponentBase;
 
+@*  Always in render tree, shown programmatically  *@
+<SfToast @ref="ToastObj"
+         Target="main-content"
+         Timeout="3000"
+         ShowCloseButton="false"
+         CssClass="app-snackbar">
+    <ToastPosition X="Right" Y="Top" />
+</SfToast>
+
 @if (Current is not null)
 {
-    <div>
-        <SfDialog Width="250px" IsModal="true" class="smt-dialog">
-            <DialogTemplates>
-                <Header><SfMessage Severity="@Current.Severity.GetMessageSeverity()">@Current.Title</SfMessage> </Header>
-                <Content>@Current.Message</Content>
-            </DialogTemplates>
-            <DialogButtons>
-                @if (Current!.Kind == DialogKind.Confirm)
-                {
-                    <DialogButton Content="@Current.CancelText" Disabled="Busy" IsPrimary="true" OnClick="CancelAsync" />
-                    <DialogButton Content="@Current.ConfirmText" Disabled="Busy" IsPrimary="false" OnClick="ConfirmAsync" />
-                }
-                else
-                {
-                    <DialogButton Content="Close" IsPrimary="true" OnClick="CancelAsync" />
-                }
-            </DialogButtons>
-        </SfDialog>
-    </div>
-
+    @if (Current.Kind != DialogKind.Toast)
+    {
+        <div>
+            <SfDialog Width="250px" IsModal="true" class="smt-dialog">
+                <DialogTemplates>
+                    <Header><SfMessage Severity="@Current.Severity.GetMessageSeverity()">@Current.Title</SfMessage> </Header>
+                    <Content>@Current.Message</Content>
+                </DialogTemplates>
+                <DialogButtons>
+                    @if (Current!.Kind == DialogKind.Confirm)
+                    {
+                        <DialogButton Content="@Current.CancelText" Disabled="Busy" IsPrimary="true" OnClick="CancelAsync" />
+                        <DialogButton Content="@Current.ConfirmText" Disabled="Busy" IsPrimary="false" OnClick="ConfirmAsync" />
+                    }
+                    else
+                    {
+                        <DialogButton Content="Close" IsPrimary="true" OnClick="CancelAsync" />
+                    }
+                </DialogButtons>
+            </SfDialog>
+        </div>
+    }
 }
 

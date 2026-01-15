@@ -28,6 +28,8 @@ namespace AnglingClubWebsite.Models
 
     public record class ShowMessage(MessageState State, string Title, string Body, string? CloseButtonTitle = "Cancel", MessageButton? confirmationButtonDetails = null);
 
+    public record class ShowToast(MessageState State, string Message);
+
     public record MessageButton()
     {
         public string Label { get; set; } = "NOT SET";
