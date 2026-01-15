@@ -173,13 +173,15 @@ namespace AnglingClubWebServices.Services
         /// <returns></returns>
         public async Task<List<DocumentListItem>> GetDocuments(DocumentSearchRequest req)
         {
+            var searchText = req.SearchText?.ToLowerInvariant();
+
             var items = new List<DocumentListItem>();
 
             var members = await _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason());
 
             var dbItems = (await _documentRepository.Get()).Where(x => x.DocumentType == req.DocType);
 
-            if (req.SearchText.IsNullOrEmpty())
+            if (searchText.IsNullOrEmpty())
             {
                 // Return all if no search specified
                 items = _mapper.Map<List<DocumentListItem>>(dbItems);
@@ -199,8 +201,8 @@ namespace AnglingClubWebServices.Services
 
                 // Now search
                 searchableItems = searchableItems.Where(x =>
-                    (x.Notes != null && x.Notes.ToLower().Contains(req.SearchText)) ||
-                    (x.RawContent != null && x.RawContent.ToLower().Contains(req.SearchText))
+                    (x.Notes != null && x.Notes.ToLower().Contains(searchText)) ||
+                    (x.RawContent != null && x.RawContent.ToLower().Contains(searchText))
                     ).ToList();
 
                 items = _mapper.Map<List<DocumentListItem>>(searchableItems);

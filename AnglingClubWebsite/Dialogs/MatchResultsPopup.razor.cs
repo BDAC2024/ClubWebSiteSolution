@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
+using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Pages;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
@@ -55,7 +56,7 @@ namespace AnglingClubWebsite.Dialogs
 
         protected override async Task OnParametersSetAsync()
         {
-            if (SelectedMatch == null)
+            if (SelectedMatch == null || SelectedMatch.Id.IsNullOrEmpty())
             {     
                 return; 
             }
@@ -91,6 +92,8 @@ namespace AnglingClubWebsite.Dialogs
 
         private async Task CloseAsync()
         {
+            SelectedMatch.Id = "";
+
             // Tell the parent to update its source of truth
             await VisibleChanged.InvokeAsync(false);
         }

@@ -176,7 +176,6 @@ namespace AnglingClubWebsite.Pages
 
             DataLoaded = false;
 
-            await ReadMeetings();
             await RefreshGridAsync();
 
             DataLoaded = true;
