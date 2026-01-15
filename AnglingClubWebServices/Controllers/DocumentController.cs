@@ -111,7 +111,7 @@ namespace AnglingClubWebServices.Controllers
             }
 
             var effectiveSeason = EnumUtils.SeasonForDate(doc.Created).Value;
-            var member = (await _memberRepository.GetMembers(effectiveSeason)).FirstOrDefault(x => x.MembershipNumber == doc.UploadedByMembershipNumber);
+            var member = (await _memberRepository.GetMembers(effectiveSeason)).FirstOrDefault(x => x.MembershipNumber == CurrentUser.MembershipNumber);
 
             var name = member != null ? member.Name : "";
             var fileName = doc.StoredFileName;
