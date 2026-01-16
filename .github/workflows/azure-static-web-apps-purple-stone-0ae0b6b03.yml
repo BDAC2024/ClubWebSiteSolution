@@ -64,8 +64,16 @@ jobs:
           cp --verbose --recursive "$BLAZOR_WWWROOT/." "$ANG_DIST/new"
 
           # Copy staticwebapp.config.json into the built root if you keep it in angular-app/src
-          cp angular-app/src/staticwebapp.config.json "$ANG_DIST/" || true
+          cp angular-app/src/staticwebapp.config.json "$ANG_DIST/"
+
           # If you later move it to angular-app/, change the line above accordingly.
+
+      - name: Verify SWA config is in deploy root
+        run: |
+          ls -la angular-app/dist/AnglingClubWebsiteAng
+          test -f angular-app/dist/AnglingClubWebsiteAng/staticwebapp.config.json
+          echo "staticwebapp.config.json present in deploy root"
+
 
       # Report deploy folder size. Useful if exceeding azure free tier limits.
       #- name: Report deploy folder size. Useful if exceeding azure free tier limits.

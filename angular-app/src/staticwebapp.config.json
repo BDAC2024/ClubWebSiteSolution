@@ -1,6 +1,9 @@
 {
   "routes": [
     {
+      "route": "/staticwebapp.config.json"
+    },
+    {
       "route": "/new/service-worker.js"
     },
     {
@@ -42,6 +45,7 @@
   "navigationFallback": {
     "rewrite": "index.html",
     "exclude": [
+      "/staticwebapp.config.json",
       "/assets/*",
       "/*.{css,scss,js,wasm,png,jpg,jpeg,gif,ico,svg,woff,woff2}",
       "/new/*"
