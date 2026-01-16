@@ -3,7 +3,7 @@
 #
 # Deployment to Staging and to Prod are done using 2 scripts (deploy-staging.ps1 and deploy-prod.ps1)
 # This relies on env vars defined in a separate script
-# It need only be executed once and then after each change by executed from a Terminal (Powerscript) using the command 
+# It need only be executed once and then after each change by executed from a Terminal (Powershell) using the command 
 # & "<full path to script file>"
 #
 # Also requires having the AWS tooling installed. This can be done with
