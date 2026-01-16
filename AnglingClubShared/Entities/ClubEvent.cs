@@ -7,7 +7,7 @@ namespace AnglingClubShared.Entities
 
     public class ClubEventBase : TableBase
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = "";
         public Season Season { get; set; }
         public DateTime Date { get; set; }
         public EventType EventType { get; set; }
@@ -37,15 +37,15 @@ namespace AnglingClubShared.Entities
         {
             get
             {
-                //if (EventType != EventType.Match)
-                //{
+                if (EventType != EventType.Match || (EventType == EventType.Match && MatchType == AnglingClubShared.Enums.MatchType.Evening))
+                {
                     var formatted = Date.ToString("HH:mm");
                     return formatted == "00:00" ? "" : formatted;
-                //}
-                //else
-                //{
-                //    return "";
-                //}
+                }
+                else
+                {
+                    return "";
+                }
             }
         }
 

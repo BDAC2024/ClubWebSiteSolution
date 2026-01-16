@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared;
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

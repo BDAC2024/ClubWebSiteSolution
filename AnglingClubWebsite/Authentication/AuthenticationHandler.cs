@@ -6,6 +6,7 @@ using AnglingClubShared;
 using CommunityToolkit.Mvvm.Messaging;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Exceptions;
+using AnglingClubShared.Models;
 
 namespace AnglingClubWebsite.Authentication
 {
@@ -15,7 +16,6 @@ namespace AnglingClubWebsite.Authentication
         private readonly AuthenticationStateProvider _stateProvider;
         private readonly IConfiguration _configuration;
         private readonly IMessenger _messenger;
-        private readonly IAppDialogService _appDialogService;
 
         private bool _refreshing = false;
 
@@ -23,14 +23,12 @@ namespace AnglingClubWebsite.Authentication
             IAuthenticationService authenticationService,
             IConfiguration configuration,
             AuthenticationStateProvider stateProvider,
-            IMessenger messenger,
-            IAppDialogService appDialogService)
+            IMessenger messenger)
         {
             _authenticationService = authenticationService;
             _configuration = configuration;
             _stateProvider = stateProvider;
             _messenger = messenger;
-            _appDialogService = appDialogService;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -49,11 +47,13 @@ namespace AnglingClubWebsite.Authentication
 
             var isToServer = request.RequestUri?.AbsoluteUri.StartsWith(_configuration[Constants.API_ROOT_KEY] ?? "") ?? false;
 
+            var isToDevTunnel = request.RequestUri?.AbsoluteUri.Contains(_configuration["uks1.devtunnels.ms"] ?? "") ?? false;
+
             //Console.WriteLine($"... result: {isToServer}");
 
             //Console.WriteLine($"Is jwt NOT null : {!string.IsNullOrEmpty(jwt)}");
 
-            if (isToServer && !string.IsNullOrEmpty(jwt))
+            if ((isToServer || isToDevTunnel) && !string.IsNullOrEmpty(jwt))
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
             //Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");

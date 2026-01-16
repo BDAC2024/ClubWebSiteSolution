@@ -6,13 +6,33 @@
         <DialogTemplates>
             <Header>Upload Minutes</Header>
             <Content>
-                <div class="match-results">
-                    Here is some content to test the width
-                </div>
+                <SfUploader AutoUpload="true"
+                            AllowedExtensions=".doc,.docx"
+                            AllowMultiple="false"
+                            MaxFileSize="20971520"
+                            EnableHtmlSanitizer="true">
+                    <UploaderEvents ValueChange="UploadHandler" OnRemove="RemoveHandler"></UploaderEvents>
+                </SfUploader>
+                <SfTextBox Placeholder='Title' @bind-Value="@DocumentInfo.Title" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                <SfDatePicker TValue="DateTime"
+                              Placeholder="Meeting Date"
+                              @bind-Value="@DocumentInfo.Created"
+                              FloatLabelType='@FloatLabelType.Auto'
+                              Format="dd MMM yyyy"></SfDatePicker>
+                <SfTextBox Placeholder='Summary (optional)' @bind-Value="@DocumentInfo.Notes" FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                @if (!string.IsNullOrEmpty(ErrorMessage.Value))
+                {
+                    <br />
+                    <br />
+                    <SfMessage Severity="MessageSeverity.Error">@ErrorMessage</SfMessage>
+                }
+                <BusyIndicator IsReady="!Uploading"></BusyIndicator>
+
             </Content>
         </DialogTemplates>
         <DialogButtons>
-            <DialogButton Content="Close" IsPrimary="true" OnClick="CloseAsync" />
+            <DialogButton Content="Cancel" IsPrimary="false" Disabled="Uploading" OnClick="CloseAsync" />
+            <DialogButton Content="Save" IsPrimary="true" Disabled="Uploading" OnClick="SaveAsync" />
         </DialogButtons>
     </SfDialog>
 

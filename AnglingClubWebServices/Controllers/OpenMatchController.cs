@@ -1,16 +1,11 @@
-using Amazon.SimpleDB.Model;
 using AnglingClubShared.Enums;
-using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
-using AutoMapper.Execution;
-using Mailjet.Client.Resources.SMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Stripe.Tax;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,7 +75,7 @@ namespace AnglingClubWebServices.Controllers
         }
 
         [HttpPost("Matches")]
-        public void Post([FromBody]List<OpenMatch> matches)
+        public void Post([FromBody] List<OpenMatch> matches)
         {
             StartTimer();
 
@@ -114,6 +109,7 @@ namespace AnglingClubWebServices.Controllers
                 }
                 catch (System.Exception ex)
                 {
+                    _logger.LogError(ex, "Failed to add open match registration");
                     return BadRequest("Registration failed");
                 }
 
@@ -140,8 +136,8 @@ namespace AnglingClubWebServices.Controllers
                 var upTo12IsAre = upTo12 == 1 ? "is" : "are";
                 var thirteenTo18IsAre = thirteenTo18 == 1 ? "is" : "are";
 
-                _emailService.SendEmail(userAdmins, 
-                    $"New Junior Open Match registration for {openMatch.Date.ToString("dd MMM yyyy")} - {pegsRemaining(openMatch)} pegs left", 
+                _emailService.SendEmail(userAdmins,
+                    $"New Junior Open Match registration for {openMatch.Date.ToString("dd MMM yyyy")} - {pegsRemaining(openMatch)} pegs left",
                     $"<b>{registration.Name}</b> has registered to fish the match on <b>{openMatch.Date.ToString("dd MMM yyyy")}</b><br/><br/>" +
                     $"There are <b>{pegsRemaining(openMatch)}</b> pegs remaining. Currently <b>{currentRegistrations.Count()}</b> registered; <b>{upTo12}</b> {upTo12IsAre} up to 12 and <b>{thirteenTo18}</b> {thirteenTo18IsAre} 13 to 18.<br/></br>" +
                     "Boroughbridge & District Angling Club"

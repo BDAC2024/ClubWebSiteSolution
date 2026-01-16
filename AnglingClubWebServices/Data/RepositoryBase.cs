@@ -2,6 +2,7 @@
 using Amazon.S3.Model;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Enums;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -196,7 +198,10 @@ namespace AnglingClubWebServices.Data
                 SelectResponse response = await client.SelectAsync(request);
                 nextToken = response.NextToken;
 
-                items.AddRange(response.Items);
+                if (response.Items != null && response.Items.Count > 0)
+                {
+                    items.AddRange(response.Items);
+                }
 
             } while (nextToken != null);
 
@@ -213,6 +218,7 @@ namespace AnglingClubWebServices.Data
             {
                 batchNumber++;
 
+                _logger.LogInformation($"Restoring batch: {batchNumber}, done {(batchNumber - 1) * UPDATE_BATCH_SIZE} items so far");
                 BatchPutAttributesRequest requestBatch = new BatchPutAttributesRequest();
                 requestBatch.DomainName = request.DomainName;
 
@@ -222,6 +228,12 @@ namespace AnglingClubWebServices.Data
                 await storeBatchOfItems(client, requestBatch);
 
                 request.Items.RemoveRange(0, request.Items.Count() < UPDATE_BATCH_SIZE ? request.Items.Count() : UPDATE_BATCH_SIZE);
+            }
+
+            if (_options.Stage.ToLower() != "prod")
+            {
+                _logger.LogWarning($"Backup disabled as running in {_options.Stage}");
+                return;
             }
 
             // If backup is older than today - generate a new backup file
@@ -492,13 +504,31 @@ namespace AnglingClubWebServices.Data
 
         protected async Task deleteFile(string fileName, string bucketName)
         {
+            bool exists;
+
             using (var s3Client = GetS3Client())
             {
-                await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
+                try
                 {
-                    BucketName = bucketName,
-                    Key = fileName
-                });
+                    await s3Client.GetObjectMetadataAsync(bucketName, fileName);
+                    exists = true;
+                }
+                catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    exists = false;
+                    throw new Exception($"Unable to delete {fileName}, it does not exist");
+                }
+
+                if (exists)
+                {
+                    {
+                        await s3Client.DeleteObjectAsync(new Amazon.S3.Model.DeleteObjectRequest
+                        {
+                            BucketName = bucketName,
+                            Key = fileName
+                        });
+                    }
+                }
             }
         }
 
@@ -568,26 +598,32 @@ namespace AnglingClubWebServices.Data
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="bucketName"></param>
-        /// <param name="contentType"></param>
         /// <param name="minutesBeforeExpiry"></param>
+        /// <param name="downloadAs"></param>
+        /// <param name="returnedFileName">Optional: name of file sent back to browser</param>
+        /// <param name="contentType">Optional: mime type of file</param>
         /// <returns></returns>
-        protected string getFilePresignedUrl(string fileName, string bucketName, string contentType, int minutesBeforeExpiry)
+        protected string getFilePresignedUrl(string fileName, string bucketName, int minutesBeforeExpiry, DownloadType downloadAs, string returnedFileName = "", string contentType = "")
         {
             string presignedUrl = null;
 
             using (var s3Client = GetS3Client())
             {
+                var headers = new ResponseHeaderOverrides();
+
+                if (contentType != "")
+                {
+                    headers.ContentType = contentType;
+                }
+                headers.ContentDisposition = $"{downloadAs.ToString()}; filename={(returnedFileName != "" ? returnedFileName : fileName)}";
+
                 presignedUrl = s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = bucketName,
                     Key = fileName,
                     Expires = DateTime.UtcNow.AddMinutes(minutesBeforeExpiry),
                     Verb = HttpVerb.GET,
-                    ResponseHeaderOverrides = new ResponseHeaderOverrides
-                    {
-                        ContentType = contentType,
-                        ContentDisposition = $"attachment; filename={fileName}"
-                    }
+                    ResponseHeaderOverrides = headers
                 });
 
             }

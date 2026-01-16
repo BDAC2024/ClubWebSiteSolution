@@ -3,6 +3,11 @@
   "Transform": "AWS::Serverless-2016-10-31",
   "Description": "An AWS Serverless Application that uses the ASP.NET Core framework running in Amazon Lambda.",
   "Parameters": {
+		"Stage": {
+		"Type": "String",
+		"AllowedValues": [ "staging", "prod" ],
+		"Description": "Deployment environment"
+		},
   		"AWSAccessId" : {
 			"Type" : "String",
 			"Description" : "AWS Access ID",
@@ -189,6 +194,7 @@
         "Runtime": "dotnet8",
         "CodeUri": "",
         "MemorySize": 1024,
+		"AutoPublishAlias": "prod",
         "Timeout": 60,
         "Role": null,
         "Policies": [
@@ -196,6 +202,7 @@
         ],
         "Environment" : {
 			"Variables" : {
+				"Stage": { "Ref": "Stage" },
 				"AWSAccessId" : { "Ref" : "AWSAccessId" } ,
 				"AWSSecret" : { "Ref" : "AWSSecret" } ,
 				"SimpleDbDomain" : { "Ref" : "SimpleDbDomain" } ,

@@ -89,7 +89,9 @@ namespace AnglingClubWebServices
             var swaDefaultHost = Configuration["SwaDefaultHost"];   // without region/suffix
             var swaRegion = Configuration["SwaRegion"];        // e.g. "westeurope", "uksouth", etc.
 
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             Regex? swaPreviewRegex = null;
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             if (!string.IsNullOrWhiteSpace(swaDefaultHost) && !string.IsNullOrWhiteSpace(swaRegion))
             {
                 // Matches:

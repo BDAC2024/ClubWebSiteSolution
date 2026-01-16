@@ -1,13 +1,20 @@
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using AutoMapper.Execution;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Utilities.Collections;
+using Stripe;
 using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
@@ -15,6 +22,8 @@ namespace AnglingClubWebServices.Data
     public class DocumentRepository : RepositoryBase, IDocumentRepository
     {
         private const string IdPrefix = "Document";
+        private const string SearchDataPath = "Search";
+
         private readonly ILogger<DocumentRepository> _logger;
         private readonly RepositoryOptions _options;
 
@@ -26,13 +35,30 @@ namespace AnglingClubWebServices.Data
             _logger = loggerFactory.CreateLogger<DocumentRepository>();
         }
 
-        public async Task AddOrUpdateTmpFile(DocumentMeta file)
+        public async Task AddOrUpdateAndIndexDocument(DocumentMeta file)
+        {
+            var wordStream = await base.getFile(file.StoredFileName, _options.DocumentBucket);
+
+            var docText = WordTextExtractor.ExtractAndNormalizeText(wordStream, Syncfusion.DocIO.FormatType.Automatic);
+
+            var compressedText = TextCompression.GzipCompressUtf8(docText);
+
+            file.Searchable = true;
+
+            await AddOrUpdateDocument(file);
+            var searchDataFileName = getSearchDataFileName(file.StoredFileName);
+
+            await base.saveFile(searchDataFileName, compressedText, "application/text", _options.DocumentBucket);
+        }
+
+        public async Task AddOrUpdateDocument(DocumentMeta file)
         {
             using (var client = GetClient())
             {
-
-                if (string.IsNullOrEmpty(file.Id))
-                    throw new ArgumentException("Document Id cannot be null or empty.");
+                if (file.IsNewItem)
+                {
+                    file.DbKey = file.GenerateDbKey(IdPrefix);
+                }
 
                 // Store the Id as a main attribute
                 BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -40,18 +66,22 @@ namespace AnglingClubWebServices.Data
 
                 var attributes = new List<ReplaceableAttribute>
                 {
-                    new ReplaceableAttribute { Name = "Id", Value = file.Id, Replace = true },
-                    new ReplaceableAttribute { Name = "Created", Value = dateToString(DateTime.Now), Replace = true },
-                    new ReplaceableAttribute { Name = "Name", Value = file.Name, Replace = true },
-                    new ReplaceableAttribute { Name = "DocumentType", Value = file.DocumentType.ToString(), Replace = true }
+                    new ReplaceableAttribute { Name = "UploadedBy", Value = file.UploadedByMembershipNumber.ToString(), Replace = true },
+                    new ReplaceableAttribute { Name = "StoredFileName", Value = file.StoredFileName, Replace = true },
+                    new ReplaceableAttribute { Name = "OriginalFileName", Value = file.OriginalFileName, Replace = true },
+                    new ReplaceableAttribute { Name = "Created", Value = dateToString(file.Created), Replace = true },
+                    new ReplaceableAttribute { Name = "Title", Value = file.Title, Replace = true },
+                    new ReplaceableAttribute { Name = "Notes", Value = file.Notes, Replace = true },
+                    new ReplaceableAttribute { Name = "DocumentType", Value = ((int)file.DocumentType).ToString(), Replace = true },
+                    new ReplaceableAttribute { Name = "Searchable", Value = file.Searchable ? "1" : "0", Replace = true },
                 };
 
-                base.SetupTableAttribues(request, $"{IdPrefix}:{file.Id}", attributes);
+                base.SetupTableAttribues(request, file.DbKey, attributes);
 
                 try
                 {
                     await WriteInBatches(request, client);
-                    _logger.LogDebug($"Document meta added/updated: {file.Id}");
+                    _logger.LogDebug($"Document meta added: {file.DbKey} - {file.Title}");
                 }
                 catch (AmazonSimpleDBException ex)
                 {
@@ -64,7 +94,7 @@ namespace AnglingClubWebServices.Data
         public async Task<List<DocumentMeta>> Get()
         {
             var files = new List<DocumentMeta>();
-            var items = await GetData(IdPrefix, "AND Id > ''", "ORDER BY Id");
+            var items = await GetData(IdPrefix);
 
             foreach (var item in items)
             {
@@ -76,8 +106,16 @@ namespace AnglingClubWebServices.Data
                 {
                     switch (attribute.Name)
                     {
-                        case "Id":
-                            doc.Id = attribute.Value;
+                        case "UploadedBy":
+                            doc.UploadedByMembershipNumber = Convert.ToInt32(attribute.Value);
+                            break;
+
+                        case "StoredFileName":
+                            doc.StoredFileName = attribute.Value;
+                            break;
+
+                        case "OriginalFileName":
+                            doc.OriginalFileName = attribute.Value;
                             break;
 
                         case "Created":
@@ -88,10 +126,18 @@ namespace AnglingClubWebServices.Data
                             doc.DocumentType = (DocumentType)(Convert.ToInt32(attribute.Value));
                             break;
 
-                        case "Name":
-                            doc.Name = attribute.Value;
+                        case "Title":
+                            doc.Title = attribute.Value;
                             break;
 
+                        case "Notes":
+                            doc.Notes = attribute.Value;
+                            break;
+
+                        case "Searchable":
+                            doc.Searchable = attribute.Value == "0" ? false : true;
+                            break;
+                            
                         default:
                             break;
                     }
@@ -99,8 +145,17 @@ namespace AnglingClubWebServices.Data
 
                 files.Add(doc);
             }
-
             return files;
+        }
+
+        public async Task<string> GetRawText(DocumentMeta doc)
+        {
+
+            var compressedContent = await base.getFile(getSearchDataFileName(doc.StoredFileName), _options.DocumentBucket);
+
+            var uncompressedText = TextCompression.GzipDecompressUtf8(compressedContent.GetBuffer());
+
+            return uncompressedText;
         }
 
         public async Task<WordDocument> GetWordDocument(string fileName)
@@ -114,5 +169,79 @@ namespace AnglingClubWebServices.Data
             return wordDoc;
         }
 
+        /// <summary>
+        /// Initial attempts to upload the file as an arg to a web api call failed on AWS with a 413 (content too large) error.
+        /// The approach here is to get a pre-signed URL from the web api, then use that URL to upload the file directly to S3.
+        /// The solution was obtained from ChatGPT
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
+        public async Task<string> GetDocumentUploadUrl(string filename, string contentType)
+        {
+            return await base.getPreSignedUploadUrl(filename, contentType, _options.DocumentBucket);
+        }
+
+        public async Task DeleteDocument(string id)
+        {
+            var client = GetClient();
+
+            var doc = (await Get()).Single(x => x.DbKey == id);
+
+            DeleteAttributesRequest request = new DeleteAttributesRequest
+            {
+                DomainName = Domain,
+                ItemName = $"{id}"
+            };
+
+            try
+            {
+                if (doc.Searchable)
+                {
+                    var searchDataFile = getSearchDataFileName(doc.StoredFileName);
+                    try
+                    {
+                        await base.deleteFile(searchDataFile, _options.DocumentBucket);
+                    }
+                    catch (Exception)
+                    {
+                        //Fail silently if unable to delete search data
+                        _logger.LogWarning($"Failed to delete search data {searchDataFile}");
+                    }
+                }
+                try
+                {
+                    await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
+                }
+                catch (Exception)
+                {
+                    //Fail silently if unable to delete doc file
+                    _logger.LogWarning($"Failed to delete document file {doc.StoredFileName}");
+                }
+                await client.DeleteAttributesAsync(request);
+            }
+            catch (AmazonSimpleDBException ex)
+            {
+                _logger.LogError(ex, $"DeleteDocument Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"DeleteDocument failed");
+                throw;
+            }
+        }
+
+        public async Task<string> GetFilePresignedUrl(string storedFileName, string returnedFileName, int minutesBeforeExpiry)
+        {
+            await Task.Delay(0);
+
+            return base.getFilePresignedUrl(storedFileName, _options.DocumentBucket, minutesBeforeExpiry, DownloadType.attachment, returnedFileName);
+        }
+
+        private string getSearchDataFileName(string storedFileName)
+        {
+            return $@"{Path.GetDirectoryName(storedFileName)}\{SearchDataPath}\{Path.GetFileName(storedFileName)}".Replace('\\', '/');
+        }
     }
 }

@@ -1,9 +1,27 @@
-@inherits LayoutComponentBase
+@using AnglingClubShared.Enums
+@inherits MvvmLayoutComponentBase<EmbeddedLayoutViewModel>
 
 <div class="embedded-blazor-content">
-    @Body
+
+    @if (debuggingDeviceType)
+    {
+        <span class="floating-panel">
+            Size: <b>@ViewModel.BrowserSize</b> Portrait: <b>@ViewModel.BrowserPortrait</b> Dims: <b>@ViewModel.BrowserWidth</b> x <b>@ViewModel.BrowserHeight</b>
+        </span>
+    }
+
+    <div id="blazor-content"
+         class="main-content">
+        <div id="main-content">
+            @Body
+        </div>
+    </div>
+
 </div>
+
 
 @code {
     // TODO Ang to Blazor Migration - this file only needed whilst migrating from Angular to Blazor.
+    public bool debuggingDeviceType = false;
+
 }

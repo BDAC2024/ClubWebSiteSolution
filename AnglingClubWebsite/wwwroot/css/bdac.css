@@ -9,7 +9,18 @@ body {
     background-color: whitesmoke !important; /* Teal 400 */
     font-size: 14px !important;
     font-family: Roboto, "Helvetica Neue", sans-serif !important;
+    color: #000000DE;
+    line-height: 20px;
     /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+}
+
+/* Blazor WASM default host element is #app (unless you changed it) */
+/*#app {
+    height: 100%;
+}*/
+
+.e-control, .e-css, .e-application {
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
 
 /*-------------------------
@@ -75,6 +86,16 @@ body {
         justify-content: center;
         align-items: center;
     }
+
+/*-------------------------
+    App main context, where pages are displayed
+--------------------------*/
+.main-content {
+    font-size: 14px !important;
+    padding: 20px 20px;
+    z-index: 0;
+    text-align: left;
+}
 
 /*-------------------------
     Headings
@@ -201,4 +222,349 @@ h3 {
 
 }
 
+/* Disable focused cell ring across all Syncfusion SfGrid (Bootstrap 5 theme) */
+.e-grid .e-rowcell.e-focused,
+.e-grid .e-rowcell:focus,
+.e-grid .e-rowcell:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
+/* Also remove focus ring from grid headers (optional but consistent) */
+.e-grid .e-headercell:focus,
+.e-grid .e-headercell.e-focused {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* The element you target the spinner to */
+#busyArea {
+    position: relative;
+    /*top: 1px;*/
+    padding-bottom: 40px;
+    padding-top: 20px;
+}
+
+    /* Syncfusion spinner overlay container */
+    #busyArea .e-spinner-pane,
+    #busyArea .e-spinner-pane * {
+        box-sizing: border-box;
+    }
+
+        /* This is typically the centered node */
+        #busyArea .e-spinner-pane .e-spinner-inner {
+            left: 20px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important; /* remove X translate */
+            right: auto !important;
+        }
+
+
+
+
+td.label {
+    font-weight: 600;
+    padding-right: 16px;
+    vertical-align: top;
+}
+
+/* shrink-wrap the grid to its content width */
+.grid-shrinkwrap {
+    display: inline-block; /* key: shrink-to-fit */
+    max-width: 100%;
+}
+
+    /* ensure grid isn't forced back to 100% */
+    .grid-shrinkwrap .e-grid {
+        width: auto !important;
+    }
+
+.e-grid .e-gridcontent .e-rowcell.date-past {
+    font-weight: 300;
+}
+
+.e-grid .e-gridcontent .e-rowcell.date-future {
+    font-weight: 500;
+}
+
+.e-grid .e-rowcell.e-focused {
+    box-shadow: none !important;
+}
+
+/* Active tab underline */
+.e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
+    border-bottom: 3px solid #1976d2 !important;
+}
+
+    /* Active tab text */
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active .e-tab-text,
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active a,
+    .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active span {
+        color: #1976d2 !important;
+        font-weight: 700 !important;
+    }
+
+
+/* Tab item wrap */
+.e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+    color: #62b4fd !important;
+    padding: 0 6px !important;
+}
+
+/* Bottom border line under the header */
+.e-tab .e-tab-header::before {
+    border-color: #CCFBF1 !important;
+}
+
+/* Active item border */
+.e-tab .e-tab-header .e-toolbar-item.e-active {
+    border: 1px solid #CCFBF1 !important;
+}
+
+/* Tab text (non-active) */
+.e-tab .e-tab-header .e-toolbar-item .e-tab-text {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: darkslategray !important;
+}
+
+/* Tab text (active) */
+.e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: black !important;
+}
+
+
+.match-results {
+    font-size: smaller;
+}
+
+
+.grid-compact .e-headertext {
+    font-size: 12px;
+    padding: 0;
+}
+
+.e-grid.e-device .e-rowcell {
+    padding-top: 11px;
+    padding-bottom: 13px;
+}
+
+.e-grid .e-rowcell {
+    padding-top: 11px;
+    padding-bottom: 13px;
+}
+
+.grid-compact .e-grid .e-rowcell,
+.grid-compact .e-grid .e-headercell {
+    font-size: 12px;
+    padding: 4px 8px !important;
+}
+
+.floating-panel {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    background: rgba(5, 225, 25, 0.25);
+    /*box-shadow: 0 10px 30px rgba(0,0,0,0.25);*/
+    border-radius: 2px;
+    z-index: 500;
+}
+
+/* Constrain Syncfusion dialog height */
+.e-dialog {
+    max-height: 85vh; 
+}
+
+    /* Ensure dialog body scrolls, not the whole dialog */
+    .e-dialog .e-dlg-content {
+        max-height: calc(85vh - 110px); /* header + footer allowance */
+        overflow-y: auto;
+    }
+
+/* Dialog content shrink-to-fit */
+.match-dialog.e-dialog {
+    width: fit-content;
+    max-width: 90vw;
+    background-color: whitesmoke;
+}
+
+    .match-dialog.e-dialog .e-dlg-content {
+        display: inline-block;
+        width: fit-content;
+        max-width: 90vw;
+        min-width: 0;
+        background-color: whitesmoke;
+    }
+
+/* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
+.match-dialog .e-grid .e-content,
+.match-dialog .e-grid .e-gridcontent {
+    overflow-x: auto;
+}
+
+.match-dialog .e-grid .e-table {
+    table-layout: auto;
+    width: max-content; /* content-sized */
+    max-width: 90vw; /* clamp with dialog */
+}
+
+/* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
+.matches .e-grid .e-content,
+.matches .e-grid .e-gridcontent {
+    overflow-x: auto;
+}
+
+.matches .e-grid .e-table {
+    table-layout: auto;
+    width: max-content; /* content-sized */
+    max-width: 90vw; /* clamp with dialog */
+}
+
+.matches .e-grid td,
+.matches .e-grid th {
+    white-space: nowrap;
+}
+
+.matches .e-grid td.e-wrap,
+.matches .e-grid th.e-wrap {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/*#blazor-content {
+    display: block;
+    position: relative;
+    height: 100vh;
+    width: 90vw;
+    overflow: hidden;
+}
+*/
+    /* 1) Let the dialog grow up to the viewport -  small margin */
+/*    #blazor-content .match-dialog.e-dialog {
+        max-height: calc(100vh + 124px); 
+    }
+*/
+        /* 2) Ensure the dialog content becomes the scrollable region - header + padding + (optional) footer */
+/*        #blazor-content .match-dialog.e-dialog .e-dlg-content {
+            max-height: calc(100vh + 120px); 
+            overflow: auto;
+        }
+*/
+
+
+.bdac-table {
+    /*box-shadow: 0 5px 5px -3px #0003,0 8px 10px 1px #00000024,0 3px 14px 2px #0000001f;*/
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+    .bdac-table th,
+    .bdac-table td {
+        border-bottom: 1px solid #ddd;
+        padding: 11px 12px 13px 12px;
+    }
+
+fieldset {
+    border: 0;
+}
+
+.e-upload .e-file-select-wrap .e-btn {
+    background-color: #0d6efd;
+    color: white;
+}
+
+
+/* Base flat icon button inside SfGrid */
+.e-grid .grid-action-btn {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 4px 6px;
+    min-width: unset;
+    color: #0d6efd;
+}
+
+    /* Hover / focus subtle flat effect */
+    .e-grid .grid-action-btn:hover,
+    .e-grid .grid-action-btn:focus {
+        background-color: rgba(13, 110, 253, 0.08);
+    }
+
+    /* Ensure Font Awesome icon inherits colour */
+    .e-grid .grid-action-btn .e-btn-icon,
+    .e-grid .grid-action-btn i {
+        color: inherit;
+    }
+
+/* Danger variant */
+.e-grid .grid-action-btn--danger {
+    color: #dc3545;
+}
+
+    .e-grid .grid-action-btn--danger:hover,
+    .e-grid .grid-action-btn--danger:focus {
+        background-color: rgba(220, 53, 69, 0.08);
+    }
+
+/* Reduce visual weight when row is not hovered */
+.e-grid tr:not(:hover) .grid-action-btn {
+    opacity: 0.85;
+}
+
+.page-header {
+    display: block !important;
+    height: 48px;
+    /*background-color: yellow;*/
+}
+
+.validation-message {
+    color: #dc3545; /* Bootstrap danger red */
+    font-size: 0.8rem; /* Smaller text */
+    margin-top: 0.25rem;
+}
+
+/* ===== Snackbar base ===== */
+.app-snackbar {
+    min-width: 320px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ===== Fix icon/text alignment (based on your actual DOM) ===== */
+.e-toast.app-snackbar {
+    display: flex;
+    align-items: center; /* vertical alignment */
+    gap: 1px; /* spacing between icon and message */
+}
+
+    /* Prevent icon div from stretching/shifting */
+    .e-toast.app-snackbar .e-toast-icon {
+        flex: 0 0 auto;
+        line-height: 1;
+        margin: 10px !important; /* neutralise any theme margins */
+    }
+
+    /* Ensure message block aligns nicely */
+    .e-toast.app-snackbar .e-toast-message {
+        flex: 1 1 auto;
+        display: flex;
+        /*align-items: center;*/
+    }
+
+    /* Optional: keep content line-height tidy */
+    .e-toast.app-snackbar .e-toast-content {
+        line-height: 1.2;
+    }
+
+
+/* Ensure Syncfusion toast always sits above dialogs/overlays/iframes */
+.e-toast-container,
+.e-toast {
+    z-index: 2147483647 !important;
+    padding-bottom: 2px;
+}
 

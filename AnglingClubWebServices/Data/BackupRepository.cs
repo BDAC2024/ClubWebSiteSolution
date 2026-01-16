@@ -15,12 +15,14 @@ namespace AnglingClubWebServices.Data
     public class BackupRepository : RepositoryBase, IBackupRepository
     {
         private readonly ILogger<BackupRepository> _logger;
-
+        private readonly IOptions<DeploymentOptions> _deployment_options;
         public BackupRepository(
             IOptions<RepositoryOptions> opts,
-            ILoggerFactory loggerFactory) : base(opts.Value, loggerFactory)
+            ILoggerFactory loggerFactory,
+            IOptions<DeploymentOptions> deployment_options) : base(opts.Value, loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<BackupRepository>();
+            _deployment_options = deployment_options;
         }
 
         public async Task Restore(List<BackupLine> backupLines, string restoreToDomain)
@@ -129,7 +131,7 @@ namespace AnglingClubWebServices.Data
         private async Task<bool> DbNotEmpty(string domainToCheck, AmazonSimpleDBClient client)
         {
             SelectRequest request = new SelectRequest();
-            request.SelectExpression = $"SELECT count(*) FROM {domainToCheck}";
+            request.SelectExpression = $"SELECT count(*) FROM `{domainToCheck}`";
 
             SelectResponse response = await client.SelectAsync(request);
 

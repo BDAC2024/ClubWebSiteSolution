@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using AnglingClubShared;
 using AnglingClubShared.Enums;
 using CommunityToolkit.Mvvm.Input;
+using AnglingClubWebsite.Models;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -16,7 +17,7 @@ namespace AnglingClubWebsite.Pages
         private readonly IMessenger _messenger;
         private readonly INewsService _newsService;
         private readonly ILogger<NewsViewModel> _logger;
-        private readonly IAppDialogService _appDialogService;
+        private readonly IDialogQueue _dialogQueue;
 
         public NewsViewModel(
             IAuthenticationService authenticationService,
@@ -24,13 +25,13 @@ namespace AnglingClubWebsite.Pages
             ICurrentUserService currentUserService,
             INewsService newsService,
             ILogger<NewsViewModel> logger,
-            IAppDialogService appDialogService) : base(messenger, currentUserService, authenticationService)
+            IDialogQueue dialogQueue) : base(messenger, currentUserService, authenticationService)
         {
             _authenticationService = authenticationService;
             _messenger = messenger;
             _newsService = newsService;
             _logger = logger;
-            _appDialogService = appDialogService;
+            _dialogQueue = dialogQueue;
         }
 
         [ObservableProperty]
@@ -49,6 +50,9 @@ namespace AnglingClubWebsite.Pages
         private bool _isAdding = false;
 
         [ObservableProperty]
+        private bool _dataLoaded = false;
+
+        [ObservableProperty]
         private bool _submitting = false;
 
         public override async Task Loaded()
@@ -65,7 +69,7 @@ namespace AnglingClubWebsite.Pages
 
         private async Task getNews(bool unlockAfterwards = false)
         {
-            _messenger.Send(new ShowProgress());
+            DataLoaded = false;
 
             try
             {
@@ -89,7 +93,7 @@ namespace AnglingClubWebsite.Pages
                     Unlock(true);
                 }
 
-                _messenger.Send(new HideProgress());
+                DataLoaded = true;
             }
         }
 
@@ -116,7 +120,7 @@ namespace AnglingClubWebsite.Pages
         [RelayCommand(CanExecute = nameof(CanWeSave))]
         private async Task Save()
         {
-            _messenger.Send<ShowProgress>();
+            DataLoaded = false;
 
             try
             {
@@ -129,14 +133,21 @@ namespace AnglingClubWebsite.Pages
             }
             catch (Exception ex)
             {
-                _appDialogService.SendMessage(MessageState.Error, "Save Failed", "Unable to save News item");
+                _dialogQueue.Enqueue(new DialogRequest
+                {
+                    Kind = DialogKind.Alert,
+                    Severity = DialogSeverity.Error,
+                    Title = "Save Failed",
+                    Message = "Unable to save News item"
+                });
+
                 _logger.LogError(ex, "Failed to save news");
             }
             finally
             {
                 Submitting = false;
                 NewsItem = null;
-                _messenger.Send<HideProgress>();
+                DataLoaded = true;
             }
         }
 
@@ -158,45 +169,37 @@ namespace AnglingClubWebsite.Pages
 
         public async Task OnNewsItemDeleted(NewsItem newsItem)
         {
-            _messenger.Send<ShowMessage>(
-                new ShowMessage
-                (
-                    MessageState.Info,
-                    "Please confirm",
-                    $"Do you really want to delete the news item '{newsItem.Title}'?",
-                    "Cancel",
-                    new MessageButton
+            _dialogQueue.Enqueue(new DialogRequest
+            {
+                Kind = DialogKind.Confirm,
+                Severity = DialogSeverity.Warn,
+                Title = "Please confirm",
+                Message = $"Do you really want to delete the news item '{newsItem.Title}'?",
+                CancelText = "Cancel",
+                ConfirmText = "Yes",
+                OnConfirmAsync = async () =>
+                {
+                    DataLoaded = false;
+
+                    try
                     {
-                        Label = "Yes",
-                        OnConfirmed = async () =>
-                        {
-                            _messenger.Send<ShowProgress>();
+                        Submitting = true;
 
-                            try
-                            {
-                                Submitting = true;
-
-                                await _newsService.DeleteNewsItem(newsItem.DbKey);
-                                await getNews(true);
-
-                            }
-                            catch (Exception ex)
-                            {
-                                _appDialogService.SendMessage(MessageState.Error, "Deletion Failed", "Unable to save News item");
-                                _logger.LogError(ex, "Failed to delete news");
-                            }
-                            finally
-                            {
-                                Submitting = false;
-                                _messenger.Send<HideProgress>();
-                            }
-
-                        }
+                        await _newsService.DeleteNewsItem(newsItem.DbKey);
+                        await getNews(true);
                     }
-                )
-            );
-
-            await Task.Delay(0);
+                    catch (Exception ex)
+                    {
+                        _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Deletion Failed", "Unable to delete News item"));
+                        _logger.LogError(ex, "Failed to delete news");
+                    }
+                    finally
+                    {
+                        Submitting = false;
+                        DataLoaded = true;
+                    }
+                }
+            });
         }
 
         public async Task OnNewsItemEdited(string itemId)

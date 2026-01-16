@@ -1,0 +1,98 @@
+﻿@using AnglingClubShared.Enums;
+
+@inherits RazorComponentBase
+
+<SfDialog IsModal="true" Visible="@Visible" CssClass="match-dialog" >
+    <DialogTemplates>
+        <Header>Match Details</Header>
+        <Content>
+             <div class="match-results">
+                @if (CurrentUser.Admin && ResultsLoaded && MatchResults.Any())
+                {
+                    <div style="float: right;">
+                        <SfCheckBox Label="Show peg" @bind-Checked="@ShowPeg"></SfCheckBox>
+                    </div>
+                    <br />
+                }
+                @if (BrowserService.IsPortrait)
+                {
+                    <table class="match-table">
+                        <tr><td class="label">Match:</td><td>@SelectedMatch!.MatchType No. @SelectedMatch!.Number</td></tr>
+                        <tr><td class="label">Date:</td><td>@SelectedMatch!.Day @SelectedMatch!.Date.ToString("dd MMM yy")</td></tr>
+                        <tr><td class="label">Venue:</td><td>@SelectedMatch!.Description</td></tr>
+                        @if (!SelectedMatch!.Cup.IsWhiteSpace())
+                        {
+                            <tr><td class="label">Cup:</td><td>@SelectedMatch!.Cup</td></tr>
+                        }
+                    </table>
+                }
+                else
+                {
+                    <table class="match-table">
+                        <tr><td class="label">Match:</td><td>@SelectedMatch!.MatchType No. @SelectedMatch!.Number</td><td class="label">Venue:</td><td>@SelectedMatch!.Description</td></tr>
+                        <tr>
+                            <td class="label">Date:</td>
+                            <td>@SelectedMatch!.Day @SelectedMatch!.Date.ToString("dd MMM yy")</td>
+                            @if (!SelectedMatch!.Cup.IsWhiteSpace())
+                            {
+                                <td class="label">Cup:</td>
+                                <td>@SelectedMatch!.Cup</td>
+                            }
+                        </tr>
+                    </table>
+                }
+                <br />
+                <h3>Results</h3>
+                <BusyIndicator IsReady="@ResultsLoaded"></BusyIndicator>
+                @if (ResultsLoaded)
+                {
+                    @if (MatchResults.Any())
+                    {
+                        <table class="bdac-table">
+                            <thead>
+                                <tr>
+                                    <th class="left-align">Pos</th>
+                                    <th class="left-align">Name</th>
+                                    @if (SelectedMatch.MatchType != MatchType.OSU)
+                                    {
+                                        @if (ShowPeg)
+                                        {
+                                            <th class="right-align">Peg</th>
+                                        }
+                                        <th class="left-align col-weight">Weight</th>
+                                    }
+                                    <th class="center-align">Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var r in MatchResults)
+                                {
+                                    <tr>
+                                        <td class="left-align"><nobr>@r.PositionOrdinal</nobr></td>
+                                        <td class="left-align">@r.Name</td>
+                                        @if (SelectedMatch.MatchType != MatchType.OSU)
+                                        {
+                                            @if (ShowPeg)
+                                            {
+                                                <td class="right-align">@r.Peg</td>
+                                            }
+                                            <td class="left-align col-weight">@r.Weight</td>
+                                        }
+                                        <td class="center-align">@r.Points</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>Sorry, not available</p>
+                    }
+                }
+            </div> 
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Close" IsPrimary="true" OnClick="CloseAsync" />
+    </DialogButtons>
+</SfDialog>

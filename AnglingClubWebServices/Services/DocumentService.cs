@@ -1,12 +1,19 @@
-﻿using AnglingClubWebServices.Interfaces;
+﻿using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
+using AnglingClubWebServices.Data;
+using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
+using AutoMapper;
 using Microsoft.Extensions.Options;
 using Syncfusion.DocIORenderer;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Parsing;
 using Syncfusion.Pdf.Security;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,11 +23,15 @@ namespace AnglingClubWebServices.Services
     {
         private readonly IDocumentRepository _documentRepository;
         private readonly AuthOptions _authOptions;
+        private readonly IMemberRepository _memberRepository;
+        private readonly IMapper _mapper;
 
-        public DocumentService(IDocumentRepository documentRepository, IOptions<AuthOptions> authOpts)
+        public DocumentService(IDocumentRepository documentRepository, IOptions<AuthOptions> authOpts, IMemberRepository memberRepository, IMapper mapper)
         {
             _documentRepository = documentRepository;
             _authOptions = authOpts.Value;
+            _memberRepository = memberRepository;
+            _mapper = mapper;
         }
 
         public async Task<byte[]> GenerateWatermarkedPdfFromWordDocument(
@@ -153,6 +164,69 @@ namespace AnglingClubWebServices.Services
             }
 
             return output; // caller should Dispose() this
+        }
+
+        /// <summary>
+        /// Get documents and optionally search
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        public async Task<List<DocumentListItem>> GetDocuments(DocumentSearchRequest req)
+        {
+            var searchText = req.SearchText?.ToLowerInvariant();
+
+            var items = new List<DocumentListItem>();
+
+            var members = await _memberRepository.GetMembers((Season?)EnumUtils.CurrentSeason());
+
+            var dbItems = (await _documentRepository.Get()).Where(x => x.DocumentType == req.DocType);
+
+            if (searchText.IsNullOrEmpty())
+            {
+                // Return all if no search specified
+                items = _mapper.Map<List<DocumentListItem>>(dbItems);
+            }
+            else
+            {
+                // Search both the raw text of the documents and the Notes field
+                var searchableItems = _mapper.Map<List<SearchableDocument>>(dbItems);
+
+                foreach (var item in searchableItems)
+                {
+                    if (item.Searchable)
+                    {
+                        item.RawContent = await _documentRepository.GetRawText(item);
+                    }
+                }
+
+                // Now search
+                searchableItems = searchableItems.Where(x =>
+                    (x.Notes != null && x.Notes.ToLower().Contains(searchText)) ||
+                    (x.RawContent != null && x.RawContent.ToLower().Contains(searchText))
+                    ).ToList();
+
+                items = _mapper.Map<List<DocumentListItem>>(searchableItems);
+            }
+
+            foreach (var item in items)
+            {
+                item.UploadedBy = members.First(x => x.MembershipNumber == item.UploadedByMembershipNumber).Name;
+            }
+
+            return items;
+        }
+
+        public async Task SaveDocument(DocumentMeta docItem, int createdByMember)
+        {
+            docItem.UploadedByMembershipNumber = createdByMember;
+            if (docItem.Searchable)
+            {
+                await _documentRepository.AddOrUpdateAndIndexDocument(docItem);
+            }
+            else
+            {
+                await _documentRepository.AddOrUpdateDocument(docItem);
+            }
         }
 
     }

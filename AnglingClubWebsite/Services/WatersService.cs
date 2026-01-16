@@ -2,7 +2,9 @@
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Exceptions;
+using AnglingClubShared.Models;
 using AnglingClubShared.Models.Auth;
+using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Fishing.Client.Services;
 using System.Net.Http;
@@ -82,7 +84,7 @@ namespace AnglingClubWebsite.Services
             }
             catch (UserSessionExpiredException)
             {
-                _messenger.Send<ShowMessage>(new ShowMessage(AnglingClubShared.Enums.MessageState.Warn, "Session expired", "You must log in again", "OK"));
+                _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Session expired", "You must log in again", "OK"));
                 await _authenticationService.LogoutAsync();
             }
 

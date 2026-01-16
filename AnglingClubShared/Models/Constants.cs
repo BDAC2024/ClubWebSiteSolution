@@ -1,4 +1,4 @@
-﻿namespace AnglingClubWebsite
+﻿namespace AnglingClubShared.Models
 {
     public static class Constants
     {
@@ -7,6 +7,7 @@
 
         public const string AUTH_KEY = "currentMember";
         public const string HTTP_CLIENT_KEY = "ServerApi";
+        public const string HTTP_CLIENT_KEY_LONG_RUNNING = "ServerApiLongRunning";
         public const string API_ROOT_KEY = "ServerUrl";
         public const string AUTH_EXPIRED = "EXPIRED";
 
@@ -19,7 +20,11 @@
         public const string API_CLUB_EVENTS = ""; 
         public const string API_WATERS_UPDATE = "UpdateDescription";
 
+        public const string API_DOCUMENT = "";
+        public const string API_DOCUMENT_GETUPLOADURL = "GetUploadUrl";
+        public const string API_DOCUMENT_READ = "GetDocuments";
 
+        public const int MINUTES_TO_EXPIRE_LINKS = 5;
 
     }
 }

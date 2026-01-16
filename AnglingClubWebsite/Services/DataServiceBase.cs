@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using AnglingClubShared.Models;
+using System.Net.Http;
 
 namespace AnglingClubWebsite.Services
 {
@@ -25,6 +26,23 @@ namespace AnglingClubWebsite.Services
                 }
 
                 return _http;
+
+            }
+        }
+
+        private HttpClient? _httpLongRunning = null;
+        protected HttpClient HttpLongRunning
+        {
+            get
+            {
+                if (_httpLongRunning == null || _httpLongRunning.BaseAddress == null)
+                {
+                    _httpLongRunning = _httpClientFactory.CreateClient(Constants.HTTP_CLIENT_KEY_LONG_RUNNING);
+                    _httpLongRunning.BaseAddress = new Uri($"{_httpLongRunning.BaseAddress!.ToString()}api/");
+                    _httpLongRunning.Timeout = Timeout.InfiniteTimeSpan;
+                }
+
+                return _httpLongRunning;
 
             }
         }

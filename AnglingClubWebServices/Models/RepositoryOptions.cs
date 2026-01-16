@@ -10,6 +10,7 @@
         public string DocumentBucket { get; set; }
         public string AWSRegion { get; set; }
         public string SiteUrl { get; set; }
+        public string Stage { get; set; }
 
     }
 }

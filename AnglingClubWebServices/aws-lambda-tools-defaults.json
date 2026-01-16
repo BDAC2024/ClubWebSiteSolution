@@ -1,0 +1,6 @@
+{
+  "region": "eu-west-1",
+  "profile": "Boroughbridge Angling Club",
+  "s3-bucket": "boroughbridgeanglingclubwebservicesbucket",
+  "template": "serverless.template"
+}

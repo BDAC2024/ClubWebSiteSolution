@@ -1,4 +1,4 @@
-using AnglingClubWebServices.DTOs;
+using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -16,7 +16,6 @@ namespace AnglingClubWebServices.Controllers
     public class TmpFileController : ControllerBase
     {
         private readonly ILogger<TmpFileController> _logger;
-        private readonly ITmpFileRepository _referenceDataRepository;
         private readonly ITmpFileRepository _tmpFileRepository;
         private readonly IMapper _mapper;
 
@@ -39,14 +38,14 @@ namespace AnglingClubWebServices.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("GetUploadUrl")]
-        public async Task<IActionResult> GetUploadUrl([FromBody] TmpFileUploadUrlDto tmpFileUploadUrlDto)
+        public async Task<IActionResult> GetUploadUrl([FromBody] FileUploadUrlDto tmpFileUploadUrlDto)
         {
             var fileId = Guid.NewGuid().ToString();
 
             var url = await _tmpFileRepository.GetTmpFileUploadUrl(fileId, tmpFileUploadUrlDto.ContentType);
 
 
-            return Ok(new TmpFileUploadUrlResult { UploadUrl = url, UploadedFileName = fileId });
+            return Ok(new FileUploadUrlResult { UploadUrl = url, UploadedFileName = fileId });
         }
 
     }

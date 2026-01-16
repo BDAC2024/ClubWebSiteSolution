@@ -1,0 +1,32 @@
+﻿@using AnglingClubShared.Enums
+@using AnglingClubShared.Models
+@inherits MvvmComponentBase<SeasonSelectorViewModel>
+
+<div class="@(ViewModel.BrowserSize == DeviceSize.Small ? "edit-button-panel" : "desktop-season-selector")">
+    @if (ViewModel.RefDataLoaded)
+    {
+        <span style="display: inline-flex">Season</span>
+        <SfDropDownList TValue="Season?"
+                        TItem="SeasonInfo"
+                        Placeholder="Season"
+                        Width="100px"
+                        FloatLabelType="FloatLabelType.Never"
+                        DataSource="@ViewModel.RefData!.Seasons"
+                        @bind-Value="@ViewModel.SelectedSeason">
+            <DropDownListFieldSettings Value="Season" Text="Name"></DropDownListFieldSettings>
+        </SfDropDownList>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public EventCallback<Season> OnSeasonChanged { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // If you truly need a "set once" bridge into the VM:
+        ViewModel.OnSeasonChanged ??= async season => await OnSeasonChanged.InvokeAsync(season);
+    }
+
+}

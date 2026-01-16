@@ -14,6 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 using Fishing.Client.Services;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using AnglingClubWebsite.Models;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -26,7 +27,6 @@ namespace AnglingClubWebsite.Pages
         private readonly ILogger<WatersViewModel> _logger;
         private readonly BrowserService _browserService;
         private readonly IJSRuntime _js;
-        private readonly IAppDialogService _appDialogService;
 
         public WatersViewModel(
             IMessenger messenger,
@@ -35,8 +35,7 @@ namespace AnglingClubWebsite.Pages
             IWatersService watersService,
             ILogger<WatersViewModel> logger,
             BrowserService browserService,
-            IJSRuntime js,
-            IAppDialogService appDialogService) : base(messenger, currentUserService, authenticationService)
+            IJSRuntime js) : base(messenger, currentUserService, authenticationService)
         {
             _messenger = messenger;
             _currentUserService = currentUserService;
@@ -47,7 +46,6 @@ namespace AnglingClubWebsite.Pages
             messenger.Register<BrowserChange>(this);
             _browserService = browserService;
             _js = js;
-            _appDialogService = appDialogService;
         }
 
         [ObservableProperty]
@@ -60,7 +58,7 @@ namespace AnglingClubWebsite.Pages
         private WaterOutputDto? _water = null;
 
         [ObservableProperty]
-        private bool _loading = false;
+        private bool _dataLoaded = false;
 
         [ObservableProperty]
         private bool _submitting = false;
@@ -119,8 +117,7 @@ namespace AnglingClubWebsite.Pages
 
         private async Task getWaters(bool unlockAfterwards = false)
         {
-            _messenger.Send(new ShowProgress());
-            Loading = true;
+            DataLoaded = false;
 
             try
             {
@@ -144,9 +141,8 @@ namespace AnglingClubWebsite.Pages
                     Unlock(true);
                 }
 
-                Loading = false;
+                DataLoaded = true;
 
-                _messenger.Send(new HideProgress());
             }
         }
 
@@ -168,7 +164,7 @@ namespace AnglingClubWebsite.Pages
         [RelayCommand(CanExecute = nameof(CanWeSave))]
         private async Task Save()
         {
-            _messenger.Send<ShowProgress>();
+            DataLoaded = false;
 
             try
             {
@@ -178,14 +174,14 @@ namespace AnglingClubWebsite.Pages
             }
             catch (Exception ex)
             {
-                _appDialogService.SendMessage(MessageState.Error, "Save Failed", "Unable to save Water");
+                _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Save Failed", "Unable to save Water"));
                 _logger.LogError(ex, "Failed to save water");
             }
             finally
             {
                 Submitting = false;
                 Water = null;
-                _messenger.Send<HideProgress>();
+                DataLoaded = true;
             }
         }
 

@@ -2,12 +2,10 @@
 
 namespace AnglingClubShared.Enums
 {
-    public enum MessageState
+    public enum DownloadType
     {
-        Info = 0,
-        Error,
-        Warn,
-        Success,
+        inline = 0,
+        attachment
     }
 
     public enum EventType
@@ -277,6 +275,15 @@ namespace AnglingClubShared.Enums
         Senior,
         Junior
     }
+
+    public enum DeviceSize
+    {
+        Unknown,
+        Small,
+        Medium,
+        Large
+    }
+
 
     public enum DocumentType
     {
