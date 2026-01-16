@@ -29,18 +29,22 @@ export class GlobalService {
       case "localhost":
         this.ApiUrl = "https://localhost:5001";
         // this.ApiUrl = "https://elold7bwu2.execute-api.eu-west-1.amazonaws.com/Prod"; // Use to test staging api locally. Need to change appSettings.Development.json on blazor app too
+        this.StripePublishableKey = "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx";
         break;
 
       case "staging":
         this.ApiUrl = "https://elold7bwu2.execute-api.eu-west-1.amazonaws.com/Prod";
+        this.StripePublishableKey = "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx";
         break;
 
       case "devtunnel":
         this.ApiUrl = "https://prct8lnk-5001.uks1.devtunnels.ms";
+        this.StripePublishableKey = "pk_test_51N81XiI81Rrb3iDAhL1R2W2JVw1oAQK4NxxKqxEu0IXdxEVK5rm7XtSk0nwWrT4nJ7Rco9KHS0Gy3d05OhKnllfT00Q6Tib7Nx";
         break;
 
       case "prod":
         this.ApiUrl = "https://t5nynu5k43.execute-api.eu-west-1.amazonaws.com/Prod";
+        this.StripePublishableKey = "pk_live_51N81XiI81Rrb3iDAHMiwfXilhTMuiwaoz4l785OeR73FxInMUfrhhIjma5mAe2imUfOYUXPXZABTMka4nABDu3qH00MkNLR5a9";
         break;
     }
 
@@ -52,6 +56,7 @@ export class GlobalService {
   public RunningOn: string = "localhost";
   public OnLocalhost: boolean = true;
   public ApiUrl: string = "";
+  public StripePublishableKey: string = '';
   public storedSeason: number = 0;
 
   public log(message: string) {

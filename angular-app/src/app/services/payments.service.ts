@@ -21,7 +21,7 @@ import { PondGateKey } from '../models/pond-gate-key';
 })
 export class PaymentsService {
 
-  private stripePromise = loadStripe(environment.stripePublishableKey);
+  private stripePromise = loadStripe(this.globalService.StripePublishableKey);
 
   constructor(
     private http: HttpClient,

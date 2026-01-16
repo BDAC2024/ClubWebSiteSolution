@@ -91,6 +91,8 @@ $templateParams = "Stage=staging;$mappedParams"
 
 # Deploy the serverless application
 dotnet lambda deploy-serverless `
+  --profile "Boroughbridge Angling Club" `
+  --region "eu-west-1" `
   --template serverless.template `
   --stack-name "BoroughbridgeAnglingClubWebServices-staging" `
   --template-parameters $templateParams
