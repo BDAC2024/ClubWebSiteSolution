@@ -1,0 +1,16 @@
+{
+  "Rules": [
+    {
+      "ID": "AbortIncompleteMultipartUploads",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "" },
+      "AbortIncompleteMultipartUpload": { "DaysAfterInitiation": 7 }
+    },
+    {
+      "ID": "ExpireOldSamArtifacts",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "sam/" },
+      "Expiration": { "Days": 120 }
+    }
+  ]
+}

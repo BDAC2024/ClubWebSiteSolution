@@ -89,10 +89,15 @@ $mappedParams = (
 # Add Stage parameter
 $templateParams = "Stage=prod;$mappedParams"
 
+$artifactBucket = "boroughbridgeanglingclubwebservicesbucket"
+$artifactPrefix = "sam/prod/"
+
 # Deploy the serverless application
 dotnet lambda deploy-serverless `
   --profile "Boroughbridge Angling Club" `
   --region "eu-west-1" `
   --template serverless.template `
   --stack-name "BoroughbridgeAnglingClubWebServices" `
-  --template-parameters $templateParams
+  --template-parameters $templateParams `
+  --s3-bucket $artifactBucket `
+  --s3-prefix $artifactPrefix

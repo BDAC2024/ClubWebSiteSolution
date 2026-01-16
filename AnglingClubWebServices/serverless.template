@@ -194,6 +194,7 @@
         "Runtime": "dotnet8",
         "CodeUri": "",
         "MemorySize": 1024,
+		"AutoPublishAlias": "prod",
         "Timeout": 60,
         "Role": null,
         "Policies": [
