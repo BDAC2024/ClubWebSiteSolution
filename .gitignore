@@ -362,7 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /AnglingClubWebServices/appsettings.Development.json
-/AnglingClubWebServices/aws-lambda-tools-defaults.json
 /AnglingClubWebServices/aws-lambda-tools-defaults - dev.json
 /AnglingClubWebServices/aws-lambda-tools-defaults - live.json
 /AnglingClubWebsite/wwwroot/appsettings.Development.json
