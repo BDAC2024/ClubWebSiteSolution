@@ -6,7 +6,7 @@ import { Water } from 'src/app/models/water';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { MembersService } from 'src/app/services/members.service';
 import { WatersService } from 'src/app/services/waters.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { ScreenService } from 'src/app/services/screen.service';
 import { RefDataService } from 'src/app/services/ref-data.service';
 import { RefData } from 'src/app/models/refData';
@@ -24,7 +24,7 @@ export class WatersComponent implements OnInit {
   pathColour: string = "lightgreen";
   mapType: string = 'satellite';
 
-  youTubeEmbedRoot: string = "https://www.youtube.com/embed/";
+  youTubeEmbedRoot: string = "https://www.youtube-nocookie.com/embed/";
   videoWidth: number = 500;
   videoHeight: number = 315;
   
@@ -93,7 +93,7 @@ export class WatersComponent implements OnInit {
     } catch (e) { }
   }
 
-  public videoURL(videoShortCode: string): SafeUrl {
+  public videoURL(videoShortCode: string): SafeResourceUrl  {
     return this.sanitizer.bypassSecurityTrustResourceUrl(this.youTubeEmbedRoot + videoShortCode);
   }
 
