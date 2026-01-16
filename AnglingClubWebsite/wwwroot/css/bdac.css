@@ -527,17 +527,44 @@ fieldset {
     margin-top: 0.25rem;
 }
 
+/* ===== Snackbar base ===== */
 .app-snackbar {
     min-width: 320px;
     border-radius: 4px;
-    padding: 30px;
-    margin: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
 }
+
+/* ===== Fix icon/text alignment (based on your actual DOM) ===== */
+.e-toast.app-snackbar {
+    display: flex;
+    align-items: center; /* vertical alignment */
+    gap: 1px; /* spacing between icon and message */
+}
+
+    /* Prevent icon div from stretching/shifting */
+    .e-toast.app-snackbar .e-toast-icon {
+        flex: 0 0 auto;
+        line-height: 1;
+        margin: 10px !important; /* neutralise any theme margins */
+    }
+
+    /* Ensure message block aligns nicely */
+    .e-toast.app-snackbar .e-toast-message {
+        flex: 1 1 auto;
+        display: flex;
+        /*align-items: center;*/
+    }
+
+    /* Optional: keep content line-height tidy */
+    .e-toast.app-snackbar .e-toast-content {
+        line-height: 1.2;
+    }
+
 
 /* Ensure Syncfusion toast always sits above dialogs/overlays/iframes */
 .e-toast-container,
 .e-toast {
     z-index: 2147483647 !important;
-    padding: 20px;
+    padding-bottom: 2px;
 }
 

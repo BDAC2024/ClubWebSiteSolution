@@ -122,6 +122,8 @@ namespace AnglingClubWebsite.Dialogs
                 // Create a doc record in the database
                 await _documentService.SaveDocument(DocumentInfo);
 
+                _messenger.Send<ShowToast>(new ShowToast(MessageState.Success, $"Minutes have been saved for {DocumentInfo.Created.ToString("dd MMM yy")}"));
+
                 // Tell the parent to update its source of truth
                 await VisibleChanged.InvokeAsync(false);
 

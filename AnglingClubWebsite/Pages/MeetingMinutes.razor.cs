@@ -210,6 +210,9 @@ namespace AnglingClubWebsite.Pages
             };
 
             Documents = await _documentService.ReadDocuments(req) ?? new List<DocumentListItem>();
+
+            //_messenger.Send<ShowToast>(new ShowToast(MessageState.Info, "Test of Toast styling"));
+            //_messenger.Send<ShowToast>(new ShowToast(MessageState.Warn, "Test of Toast styling with a much longer line of text that will need to wrap"));
         }
 
         #region Helper Classes

@@ -1,0 +1,33 @@
+﻿@page "/DebugToast"
+
+<h3>Debug Toast</h3>
+
+<button type="button" @onclick="ShowDebugToast">Show debug toast</button>
+
+<SfToast @ref="ToastObj2"
+         Target="main-content"
+         Timeout="0"
+         ExtendedTimeout="0"
+         ShowCloseButton="true"
+         CssClass="app-snackbar">
+    <ToastPosition X="Center" Y="Bottom" />
+</SfToast>
+
+@code {
+    SfToast? ToastObj2;
+
+    private async Task ShowDebugToast()
+    {
+        if (ToastObj2 is null) return;
+
+        await ToastObj2.ShowAsync(new ToastModel
+        {
+            Content = "Debug toast - leave open for DevTools",
+            CssClass = "app-snackbar e-toast-info",
+            Icon = "e-circle-check",
+            Timeout = 0,
+            ExtendedTimeout = 0
+        });
+    }
+
+}

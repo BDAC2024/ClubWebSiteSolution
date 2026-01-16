@@ -5,10 +5,9 @@
 @*  Always in render tree, shown programmatically  *@
 <SfToast @ref="ToastObj"
          Target="main-content"
-         Timeout="3000"
-         ShowCloseButton="false"
+         ShowCloseButton="true"
          CssClass="app-snackbar">
-    <ToastPosition X="Right" Y="Top" />
+    <ToastPosition X="Center" Y="Bottom" />
 </SfToast>
 
 @if (Current is not null)

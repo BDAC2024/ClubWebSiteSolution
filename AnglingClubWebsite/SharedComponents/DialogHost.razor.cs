@@ -31,6 +31,7 @@ namespace AnglingClubWebsite.SharedComponents
             _dialogQueue = dialogQueue;
         }
 
+
         protected override void OnInitialized()
         {
             _dialogQueue.Changed += OnQueueChanged;
@@ -69,11 +70,13 @@ namespace AnglingClubWebsite.SharedComponents
 
                 CssClass = toastRequest.Severity switch
                 {
-                    DialogSeverity.Success => "e-toast-success",
-                    DialogSeverity.Warn => "e-toast-warning",
-                    DialogSeverity.Error => "e-toast-danger",
-                    _ => "e-toast-info"
-                }
+                    DialogSeverity.Success => "app-snackbar e-toast-success",
+                    DialogSeverity.Warn => "app-snackbar e-toast-warning",
+                    DialogSeverity.Error => "app-snackbar e-toast-danger",
+                    _ => "app-snackbar e-toast-info"
+                },
+                Timeout = 2500,       // Set to 0 to Leave on screen for testing/debugging
+                //ExtendedTimeout = 0 // Leave on screen for testing/debugging
             });
 
             // Give the renderer/JS a chance to apply the show operation before advancing.
