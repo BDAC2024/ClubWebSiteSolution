@@ -65,7 +65,7 @@
         <span class="full-width">Meetings</span>
         <mat-icon class="menu-button" [ngClass]="{'rotated' : showMeetingsSubMenu}">expand_more</mat-icon>
       </mat-list-item>
-      <div class="submenu" [ngClass]="{'expanded' : showMeetingsSubMenu}" *ngIf="showMeetingsSubMenu">
+      <div class="submenu" [ngClass]="{'expanded' : showMeetingsSubMenu}" *ngIf="authenticationService.isCommitteeMember && showMeetingsSubMenu">
         <a mat-list-item (click)="openBlazor('MeetingMinutes', drawer)">Minutes</a>
       </div>
 
