@@ -347,6 +347,11 @@ td.label {
     padding: 0;
 }
 
+.e-grid .e-rowcell {
+    padding-top: 11px;
+    padding-bottom: 13px;
+}
+
 .grid-compact .e-grid .e-rowcell,
 .grid-compact .e-grid .e-headercell {
     font-size: 12px;
@@ -362,6 +367,17 @@ td.label {
     border-radius: 2px;
     z-index: 500;
 }
+
+/* Constrain Syncfusion dialog height */
+.e-dialog {
+    max-height: 85vh; 
+}
+
+    /* Ensure dialog body scrolls, not the whole dialog */
+    .e-dialog .e-dlg-content {
+        max-height: calc(85vh - 110px); /* header + footer allowance */
+        overflow-y: auto;
+    }
 
 /* Dialog content shrink-to-fit */
 .match-dialog.e-dialog {
@@ -444,6 +460,7 @@ td.label {
     .bdac-table th,
     .bdac-table td {
         border-bottom: 1px solid #ddd;
+        padding: 11px 12px 13px 12px;
     }
 
 fieldset {
@@ -495,7 +512,7 @@ fieldset {
 
 .page-header {
     display: block !important;
-    height: 36px;
+    height: 48px;
     /*background-color: yellow;*/
 }
 
@@ -518,3 +535,4 @@ fieldset {
     z-index: 2147483647 !important;
     padding: 20px;
 }
+
