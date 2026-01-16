@@ -347,6 +347,11 @@ td.label {
     padding: 0;
 }
 
+.e-grid.e-device .e-rowcell {
+    padding-top: 11px;
+    padding-bottom: 13px;
+}
+
 .e-grid .e-rowcell {
     padding-top: 11px;
     padding-bottom: 13px;
