@@ -93,8 +93,21 @@ export class WatersComponent implements OnInit {
     } catch (e) { }
   }
 
-  public videoURL(videoShortCode: string): SafeResourceUrl  {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(this.youTubeEmbedRoot + videoShortCode);
+  private videoUrlCache = new Map<string, SafeResourceUrl>();
+
+  public videoURL(videoShortCode: string): SafeResourceUrl {
+    let cached = this.videoUrlCache.get(videoShortCode);
+    if (!cached) {
+      cached = this.sanitizer.bypassSecurityTrustResourceUrl(
+        this.youTubeEmbedRoot + videoShortCode
+      );
+      this.videoUrlCache.set(videoShortCode, cached);
+    }
+    return cached;
+  }
+
+  trackByWaterId(_index: number, item: Water) {
+    return item.id;
   }
 
   public enableAdmin(set: boolean): void {
