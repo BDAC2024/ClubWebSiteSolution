@@ -48,8 +48,8 @@ namespace AnglingClubWebServices.Services
                 throw new CustomException($"Sorry - You are not able to login until your membership starts on {EnumUtils.NextSeason().SeasonStarts().ToString("dd MMM yyyy")}");
             }
 
+            // Dont trigger a backup if its just a normal logon
             var saveRequired = member.FailedLoginAttempts > 0 || member.ReLoginRequired;
-
 
             // Reject if locked out
             if (member.FailedLoginAttempts > MAX_FAILED_LOGINS && member.LastLoginFailure.AddMinutes(MINUTES_TO_LOCKOUT) > DateTime.Now)
@@ -76,6 +76,7 @@ namespace AnglingClubWebServices.Services
             member.FailedLoginAttempts = 0;
             member.ReLoginRequired = false;
 
+            // Dont trigger a backup if its just a normal logon
             if (saveRequired)
             {
                 await _memberRepository.AddOrUpdateMember(member);
