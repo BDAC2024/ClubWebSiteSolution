@@ -336,11 +336,9 @@ td.label {
     color: black !important;
 }
 
-
-.match-results {
+.bdac-smaller {
     font-size: smaller;
 }
-
 
 .grid-compact .e-headertext {
     font-size: 12px;
@@ -385,13 +383,13 @@ td.label {
     }
 
 /* Dialog content shrink-to-fit */
-.match-dialog.e-dialog {
+.bdac-dialog.e-dialog {
     width: fit-content;
     max-width: 90vw;
     background-color: whitesmoke;
 }
 
-    .match-dialog.e-dialog .e-dlg-content {
+    .bdac-dialog.e-dialog .e-dlg-content {
         display: inline-block;
         width: fit-content;
         max-width: 90vw;
@@ -400,36 +398,36 @@ td.label {
     }
 
 /* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
-.match-dialog .e-grid .e-content,
-.match-dialog .e-grid .e-gridcontent {
+.bdac-dialog .e-grid .e-content,
+.bdac-dialog .e-grid .e-gridcontent {
     overflow-x: auto;
 }
 
-.match-dialog .e-grid .e-table {
+.bdac-dialog .e-grid .e-table {
     table-layout: auto;
     width: max-content; /* content-sized */
     max-width: 90vw; /* clamp with dialog */
 }
 
 /* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
-.matches .e-grid .e-content,
-.matches .e-grid .e-gridcontent {
+.bdac-grid .e-grid .e-content,
+.bdac-grid .e-grid .e-gridcontent {
     overflow-x: auto;
 }
 
-.matches .e-grid .e-table {
+.bdac-grid .e-grid .e-table {
     table-layout: auto;
     width: max-content; /* content-sized */
     max-width: 90vw; /* clamp with dialog */
 }
 
-.matches .e-grid td,
-.matches .e-grid th {
+.bdac-grid .e-grid td,
+.bdac-grid .e-grid th {
     white-space: nowrap;
 }
 
-.matches .e-grid td.e-wrap,
-.matches .e-grid th.e-wrap {
+.bdac-grid .e-grid td.e-wrap,
+.bdac-grid .e-grid th.e-wrap {
     white-space: normal;
     overflow-wrap: anywhere;
 }
@@ -443,12 +441,12 @@ td.label {
 }
 */
     /* 1) Let the dialog grow up to the viewport -  small margin */
-/*    #blazor-content .match-dialog.e-dialog {
+/*    #blazor-content .bdac-dialog.e-dialog {
         max-height: calc(100vh + 124px); 
     }
 */
         /* 2) Ensure the dialog content becomes the scrollable region - header + padding + (optional) footer */
-/*        #blazor-content .match-dialog.e-dialog .e-dlg-content {
+/*        #blazor-content .bdac-dialog.e-dialog .e-dlg-content {
             max-height: calc(100vh + 120px); 
             overflow: auto;
         }
