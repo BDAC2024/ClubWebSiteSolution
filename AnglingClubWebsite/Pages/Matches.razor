@@ -44,7 +44,7 @@
             </TabItems>
         </SfTab>
 
-        <div class="matches grid-shrinkwrap">
+        <div class="bdac-grid grid-shrinkwrap">
             <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false">
                 <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" RowSelected="MatchSelectedHandler" TValue="ClubEvent"></GridEvents>
                 <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />

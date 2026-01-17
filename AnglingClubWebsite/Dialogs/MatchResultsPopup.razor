@@ -2,11 +2,11 @@
 
 @inherits RazorComponentBase
 
-<SfDialog IsModal="true" Visible="@Visible" CssClass="match-dialog" >
+<SfDialog IsModal="true" Visible="@Visible" CssClass="bdac-dialog" >
     <DialogTemplates>
         <Header>Match Details</Header>
         <Content>
-             <div class="match-results">
+             <div class="bdac-smaller">
                 @if (CurrentUser.Admin && ResultsLoaded && MatchResults.Any())
                 {
                     <div style="float: right;">
