@@ -48,6 +48,9 @@ namespace AnglingClubWebServices.Services
                 throw new CustomException($"Sorry - You are not able to login until your membership starts on {EnumUtils.NextSeason().SeasonStarts().ToString("dd MMM yyyy")}");
             }
 
+            var saveRequired = member.FailedLoginAttempts > 0 || member.ReLoginRequired;
+
+
             // Reject if locked out
             if (member.FailedLoginAttempts > MAX_FAILED_LOGINS && member.LastLoginFailure.AddMinutes(MINUTES_TO_LOCKOUT) > DateTime.Now)
             {
@@ -73,7 +76,10 @@ namespace AnglingClubWebServices.Services
             member.FailedLoginAttempts = 0;
             member.ReLoginRequired = false;
 
-            await _memberRepository.AddOrUpdateMember(member);
+            if (saveRequired)
+            {
+                await _memberRepository.AddOrUpdateMember(member);
+            }
 
             // authentication successful so generate jwt token
             var token = generateJwtToken(member);
