@@ -122,12 +122,13 @@
         <a mat-list-item routerLink="/members">Members</a>
         <a mat-list-item routerLink="/userAdmins">User Admins</a>
         <!-- <a mat-list-item routerLink="/guestTickets" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC">
-      <div class="preview-option">
-        Guest Tickets
-      </div>
-    </a>
-    -->
+    <div class="preview-option">
+      Guest Tickets
+    </div>
+  </a>
+  -->
         <a mat-list-item routerLink="/generateBookPrintingPages" *ngIf="this.refDataService.isMemberSecretary()">Book Printing</a>
+        <a mat-list-item (click)="openBlazor('BookPrinting', drawer)" *ngIf="this.refDataService.isMemberSecretary()">Book Printing v2</a>
         <a mat-list-item routerLink="/payments">
           <div>
             Payments
