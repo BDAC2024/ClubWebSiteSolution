@@ -127,8 +127,8 @@
     </div>
   </a>
   -->
-        <a mat-list-item routerLink="/generateBookPrintingPages" *ngIf="this.refDataService.isMemberSecretary()">Book Printing</a>
-        <a mat-list-item (click)="openBlazor('BookPrinting', drawer)" *ngIf="this.refDataService.isMemberSecretary()">Book Printing v2</a>
+        <!--<a mat-list-item routerLink="/generateBookPrintingPages" *ngIf="this.refDataService.isMemberSecretary()">Book Printing</a>-->
+        <a mat-list-item (click)="openBlazor('BookPrinting', drawer)" *ngIf="this.refDataService.isMemberSecretary()">Book Printing</a>
         <a mat-list-item routerLink="/payments">
           <div>
             Payments

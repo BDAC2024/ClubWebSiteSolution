@@ -1,10 +1,7 @@
 ﻿using AnglingClubShared.Enums;
-using AnglingClubShared.Entities;
-using System;
 using System.ComponentModel;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Reflection;
 
 
@@ -30,27 +27,6 @@ namespace AnglingClubShared.Extensions
                ?.Description
                ?? enumValue.ToString()));
         }
-
-        public static string StoragePath(this DocumentType value)
-        {
-            var docPath = "";
-
-            switch (value)
-            {
-                case DocumentType.MeetingMinutes:
-                    docPath = "Meetings/Minutes";
-                    break;
-
-                default:
-                    var errMsg = $"DocumentType.StoragePath: Unsupported document type {value}";
-                    var ex = new ArgumentOutOfRangeException(errMsg);
-                    throw ex;
-            }
-
-            return docPath;
-
-        }
-
 
         /// <summary>
         /// Returns the season name from [Description("2021/22,2021-04-01,2022-03-31")]
@@ -91,7 +67,10 @@ namespace AnglingClubShared.Extensions
 
         public static string Ordinal(this int num)
         {
-            if (num <= 0) return "";
+            if (num <= 0)
+            {
+                return "";
+            }
 
             switch (num % 100)
             {

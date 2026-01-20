@@ -17,6 +17,7 @@ namespace AnglingClubWebsite.Pages
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IDocumentService _documentService;
         private readonly BrowserService _browserService;
         private readonly IDialogQueue _dialogQueue;

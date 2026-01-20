@@ -1,4 +1,59 @@
 ﻿@page "/BookPrinting"
 
-<h3>BookPrinting</h3>
+@inherits RazorComponentBase;
 
+<div class="page-header">
+    <h3>Book Printing</h3>
+</div>
+
+<p>
+    This page allows a PDF to be uploaded and returns 2 print-ready PDFs. One for the covers and one for the content. This can then be printed without specifying page numbers.
+    <br />
+    <br />
+    <a href="assets/Saving-MS-Word-to-PDF.pdf" target="_blank" rel="noopener noreferrer">Instructions for saving MS Word to PDF</a>
+    <br />
+    <br />
+    <b>Note: </b> The MS Word/PDFs number of pages must be divisible by 4.
+</p>
+<SfUploader AutoUpload="true"
+            AllowedExtensions=".pdf"
+            AllowMultiple="false"
+            MaxFileSize="20971520"
+            EnableHtmlSanitizer="true">
+    <UploaderEvents ValueChange="UploadHandler" OnRemove="RemoveHandler"></UploaderEvents>
+
+</SfUploader>
+
+@if (!string.IsNullOrEmpty(ErrorMessage.Value))
+{
+    <br />
+    <br />
+    <SfMessage Severity="MessageSeverity.Error">@ErrorMessage</SfMessage>
+}
+<BusyIndicator IsReady="!Uploading"></BusyIndicator>
+
+@if (Result != null)
+{
+    <br />
+    <br />
+    <b>Please note that the following links will expire in 1 hour.</b>
+    <br />
+    <br />
+    <a href="@Result.CoversUrl" target="_blank" rel="noopener noreferrer">Print-ready Covers</a>
+    <br />
+    <br />
+    <a href="@Result.ContentUrl" target="_blank" rel="noopener noreferrer">Print-ready Content</a>
+    <br />
+    <br />
+    <p>These should open in your default PDF viewer (probably either web browser or Adobe Acrobat). From there: -
+        <ul>
+            <li>Hit the print icon</li>
+            <li>Choose "More settings"</li>
+            <li>Choose Two-sided and Flip on long edge</li>
+        </ul>
+    </p>
+}
+
+<div class="mt-3">
+    <SfButton Disabled="@(!CanRun)" CssClass="e-primary edit-button" @onclick="Run"><i class="fa-solid fa-print" /> Generate print-ready PDFs</SfButton>
+</div>

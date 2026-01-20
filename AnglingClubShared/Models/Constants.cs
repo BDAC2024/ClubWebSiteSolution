@@ -24,6 +24,9 @@
         public const string API_DOCUMENT_GETUPLOADURL = "GetUploadUrl";
         public const string API_DOCUMENT_READ = "GetDocuments";
 
+        public const string API_TMPFILE = "";
+        public const string API_TMPFILE_GETUPLOADURL = "GetUploadUrl";
+
         public const int MINUTES_TO_EXPIRE_LINKS = 5;
 
     }

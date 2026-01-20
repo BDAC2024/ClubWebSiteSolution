@@ -1,12 +1,9 @@
 ﻿using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
-using AnglingClubWebServices.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using static NodaTime.TimeZones.ZoneEqualityComparer;
 
 namespace AnglingClubWebServices.Controllers
 {

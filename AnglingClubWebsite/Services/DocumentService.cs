@@ -159,7 +159,7 @@ namespace AnglingClubWebsite.Services
         }
 
 
-        public async Task<FileUploadUrlResult?> GetDocumentUploadUrl(UploadFiles file, DocumentType docType)
+        public async Task<FileUploadUrlResult?> GetDocumentUploadUrl(UploadFiles file, DocumentMeta doc)
         {
             var resp = new FileUploadUrlResult();
 
@@ -169,7 +169,7 @@ namespace AnglingClubWebsite.Services
 
             var model = new FileUploadUrlDto
             {
-                Path = docType.StoragePath(),
+                Path = doc.StoragePath(),
                 Filename = file.FileInfo.Name,
                 ContentType = file.File.ContentType
             };

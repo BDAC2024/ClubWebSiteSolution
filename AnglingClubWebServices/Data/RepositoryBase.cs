@@ -420,6 +420,20 @@ namespace AnglingClubWebServices.Data
             return ms;
         }
 
+        protected async Task<Stream> getFileStream(string fileName, string bucketName)
+        {
+            var response = await GetS3Client().GetObjectAsync(new Amazon.S3.Model.GetObjectRequest
+            {
+                BucketName = bucketName,
+                Key = fileName
+            });
+
+            // IMPORTANT:
+            // - response.ResponseStream is the live network stream
+            // - The caller MUST dispose it
+            return response.ResponseStream;
+        }
+
         protected async Task<string> getFileAsBase64(string fileName, string bucketName)
         {
             var ms = await getFile(fileName, bucketName);
