@@ -1,0 +1,52 @@
+[*.cs]
+
+#################################
+# Allman brace style
+#################################
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+#################################
+# Line length (guideline)
+#################################
+max_line_length = 80
+
+#################################
+# Parameter and argument wrapping
+#################################
+
+# Declarations (methods/constructors)
+csharp_wrap_parameters = true
+csharp_new_line_before_parameters = true
+csharp_indent_method_declaration_parameters = true
+
+# Calls (invocations)
+csharp_wrap_arguments = true
+csharp_new_line_before_arguments = true
+
+#################################
+# Indentation / formatting basics
+#################################
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+#################################
+# Naming rules: private fields
+#################################
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.underscore_prefix.required_prefix = _
+dotnet_naming_style.underscore_prefix.capitalization = camel_case
+
+dotnet_naming_rule.private_fields_must_be_underscore_prefixed.symbols = private_fields
+dotnet_naming_rule.private_fields_must_be_underscore_prefixed.style = underscore_prefix
+dotnet_naming_rule.private_fields_must_be_underscore_prefixed.severity = warning
+
+[*.cs]
+csharp_new_line_before_open_brace = all
+csharp_prefer_braces = true:warning
+csharp_preserve_single_line_blocks = false

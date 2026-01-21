@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,8 +15,8 @@ namespace AnglingClubWebServices.Data
 {
     public class TmpFileRepository : RepositoryBase, ITmpFileRepository
     {
-        private const string IdPrefix = "TmpFile";
-        private const int DAYS_TO_EXPIRE = 7; // Will purge files older than this
+        private const string _idPrefix = "TmpFile";
+        private const int _days_to_expire = 7; // Will purge files older than this
         private readonly ILogger<TmpFileRepository> _logger;
         private readonly RepositoryOptions _options;
 
@@ -32,7 +33,9 @@ namespace AnglingClubWebServices.Data
             var client = GetClient();
 
             if (string.IsNullOrEmpty(file.Id))
+            {
                 throw new ArgumentException("TmpFile Id cannot be null or empty.");
+            }
 
             // Store the Id as a main attribute
             BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -44,7 +47,7 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "Created", Value = dateToString(DateTime.Now), Replace = true }
             };
 
-            base.SetupTableAttribues(request, $"{IdPrefix}:{file.Id}", attributes);
+            base.SetupTableAttribues(request, $"{_idPrefix}:{file.Id}", attributes);
 
             try
             {
@@ -69,7 +72,7 @@ namespace AnglingClubWebServices.Data
         public async Task<List<StoredFile>> GetTmpFiles(bool loadFile = false)
         {
             var files = new List<StoredFile>();
-            var items = await GetData(IdPrefix, "AND Id > ''", "ORDER BY Id");
+            var items = await GetData(_idPrefix, "AND Id > ''", "ORDER BY Id");
 
             foreach (var item in items)
             {
@@ -93,9 +96,11 @@ namespace AnglingClubWebServices.Data
 
         public async Task<StoredFile> GetTmpFile(string id)
         {
-            var items = await GetData(IdPrefix, $"AND ItemName() = '{IdPrefix}:{id}'");
+            var items = await GetData(_idPrefix, $"AND ItemName() = '{_idPrefix}:{id}'");
             if (items.Count != 1)
+            {
                 throw new Exception($"Could not locate TmpFile: {id}");
+            }
 
             try
             {
@@ -119,7 +124,7 @@ namespace AnglingClubWebServices.Data
             DeleteAttributesRequest request = new DeleteAttributesRequest
             {
                 DomainName = Domain,
-                ItemName = $"{IdPrefix}:{id}"
+                ItemName = $"{_idPrefix}:{id}"
             };
 
             try
@@ -168,7 +173,7 @@ namespace AnglingClubWebServices.Data
             var tmpFiles = await GetTmpFiles();
 
             //var expiryTime = DateTime.Now.AddMinutes(-1);
-            var expiryTime = DateTime.Now.AddDays(-DAYS_TO_EXPIRE);
+            var expiryTime = DateTime.Now.AddDays(-_days_to_expire);
 
             foreach (var file in tmpFiles)
             {
@@ -215,6 +220,11 @@ namespace AnglingClubWebServices.Data
             await Task.Delay(0);
 
             return base.getFilePresignedUrl(fileName, _options.TmpFilesBucket, minutesBeforeExpiry, DownloadType.inline);
+        }
+
+        public async Task<MemoryStream> GetTmpFileStream(string fileName)
+        {
+            return await base.getFile(fileName, _options.TmpFilesBucket);
         }
     }
 }

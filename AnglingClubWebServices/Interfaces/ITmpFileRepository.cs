@@ -1,5 +1,6 @@
 using AnglingClubWebServices.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Interfaces
@@ -13,5 +14,6 @@ namespace AnglingClubWebServices.Interfaces
         Task<string> GetTmpFileUploadUrl(string filename, string contentType);
         Task SaveTmpFile(string fileName, byte[] fileBytes, string contentType);
         Task<string> GetFilePresignedUrl(string fileName, int minutesBeforeExpiry, string contentType);
+        Task<MemoryStream> GetTmpFileStream(string fileName);
     }
 }

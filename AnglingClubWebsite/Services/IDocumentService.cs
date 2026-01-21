@@ -10,7 +10,7 @@ namespace AnglingClubWebsite.Services
         Task<List<DocumentListItem>?> ReadDocuments(DocumentSearchRequest req);
         Task SaveDocument(DocumentMeta item);
 
-        Task<FileUploadUrlResult?> GetDocumentUploadUrl(UploadFiles file, DocumentType docType);
+        Task<FileUploadUrlResult?> GetDocumentUploadUrl(UploadFiles file, DocumentMeta docType);
         Task UploadDocumentWithPresignedUrl(string uploadUrl, UploadFiles selectedFile);
         Task<string?> GetReadOnlyUrl(string id);
         Task DeleteDocument(string id);

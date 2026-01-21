@@ -1,4 +1,5 @@
 using AnglingClubShared.DTOs;
+using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -40,7 +41,8 @@ namespace AnglingClubWebServices.Controllers
         [HttpPost("GetUploadUrl")]
         public async Task<IActionResult> GetUploadUrl([FromBody] FileUploadUrlDto tmpFileUploadUrlDto)
         {
-            var fileId = Guid.NewGuid().ToString();
+            var seperator = tmpFileUploadUrlDto.Path.IsNullOrEmpty() ? "" : (tmpFileUploadUrlDto.Path.EndsWith("/") ? "" : "/");
+            var fileId = $"{tmpFileUploadUrlDto.Path}{seperator}{Guid.NewGuid().ToString()}";
 
             var url = await _tmpFileRepository.GetTmpFileUploadUrl(fileId, tmpFileUploadUrlDto.ContentType);
 

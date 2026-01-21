@@ -21,8 +21,7 @@ namespace AnglingClubWebServices.Data
 {
     public class DocumentRepository : RepositoryBase, IDocumentRepository
     {
-        private const string IdPrefix = "Document";
-        private const string SearchDataPath = "Search";
+        private const string _idPrefix = "Document";
 
         private readonly ILogger<DocumentRepository> _logger;
         private readonly RepositoryOptions _options;
@@ -46,7 +45,7 @@ namespace AnglingClubWebServices.Data
             file.Searchable = true;
 
             await AddOrUpdateDocument(file);
-            var searchDataFileName = getSearchDataFileName(file.StoredFileName);
+            var searchDataFileName = file.StorageSearchFilename();
 
             await base.saveFile(searchDataFileName, compressedText, "application/text", _options.DocumentBucket);
         }
@@ -57,7 +56,7 @@ namespace AnglingClubWebServices.Data
             {
                 if (file.IsNewItem)
                 {
-                    file.DbKey = file.GenerateDbKey(IdPrefix);
+                    file.DbKey = file.GenerateDbKey(_idPrefix);
                 }
 
                 // Store the Id as a main attribute
@@ -94,7 +93,7 @@ namespace AnglingClubWebServices.Data
         public async Task<List<DocumentMeta>> Get()
         {
             var files = new List<DocumentMeta>();
-            var items = await GetData(IdPrefix);
+            var items = await GetData(_idPrefix);
 
             foreach (var item in items)
             {
@@ -151,7 +150,7 @@ namespace AnglingClubWebServices.Data
         public async Task<string> GetRawText(DocumentMeta doc)
         {
 
-            var compressedContent = await base.getFile(getSearchDataFileName(doc.StoredFileName), _options.DocumentBucket);
+            var compressedContent = await base.getFile(doc.StorageSearchFilename(), _options.DocumentBucket);
 
             var uncompressedText = TextCompression.GzipDecompressUtf8(compressedContent.GetBuffer());
 
@@ -198,7 +197,7 @@ namespace AnglingClubWebServices.Data
             {
                 if (doc.Searchable)
                 {
-                    var searchDataFile = getSearchDataFileName(doc.StoredFileName);
+                    var searchDataFile = doc.StorageSearchFilename();
                     try
                     {
                         await base.deleteFile(searchDataFile, _options.DocumentBucket);
@@ -239,9 +238,5 @@ namespace AnglingClubWebServices.Data
             return base.getFilePresignedUrl(storedFileName, _options.DocumentBucket, minutesBeforeExpiry, DownloadType.attachment, returnedFileName);
         }
 
-        private string getSearchDataFileName(string storedFileName)
-        {
-            return $@"{Path.GetDirectoryName(storedFileName)}\{SearchDataPath}\{Path.GetFileName(storedFileName)}".Replace('\\', '/');
-        }
     }
 }

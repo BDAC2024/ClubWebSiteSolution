@@ -27,7 +27,10 @@ namespace AnglingClubWebServices
             Configuration = configuration;
         }
 
-        public static IConfiguration Configuration { get; private set; }
+        public static IConfiguration Configuration
+        {
+            get; private set;
+        }
 
 
         // This method gets called by the runtime. Use this method to add services to the container
@@ -113,11 +116,15 @@ namespace AnglingClubWebServices
                         {
                             // 1) Explicit allowlist from config (prod, localhost, etc.)
                             if (configuredOrigins.Contains(origin))
+                            {
                                 return true;
+                            }
 
                             // 2) SWA preview allow (pattern)
                             if (swaPreviewRegex is not null && swaPreviewRegex.IsMatch(origin))
+                            {
                                 return true;
+                            }
 
                             return false;
                         })
@@ -163,7 +170,7 @@ namespace AnglingClubWebServices
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUtilityService, UtilityService>();
             services.AddScoped<IDocumentService, DocumentService>();
-
+            services.AddScoped<IBookPrintingService, BookPrintingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

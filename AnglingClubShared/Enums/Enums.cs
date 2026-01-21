@@ -289,4 +289,10 @@ namespace AnglingClubShared.Enums
     {
         MeetingMinutes
     }
+
+    public enum TmpFileType
+    {
+        BookPrinting,
+        DisabledCertificate
+    }
 }

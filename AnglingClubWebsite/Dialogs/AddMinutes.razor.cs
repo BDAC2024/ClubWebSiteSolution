@@ -105,7 +105,7 @@ namespace AnglingClubWebsite.Dialogs
 
             try
             {
-                var uploadUrlDetails = await _documentService.GetDocumentUploadUrl(_meetingMinutesFile!, DocumentInfo.DocumentType);
+                var uploadUrlDetails = await _documentService.GetDocumentUploadUrl(_meetingMinutesFile!, DocumentInfo);
 
                 if (uploadUrlDetails == null)
                 {
