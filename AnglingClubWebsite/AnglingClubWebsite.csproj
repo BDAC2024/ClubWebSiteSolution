@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Syncfusion.Blazor.Calendars" Version="32.1.19" />
     <PackageReference Include="Syncfusion.Blazor.Cards" Version="32.1.19" />
     <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="32.1.19" />
