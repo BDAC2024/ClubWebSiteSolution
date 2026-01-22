@@ -44,38 +44,51 @@
                 }
             </TabItems>
         </SfTab>
+        <div class="bdac-table-scroll-container">
+            <QuickGrid Items="ViewModel.MatchesQueryable" Class="bdac-table table">
 
-        <QuickGrid Items="ViewModel.MatchesQueryable" Class="table-striped">
-            <PropertyColumn Property="@(x => x.Date)" Title="Date" Format="dd MMM yy" Sortable="true" IsDefaultSortColumn="true" Class="nowrap" />
-            <PropertyColumn Property="@(x => x.Description)" Title="Venue" />
-            @if (ViewModel.IsCupVisible())
-            {
-                <PropertyColumn Property="@(x => x.Cup)" Title="Cup" />
-            }
-            <PropertyColumn Property="@(x => x.Number)" Title="No" Format="N0" Align="Align.Right" />
-        </QuickGrid>
-@*         <br/>
-        <br/>
-        <br />
-        <div class="bdac-grid grid-shrinkwrap">
-            <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false">
-                <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" RowSelected="MatchSelectedHandler" TValue="ClubEvent"></GridEvents>
-                <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
-                <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
-                <GridTextWrapSettings WrapMode="WrapMode.Content" />
+                <TemplateColumn Title="Date" IsDefaultSortColumn="true" Sortable="true" SortBy="@MatchesViewModel.SortByDate">
+                    <ChildContent Context="row">
+                        <div class="@ViewModel.CellClass(row)"
+                             @onclick="() => ViewModel.MatchSelectedHandler(row)">
+                            <span class="nowrap">@row.Date.ToString("dd MMM yy")</span>
+                        </div>
+                    </ChildContent>
+                </TemplateColumn>
 
-                <GridColumns>
-                    <GridColumn Field=@nameof(ClubEvent.Date) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
-                    <GridColumn Field=@nameof(ClubEvent.Time) Visible="@ViewModel.IsTimeVisible()" HeaderText="Time" />
-                    <GridColumn Field=@nameof(ClubEvent.Description) HeaderText="Venue" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
-                    <GridColumn Field=@nameof(ClubEvent.Cup) Visible="@ViewModel.IsCupVisible()" HeaderText="Cup" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
-                    <GridColumn Field=@nameof(ClubEvent.Number) HeaderText="No" Format="N0" TextAlign="TextAlign.Right" />
-                </GridColumns>
+                <TemplateColumn Title="Venue">
+                    <ChildContent Context="row">
+                        <div class="@ViewModel.CellClass(row)"
+                             @onclick="() => ViewModel.MatchSelectedHandler(row)">
+                            @row.Description
+                        </div>
+                    </ChildContent>
+                </TemplateColumn>
 
-            </SfGrid>
+                @if (ViewModel.IsCupVisible())
+                {
+                    <TemplateColumn Title="Cup">
+                        <ChildContent Context="row">
+                            <div class="@ViewModel.CellClass(row)"
+                                 @onclick="() => ViewModel.MatchSelectedHandler(row)">
+                                @row.Cup
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+                }
 
+                <TemplateColumn Title="No" Align="Align.Right">
+                    <ChildContent Context="row">
+                        <div class="@ViewModel.CellClass(row)"
+                             @onclick="() => ViewModel.MatchSelectedHandler(row)">
+                            @row.Number!.Value.ToString("N0")
+                        </div>
+                    </ChildContent>
+                </TemplateColumn>
+
+            </QuickGrid>
         </div>
- *@
+
         @* Note the 2-way binding of the Visible property *@
         <MatchResultsPopup @bind-Visible="ViewModel.ShowingResults" SelectedMatch="@ViewModel.SelectedMatch"></MatchResultsPopup>
 
@@ -117,10 +130,5 @@
         }
     }
 
-    public void MatchSelectedHandler(RowSelectEventArgs<ClubEvent> args)
-    {
-        ViewModel.SelectedMatch = args.Data;
-        ViewModel.ShowingResults = true;
-    }
 
 }
