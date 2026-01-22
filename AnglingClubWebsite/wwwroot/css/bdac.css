@@ -426,6 +426,10 @@ td.label {
     white-space: nowrap;
 }
 
+.nowrap {
+    white-space: nowrap;
+}
+
 .bdac-grid .e-grid td.e-wrap,
 .bdac-grid .e-grid th.e-wrap {
     white-space: normal;

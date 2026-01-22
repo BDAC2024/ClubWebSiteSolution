@@ -3,6 +3,7 @@
 @using AnglingClubShared.Entities
 @using AnglingClubShared.Enums
 @using AnglingClubShared.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.Grids
 @using Microsoft.AspNetCore.Authorization
@@ -44,6 +45,18 @@
             </TabItems>
         </SfTab>
 
+        <QuickGrid Items="ViewModel.MatchesQueryable" Class="table-striped">
+            <PropertyColumn Property="@(x => x.Date)" Title="Date" Format="dd MMM yy" Sortable="true" IsDefaultSortColumn="true" Class="nowrap" />
+            <PropertyColumn Property="@(x => x.Description)" Title="Venue" />
+            @if (ViewModel.IsCupVisible())
+            {
+                <PropertyColumn Property="@(x => x.Cup)" Title="Cup" />
+            }
+            <PropertyColumn Property="@(x => x.Number)" Title="No" Format="N0" Align="Align.Right" />
+        </QuickGrid>
+@*         <br/>
+        <br/>
+        <br />
         <div class="bdac-grid grid-shrinkwrap">
             <SfGrid @ref="Grid" DataSource="@ViewModel.Matches" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false">
                 <GridEvents DataBound="DataboundHandler" QueryCellInfo="QueryCellInfoHandler" RowSelected="MatchSelectedHandler" TValue="ClubEvent"></GridEvents>
@@ -62,7 +75,7 @@
             </SfGrid>
 
         </div>
-
+ *@
         @* Note the 2-way binding of the Visible property *@
         <MatchResultsPopup @bind-Visible="ViewModel.ShowingResults" SelectedMatch="@ViewModel.SelectedMatch"></MatchResultsPopup>
 

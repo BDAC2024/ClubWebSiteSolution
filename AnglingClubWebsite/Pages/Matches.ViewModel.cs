@@ -79,6 +79,9 @@ namespace AnglingClubWebsite.Pages
         private ObservableCollection<ClubEvent> _matches = new ObservableCollection<ClubEvent>();
 
         [ObservableProperty]
+        private IQueryable<ClubEvent>? _matchesQueryable;
+
+        [ObservableProperty]
         private ObservableCollection<MatchResultOutputDto> _matchResults = new ObservableCollection<MatchResultOutputDto>();
 
         [ObservableProperty]
@@ -139,6 +142,8 @@ namespace AnglingClubWebsite.Pages
 
                 selectedMatches = _allMatches.Where(m => m.MatchType == SelectedMatchType).ToList();
                 Matches = new ObservableCollection<ClubEvent>(selectedMatches);
+                MatchesQueryable = Matches.AsQueryable();
+
                 ShowCup = selectedMatches.Any(x => x.Cup != "");
                 ShowTime = selectedMatches.Any(x => x.Time != "");
 
