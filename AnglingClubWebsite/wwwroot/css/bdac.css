@@ -222,22 +222,6 @@ h3 {
 
 }
 
-/* Disable focused cell ring across all Syncfusion SfGrid (Bootstrap 5 theme) */
-.e-grid .e-rowcell.e-focused,
-.e-grid .e-rowcell:focus,
-.e-grid .e-rowcell:focus-within {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: transparent !important;
-}
-
-/* Also remove focus ring from grid headers (optional but consistent) */
-.e-grid .e-headercell:focus,
-.e-grid .e-headercell.e-focused {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
 /* The element you target the spinner to */
 #busyArea {
     position: relative;
@@ -269,27 +253,10 @@ td.label {
     vertical-align: top;
 }
 
-/* shrink-wrap the grid to its content width */
-.grid-shrinkwrap {
+/* shrink-wrap to its content width */
+.shrinkwrap {
     display: inline-block; /* key: shrink-to-fit */
     max-width: 100%;
-}
-
-    /* ensure grid isn't forced back to 100% */
-    .grid-shrinkwrap .e-grid {
-        width: auto !important;
-    }
-
-.e-grid .e-gridcontent .e-rowcell.date-past {
-    font-weight: 300;
-}
-
-.e-grid .e-gridcontent .e-rowcell.date-future {
-    font-weight: 500;
-}
-
-.e-grid .e-rowcell.e-focused {
-    box-shadow: none !important;
 }
 
 /* Active tab underline */
@@ -345,22 +312,6 @@ td.label {
     padding: 0;
 }
 
-.e-grid.e-device .e-rowcell {
-    padding-top: 11px;
-    padding-bottom: 13px;
-}
-
-.e-grid .e-rowcell {
-    padding-top: 11px;
-    padding-bottom: 13px;
-}
-
-.grid-compact .e-grid .e-rowcell,
-.grid-compact .e-grid .e-headercell {
-    font-size: 12px;
-    padding: 4px 8px !important;
-}
-
 .floating-panel {
     position: absolute;
     top: 50px;
@@ -391,70 +342,35 @@ td.label {
 
     .bdac-dialog.e-dialog .e-dlg-content {
         display: inline-block;
+        overflow: hidden;
         width: fit-content;
         max-width: 90vw;
         min-width: 0;
         background-color: whitesmoke;
     }
 
-/* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
-.bdac-dialog .e-grid .e-content,
-.bdac-dialog .e-grid .e-gridcontent {
+.match-results-scroll {
+    overflow-y: auto;
     overflow-x: auto;
 }
 
-.bdac-dialog .e-grid .e-table {
-    table-layout: auto;
-    width: max-content; /* content-sized */
-    max-width: 90vw; /* clamp with dialog */
+/* Large screens */
+@media (min-width: 992px) {
+    .match-results-scroll {
+        max-height: 50vh;
+    }
 }
 
-/* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
-.bdac-grid .e-grid .e-content,
-.bdac-grid .e-grid .e-gridcontent {
-    overflow-x: auto;
-}
-
-.bdac-grid .e-grid .e-table {
-    table-layout: auto;
-    width: max-content; /* content-sized */
-    max-width: 90vw; /* clamp with dialog */
-}
-
-.bdac-grid .e-grid td,
-.bdac-grid .e-grid th {
-    white-space: nowrap;
+/* Smaller screens / tablets / phones */
+@media (max-width: 991.98px) {
+    .match-results-scroll {
+        max-height: 40vh;
+    }
 }
 
 .nowrap {
     white-space: nowrap;
 }
-
-.bdac-grid .e-grid td.e-wrap,
-.bdac-grid .e-grid th.e-wrap {
-    white-space: normal;
-    overflow-wrap: anywhere;
-}
-
-/*#blazor-content {
-    display: block;
-    position: relative;
-    height: 100vh;
-    width: 90vw;
-    overflow: hidden;
-}
-*/
-    /* 1) Let the dialog grow up to the viewport -  small margin */
-/*    #blazor-content .bdac-dialog.e-dialog {
-        max-height: calc(100vh + 124px); 
-    }
-*/
-        /* 2) Ensure the dialog content becomes the scrollable region - header + padding + (optional) footer */
-/*        #blazor-content .bdac-dialog.e-dialog .e-dlg-content {
-            max-height: calc(100vh + 120px); 
-            overflow: auto;
-        }
-*/
 
 
 fieldset {
@@ -466,12 +382,6 @@ fieldset {
     color: white;
 }
 
-
-
-/* Reduce visual weight when row is not hovered */
-.e-grid tr:not(:hover) .grid-action-btn {
-    opacity: 0.85;
-}
 
 .page-header {
     display: block !important;
