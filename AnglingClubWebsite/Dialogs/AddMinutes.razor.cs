@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
@@ -122,7 +123,7 @@ namespace AnglingClubWebsite.Dialogs
                 // Create a doc record in the database
                 await _documentService.SaveDocument(DocumentInfo);
 
-                _messenger.Send<ShowToast>(new ShowToast(MessageState.Success, $"Minutes have been saved for {DocumentInfo.Created.ToString("dd MMM yy")}"));
+                _messenger.Send<ShowToast>(new ShowToast(MessageState.Success, $"Minutes have been saved for {DocumentInfo.Created.BdacDate()}"));
 
                 // Tell the parent to update its source of truth
                 await VisibleChanged.InvokeAsync(false);

@@ -1,8 +1,10 @@
 ﻿@page "/MeetingMinutes"
 
 @using AnglingClubShared.Entities
+@using AnglingClubShared.Extensions
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.Grids
+@using Microsoft.AspNetCore.Components.QuickGrid
 
 @inherits RazorComponentBase;
 
@@ -16,9 +18,9 @@
 
     <BusyIndicator IsReady="DataLoaded" />
 
-    @if (Documents.Any() || !_model.SearchText.IsWhiteSpace())
+    @if (DocumentsQueryable.Any() || !_model.SearchText.IsWhiteSpace())
     {
-        <div class="bdac-grid grid-shrinkwrap">
+        <div class="bdac-grid shrinkwrap">
 
             <EditForm EditContext="_editContext">
                 <div class="edit-button-panel">
@@ -44,51 +46,82 @@
                 <br />
             }
 
-            <SfGrid @ref="Grid" DataSource="@Documents" AllowSorting="true" AllowFiltering="false" AllowTextWrap="false" TItem="DocumentListItem">
-                <GridEvents DataBound="DataboundHandler" RowSelected="MeetingSelectedHandler" TValue="DocumentListItem"></GridEvents>
-                <GridFilterSettings Type="@Syncfusion.Blazor.Grids.FilterType.Excel" />
-                <GridSelectionSettings Type="@Syncfusion.Blazor.Grids.SelectionType.Single" Mode="@Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
-                <GridTextWrapSettings WrapMode="WrapMode.Content" />
-                <GridSortSettings>
-                    <GridSortColumns>
-                        <GridSortColumn Field=@nameof(DocumentListItem.Created)
-                                        Direction="SortDirection.Descending" />
-                    </GridSortColumns>
-                </GridSortSettings>
+            <QuickGrid Items="DocumentsQueryable" Class="bdac-table">
 
-                <GridColumns>
-                    <GridColumn Field=@nameof(DocumentListItem.Created) HeaderText="Date" Format="dd MMM yy" Type="Syncfusion.Blazor.Grids.ColumnType.Date" />
-                    <GridColumn Field=@nameof(DocumentListItem.UploadedBy) Visible="@IsWide()" HeaderText="Created by" />
-                    <GridColumn Field=@nameof(DocumentListItem.Title) HeaderText="Title" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
-                    <GridColumn Field=@nameof(DocumentListItem.Notes) Visible="@IsWide()" HeaderText="Summary" CustomAttributes="@(new Dictionary<string, object>() { { "class", "e-wrap" } })" />
+                    <TemplateColumn Title="Date">
+                        <ChildContent Context="row">
+                            <BdacGridCell TItem="DocumentListItem"
+                                          Item="row"
+                                          AdditionalClass="@CellClass(row)"
+                                          OnSelect="MeetingSelectedHandler">
+                                <span class="nowrap">@row.Created.BdacDate()</span>
+                            </BdacGridCell>
+                        </ChildContent>
+                    </TemplateColumn>
 
-                    <GridColumn HeaderText="Action"
-                                Visible="CurrentUser.Secretary"
-                                Width="110"
-                                AllowSorting="false"
-                                AllowFiltering="false"
-                                TextAlign="TextAlign.Center">
-                        <Template Context="rowObj">
-                            @{
-                                var row = (DocumentListItem)rowObj;
-                            }
+                    @if (IsWide())
+                    {
+                        <TemplateColumn Title="Created by">
+                            <ChildContent Context="row">
+                                <BdacGridCell TItem="DocumentListItem"
+                                              Item="row"
+                                              AdditionalClass="@CellClass(row)"
+                                              OnSelect="MeetingSelectedHandler">
+                                    <span class="nowrap">@row.UploadedBy</span>
+                                </BdacGridCell>
+                            </ChildContent>
+                        </TemplateColumn>
+                    }
 
-                            <span @onclick:stopPropagation>
-                                <SfButton CssClass="grid-action-btn"
-                                          IconCss="fa-solid fa-download"
-                                          Title="Download"
-                                          OnClick="@(async () => await DownloadAsync(row))" />
+                    <TemplateColumn Title="Title">
+                        <ChildContent Context="row">
+                            <BdacGridCell TItem="DocumentListItem"
+                                          Item="row"
+                                          AdditionalClass="@CellClass(row)"
+                                          OnSelect="MeetingSelectedHandler">
+                                <span class="nowrap">@row.Title</span>
+                            </BdacGridCell>
+                        </ChildContent>
+                    </TemplateColumn>
 
-                                <SfButton CssClass="grid-action-btn grid-action-btn--danger"
-                                          IconCss="fa-solid fa-trash"
-                                          Title="Delete"
-                                          OnClick="@(async () => await DeleteAsync(row))" />
-                            </span>
-                        </Template>
-                    </GridColumn>
-                </GridColumns>
+                    @if (IsWide())
+                    {
+                        <TemplateColumn Title="Summary">
+                            <ChildContent Context="row">
+                                <BdacGridCell TItem="DocumentListItem"
+                                              Item="row"
+                                              AdditionalClass="@CellClass(row)"
+                                              OnSelect="MeetingSelectedHandler">
+                                    <span class="nowrap">@row.Notes</span>
+                                </BdacGridCell>
+                            </ChildContent>
+                        </TemplateColumn>
+                    }
 
-            </SfGrid>
+                    @if(CurrentUser.Secretary)
+                    {
+                        <TemplateColumn Title="Actions" Align="Align.Center">
+                            <ChildContent Context="row">
+                                <BdacGridCell TItem="DocumentListItem"
+                                              Item="row"
+                                              AdditionalClass="@CellClass(row)">
+                                    <span >
+                                        <SfButton CssClass="grid-action-btn"
+                                              IconCss="fa-solid fa-download"
+                                              Title="Download"
+                                              OnClick="@(async () => await DownloadAsync(row))" />
+
+                                        <SfButton CssClass="grid-action-btn grid-action-btn--danger"
+                                              IconCss="fa-solid fa-trash"
+                                              Title="Delete"
+                                              OnClick="@(async () => await DeleteAsync(row))" />
+                                    </span>
+                                </BdacGridCell>
+                            </ChildContent>
+                        </TemplateColumn>
+                    }
+
+                </QuickGrid>
 
         </div>
     }

@@ -1,4 +1,4 @@
-html, body {
+﻿html, body {
     height: 100%;
 }
 
@@ -222,22 +222,6 @@ h3 {
 
 }
 
-/* Disable focused cell ring across all Syncfusion SfGrid (Bootstrap 5 theme) */
-.e-grid .e-rowcell.e-focused,
-.e-grid .e-rowcell:focus,
-.e-grid .e-rowcell:focus-within {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: transparent !important;
-}
-
-/* Also remove focus ring from grid headers (optional but consistent) */
-.e-grid .e-headercell:focus,
-.e-grid .e-headercell.e-focused {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
 /* The element you target the spinner to */
 #busyArea {
     position: relative;
@@ -269,27 +253,10 @@ td.label {
     vertical-align: top;
 }
 
-/* shrink-wrap the grid to its content width */
-.grid-shrinkwrap {
+/* shrink-wrap to its content width */
+.shrinkwrap {
     display: inline-block; /* key: shrink-to-fit */
     max-width: 100%;
-}
-
-    /* ensure grid isn't forced back to 100% */
-    .grid-shrinkwrap .e-grid {
-        width: auto !important;
-    }
-
-.e-grid .e-gridcontent .e-rowcell.date-past {
-    font-weight: 300;
-}
-
-.e-grid .e-gridcontent .e-rowcell.date-future {
-    font-weight: 500;
-}
-
-.e-grid .e-rowcell.e-focused {
-    box-shadow: none !important;
 }
 
 /* Active tab underline */
@@ -345,22 +312,6 @@ td.label {
     padding: 0;
 }
 
-.e-grid.e-device .e-rowcell {
-    padding-top: 11px;
-    padding-bottom: 13px;
-}
-
-.e-grid .e-rowcell {
-    padding-top: 11px;
-    padding-bottom: 13px;
-}
-
-.grid-compact .e-grid .e-rowcell,
-.grid-compact .e-grid .e-headercell {
-    font-size: 12px;
-    padding: 4px 8px !important;
-}
-
 .floating-panel {
     position: absolute;
     top: 50px;
@@ -391,80 +342,36 @@ td.label {
 
     .bdac-dialog.e-dialog .e-dlg-content {
         display: inline-block;
+        overflow: hidden;
         width: fit-content;
         max-width: 90vw;
         min-width: 0;
         background-color: whitesmoke;
     }
 
-/* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
-.bdac-dialog .e-grid .e-content,
-.bdac-dialog .e-grid .e-gridcontent {
+.match-results-scroll {
+    overflow-y: auto;
     overflow-x: auto;
 }
 
-.bdac-dialog .e-grid .e-table {
-    table-layout: auto;
-    width: max-content; /* content-sized */
-    max-width: 90vw; /* clamp with dialog */
+/* Large screens */
+@media (min-width: 992px) {
+    .match-results-scroll {
+        max-height: 50vh;
+    }
 }
 
-/* Grid/table shrink-wrap with clamp + horizontal scroll if needed */
-.bdac-grid .e-grid .e-content,
-.bdac-grid .e-grid .e-gridcontent {
-    overflow-x: auto;
+/* Smaller screens / tablets / phones */
+@media (max-width: 991.98px) {
+    .match-results-scroll {
+        max-height: 40vh;
+    }
 }
 
-.bdac-grid .e-grid .e-table {
-    table-layout: auto;
-    width: max-content; /* content-sized */
-    max-width: 90vw; /* clamp with dialog */
-}
-
-.bdac-grid .e-grid td,
-.bdac-grid .e-grid th {
+.nowrap {
     white-space: nowrap;
 }
 
-.bdac-grid .e-grid td.e-wrap,
-.bdac-grid .e-grid th.e-wrap {
-    white-space: normal;
-    overflow-wrap: anywhere;
-}
-
-/*#blazor-content {
-    display: block;
-    position: relative;
-    height: 100vh;
-    width: 90vw;
-    overflow: hidden;
-}
-*/
-    /* 1) Let the dialog grow up to the viewport -  small margin */
-/*    #blazor-content .bdac-dialog.e-dialog {
-        max-height: calc(100vh + 124px); 
-    }
-*/
-        /* 2) Ensure the dialog content becomes the scrollable region - header + padding + (optional) footer */
-/*        #blazor-content .bdac-dialog.e-dialog .e-dlg-content {
-            max-height: calc(100vh + 120px); 
-            overflow: auto;
-        }
-*/
-
-
-.bdac-table {
-    /*box-shadow: 0 5px 5px -3px #0003,0 8px 10px 1px #00000024,0 3px 14px 2px #0000001f;*/
-    border-collapse: collapse;
-    background-color: white;
-    border: 1px solid #ddd;
-}
-
-    .bdac-table th,
-    .bdac-table td {
-        border-bottom: 1px solid #ddd;
-        padding: 11px 12px 13px 12px;
-    }
 
 fieldset {
     border: 0;
@@ -475,43 +382,6 @@ fieldset {
     color: white;
 }
 
-
-/* Base flat icon button inside SfGrid */
-.e-grid .grid-action-btn {
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 4px 6px;
-    min-width: unset;
-    color: #0d6efd;
-}
-
-    /* Hover / focus subtle flat effect */
-    .e-grid .grid-action-btn:hover,
-    .e-grid .grid-action-btn:focus {
-        background-color: rgba(13, 110, 253, 0.08);
-    }
-
-    /* Ensure Font Awesome icon inherits colour */
-    .e-grid .grid-action-btn .e-btn-icon,
-    .e-grid .grid-action-btn i {
-        color: inherit;
-    }
-
-/* Danger variant */
-.e-grid .grid-action-btn--danger {
-    color: #dc3545;
-}
-
-    .e-grid .grid-action-btn--danger:hover,
-    .e-grid .grid-action-btn--danger:focus {
-        background-color: rgba(220, 53, 69, 0.08);
-    }
-
-/* Reduce visual weight when row is not hovered */
-.e-grid tr:not(:hover) .grid-action-btn {
-    opacity: 0.85;
-}
 
 .page-header {
     display: block !important;
@@ -566,3 +436,291 @@ fieldset {
     padding-bottom: 2px;
 }
 
+.bdac-table-scroll-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* =========================================================
+   BDAC QuickGrid styling (class: bdac-table)
+   ========================================================= */
+
+:root {
+    /* Single source of truth for your cell padding (H = 12px) */
+    --bdac-cell-pt: 11px;
+    --bdac-cell-pr: 12px;
+    --bdac-cell-pb: 13px;
+    --bdac-cell-pl: 12px;
+    /* Extra space to reserve for the custom sort chevron when sorted */
+    --bdac-sort-reserve: 1.0rem;
+}
+
+/* Base table */
+.bdac-table {
+    width: auto; /* keep content-sized on desktop */
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    background-color: #fff !important;
+    border: 1px solid #ddd !important;
+}
+
+    /* ---------------------------------------------------------
+   Header cells: NO padding on th; padding goes on title text
+   (so header inset matches body inset exactly)
+   --------------------------------------------------------- */
+
+    .bdac-table thead th {
+        border-bottom: 1px solid #ddd !important;
+        padding: 0 !important;
+        position: relative; /* for sort chevron */
+    }
+
+        /* Apply the same padding as body cells to header text wrapper */
+        .bdac-table thead th .col-title-text {
+            display: block;
+            padding-top: var(--bdac-cell-pt);
+            padding-bottom: var(--bdac-cell-pb);
+            padding-left: max(0px, calc(var(--bdac-cell-pl) - 6px));
+            padding-right: max(0px, calc(var(--bdac-cell-pr) - 6px));
+        }
+
+
+        /* Only reserve room for chevron when the column is actually sorted
+   (reserve it on the header text wrapper, not the th) */
+        .bdac-table thead th[aria-sort="ascending"] .col-title-text,
+        .bdac-table thead th[aria-sort="descending"] .col-title-text {
+            padding-right: calc(var(--bdac-cell-pr) + var(--bdac-sort-reserve));
+        }
+
+    /* ---------------------------------------------------------
+   Body cells: padding lives on .bdac-rowcell so the whole
+   padded area is clickable
+   --------------------------------------------------------- */
+
+    .bdac-table tbody td {
+        padding: 0 !important;
+    }
+
+/* Clickable cell content (fills entire td, including padding) */
+.bdac-rowcell {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--bdac-cell-pt) var(--bdac-cell-pr) var(--bdac-cell-pb) var(--bdac-cell-pl);
+    margin: 0;
+    user-select: none;
+    background: transparent;
+}
+
+/* =========================================================
+   Sorting
+   ========================================================= */
+
+/* Hide QuickGrid's built-in sort indicator element */
+.bdac-table .sort-indicator {
+    display: none !important;
+}
+
+/* Subtle chevrons driven by aria-sort on th (only appears when sorted)
+   Position at the same right inset as the content padding */
+.bdac-table thead th[aria-sort="ascending"]::after,
+.bdac-table thead th[aria-sort="descending"]::after {
+    position: absolute;
+    right: var(--bdac-cell-pr); /* align with content right padding */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.65rem;
+    color: var(--bs-secondary-color);
+    opacity: 0.4;
+}
+
+.bdac-table thead th[aria-sort="ascending"]::after {
+    content: "▲";
+}
+
+.bdac-table thead th[aria-sort="descending"]::after {
+    content: "▼";
+}
+
+/* =========================================================
+   Row hover + selection
+   ========================================================= */
+
+.bdac-table tbody tr {
+    cursor: pointer;
+}
+
+    .bdac-table tbody tr:hover > td {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .bdac-table tbody tr:has(.bdac-row-selected) > td {
+        background-color: rgba(0, 0, 0, 0.06);
+    }
+
+.bdac-table.table-striped tbody tr:has(.bdac-row-selected) > td {
+    background-color: rgba(0, 0, 0, 0.09);
+}
+
+/* Past rows (dimmed) */
+.bdac-row-past {
+    font-weight: 300;
+    /* or: color: var(--bs-secondary-color); */
+}
+
+/* Helpers */
+.nowrap {
+    white-space: nowrap;
+}
+
+/* =========================================================
+   Right-align headers for right-justified columns
+   ========================================================= */
+
+.bdac-table thead th.col-justify-right {
+    text-align: right !important;
+}
+
+    /* Ensure header title consumes width so text-align has meaning */
+    .bdac-table thead th.col-justify-right .col-header-content {
+        width: 100% !important;
+        display: flex !important;
+    }
+
+    .bdac-table thead th.col-justify-right .col-title {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        min-width: 0 !important;
+    }
+
+    /* The title text wrapper is full-width already; enforce right-align */
+    .bdac-table thead th.col-justify-right .col-title-text {
+        text-align: right !important;
+    }
+
+/* =========================================================
+   Ensure QuickGrid body-cell alignment works with bdac-rowcell
+   ========================================================= */
+
+.bdac-table tbody td.col-justify-right {
+    text-align: right !important;
+}
+
+    .bdac-table tbody td.col-justify-right .bdac-rowcell {
+        text-align: right !important;
+    }
+
+    /* Optional: if QuickGrid wraps cell content in a flex container, force it to stretch */
+    .bdac-table tbody td.col-justify-right .col-cell-content,
+    .bdac-table tbody td.col-justify-right .col-content {
+        width: 100% !important;
+    }
+
+/* =========================================================
+   Header: remove extra QuickGrid spacing that looks like padding
+   ========================================================= */
+
+.bdac-table thead .col-title {
+    gap: 0 !important;
+}
+
+.bdac-table thead .col-header-content {
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Make header text container span the full column width (match bdac-rowcell) */
+.bdac-table thead .col-title-text {
+    width: 100% !important;
+}
+
+/* Pixel-perfect header/body width alignment: make header flex containers stretch */
+.bdac-table thead th .col-header-content,
+.bdac-table thead th .col-title {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Make the title text actually take the available width inside the flex title container */
+.bdac-table thead th .col-title-text {
+    flex: 1 1 auto !important;
+    width: auto !important; /* override the earlier width:100% that isn't behaving as expected */
+    min-width: 0 !important;
+}
+
+/* Base flat icon button inside table */
+.bdac-table .grid-action-btn {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 4px 6px;
+    min-width: unset;
+    color: #0d6efd;
+}
+
+    /* Hover / focus subtle flat effect */
+    .bdac-table .grid-action-btn:hover,
+    .bdac-table .grid-action-btn:focus {
+        background-color: rgba(13, 110, 253, 0.08);
+    }
+
+    /* Ensure Font Awesome icon inherits colour */
+    .bdac-table .grid-action-btn .e-btn-icon,
+    .bdac-table .grid-action-btn i {
+        color: inherit;
+    }
+
+/* Danger variant */
+.bdac-table .grid-action-btn--danger {
+    color: #dc3545;
+}
+
+    .bdac-table .grid-action-btn--danger:hover,
+    .bdac-table .grid-action-btn--danger:focus {
+        background-color: rgba(220, 53, 69, 0.08);
+    }
+
+.bdac-table tbody td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* =========================================================
+   End of BDAC QuickGrid styling (class: bdac-table)
+   ========================================================= */
+
+
+/* =========================================================
+   BDAC Simple html table styling (class: bdac-simple-table)
+   ========================================================= */
+
+.bdac-simple-table {
+    /*box-shadow: 0 5px 5px -3px #0003,0 8px 10px 1px #00000024,0 3px 14px 2px #0000001f;*/
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+    .bdac-simple-table th,
+    .bdac-simple-table td {
+        border-bottom: 1px solid #ddd;
+        padding: 11px 12px 13px 12px;
+    }
+
+        .bdac-simple-table th.center-align,
+        .bdac-simple-table td.center-align {
+            text-align: center;
+        }
+
+        .bdac-simple-table th.right-align,
+        .bdac-simple-table td.right-align {
+            text-align: right;
+        }
+
+        .bdac-simple-table th.left-align,
+        .bdac-simple-table td.left-align {
+            text-align: left;
+        }
+/* =========================================================
+   End of BDAC Simple html table styling (class: bdac-simple-table)
+   ========================================================= */

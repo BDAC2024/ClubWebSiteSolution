@@ -1,4 +1,6 @@
 ﻿@using AnglingClubShared.Models
+@using AnglingClubShared.Extensions;
+
 @inherits RazorComponentBase;
 
 <AuthorizationRequired>
@@ -10,7 +12,7 @@
 
                 <table class="match-table">
                     <tr><td class="label">Title:</td><td>@SelectedMeeting!.Title</td></tr>
-                    <tr><td class="label">Meeting Date:</td><td>@SelectedMeeting!.Created.ToString("dd MMM yy")</td></tr>
+                    <tr><td class="label">Meeting Date:</td><td>@SelectedMeeting!.Created.BdacDate()</td></tr>
                     <tr><td class="label">Created by:</td><td>@SelectedMeeting!.UploadedBy</td></tr>
                     <tr><td class="label">Summary:</td><td>@SelectedMeeting!.Notes</td></tr>
                 </table>

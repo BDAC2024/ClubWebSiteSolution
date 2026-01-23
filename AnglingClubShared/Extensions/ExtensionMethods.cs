@@ -104,6 +104,16 @@ namespace AnglingClubShared.Extensions
         }
 
         /// <summary>
+        /// Returns a date of the form "18 Dec 25"
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string BdacDate(this DateTime value)
+        {
+            return value.ToString("dd MMM yy");
+        }
+
+        /// <summary>
         /// Splits an enum desc of [Description("2021/22,2021-04-01,2022-03-31")] into
         /// comma separted parts
         /// </summary>

@@ -1,5 +1,4 @@
-﻿using AnglingClubShared;
-using AnglingClubShared.DTOs;
+﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
@@ -8,6 +7,7 @@ using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.AspNetCore.Components.QuickGrid;
 using System.Collections.ObjectModel;
 using MatchType = AnglingClubShared.Enums.MatchType;
 
@@ -79,6 +79,9 @@ namespace AnglingClubWebsite.Pages
         private ObservableCollection<ClubEvent> _matches = new ObservableCollection<ClubEvent>();
 
         [ObservableProperty]
+        private IQueryable<ClubEvent>? _matchesQueryable;
+
+        [ObservableProperty]
         private ObservableCollection<MatchResultOutputDto> _matchResults = new ObservableCollection<MatchResultOutputDto>();
 
         [ObservableProperty]
@@ -139,6 +142,8 @@ namespace AnglingClubWebsite.Pages
 
                 selectedMatches = _allMatches.Where(m => m.MatchType == SelectedMatchType).ToList();
                 Matches = new ObservableCollection<ClubEvent>(selectedMatches);
+                MatchesQueryable = Matches.AsQueryable();
+
                 ShowCup = selectedMatches.Any(x => x.Cup != "");
                 ShowTime = selectedMatches.Any(x => x.Time != "");
 
@@ -158,6 +163,34 @@ namespace AnglingClubWebsite.Pages
         //    //_logger.LogWarning($"Portrait {BrowserPortrait}");
         //    await GetMatchResults(match.Id);
         //}
+
+
+        public void MatchSelectedHandler(ClubEvent row)
+        {
+            SelectedMatch = row;
+            ShowingResults = true;
+        }
+
+        public string CellClass(ClubEvent row)
+        {
+            var classes = "bdac-rowcell";
+
+            // Selected row highlight (use a stable key if your query re-materializes items)
+            if (ReferenceEquals(SelectedMatch, row))
+            {
+                classes += " bdac-row-selected";
+            }
+
+            // Dim past rows (based on your earlier requirement)
+            if (row.Date.Date < DateTime.Today)
+            {
+                classes += " bdac-row-past";
+            }
+
+            return classes;
+        }
+
+        public static readonly GridSort<ClubEvent> SortByDate = GridSort<ClubEvent>.ByAscending(x => x.Date);
 
         #endregion Methods
 
