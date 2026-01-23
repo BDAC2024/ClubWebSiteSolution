@@ -8,14 +8,14 @@
         <Header>Match Details</Header>
         <Content>
              <div class="bdac-smaller">
-                @if (CurrentUser.Admin && ResultsLoaded && MatchResults.Any())
+                @if (CurrentUser.Admin && _resultsLoaded && _matchResults.Any())
                 {
                     <div style="float: right;">
-                        <SfCheckBox Label="Show peg" @bind-Checked="@ShowPeg"></SfCheckBox>
+                        <SfCheckBox Label="Show peg" @bind-Checked="@_showPeg"></SfCheckBox>
                     </div>
                     <br />
                 }
-                @if (BrowserService.IsPortrait)
+                @if (_browserService.IsPortrait)
                 {
                     <table class="match-table">
                         <tr><td class="label">Match:</td><td>@SelectedMatch!.MatchType No. @SelectedMatch!.Number</td></tr>
@@ -44,10 +44,10 @@
                 }
                 <br />
                 <h3>Results</h3>
-                <BusyIndicator IsReady="@ResultsLoaded"></BusyIndicator>
-                @if (ResultsLoaded)
+                <BusyIndicator IsReady="@_resultsLoaded"></BusyIndicator>
+                @if (_resultsLoaded)
                 {
-                    @if (MatchResults.Any())
+                    @if (_matchResults.Any())
                     {
                         <table class="bdac-simple-table">
                             <thead>
@@ -56,7 +56,7 @@
                                     <th class="left-align">Name</th>
                                     @if (SelectedMatch.MatchType != MatchType.OSU)
                                     {
-                                        @if (ShowPeg)
+                                        @if (_showPeg)
                                         {
                                             <th class="right-align">Peg</th>
                                         }
@@ -66,14 +66,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var r in MatchResults)
+                                @foreach (var r in _matchResults)
                                 {
                                     <tr>
                                         <td class="left-align"><nobr>@r.PositionOrdinal</nobr></td>
                                         <td class="left-align">@r.Name</td>
                                         @if (SelectedMatch.MatchType != MatchType.OSU)
                                         {
-                                            @if (ShowPeg)
+                                            @if (_showPeg)
                                             {
                                                 <td class="right-align">@r.Peg</td>
                                             }

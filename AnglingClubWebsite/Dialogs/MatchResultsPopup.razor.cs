@@ -26,8 +26,8 @@ namespace AnglingClubWebsite.Dialogs
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
 
-        private readonly IGlobalService GlobalService;
-        private readonly BrowserService BrowserService;
+        private readonly IGlobalService _globalService;
+        private readonly BrowserService _browserService;
         private readonly IMatchResultsService _matchResultsService;
         private readonly ILogger<MatchResultsPopup> _logger;
 
@@ -40,30 +40,30 @@ namespace AnglingClubWebsite.Dialogs
             IMatchResultsService matchResultsService,
             ILogger<MatchResultsPopup> logger) : base(messenger, currentUserService, authenticationService)
         {
-            GlobalService = globalService;
-            BrowserService = browserService;
+            _globalService = globalService;
+            _browserService = browserService;
             _messenger = messenger;
             _authenticationService = authenticationService;
             _matchResultsService = matchResultsService;
             _logger = logger;
         }
 
-        private List<MatchResultOutputDto> MatchResults = new List<MatchResultOutputDto>();
-        private bool ResultsLoaded = false;
-        private bool ShowPeg = true;
+        private List<MatchResultOutputDto> _matchResults = new List<MatchResultOutputDto>();
+        private bool _resultsLoaded = false;
+        private bool _showPeg = true;
 
-        private string cachedMatchId = "";
+        private string _cachedMatchId = "";
 
         protected override async Task OnParametersSetAsync()
         {
-            if (SelectedMatch == null || SelectedMatch.Id.IsNullOrEmpty())
+            if (SelectedMatch == null)
             {     
                 return; 
             }
 
-            if (cachedMatchId != SelectedMatch.Id)
+            if (_cachedMatchId != SelectedMatch.Id)
             {
-                cachedMatchId = SelectedMatch.Id;
+                _cachedMatchId = SelectedMatch.Id;
                 await GetMatchResults(SelectedMatch.Id);
             }
 
@@ -72,13 +72,13 @@ namespace AnglingClubWebsite.Dialogs
 
         private async Task GetMatchResults(string matchId)
         {
-            ResultsLoaded = false;
+            _resultsLoaded = false;
 
             try
             {
                 var resultsFromService = await _matchResultsService.GetResultsForMatch(matchId);
                 var results = (resultsFromService ?? new List<MatchResultOutputDto>()).ToList();
-                MatchResults = results;
+                _matchResults = results;
             }
             catch (Exception ex)
             {
@@ -86,14 +86,12 @@ namespace AnglingClubWebsite.Dialogs
             }
             finally
             {
-                ResultsLoaded = true;
+                _resultsLoaded = true;
             }
         }
 
         private async Task CloseAsync()
         {
-            SelectedMatch.Id = "";
-
             // Tell the parent to update its source of truth
             await VisibleChanged.InvokeAsync(false);
         }
