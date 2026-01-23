@@ -89,7 +89,7 @@
                                     Item="row"
                                     AdditionalClass="@ViewModel.CellClass(row)"
                                     OnSelect="ViewModel.MatchSelectedHandler">
-                        @row.Number!.Value.ToString("N0")
+                        @(row.Number != null ? row.Number.Value.ToString("N0") : 0)
                     </BdacGridCell>
                 </ChildContent>
             </TemplateColumn>
