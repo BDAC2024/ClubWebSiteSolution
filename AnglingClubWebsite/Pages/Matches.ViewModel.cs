@@ -1,5 +1,4 @@
-﻿using AnglingClubShared;
-using AnglingClubShared.DTOs;
+﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;

@@ -1,5 +1,6 @@
 ﻿@page "/News"
 
+@using AnglingClubShared.Extensions;
 @inherits MvvmComponentBase<NewsViewModel>
 
 <div class="page-header">
@@ -53,7 +54,7 @@
     {
         <NewsCard ItemId="@item.DbKey"
         Title="@item.Title"
-        SubTitle="@item.Date.ToString("dd MMM yy")"
+        SubTitle="@item.Date.BdacDate()"
         IsNew="ViewModel.IsNew(item.Date)"
         Button1Text="@(ViewModel.IsUnlocked ? "Delete" : "")"
         Button1Icon="@(ViewModel.IsUnlocked ? "fa-trash" : "")"

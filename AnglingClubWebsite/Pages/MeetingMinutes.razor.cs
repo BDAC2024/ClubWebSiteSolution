@@ -1,15 +1,12 @@
-﻿using AnglingClubShared;
-using AnglingClubShared.Entities;
+﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Inputs;
-using System.Linq.Expressions;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -17,7 +14,6 @@ namespace AnglingClubWebsite.Pages
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
-        private readonly ICurrentUserService _currentUserService;
         private readonly IDocumentService _documentService;
         private readonly BrowserService _browserService;
         private readonly IDialogQueue _dialogQueue;
@@ -45,19 +41,24 @@ namespace AnglingClubWebsite.Pages
         }
 
         #region Properties
-        private SfGrid<DocumentListItem>? Grid;
-        private SfTextBox? SearchComponent { get; set; }
+        private SfTextBox? SearchComponent
+        {
+            get; set;
+        }
 
         public bool AddingMinutes = false;
         public bool ShowingMeeting = false;
 
-        public List<DocumentListItem> Documents { get; set; } = new List<DocumentListItem>();
+        public IQueryable<DocumentListItem> DocumentsQueryable = new List<DocumentListItem>().AsQueryable();
 
         public string SearchText { get; set; } = "";
         private SearchModel _model = new();
         private EditContext? _editContext;
         private ValidationMessageStore? _messages;
-        public DocumentListItem? SelectedMeeting { get; set; }
+        public DocumentListItem? SelectedMeeting
+        {
+            get; set;
+        }
 
         public DeviceSize BrowserSize = DeviceSize.Unknown;
 
@@ -81,11 +82,6 @@ namespace AnglingClubWebsite.Pages
             await base.OnParametersSetAsync();
         }
 
-        public async Task DataboundHandler(object args)
-        {
-            await this.Grid!.AutoFitColumnsAsync();
-        }
-
         private async void AddSearchIcon()
         {
             if (SearchComponent != null)
@@ -106,9 +102,9 @@ namespace AnglingClubWebsite.Pages
         }
 
 
-        public void MeetingSelectedHandler(RowSelectEventArgs<DocumentListItem> args)
+        public void MeetingSelectedHandler(DocumentListItem doc)
         {
-            SelectedMeeting = args.Data;
+            SelectedMeeting = doc;
             ShowingMeeting = true;
         }
 
@@ -121,6 +117,7 @@ namespace AnglingClubWebsite.Pages
                 if (url != null)
                 {
                     _navigationService.NavigateTo(url, forceLoad: true);
+                    _messenger.Send<ShowToast>(new ShowToast(MessageState.Success, "Minutes have been downloaded"));
                 }
                 else
                 {
@@ -140,7 +137,7 @@ namespace AnglingClubWebsite.Pages
                 Kind = DialogKind.Confirm,
                 Severity = DialogSeverity.Warn,
                 Title = "Please confirm",
-                Message = $"Do you really want to delete the minutes for '{doc.Title}' on {doc.Created.ToString("dd MMM yy")}?",
+                Message = $"Do you really want to delete the minutes for '{doc.Title}' on {doc.Created.BdacDate()}?",
                 CancelText = "Cancel",
                 ConfirmText = "Yes",
                 OnConfirmAsync = async () =>
@@ -187,12 +184,6 @@ namespace AnglingClubWebsite.Pages
             // Option A: re-query and rebind
             await ReadMeetings();
             StateHasChanged();
-
-            // Option B (often useful as well): force Syncfusion to re-render its view
-            if (Grid is not null)
-            {
-                await Grid.Refresh();
-            }
         }
 
         public void Receive(BrowserChange message)
@@ -210,17 +201,34 @@ namespace AnglingClubWebsite.Pages
                 SearchText = _model.SearchText ?? ""
             };
 
-            Documents = await _documentService.ReadDocuments(req) ?? new List<DocumentListItem>();
+            var docs = await _documentService.ReadDocuments(req) ?? new List<DocumentListItem>();
+            DocumentsQueryable = docs.OrderByDescending(x => x.Created).AsQueryable();
 
             //_messenger.Send<ShowToast>(new ShowToast(MessageState.Info, "Test of Toast styling"));
             //_messenger.Send<ShowToast>(new ShowToast(MessageState.Warn, "Test of Toast styling with a much longer line of text that will need to wrap"));
+        }
+
+        public string CellClass(DocumentListItem row)
+        {
+            var classes = "bdac-rowcell";
+
+            // Selected row highlight (use a stable key if your query re-materializes items)
+            if (ReferenceEquals(SelectedMeeting, row))
+            {
+                classes += " bdac-row-selected";
+            }
+
+            return classes;
         }
 
         #region Helper Classes
 
         public class SearchModel
         {
-            public string? SearchText { get; set; }
+            public string? SearchText
+            {
+                get; set;
+            }
         }
 
         #endregion Helper Classes

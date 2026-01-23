@@ -467,37 +467,6 @@ fieldset {
 }
 
 
-/* Base flat icon button inside SfGrid */
-.e-grid .grid-action-btn {
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 4px 6px;
-    min-width: unset;
-    color: #0d6efd;
-}
-
-    /* Hover / focus subtle flat effect */
-    .e-grid .grid-action-btn:hover,
-    .e-grid .grid-action-btn:focus {
-        background-color: rgba(13, 110, 253, 0.08);
-    }
-
-    /* Ensure Font Awesome icon inherits colour */
-    .e-grid .grid-action-btn .e-btn-icon,
-    .e-grid .grid-action-btn i {
-        color: inherit;
-    }
-
-/* Danger variant */
-.e-grid .grid-action-btn--danger {
-    color: #dc3545;
-}
-
-    .e-grid .grid-action-btn--danger:hover,
-    .e-grid .grid-action-btn--danger:focus {
-        background-color: rgba(220, 53, 69, 0.08);
-    }
 
 /* Reduce visual weight when row is not hovered */
 .e-grid tr:not(:hover) .grid-action-btn {
@@ -768,4 +737,40 @@ fieldset {
     flex: 1 1 auto !important;
     width: auto !important; /* override the earlier width:100% that isn't behaving as expected */
     min-width: 0 !important;
+}
+
+/* Base flat icon button inside table */
+.bdac-table .grid-action-btn {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 4px 6px;
+    min-width: unset;
+    color: #0d6efd;
+}
+
+    /* Hover / focus subtle flat effect */
+    .bdac-table .grid-action-btn:hover,
+    .bdac-table .grid-action-btn:focus {
+        background-color: rgba(13, 110, 253, 0.08);
+    }
+
+    /* Ensure Font Awesome icon inherits colour */
+    .bdac-table .grid-action-btn .e-btn-icon,
+    .bdac-table .grid-action-btn i {
+        color: inherit;
+    }
+
+/* Danger variant */
+.bdac-table .grid-action-btn--danger {
+    color: #dc3545;
+}
+
+    .bdac-table .grid-action-btn--danger:hover,
+    .bdac-table .grid-action-btn--danger:focus {
+        background-color: rgba(220, 53, 69, 0.08);
+    }
+
+.bdac-table tbody td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }

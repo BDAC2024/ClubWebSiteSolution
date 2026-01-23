@@ -1,4 +1,5 @@
 ﻿@using AnglingClubShared.Enums;
+@using AnglingClubShared.Extensions;
 
 @inherits RazorComponentBase
 
@@ -18,7 +19,7 @@
                 {
                     <table class="match-table">
                         <tr><td class="label">Match:</td><td>@SelectedMatch!.MatchType No. @SelectedMatch!.Number</td></tr>
-                        <tr><td class="label">Date:</td><td>@SelectedMatch!.Day @SelectedMatch!.Date.ToString("dd MMM yy")</td></tr>
+                        <tr><td class="label">Date:</td><td>@SelectedMatch!.Day @SelectedMatch!.Date.BdacDate()</td></tr>
                         <tr><td class="label">Venue:</td><td>@SelectedMatch!.Description</td></tr>
                         @if (!SelectedMatch!.Cup.IsWhiteSpace())
                         {
@@ -32,7 +33,7 @@
                         <tr><td class="label">Match:</td><td>@SelectedMatch!.MatchType No. @SelectedMatch!.Number</td><td class="label">Venue:</td><td>@SelectedMatch!.Description</td></tr>
                         <tr>
                             <td class="label">Date:</td>
-                            <td>@SelectedMatch!.Day @SelectedMatch!.Date.ToString("dd MMM yy")</td>
+                            <td>@SelectedMatch!.Day @SelectedMatch!.Date.BdacDate()</td>
                             @if (!SelectedMatch!.Cup.IsWhiteSpace())
                             {
                                 <td class="label">Cup:</td>
