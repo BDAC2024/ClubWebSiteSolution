@@ -49,7 +49,7 @@
                 {
                     @if (MatchResults.Any())
                     {
-                        <table class="bdac-table">
+                        <table class="bdac-simple-table">
                             <thead>
                                 <tr>
                                     <th class="left-align">Pos</th>
@@ -62,7 +62,7 @@
                                         }
                                         <th class="left-align col-weight">Weight</th>
                                     }
-                                    <th class="center-align">Pts</th>
+                                    <th class="right-align">Pts</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -79,7 +79,7 @@
                                             }
                                             <td class="left-align col-weight">@r.Weight</td>
                                         }
-                                        <td class="center-align">@r.Points</td>
+                                        <td class="right-align">@r.Points</td>
                                     </tr>
                                 }
                             </tbody>

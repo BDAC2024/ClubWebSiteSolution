@@ -9,17 +9,3 @@
     overflow-wrap: anywhere;
 }
 
-    .match-table th.left-align,
-    .match-table td.left-align {
-        text-align: left;
-    }
-
-    .match-table th.right-align,
-    .match-table td.right-align {
-        text-align: right;
-    }
-
-    .match-table th.center-align,
-    .match-table td.center-align {
-        text-align: center;
-    }

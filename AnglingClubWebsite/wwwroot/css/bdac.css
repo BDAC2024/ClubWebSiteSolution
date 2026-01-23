@@ -774,3 +774,43 @@ fieldset {
 .bdac-table tbody td {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
+
+/* =========================================================
+   End of BDAC QuickGrid styling (class: bdac-table)
+   ========================================================= */
+
+
+/* =========================================================
+   BDAC Simple html table styling (class: bdac-simple-table)
+   ========================================================= */
+
+.bdac-simple-table {
+    /*box-shadow: 0 5px 5px -3px #0003,0 8px 10px 1px #00000024,0 3px 14px 2px #0000001f;*/
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+    .bdac-simple-table th,
+    .bdac-simple-table td {
+        border-bottom: 1px solid #ddd;
+        padding: 11px 12px 13px 12px;
+    }
+
+        .bdac-simple-table th.center-align,
+        .bdac-simple-table td.center-align {
+            text-align: center;
+        }
+
+        .bdac-simple-table th.right-align,
+        .bdac-simple-table td.right-align {
+            text-align: right;
+        }
+
+        .bdac-simple-table th.left-align,
+        .bdac-simple-table td.left-align {
+            text-align: left;
+        }
+/* =========================================================
+   End of BDAC Simple html table styling (class: bdac-simple-table)
+   ========================================================= */
