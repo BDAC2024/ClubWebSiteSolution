@@ -130,6 +130,9 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
       case 'REQUEST_LOGIN':
         this.handleRequestLogin(data.blazorPage);
         break;
+      case 'REQUEST_LOGOUT':
+        this.handleRequestLogout();
+        break;
       case 'REQUEST_PAGE':
         this.handleRequestPage(data.angPage);
         break;
@@ -142,6 +145,10 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login'], {
       state: blazorPage ? { blazorPage } : undefined
     });
+  }
+
+  private handleRequestLogout() {
+    this.router.navigate(['/logout']);
   }
 
   private handleRequestPage(angPage?: string) {

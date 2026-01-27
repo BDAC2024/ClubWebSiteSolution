@@ -6,6 +6,7 @@ using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
@@ -20,6 +21,7 @@ namespace AnglingClubWebsite.Authentication
         private readonly ILogger<CustomAuthenticationStateProvider> _logger;
         private readonly IAuthTokenStore _authTokenStore;
         private readonly HostBridge _hostBridge;
+        private readonly IJSRuntime _js;
 
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
         private bool _isEmbedded = true;
@@ -30,7 +32,8 @@ namespace AnglingClubWebsite.Authentication
             ILogger<CustomAuthenticationStateProvider> logger,
             ISessionStorageService sessionStorageService,
             IAuthTokenStore authTokenStore,
-            HostBridge hostBridge)
+            HostBridge hostBridge,
+            IJSRuntime js)
         {
             _localStorageService = localStorageService;
             _messenger = messenger;
@@ -38,6 +41,7 @@ namespace AnglingClubWebsite.Authentication
             _sessionStorageService = sessionStorageService;
             _authTokenStore = authTokenStore;
             _hostBridge = hostBridge;
+            _js = js;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -45,7 +49,7 @@ namespace AnglingClubWebsite.Authentication
             //_logger.LogWarning($"[GetAuthenticationStateAsync] called with");
             try
             {
-                
+
                 var userSession = _authTokenStore.Current;
 
                 if (userSession == null)
@@ -87,12 +91,12 @@ namespace AnglingClubWebsite.Authentication
                     //new Claim(ClaimTypes.GivenName, userSession.FirstName!),
                     //new Claim(ClaimTypes.Surname, userSession.LastName!),
                 }, "JwtAuth"));
-                
+
                 userSession.Expiration = DateTime.UtcNow.AddSeconds(userSession.ExpiresIn);
 
                 if (rememberMe)
                 {
-                    
+
                     await _localStorageService.SetItemAsStringAsync(Constants.AUTH_KEY, userSessionAsString); // TODO Ang to Blazor Migration - remove after migration
                     //await _localStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession); // TODO Ang to Blazor Migration - re-instate after migration
                 }
@@ -109,7 +113,7 @@ namespace AnglingClubWebsite.Authentication
                 {
                     _messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));  // TODO Ang to Blazor Migration - keep just this once migration is complete
                 }
-                
+
             }
             else
             {
@@ -126,6 +130,11 @@ namespace AnglingClubWebsite.Authentication
                 if (!_isEmbedded)
                 {
                     _messenger.Send(anonUser); // TODO Ang to Blazor Migration - keep just this once migration is complete
+                }
+                else
+                {
+                    // In embedded mode, we need to notify the host that the user has logged out
+                    await _js.InvokeVoidAsync("blazorHostBridge.requestLogout");
                 }
             }
 
