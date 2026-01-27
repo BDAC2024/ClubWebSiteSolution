@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 
 @Component({
@@ -9,12 +9,23 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 })
 export class LogoutComponent implements OnInit {
 
-  constructor(private authenticationService: AuthenticationService,
-    private router: Router) { }
+  informBlazor: boolean = true;
+
+  constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService,
+    private router: Router) {
+    var ib = this.route.snapshot.paramMap.get('informBlazor')?.toLowerCase();
+    //console.log("ib: " + ib);
+    if (!ib || ib == "true") {
+      this.informBlazor = true;
+    } else {
+      this.informBlazor = false;
+    }
+    //console.log("this.informBlazor : " + this.informBlazor);
+  }
 
   ngOnInit(): void {
     if (this.authenticationService.isLoggedIn) { 
-      this.authenticationService.logout();
+      this.authenticationService.logout(this.informBlazor);
       this.router.navigate(['/']);
     }
   }

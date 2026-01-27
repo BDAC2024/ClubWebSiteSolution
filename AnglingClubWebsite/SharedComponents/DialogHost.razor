@@ -23,7 +23,10 @@
                 <DialogButtons>
                     @if (Current!.Kind == DialogKind.Confirm)
                     {
-                        <DialogButton Content="@Current.CancelText" Disabled="Busy" IsPrimary="true" OnClick="CancelAsync" />
+                        @if (Current.CancelText != "")
+                        {
+                            <DialogButton Content="@Current.CancelText" Disabled="Busy" IsPrimary="true" OnClick="CancelAsync" />
+                        }
                         <DialogButton Content="@Current.ConfirmText" Disabled="Busy" IsPrimary="false" OnClick="ConfirmAsync" />
                     }
                     else

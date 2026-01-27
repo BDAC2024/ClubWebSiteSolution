@@ -148,7 +148,7 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
   }
 
   private handleRequestLogout() {
-    this.router.navigate(['/logout']);
+    this.router.navigate(['/logout/false']);
   }
 
   private handleRequestPage(angPage?: string) {

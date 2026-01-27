@@ -27,7 +27,7 @@ window.blazorHostBridge = {
                 type: 'REQUEST_LOGOUT',
             };
 
-            console.warn('blazorHostBridge.requestLogout message being sent to parent frame', blazorPage);
+            console.warn('blazorHostBridge.requestLogout message being sent to parent frame');
             // TODO: replace '*' with your Angular origin in prod
             window.parent.postMessage(message, '*');
         } else {

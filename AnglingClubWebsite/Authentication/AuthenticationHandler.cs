@@ -16,6 +16,7 @@ namespace AnglingClubWebsite.Authentication
         private readonly AuthenticationStateProvider _stateProvider;
         private readonly IConfiguration _configuration;
         private readonly IMessenger _messenger;
+        private readonly IDialogQueue _dialogQueue;
 
         private bool _refreshing = false;
 
@@ -23,12 +24,14 @@ namespace AnglingClubWebsite.Authentication
             IAuthenticationService authenticationService,
             IConfiguration configuration,
             AuthenticationStateProvider stateProvider,
-            IMessenger messenger)
+            IMessenger messenger,
+            IDialogQueue dialogQueue)
         {
             _authenticationService = authenticationService;
             _configuration = configuration;
             _stateProvider = stateProvider;
             _messenger = messenger;
+            _dialogQueue = dialogQueue;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -69,8 +72,19 @@ namespace AnglingClubWebsite.Authentication
                 if (!user.Id.IsNullOrEmpty())
                 {
                     // Must be a forced re-login
-                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Info, "Re-login required", "You have now been logged out. System changes require that you login again."));
-                    await customAuthStateProvider.UpdateAuthenticationState(null, false);
+                    _dialogQueue.Enqueue(new DialogRequest
+                    {
+                        Kind = DialogKind.Confirm,
+                        Severity = DialogSeverity.Info,
+                        Title = "Re-login required",
+                        Message = $"You have now been logged out. System changes require that you login again.",
+                        CancelText = "",
+                        ConfirmText = "OK",
+                        OnConfirmAsync = async () =>
+                        {
+                            await customAuthStateProvider.UpdateAuthenticationState(null, false, true);
+                        }
+                    });
                 }
 
                 try

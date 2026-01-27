@@ -154,14 +154,19 @@ export class AuthenticationService {
     return this.http.post<void>(`${this.globalService.ApiUrl}/api/members/SetNewPinOfCurrentUser/${newPin}`, '');
   }
 
-  logout() {
+  logout(informBlazor: boolean = true) {
     // remove user from local storage to log user out
     localStorage.removeItem(this.STORAGE_KEY);
     sessionStorage.removeItem(this.STORAGE_KEY);
     this.membersService.memberLoggedOut();
     this.currentMemberSubject.next(new Member());
 
-    this.blazorBridge.sendAuth(null, false);
+    //console.log("informBlazor: " + informBlazor);
+
+    // May have been requested from blazor so dont want to go back there
+    if (informBlazor) {
+      this.blazorBridge.sendAuth(null, false);
+    }
   }
 
   private getMember() {

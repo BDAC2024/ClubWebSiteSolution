@@ -73,7 +73,7 @@ namespace AnglingClubWebsite.Authentication
             }
         }
 
-        public async Task UpdateAuthenticationState(AuthenticateResponse? userSession, bool rememberMe)
+        public async Task UpdateAuthenticationState(AuthenticateResponse? userSession, bool rememberMe, bool requestHostLogout = false)
         {
             var userSessionAsString = JsonSerializer.Serialize(userSession, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             //_logger.LogWarning($"[UpdateAuthenticationState] called with userSession = {userSessionAsString} and rememberMe = {rememberMe}");
@@ -133,8 +133,12 @@ namespace AnglingClubWebsite.Authentication
                 }
                 else
                 {
-                    // In embedded mode, we need to notify the host that the user has logged out
-                    await _js.InvokeVoidAsync("blazorHostBridge.requestLogout");
+                    if (requestHostLogout)
+                    {
+
+                        // In embedded mode, we need to notify the host that the user has logged out
+                        await _js.InvokeVoidAsync("blazorHostBridge.requestLogout");
+                    }
                 }
             }
 
