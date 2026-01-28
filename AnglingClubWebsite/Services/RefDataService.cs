@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Models;
 using AnglingClubShared.Models.Auth;
+using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Net.Http.Json;
 

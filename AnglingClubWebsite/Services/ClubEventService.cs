@@ -1,6 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
-using AnglingClubShared.Models;
+using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Net.Http.Json;
 

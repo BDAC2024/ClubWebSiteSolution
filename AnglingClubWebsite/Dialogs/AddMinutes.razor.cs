@@ -19,10 +19,18 @@ namespace AnglingClubWebsite.Dialogs
         /// @bind-Visible="ShowingResults" rather than the 1-way method
         /// of setting Value="ShowingResults"
         /// </summary>
-        [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> VisibleChanged
+        {
+            get; set;
+        }
 
         // Signal to parent: “refresh your grid”
-        [Parameter] public EventCallback RefreshRequested { get; set; }
+        [Parameter]
+        public EventCallback RefreshRequested
+        {
+            get; set;
+        }
 
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
@@ -45,7 +53,10 @@ namespace AnglingClubWebsite.Dialogs
         }
 
         public DocumentMeta DocumentInfo { get; set; } = new DocumentMeta() { Created = DateTime.Now };
-        public MarkupString ErrorMessage { get; set; }
+        public MarkupString ErrorMessage
+        {
+            get; set;
+        }
         public bool Uploading { get; set; } = false;
 
 

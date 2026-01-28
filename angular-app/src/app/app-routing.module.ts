@@ -50,6 +50,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/blazor', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canDeactivate:[DeactivateGuardService]  },
   { path: 'logout', component: LogoutComponent },
+  { path: 'logout/:informBlazor', component: LogoutComponent },
   
   // { path: 'welcome', component: WelcomeComponent },  // Angular welcome page
   { path: '', component: BlazorHostComponent },         // Blazor welcome page

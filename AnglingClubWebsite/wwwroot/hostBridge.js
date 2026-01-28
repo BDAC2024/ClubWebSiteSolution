@@ -19,6 +19,21 @@ window.blazorHostBridge = {
             console.warn('blazorHostBridge.requestLogin: no parent frame');
         }
     },
+    requestLogout: function () {
+        // Only if we're inside an iframe
+        if (window.parent && window.parent !== window) {
+            const message = {
+                source: 'BLAZOR',
+                type: 'REQUEST_LOGOUT',
+            };
+
+            console.warn('blazorHostBridge.requestLogout message being sent to parent frame');
+            // TODO: replace '*' with your Angular origin in prod
+            window.parent.postMessage(message, '*');
+        } else {
+            console.warn('blazorHostBridge.requestLogout: no parent frame');
+        }
+    },
     requestAngPage: function (angPage) {
         // Only if we're inside an iframe
         if (window.parent && window.parent !== window) {

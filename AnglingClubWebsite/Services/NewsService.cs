@@ -1,7 +1,6 @@
 ﻿using AnglingClubShared;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Exceptions;
-using AnglingClubShared.Models;
 using AnglingClubShared.Models.Auth;
 using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;

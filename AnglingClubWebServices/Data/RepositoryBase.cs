@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -41,7 +42,13 @@ namespace AnglingClubWebServices.Data
 
         }
 
-        internal string Domain { get { return _options.SimpleDbDomain; } }
+        internal string Domain
+        {
+            get
+            {
+                return _options.SimpleDbDomain;
+            }
+        }
 
         private async Task createDomain(string domainName)
         {
@@ -180,6 +187,36 @@ namespace AnglingClubWebServices.Data
         {
             //return date.ToString("yyyy-MM-ddTHH:mm:ss.000Z");
             return date.ToString("yyyy-MM-dd HH:mm:ss.000Z");
+        }
+
+        internal string dateToStorageString(DateTime created)
+        {
+            // Store a UTC instant with offset info
+            var utc = created.Kind switch
+            {
+                DateTimeKind.Utc => created,
+                DateTimeKind.Local => created.ToUniversalTime(),
+                _ => DateTime.SpecifyKind(created, DateTimeKind.Utc)
+            };
+
+            return utc.ToString("O", CultureInfo.InvariantCulture);
+        }
+
+        internal DateTime dateFromStorageString(string value)
+        {
+            // Parse ISO round-trip. Ensure UTC.
+            if (DateTime.TryParse(
+                    value,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.RoundtripKind,
+                    out var dt))
+            {
+                return dt.Kind == DateTimeKind.Utc ? dt : dt.ToUniversalTime();
+            }
+
+            // Last resort: invariant parse as UTC
+            var parsed = DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+            return DateTime.SpecifyKind(parsed, DateTimeKind.Utc);
         }
 
         protected async Task<List<Item>> GetData(string idPrefix, string additionalWhereClause = "", string orderByClause = "")
@@ -354,8 +391,14 @@ namespace AnglingClubWebServices.Data
 
         protected class MultiValued
         {
-            public int Index { get; set; }
-            public string Text { get; set; }
+            public int Index
+            {
+                get; set;
+            }
+            public string Text
+            {
+                get; set;
+            }
         }
 
 

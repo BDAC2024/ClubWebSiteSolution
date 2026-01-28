@@ -1,5 +1,5 @@
 ﻿using AnglingClubShared.DTOs;
-using AnglingClubShared.Models;
+using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
 using System.Net.Http.Json;

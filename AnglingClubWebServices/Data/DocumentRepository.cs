@@ -5,15 +5,11 @@ using AnglingClubShared.Enums;
 using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
-using AutoMapper.Execution;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Utilities.Collections;
-using Stripe;
 using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -68,7 +64,7 @@ namespace AnglingClubWebServices.Data
                     new ReplaceableAttribute { Name = "UploadedBy", Value = file.UploadedByMembershipNumber.ToString(), Replace = true },
                     new ReplaceableAttribute { Name = "StoredFileName", Value = file.StoredFileName, Replace = true },
                     new ReplaceableAttribute { Name = "OriginalFileName", Value = file.OriginalFileName, Replace = true },
-                    new ReplaceableAttribute { Name = "Created", Value = dateToString(file.Created), Replace = true },
+                    new ReplaceableAttribute { Name = "Created", Value = dateToStorageString(file.Created), Replace = true },
                     new ReplaceableAttribute { Name = "Title", Value = file.Title, Replace = true },
                     new ReplaceableAttribute { Name = "Notes", Value = file.Notes, Replace = true },
                     new ReplaceableAttribute { Name = "DocumentType", Value = ((int)file.DocumentType).ToString(), Replace = true },
@@ -118,7 +114,7 @@ namespace AnglingClubWebServices.Data
                             break;
 
                         case "Created":
-                            doc.Created = DateTime.Parse(attribute.Value);
+                            doc.Created = dateFromStorageString(attribute.Value);
                             break;
 
                         case "DocumentType":
@@ -136,7 +132,7 @@ namespace AnglingClubWebServices.Data
                         case "Searchable":
                             doc.Searchable = attribute.Value == "0" ? false : true;
                             break;
-                            
+
                         default:
                             break;
                     }

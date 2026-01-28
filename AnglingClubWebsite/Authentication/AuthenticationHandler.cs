@@ -1,12 +1,11 @@
-﻿using System.Net.Http.Headers;
-using System.Net;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using AnglingClubShared.Exceptions;
+using AnglingClubShared.Extensions;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
-using AnglingClubShared;
 using CommunityToolkit.Mvvm.Messaging;
-using AnglingClubShared.Enums;
-using AnglingClubShared.Exceptions;
-using AnglingClubShared.Models;
+using Microsoft.AspNetCore.Components.Authorization;
+using System.Net;
+using System.Net.Http.Headers;
 
 namespace AnglingClubWebsite.Authentication
 {
@@ -16,6 +15,7 @@ namespace AnglingClubWebsite.Authentication
         private readonly AuthenticationStateProvider _stateProvider;
         private readonly IConfiguration _configuration;
         private readonly IMessenger _messenger;
+        private readonly IDialogQueue _dialogQueue;
 
         private bool _refreshing = false;
 
@@ -23,18 +23,20 @@ namespace AnglingClubWebsite.Authentication
             IAuthenticationService authenticationService,
             IConfiguration configuration,
             AuthenticationStateProvider stateProvider,
-            IMessenger messenger)
+            IMessenger messenger,
+            IDialogQueue dialogQueue)
         {
             _authenticationService = authenticationService;
             _configuration = configuration;
             _stateProvider = stateProvider;
             _messenger = messenger;
+            _dialogQueue = dialogQueue;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
-            
+
             var jwt = await customAuthStateProvider.GetToken();
 
             if (jwt == Constants.AUTH_EXPIRED)
@@ -54,7 +56,9 @@ namespace AnglingClubWebsite.Authentication
             //Console.WriteLine($"Is jwt NOT null : {!string.IsNullOrEmpty(jwt)}");
 
             if ((isToServer || isToDevTunnel) && !string.IsNullOrEmpty(jwt))
+            {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+            }
 
             //Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");
 
@@ -62,6 +66,26 @@ namespace AnglingClubWebsite.Authentication
 
             if (!_refreshing && response.StatusCode == HttpStatusCode.Unauthorized)
             {
+                // Handle the "Require re-login" setting
+                var user = await _authenticationService.GetCurrentUser();
+                if (!user.Id.IsNullOrEmpty())
+                {
+                    // Must be a forced re-login
+                    _dialogQueue.Enqueue(new DialogRequest
+                    {
+                        Kind = DialogKind.Confirm,
+                        Severity = DialogSeverity.Info,
+                        Title = "Re-login required",
+                        Message = $"You have now been logged out. System changes require that you login again.",
+                        CancelText = "",
+                        ConfirmText = "OK",
+                        OnConfirmAsync = async () =>
+                        {
+                            await customAuthStateProvider.UpdateAuthenticationState(null, false, true);
+                        }
+                    });
+                }
+
                 try
                 {
                     _refreshing = true;

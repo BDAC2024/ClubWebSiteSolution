@@ -1,5 +1,6 @@
-﻿@using AnglingClubShared.Models
-@using AnglingClubShared.Extensions;
+﻿@using AnglingClubShared.Extensions;
+@using AnglingClubShared.Models
+@using AnglingClubWebsite.Models
 
 @inherits RazorComponentBase;
 
@@ -29,7 +30,7 @@
                     else
                     {
                         <br />
-                        <p>Please note that the following link will expire in @Constants.MINUTES_TO_EXPIRE_LINKS minutes.</p>
+                        <p>Please note that the following link will expire in @SharedConstants.MINUTES_TO_EXPIRE_LINKS minutes.</p>
                         @* <a href="@ReadOnlyUrl" target="_blank">View Meeting Minutes</a> *@
                         <a href="@ReadOnlyUrl" target="_blank" rel="noopener noreferrer">View Meeting Minutes</a>
                     }
