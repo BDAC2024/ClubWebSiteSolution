@@ -1,10 +1,8 @@
-﻿using AnglingClubShared;
-using AnglingClubShared.DTOs;
+﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
-using AnglingClubShared.Enums;
 using AnglingClubShared.Exceptions;
-using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Models;
+using AutoMapper;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
 using System.Net.Http.Json;
@@ -13,27 +11,30 @@ namespace AnglingClubWebsite.Services
 {
     public class DocumentService : DataServiceBase, IDocumentService
     {
-        private static string CONTROLLER = "Document";
-        private const long MaxUploadBytes = 20 * 1024 * 1024; // 20 MB
+        private static string _controller = "Document";
+        private const long _maxUploadBytes = 20 * 1024 * 1024; // 20 MB
 
         private readonly ILogger<DocumentService> _logger;
         private readonly IMessenger _messenger;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IMapper _mapper;
 
         public DocumentService(
             IHttpClientFactory httpClientFactory,
             ILogger<DocumentService> logger,
             IMessenger messenger,
-            IAuthenticationService authenticationService) : base(httpClientFactory)
+            IAuthenticationService authenticationService,
+            IMapper mapper) : base(httpClientFactory)
         {
             _logger = logger;
             _messenger = messenger;
             _authenticationService = authenticationService;
+            _mapper = mapper;
         }
 
         public async Task<List<DocumentListItem>?> ReadDocuments(DocumentSearchRequest req)
         {
-            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENT_READ}";
+            var relativeEndpoint = $"{_controller}/{Constants.API_DOCUMENT_READ}";
 
             _logger.LogInformation($"ReadDocuments: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
@@ -61,13 +62,16 @@ namespace AnglingClubWebsite.Services
 
         public async Task SaveDocument(DocumentMeta item)
         {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}";
+            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}";
 
             _logger.LogInformation($"SaveDocument: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
             try
             {
-                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<DocumentMeta> { item });
+                var docDTO = _mapper.Map<DocumentMetaDTO>(item);
+                docDTO.CreatedOffset = docDTO.Created;
+
+                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<DocumentMetaDTO> { docDTO });
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -93,7 +97,7 @@ namespace AnglingClubWebsite.Services
         /// <returns></returns>
         public async Task<string?> GetReadOnlyUrl(string id)
         {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/minutes/readOnly/{id}";
+            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}/minutes/readOnly/{id}";
 
             _logger.LogInformation($"GetReadOnlyUrl: Accessing {HttpLongRunning.BaseAddress}{relativeEndpoint}");
 
@@ -106,7 +110,7 @@ namespace AnglingClubWebsite.Services
 
             if (!response.IsSuccessStatusCode)
             {
-            _logger.LogWarning($"GetReadOnlyUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+                _logger.LogWarning($"GetReadOnlyUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
                 return null;
             }
             else
@@ -131,7 +135,7 @@ namespace AnglingClubWebsite.Services
         /// <returns></returns>
         public async Task<string?> Download(string id)
         {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/download/{id}";
+            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}/download/{id}";
 
             _logger.LogInformation($"Download: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
@@ -162,7 +166,7 @@ namespace AnglingClubWebsite.Services
         {
             var resp = new FileUploadUrlResult();
 
-            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENT_GETUPLOADURL}";
+            var relativeEndpoint = $"{_controller}/{Constants.API_DOCUMENT_GETUPLOADURL}";
 
             _logger.LogInformation($"getDocumentUploadUrl: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
@@ -197,9 +201,9 @@ namespace AnglingClubWebsite.Services
 
         public async Task UploadDocumentWithPresignedUrl(string uploadUrl, UploadFiles selectedFile)
         {
-            
+
             // IMPORTANT: Syncfusion provides a stream
-            await using var fileStream = selectedFile.File.OpenReadStream(MaxUploadBytes);
+            await using var fileStream = selectedFile.File.OpenReadStream(_maxUploadBytes);
 
             using var content = new StreamContent(fileStream);
 
@@ -228,7 +232,7 @@ namespace AnglingClubWebsite.Services
 
         public async Task DeleteDocument(string id)
         {
-            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/{id}";
+            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}/{id}";
 
             _logger.LogInformation($"DeleteDocument: Accessing {Http.BaseAddress}{relativeEndpoint}");
 

@@ -5,11 +5,17 @@ namespace AnglingClubShared.Entities
 {
     public class DocumentMeta : TableBase
     {
-        public DateTime Created { get; set; }
+        public DateTime Created
+        {
+            get; set;
+        }
         /// <summary>
         /// Membership number of the person who uploaded the document
         /// </summary>
-        public int UploadedByMembershipNumber { get; set; }
+        public int UploadedByMembershipNumber
+        {
+            get; set;
+        }
         /// <summary>
         /// Includes the path within the storage bucket
         /// </summary>
@@ -17,8 +23,19 @@ namespace AnglingClubShared.Entities
         public string OriginalFileName { get; set; } = "";
         public string Title { get; set; } = "";
         public string Notes { get; set; } = "";
-        public DocumentType DocumentType { get; set; }
+        public DocumentType DocumentType
+        {
+            get; set;
+        }
         public bool Searchable { get; set; } = false;
+    }
+
+    public class DocumentMetaDTO : DocumentMeta
+    {
+        public DateTimeOffset CreatedOffset
+        {
+            get; set;
+        }
     }
 
     public class DocumentListItem : DocumentMeta
@@ -28,7 +45,10 @@ namespace AnglingClubShared.Entities
 
     public class DocumentSearchRequest
     {
-        public DocumentType DocType { get; set; }
+        public DocumentType DocType
+        {
+            get; set;
+        }
         public string SearchText { get; set; } = "";
     }
 
@@ -94,7 +114,7 @@ namespace AnglingClubShared.Entities
         }
 
 
-        
+
     }
 
 }

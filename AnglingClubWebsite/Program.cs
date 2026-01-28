@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.VisualBasic;
 using Syncfusion.Blazor;
 using Constants = AnglingClubWebsite.Models.Constants;
 
@@ -45,7 +44,7 @@ if (isDevTunnel)
 {
     apiBaseUrl = builder.Configuration["ServerUrlDevTunnel"] ?? "";
 }
-else 
+else
 {
     if (isStaging)
     {
@@ -80,6 +79,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Auth
 builder.Services.AddSingleton<IAuthTokenStore, AuthTokenStore>();
@@ -122,7 +122,7 @@ builder.Services.AddTransient<IMatchResultsService, MatchResultsService>();
 builder.Services.AddTransient<IAboutService, AboutService>();
 builder.Services.AddTransient<IDocumentService, DocumentService>();
 builder.Services.AddSingleton<IDialogQueue, DialogQueue>();
-builder.Services.AddTransient<ITmpFileService ,TmpFileService>();
+builder.Services.AddTransient<ITmpFileService, TmpFileService>();
 builder.Services.AddTransient<IBookPrintingService, BookPrintingService>();
 
 builder.Services.AddAuthorizationCore();

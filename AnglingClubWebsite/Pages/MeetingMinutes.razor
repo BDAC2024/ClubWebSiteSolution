@@ -54,7 +54,7 @@
                                           Item="row"
                                           AdditionalClass="@CellClass(row)"
                                           OnSelect="MeetingSelectedHandler">
-                                <span class="nowrap">@row.Created.BdacDate()</span>
+                                <span class="nowrap">@row.Created.ToString("dd MMM yy HH:mm")</span>
                             </BdacGridCell>
                         </ChildContent>
                     </TemplateColumn>

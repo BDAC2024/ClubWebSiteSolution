@@ -60,7 +60,7 @@ namespace AnglingClubWebServices.Controllers
 
         // POST api/values
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] List<DocumentMeta> docItems)
+        public async Task<IActionResult> Post([FromBody] List<DocumentMetaDTO> docItems)
         {
             StartTimer();
 
@@ -68,6 +68,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 foreach (var docItem in docItems)
                 {
+                    docItem.Created = docItem.CreatedOffset.DateTime;
                     await _documentService.SaveDocument(docItem, CurrentUser.MembershipNumber);
                 }
                 ReportTimer("Posting document item");

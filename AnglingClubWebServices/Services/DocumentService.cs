@@ -1,7 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
-using AnglingClubWebServices.Data;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -228,6 +227,5 @@ namespace AnglingClubWebServices.Services
                 await _documentRepository.AddOrUpdateDocument(docItem);
             }
         }
-
     }
 }
