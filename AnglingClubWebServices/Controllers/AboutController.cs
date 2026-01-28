@@ -4,6 +4,8 @@ using AnglingClubWebServices.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Linq;
+using System.Reflection;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -40,6 +42,7 @@ namespace AnglingClubWebServices.Controllers
             StartTimer();
 
             var aboutInfo = new AboutDto();
+            Assembly curAssembly = typeof(Startup).Assembly;
 
             if (CurrentUser.Name == _authService.GetDeveloperName())
             {
@@ -47,6 +50,7 @@ namespace AnglingClubWebServices.Controllers
                 aboutInfo.BackupBucket = _options.BackupBucket;
                 aboutInfo.DocumentBucket = _options.DocumentBucket;
                 aboutInfo.TmpFilesBucket = _options.TmpFilesBucket;
+                aboutInfo.ServicesBuiltAt = $"{curAssembly.GetCustomAttributes(false).OfType<AssemblyTitleAttribute>().FirstOrDefault()!.Title}";
             }
 
             ReportTimer("About");

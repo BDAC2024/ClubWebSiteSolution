@@ -75,4 +75,9 @@
     <Copy SourceFiles="IndexTemplates\index.prod.html" DestinationFiles="wwwroot\index.html" Condition="'$(Configuration)' == 'Release'" />
   
   </Target>
+  <PropertyGroup>
+    <AssemblyTitle>
+      Boroughbridge and District Angling Club Website: Released $([System.DateTime]::Now.ToString("ddd dd MMM yyyy hh:mm tt"))</AssemblyTitle>
+  </PropertyGroup>
+
 </Project>

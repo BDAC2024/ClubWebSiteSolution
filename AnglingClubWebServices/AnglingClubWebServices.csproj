@@ -58,4 +58,10 @@
     <ProjectReference Include="..\AnglingClubShared\AnglingClubShared.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <AssemblyTitle>
+      Boroughbridge and District Angling Club Services: Released $([System.DateTime]::Now.ToString("ddd dd MMM yyyy hh:mm tt"))
+    </AssemblyTitle>
+  </PropertyGroup>
+
 </Project>

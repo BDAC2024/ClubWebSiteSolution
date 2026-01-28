@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared.DTOs;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Reflection;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -25,6 +26,11 @@ namespace AnglingClubWebsite.Pages
 
         public AboutDto AboutInfo { get; set; } = new AboutDto();
         public bool IsDeveloper { get; set; } = false;
+        public string ClientBuiltAt
+        {
+            get;
+            set;
+        } = "";
 
         #endregion Properties
 
@@ -35,6 +41,10 @@ namespace AnglingClubWebsite.Pages
             AboutInfo = await _aboutService.GetAboutInfo() ?? new AboutDto();
 
             IsDeveloper = CurrentUser.Developer;
+
+            Assembly curAssembly = typeof(Program).Assembly;
+            ClientBuiltAt = $"{curAssembly.GetCustomAttributes(false).OfType<AssemblyTitleAttribute>().FirstOrDefault()!.Title}";
+
         }
 
         #endregion Events
