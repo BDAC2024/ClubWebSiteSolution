@@ -114,7 +114,6 @@ namespace AnglingClubWebsite.Dialogs
             Uploading = true;
 
             DocumentInfo.DocumentType = DocumentType.MeetingMinutes;
-            DocumentInfo.Created = DocumentInfo.Created.AddMinutes(180);
 
             try
             {
