@@ -171,6 +171,7 @@ namespace AnglingClubWebServices
             services.AddScoped<IUtilityService, UtilityService>();
             services.AddScoped<IDocumentService, DocumentService>();
             services.AddScoped<IBookPrintingService, BookPrintingService>();
+            services.AddTransient<ApiExceptionHandlingMiddleware>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -191,6 +192,8 @@ namespace AnglingClubWebServices
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ApiExceptionHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
