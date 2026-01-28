@@ -10,9 +10,10 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 export class LogoutComponent implements OnInit {
 
   informBlazor: boolean = true;
-
+    
   constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService,
     private router: Router) {
+  
     var ib = this.route.snapshot.paramMap.get('informBlazor')?.toLowerCase();
     //console.log("ib: " + ib);
     if (!ib || ib == "true") {
