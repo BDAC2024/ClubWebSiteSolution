@@ -1,5 +1,4 @@
 using AnglingClubShared.DTOs;
-using AnglingClubShared.Models;
 using AnglingClubShared.Models.Auth;
 using AnglingClubWebsite.Models;
 using Blazored.LocalStorage;
@@ -96,12 +95,13 @@ namespace AnglingClubWebsite.Authentication
 
                 if (rememberMe)
                 {
-
                     await _localStorageService.SetItemAsStringAsync(Constants.AUTH_KEY, userSessionAsString); // TODO Ang to Blazor Migration - remove after migration
                     //await _localStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession); // TODO Ang to Blazor Migration - re-instate after migration
                 }
                 else
                 {
+                    Console.Write("Token being saved to \"Token being saved to SessionStorage\"); - via console");
+                    _logger.LogWarning($"Token being saved to SessionStorage - via log - [{userSessionAsString}]");
                     await _sessionStorageService.SetItemAsStringAsync(Constants.AUTH_KEY, userSessionAsString); // TODO Ang to Blazor Migration - remove after migration
                     //await _sessionStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession); // TODO Ang to Blazor Migration - re-instate after migration
                 }

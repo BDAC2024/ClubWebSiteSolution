@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.VisualBasic;
 using Syncfusion.Blazor;
-using Constants = AnglingClubShared.Models.Constants;
+using Constants = AnglingClubWebsite.Models.Constants;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

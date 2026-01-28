@@ -47,7 +47,7 @@ namespace AnglingClubWebServices.Controllers
         [HttpPost("GetDocuments")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DocumentListItem>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public async Task<IActionResult> GetDocuments([FromBody]DocumentSearchRequest req)
+        public async Task<IActionResult> GetDocuments([FromBody] DocumentSearchRequest req)
         {
             StartTimer();
 
@@ -127,7 +127,7 @@ namespace AnglingClubWebServices.Controllers
 
             await _tmpFileRepository.SaveTmpFile(pdfFileName, pdfBytes, "application/pdf");
 
-            var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, Constants.MINUTES_TO_EXPIRE_LINKS, "application/pdf");
+            var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS, "application/pdf");
 
             return Ok(url);
         }
@@ -147,7 +147,7 @@ namespace AnglingClubWebServices.Controllers
                 return Unauthorized("Only club secretaries can download meeting minutes.");
             }
 
-            var url = await _documentRepository.GetFilePresignedUrl(doc.StoredFileName, doc.OriginalFileName, Constants.MINUTES_TO_EXPIRE_LINKS);
+            var url = await _documentRepository.GetFilePresignedUrl(doc.StoredFileName, doc.OriginalFileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS);
 
             return Ok(url);
         }

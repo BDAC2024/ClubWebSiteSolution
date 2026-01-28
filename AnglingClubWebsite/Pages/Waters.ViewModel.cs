@@ -8,7 +8,6 @@ using Syncfusion.Blazor.RichTextEditor;
 using System.Collections.ObjectModel;
 using AnglingClubShared.DTOs;
 using Microsoft.JSInterop;
-using AnglingClubShared.Models;
 using AnglingClubShared.Enums;
 using CommunityToolkit.Mvvm.Input;
 using Fishing.Client.Services;

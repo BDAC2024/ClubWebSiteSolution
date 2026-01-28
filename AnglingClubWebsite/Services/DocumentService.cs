@@ -4,7 +4,6 @@ using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Exceptions;
 using AnglingClubShared.Extensions;
-using AnglingClubShared.Models;
 using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
