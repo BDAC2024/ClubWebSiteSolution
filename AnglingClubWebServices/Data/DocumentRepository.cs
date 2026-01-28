@@ -86,10 +86,33 @@ namespace AnglingClubWebServices.Data
             }
         }
 
+        public async Task<DocumentMeta> GetById(string docId)
+        {
+            var items = await GetData(_idPrefix, $"AND ItemName() = '{docId}'");
+
+            if (!items.Any())
+            {
+                throw new NotFoundException($"Document '{docId}' was not found.");
+            }
+
+            return processItems(items).First();
+        }
+
         public async Task<List<DocumentMeta>> Get()
         {
             var files = new List<DocumentMeta>();
             var items = await GetData(_idPrefix);
+
+            foreach (var item in processItems(items))
+            {
+                files.Add(item);
+            }
+            return files;
+        }
+
+        private List<DocumentMeta> processItems(List<Item> items)
+        {
+            var files = new List<DocumentMeta>();
 
             foreach (var item in items)
             {
@@ -181,7 +204,11 @@ namespace AnglingClubWebServices.Data
         {
             var client = GetClient();
 
-            var doc = (await Get()).Single(x => x.DbKey == id);
+            var doc = (await Get()).SingleOrDefault(x => x.DbKey == id);
+            if (doc == null)
+            {
+                throw new NotFoundException($"Document '{id}' was not found.");
+            }
 
             DeleteAttributesRequest request = new DeleteAttributesRequest
             {

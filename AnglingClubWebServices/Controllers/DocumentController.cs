@@ -3,6 +3,7 @@ using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -104,12 +105,7 @@ namespace AnglingClubWebServices.Controllers
         [HttpGet("minutes/readonly/{id}")]
         public async Task<IActionResult> GetReadOnlyMinutes(string id)
         {
-            var doc = (await _documentRepository.Get()).SingleOrDefault(x => x.DbKey == id);
-
-            if (doc == null)
-            {
-                return BadRequest("Document could not be found.");
-            }
+            var doc = await _documentRepository.GetById(id);
 
             var effectiveSeason = EnumUtils.SeasonForDate(doc.Created).Value;
             var member = (await _memberRepository.GetMembers(effectiveSeason)).FirstOrDefault(x => x.MembershipNumber == CurrentUser.MembershipNumber);
@@ -145,7 +141,7 @@ namespace AnglingClubWebServices.Controllers
 
             if (doc.DocumentType == DocumentType.MeetingMinutes && !CurrentUser.Secretary)
             {
-                return Unauthorized("Only club secretaries can download meeting minutes.");
+                throw new ForbiddenException("Only club secretaries can download meeting minutes.");
             }
 
             var url = await _documentRepository.GetFilePresignedUrl(doc.StoredFileName, doc.OriginalFileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS);
