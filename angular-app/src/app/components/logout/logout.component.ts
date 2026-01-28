@@ -28,8 +28,8 @@ export class LogoutComponent implements OnInit {
   ngOnInit(): void {
     if (this.authenticationService.isLoggedIn) { 
       this.authenticationService.logout(this.informBlazor);
-      this.router.navigate(['/']);
     }
+    this.router.navigate(['/']);
   }
 
 }
