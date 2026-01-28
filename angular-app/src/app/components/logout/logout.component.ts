@@ -16,7 +16,8 @@ export class LogoutComponent implements OnInit {
   
     var ib = this.route.snapshot.paramMap.get('informBlazor')?.toLowerCase();
     //console.log("ib: " + ib);
-    if (!ib || ib == "true") {
+
+    if (ib == undefined || ib == "true") {
       this.informBlazor = true;
     } else {
       this.informBlazor = false;
