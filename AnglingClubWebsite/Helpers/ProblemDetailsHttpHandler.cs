@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AnglingClubWebsite.Models;
 using System.Net;
 using System.Text.Json;
 
@@ -30,8 +30,8 @@ namespace AnglingClubWebsite.Helpers
                     return response;
                 }
 
-                // Try parse ProblemDetails; if not possible, still throw a typed exception.
-                var problem = await TryReadProblemDetailsAsync(response, cancellationToken);
+                // Try parse ApiProblemDetails; if not possible, still throw a typed exception.
+                var problem = await TryReadApiProblemDetailsAsync(response, cancellationToken);
 
                 var traceId = TryGetTraceId(problem) ?? TryGetTraceIdFromHeaders(response);
                 if (!string.IsNullOrWhiteSpace(traceId))
@@ -55,7 +55,7 @@ namespace AnglingClubWebsite.Helpers
             }
         }
 
-        private static async Task<ProblemDetails?> TryReadProblemDetailsAsync(HttpResponseMessage response, CancellationToken ct)
+        private static async Task<ApiProblemDetails?> TryReadApiProblemDetailsAsync(HttpResponseMessage response, CancellationToken ct)
         {
             // If server returns application/problem+json (or even JSON), attempt parse
             if (response.Content is null)
@@ -80,8 +80,8 @@ namespace AnglingClubWebsite.Helpers
 
             try
             {
-                // Try ProblemDetails first
-                var pd = JsonSerializer.Deserialize<ProblemDetails>(body, _jsonOptions);
+                // Try ApiProblemDetails first
+                var pd = JsonSerializer.Deserialize<ApiProblemDetails>(body, _jsonOptions);
                 return pd;
             }
             catch
@@ -105,19 +105,13 @@ namespace AnglingClubWebsite.Helpers
             return false;
         }
 
-        private static string? TryGetTraceId(ProblemDetails? pd)
+        private static string? TryGetTraceId(ApiProblemDetails? pd)
         {
-            if (pd?.Extensions is null)
-            {
-                return null;
-            }
+            var traceId = pd?.TraceId
+              ?? (pd?.ExtensionData is not null &&
+                  pd.ExtensionData.TryGetValue("traceId", out var v) ? v.GetString() : null);
 
-            if (pd.Extensions.TryGetValue("traceId", out var v) && v is not null)
-            {
-                return v.ToString();
-            }
-
-            return null;
+            return traceId;
         }
 
         private static string? TryGetTraceIdFromHeaders(HttpResponseMessage response)
@@ -127,7 +121,7 @@ namespace AnglingClubWebsite.Helpers
             return null;
         }
 
-        private static string BuildUserMessage(ProblemDetails? problem, HttpStatusCode status)
+        private static string BuildUserMessage(ApiProblemDetails? problem, HttpStatusCode status)
         {
             // Prefer server-provided safe title/detail for 4xx; for 5xx keep generic.
             var s = (int)status;
@@ -153,7 +147,7 @@ namespace AnglingClubWebsite.Helpers
             };
         }
 
-        private static ApiException CreateException(HttpStatusCode status, string message, ProblemDetails? problem, string? traceId)
+        private static ApiException CreateException(HttpStatusCode status, string message, ApiProblemDetails? problem, string? traceId)
         {
             var code = (int)status;
 
@@ -172,16 +166,14 @@ namespace AnglingClubWebsite.Helpers
 
     public interface IClientTraceContext
     {
-        string? LastTraceId
-        {
+        string? LastTraceId {
             get; set;
         }
     }
 
     public sealed class ClientTraceContext : IClientTraceContext
     {
-        public string? LastTraceId
-        {
+        public string? LastTraceId {
             get; set;
         }
     }

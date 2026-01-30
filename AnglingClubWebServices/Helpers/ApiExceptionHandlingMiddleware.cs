@@ -32,6 +32,7 @@
             {
                 var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
 
+
                 _logger.LogError(ex,
                     "Unhandled exception. TraceId={TraceId} Method={Method} Path={Path} User={User}",
                     traceId,

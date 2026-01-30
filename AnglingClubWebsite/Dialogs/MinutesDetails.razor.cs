@@ -1,4 +1,5 @@
 ﻿using AnglingClubShared.Entities;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;
@@ -97,7 +98,11 @@ namespace AnglingClubWebsite.Dialogs
             {
                 ReadOnlyUrl = await _documentService.GetReadOnlyUrl(SelectedMeeting!.DbKey);
             }
-            catch (Exception ex)
+            catch (ApiNotFoundException ex)
+            {
+                ErrorMessage = new MarkupString(ex.Message);
+            }
+            catch (ApiException ex)
             {
                 ErrorMessage = new MarkupString(ex.Message);
             }

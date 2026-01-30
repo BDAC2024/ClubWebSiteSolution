@@ -90,12 +90,7 @@ namespace AnglingClubWebServices.Data
         {
             var items = await GetData(_idPrefix, $"AND ItemName() = '{docId}'");
 
-            if (!items.Any())
-            {
-                throw new NotFoundException($"Document '{docId}' was not found.");
-            }
-
-            return processItems(items).First();
+            return processItems(items).FirstOrDefault();
         }
 
         public async Task<List<DocumentMeta>> Get()

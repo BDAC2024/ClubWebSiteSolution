@@ -1,23 +1,20 @@
 ﻿namespace AnglingClubWebsite.Helpers
 {
-    using Microsoft.AspNetCore.Mvc;
+    using AnglingClubWebsite.Models;
 
     public abstract class ApiException : Exception
     {
-        public int StatusCode
-        {
+        public int StatusCode {
             get;
         }
-        public ProblemDetails? Problem
-        {
+        public ApiProblemDetails? Problem {
             get;
         }
-        public string? TraceId
-        {
+        public string? TraceId {
             get;
         }
 
-        protected ApiException(string message, int statusCode, ProblemDetails? problem, string? traceId, Exception? inner = null)
+        protected ApiException(string message, int statusCode, ApiProblemDetails? problem, string? traceId, Exception? inner = null)
             : base(message, inner)
         {
             StatusCode = statusCode;
@@ -28,37 +25,37 @@
 
     public sealed class ApiValidationException : ApiException
     {
-        public ApiValidationException(string message, int statusCode, ProblemDetails? problem, string? traceId)
+        public ApiValidationException(string message, int statusCode, ApiProblemDetails? problem, string? traceId)
             : base(message, statusCode, problem, traceId) { }
     }
 
     public sealed class ApiNotFoundException : ApiException
     {
-        public ApiNotFoundException(string message, int statusCode, ProblemDetails? problem, string? traceId)
+        public ApiNotFoundException(string message, int statusCode, ApiProblemDetails? problem, string? traceId)
             : base(message, statusCode, problem, traceId) { }
     }
 
     public sealed class ApiUnauthorizedException : ApiException
     {
-        public ApiUnauthorizedException(string message, int statusCode, ProblemDetails? problem, string? traceId)
+        public ApiUnauthorizedException(string message, int statusCode, ApiProblemDetails? problem, string? traceId)
             : base(message, statusCode, problem, traceId) { }
     }
 
     public sealed class ApiForbiddenException : ApiException
     {
-        public ApiForbiddenException(string message, int statusCode, ProblemDetails? problem, string? traceId)
+        public ApiForbiddenException(string message, int statusCode, ApiProblemDetails? problem, string? traceId)
             : base(message, statusCode, problem, traceId) { }
     }
 
     public sealed class ApiConflictException : ApiException
     {
-        public ApiConflictException(string message, int statusCode, ProblemDetails? problem, string? traceId)
+        public ApiConflictException(string message, int statusCode, ApiProblemDetails? problem, string? traceId)
             : base(message, statusCode, problem, traceId) { }
     }
 
     public sealed class ApiServerException : ApiException
     {
-        public ApiServerException(string message, int statusCode, ProblemDetails? problem, string? traceId)
+        public ApiServerException(string message, int statusCode, ApiProblemDetails? problem, string? traceId)
             : base(message, statusCode, problem, traceId) { }
     }
 

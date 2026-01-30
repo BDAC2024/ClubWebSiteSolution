@@ -57,7 +57,7 @@ namespace AnglingClubWebsite.Services
                 _logger.LogWarning($"GetPrintReadyPDFs: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
 
                 var body = await response.Content.ReadAsStringAsync();
-                var pd = JsonSerializer.Deserialize<ProblemDetails>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var pd = JsonSerializer.Deserialize<ApiProblemDetails>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (pd != null)
                 {
                     _messenger.Send(new ShowMessage(MessageState.Error, "Print-ready generation failed", pd.Detail));

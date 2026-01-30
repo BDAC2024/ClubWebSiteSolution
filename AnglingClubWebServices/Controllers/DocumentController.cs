@@ -105,7 +105,18 @@ namespace AnglingClubWebServices.Controllers
         [HttpGet("minutes/readonly/{id}")]
         public async Task<IActionResult> GetReadOnlyMinutes(string id)
         {
-            var doc = await _documentRepository.GetById(id);
+            var doc = await _documentRepository.GetById(id + "ZZZZ");
+            //DocumentMeta doc = null;
+            //try
+            //{
+            //    var doc = await _documentRepository.GetById(id + "ZZZZ");
+            //    //doc = await _documentRepository.GetById(id);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new NotFoundException($"Document '{id.Replace("Document:", "")}' was not found.", ex);
+            //}
+
 
             var effectiveSeason = EnumUtils.SeasonForDate(doc.Created).Value;
             var member = (await _memberRepository.GetMembers(effectiveSeason)).FirstOrDefault(x => x.MembershipNumber == CurrentUser.MembershipNumber);
