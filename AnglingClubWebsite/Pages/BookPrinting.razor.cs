@@ -1,13 +1,10 @@
 ﻿using AnglingClubShared.DTOs;
-using AnglingClubShared.Enums;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Syncfusion.Blazor.Inputs;
-using System.Net.NetworkInformation;
-using static System.Net.WebRequestMethods;
 
 
 namespace AnglingClubWebsite.Pages
@@ -78,7 +75,11 @@ namespace AnglingClubWebsite.Pages
                 Result = await _bookPrintingService.GetPrintReadyPDFs(_file);
 
             }
-            catch (Exception ex)
+            catch (ApiValidationException ex)
+            {
+                ErrorMessage = new MarkupString($"There was an error uploading the file: {ex.Message}");
+            }
+            catch (ApiNotFoundException ex)
             {
                 ErrorMessage = new MarkupString($"There was an error uploading the file: {ex.Message}");
             }
@@ -87,7 +88,7 @@ namespace AnglingClubWebsite.Pages
                 Uploading = false;
             }
 
-            
+
         }
 
         private void reset()

@@ -54,3 +54,22 @@ dotnet_naming_style.underscore_prefix.capitalization = camel_case
 dotnet_naming_rule.private_fields_must_be_underscore_prefixed.symbols = private_fields
 dotnet_naming_rule.private_fields_must_be_underscore_prefixed.style = underscore_prefix
 dotnet_naming_rule.private_fields_must_be_underscore_prefixed.severity = warning
+
+#################################
+# Naming rules: constants
+#################################
+
+# Treat consts as fields with the const modifier (this is what Roslyn matches)
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+dotnet_naming_symbols.constants.required_modifiers = const
+
+# ALL_CAPS, no prefix/suffix
+dotnet_naming_style.uppercase_no_prefix.required_prefix =
+dotnet_naming_style.uppercase_no_prefix.required_suffix =
+dotnet_naming_style.uppercase_no_prefix.capitalization = all_upper
+
+# Apply style
+dotnet_naming_rule.constants_must_be_uppercase.symbols = constants
+dotnet_naming_rule.constants_must_be_uppercase.style = uppercase_no_prefix
+dotnet_naming_rule.constants_must_be_uppercase.severity = warning

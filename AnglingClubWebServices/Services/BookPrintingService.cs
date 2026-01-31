@@ -1,4 +1,5 @@
-﻿using AnglingClubWebServices.Models;
+﻿using AnglingClubWebServices.Helpers;
+using AnglingClubWebServices.Models;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
@@ -15,12 +16,12 @@ namespace AnglingClubWebServices.Services
         {
             if (inputPdf is null)
             {
-                throw new ArgumentNullException(nameof(inputPdf));
+                throw new AppValidationException($"{nameof(inputPdf)} cannot be null");
             }
 
             if (options is null)
             {
-                throw new ArgumentNullException(nameof(options));
+                throw new AppValidationException($"{nameof(options)} cannot be null");
             }
 
             // Load PDF (guardrails: encrypted / password-protected)
@@ -29,17 +30,17 @@ namespace AnglingClubWebServices.Services
             int n = loaded.Pages.Count;
             if (n <= 0)
             {
-                throw new InvalidOperationException("PDF contains no pages.");
+                throw new AppValidationException("PDF contains no pages.");
             }
 
             if (n > options.MaxPages)
             {
-                throw new InvalidOperationException($"PDF has {n} pages; maximum allowed is {options.MaxPages}.");
+                throw new AppValidationException($"PDF has {n} pages; maximum allowed is {options.MaxPages}.");
             }
 
             if (n % 4 != 0)
             {
-                throw new InvalidOperationException($"Total page count must be divisible by 4. Found {n} pages.");
+                throw new AppValidationException($"Total page count must be divisible by 4. Found {n} pages.");
             }
 
             if (options.RequireConsistentPageSize)
@@ -57,13 +58,13 @@ namespace AnglingClubWebServices.Services
             {
                 if (n < 8)
                 {
-                    throw new InvalidOperationException("PDF is too short to separate covers and content (needs at least 8 pages).");
+                    throw new AppValidationException("PDF is too short to separate covers and content (needs at least 8 pages).");
                 }
 
                 int contentCount = n - 4;
                 if (contentCount % 4 != 0)
                 {
-                    throw new InvalidOperationException($"After separating covers, content page count must still be divisible by 4. Content would be {contentCount} pages.");
+                    throw new AppValidationException($"After separating covers, content page count must still be divisible by 4. Content would be {contentCount} pages.");
                 }
 
                 var coverSequence = BuildBookletSequence(
@@ -107,7 +108,7 @@ namespace AnglingClubWebServices.Services
             catch (PdfException ex)
             {
                 // Typical for encrypted/password PDFs or malformed docs
-                throw new InvalidOperationException("Unable to load PDF. It may be encrypted, password-protected, or invalid.", ex);
+                throw new AppNotFoundException("Unable to load PDF. It may be encrypted, password-protected, or invalid.", ex);
             }
         }
 
@@ -123,7 +124,7 @@ namespace AnglingClubWebServices.Services
                 var s = loaded.Pages[i].Size;
                 if (Math.Abs(s.Width - first.Width) > tol || Math.Abs(s.Height - first.Height) > tol)
                 {
-                    throw new InvalidOperationException(
+                    throw new AppValidationException(
                         $"PDF pages are not consistent size. Page 1 is {first.Width:0.##}x{first.Height:0.##}pt, " +
                         $"page {i + 1} is {s.Width:0.##}x{s.Height:0.##}pt.");
                 }
@@ -142,12 +143,12 @@ namespace AnglingClubWebServices.Services
             int count = endPage - startPage + 1;
             if (count <= 0)
             {
-                throw new InvalidOperationException("Invalid page range.");
+                throw new AppValidationException("Invalid page range.");
             }
 
             if (count % 4 != 0)
             {
-                throw new InvalidOperationException($"Page range {startPage}-{endPage} must be divisible by 4. Range has {count} pages.");
+                throw new AppValidationException($"Page range {startPage}-{endPage} must be divisible by 4. Range has {count} pages.");
             }
 
             // Classic saddle-stitch pairing:
@@ -216,7 +217,7 @@ namespace AnglingClubWebServices.Services
 
             if (sideSequence.Count % 4 != 0)
             {
-                throw new InvalidOperationException("Internal error: side sequence must be a multiple of 4.");
+                throw new AppValidationException("Internal error: side sequence must be a multiple of 4.");
             }
 
             using var outDoc = new PdfDocument();

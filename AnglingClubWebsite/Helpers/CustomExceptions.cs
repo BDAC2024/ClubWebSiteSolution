@@ -29,6 +29,9 @@
             : base(message, statusCode, problem, traceId) { }
     }
 
+    /// <summary>
+    /// Used when an item does not exist. Add item name to message if it is user friendly
+    /// </summary>
     public sealed class ApiNotFoundException : ApiException
     {
         public ApiNotFoundException(string message, int statusCode, ApiProblemDetails? problem, string? traceId)
@@ -64,4 +67,24 @@
         public ApiNetworkException(string message, Exception inner)
             : base(message, statusCode: 0, problem: null, traceId: null, inner: inner) { }
     }
+
+    public sealed class S3UploadException : Exception
+    {
+        public string UserMessage { get; }
+        public int? StatusCode { get; }
+        public string? ResponseBody { get; }
+
+        public S3UploadException(
+            string userMessage,
+            Exception? innerException = null,
+            int? statusCode = null,
+            string? responseBody = null)
+            : base(userMessage, innerException)
+        {
+            UserMessage = userMessage;
+            StatusCode = statusCode;
+            ResponseBody = responseBody;
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
 ﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
-using AnglingClubShared.Exceptions;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Models;
 using AutoMapper;
 using CommunityToolkit.Mvvm.Messaging;
@@ -11,8 +11,8 @@ namespace AnglingClubWebsite.Services
 {
     public class DocumentService : DataServiceBase, IDocumentService
     {
-        private static string _controller = "Document";
-        private const long _maxUploadBytes = 20 * 1024 * 1024; // 20 MB
+        private const string CONTROLLER = "Document";
+        private const long MAXUPLOADBYTES = 20 * 1024 * 1024; // 20 MB
 
         private readonly ILogger<DocumentService> _logger;
         private readonly IMessenger _messenger;
@@ -34,58 +34,22 @@ namespace AnglingClubWebsite.Services
 
         public async Task<List<DocumentListItem>?> ReadDocuments(DocumentSearchRequest req)
         {
-            var relativeEndpoint = $"{_controller}/{Constants.API_DOCUMENT_READ}";
-
-            _logger.LogInformation($"ReadDocuments: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENT_READ}";
 
             var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", req);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"ReadDocuments: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<List<DocumentListItem>>();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"ReadDocuments: {ex.Message}");
-                    throw;
-                }
-            }
+            var content = await response.Content.ReadFromJsonAsync<List<DocumentListItem>>();
+            return content;
         }
 
         public async Task SaveDocument(DocumentMeta item)
         {
-            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}";
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}";
 
-            _logger.LogInformation($"SaveDocument: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            var docDTO = _mapper.Map<DocumentMetaDTO>(item);
+            docDTO.CreatedOffset = docDTO.Created;
 
-            try
-            {
-                var docDTO = _mapper.Map<DocumentMetaDTO>(item);
-                docDTO.CreatedOffset = docDTO.Created;
-
-                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<DocumentMetaDTO> { docDTO });
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning($"SaveDocument: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Error", "Failed to save document", "OK"));
-                    throw new Exception("Failed to save document");
-
-                }
-            }
-            catch (UserSessionExpiredException)
-            {
-                _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Session expired", "You must log in again", "OK"));
-                await _authenticationService.LogoutAsync();
-            }
+            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<DocumentMetaDTO> { docDTO });
 
             return;
         }
@@ -97,9 +61,7 @@ namespace AnglingClubWebsite.Services
         /// <returns></returns>
         public async Task<string?> GetReadOnlyUrl(string id)
         {
-            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}/minutes/readOnly/{id}";
-
-            _logger.LogInformation($"GetReadOnlyUrl: Accessing {HttpLongRunning.BaseAddress}{relativeEndpoint}");
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/minutes/readOnly/{id}";
 
             _logger.LogInformation("HttpClient.Timeout is {Timeout}", HttpLongRunning.Timeout);
 
@@ -108,24 +70,8 @@ namespace AnglingClubWebsite.Services
 
             var response = await HttpLongRunning.GetAsync($"{relativeEndpoint}", cts.Token);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"GetReadOnlyUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadAsStringAsync(cts.Token);
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"GetReadOnlyUrl: {ex.Message}");
-                    throw;
-                }
-            }
+            var content = await response.Content.ReadAsStringAsync(cts.Token);
+            return content;
         }
 
         /// <summary>
@@ -135,30 +81,12 @@ namespace AnglingClubWebsite.Services
         /// <returns></returns>
         public async Task<string?> Download(string id)
         {
-            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}/download/{id}";
-
-            _logger.LogInformation($"Download: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/download/{id}";
 
             var response = await Http.GetAsync($"{relativeEndpoint}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"Download: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Download: {ex.Message}");
-                    throw;
-                }
-            }
+            var content = await response.Content.ReadAsStringAsync();
+            return content;
         }
 
 
@@ -166,9 +94,7 @@ namespace AnglingClubWebsite.Services
         {
             var resp = new FileUploadUrlResult();
 
-            var relativeEndpoint = $"{_controller}/{Constants.API_DOCUMENT_GETUPLOADURL}";
-
-            _logger.LogInformation($"getDocumentUploadUrl: Accessing {Http.BaseAddress}{relativeEndpoint}");
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENT_GETUPLOADURL}";
 
             var model = new FileUploadUrlDto
             {
@@ -179,71 +105,67 @@ namespace AnglingClubWebsite.Services
 
             var response = await Http.PostAsync($"{relativeEndpoint}", JsonContent.Create(model));
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"getDocumentUploadUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<FileUploadUrlResult>();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"getDocumentUploadUrl: {ex.Message}");
-                    throw;
-                }
-            }
+            var content = await response.Content.ReadFromJsonAsync<FileUploadUrlResult>();
+            return content;
         }
 
         public async Task UploadDocumentWithPresignedUrl(string uploadUrl, UploadFiles selectedFile)
         {
-
-            // IMPORTANT: Syncfusion provides a stream
-            await using var fileStream = selectedFile.File.OpenReadStream(_maxUploadBytes);
-
-            using var content = new StreamContent(fileStream);
-
-            // Must match how your presigned URL was created (if Content-Type was part of the signature)
-            content.Headers.ContentType =
-                new System.Net.Http.Headers.MediaTypeHeaderValue(
-                    selectedFile.File.ContentType
-                );
-
-            using var req = new HttpRequestMessage(HttpMethod.Put, uploadUrl)
+            try
             {
-                Content = content
-            };
+                // IMPORTANT: Syncfusion provides a stream
+                await using var fileStream = selectedFile.File.OpenReadStream(MAXUPLOADBYTES);
 
-            // No auth header to S3 here; presigned URL already authorizes it.
-            using var s3Http = new HttpClient(); // clean client for S3 only
-            using var resp = await s3Http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+                using var content = new StreamContent(fileStream);
 
-            if (!resp.IsSuccessStatusCode)
-            {
-                var body = await resp.Content.ReadAsStringAsync();
-                throw new InvalidOperationException($"UploadDocumentWithPresignedUrl: upload failed: {(int)resp.StatusCode} {resp.ReasonPhrase}. {body}");
+                // Must match how your presigned URL was created (if Content-Type was part of the signature)
+                content.Headers.ContentType =
+                    new System.Net.Http.Headers.MediaTypeHeaderValue(
+                        selectedFile.File.ContentType
+                    );
+
+                using var req = new HttpRequestMessage(HttpMethod.Put, uploadUrl)
+                {
+                    Content = content
+                };
+
+                // No auth header to S3 here; presigned URL already authorizes it.
+                using var s3Http = new HttpClient(); // clean client for S3 only
+                using var resp = await s3Http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+
+                if (!resp.IsSuccessStatusCode)
+                {
+                    var body = await resp.Content.ReadAsStringAsync();
+
+                    throw new S3UploadException(
+                        userMessage: "Upload failed. Please try again.",
+                        statusCode: (int)resp.StatusCode,
+                        responseBody: body);
+                }
+
             }
-
+            catch (HttpRequestException ex)
+            {
+                // Common in WASM for CORS / network issues
+                throw new S3UploadException(
+                    userMessage: "Upload failed due to a network or browser security issue (CORS). Please try again.",
+                    innerException: ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new S3UploadException(
+                    userMessage: "Upload timed out. Please try again.",
+                    innerException: ex);
+            }
         }
 
         public async Task DeleteDocument(string id)
         {
-            var relativeEndpoint = $"{_controller}{Constants.API_DOCUMENT}/{id}";
+            var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/{id}";
 
             _logger.LogInformation($"DeleteDocument: Accessing {Http.BaseAddress}{relativeEndpoint}");
 
             var response = await Http.DeleteAsync($"{relativeEndpoint}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var ex = new Exception($"Unable to delete document: {id}");
-                _logger.LogError(ex, $"Failed to delete");
-                throw ex;
-            }
         }
 
 

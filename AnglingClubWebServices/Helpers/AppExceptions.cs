@@ -1,5 +1,7 @@
 ﻿using System;
 
+#nullable enable
+
 namespace AnglingClubWebServices.Helpers
 {
     public abstract class AppException : Exception
@@ -12,66 +14,68 @@ namespace AnglingClubWebServices.Helpers
         }
     }
 
-    public sealed class NotFoundException : AppException
+    public sealed class AppNotFoundException : AppException
     {
-        public NotFoundException(string message)
+        /// <summary>
+        /// Used when an item does not exist. Add item name to message if it is user friendly
+        /// </summary>
+        public AppNotFoundException(string message)
             : base(message)
         {
         }
 
-        public NotFoundException(string message, Exception? innerException)
+        /// <summary>
+        /// Used when an item does not exist. Add item name to message if it is user friendly
+        /// </summary>
+        public AppNotFoundException(string message, Exception? innerException)
             : base(message, innerException)
         {
         }
     }
 
-    public sealed class ConflictException : AppException
+    public sealed class AppConflictException : AppException
     {
-        public ConflictException(string message)
+        public AppConflictException(string message)
             : base(message)
         {
         }
 
-        public ConflictException(string message, Exception? innerException)
+        public AppConflictException(string message, Exception? innerException)
             : base(message, innerException)
         {
         }
     }
 
-    public sealed class ForbiddenException : AppException
+    public sealed class AppForbiddenException : AppException
     {
-        public ForbiddenException(string message)
+        public AppForbiddenException(string message)
             : base(message)
         {
         }
 
-        public ForbiddenException(string message, Exception? innerException)
+        public AppForbiddenException(string message, Exception? innerException)
             : base(message, innerException)
         {
         }
     }
 
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-    public sealed class ValidationException : AppException
+    public sealed class AppValidationException : AppException
     {
-        public string? Details
-        {
+        public string? Details {
             get;
         }
 
-        public ValidationException(string message, string? details = null)
+        public AppValidationException(string message, string? details = null)
             : base(message)
         {
             Details = details;
         }
 
-        public ValidationException(string message, string? details, Exception? innerException)
+        public AppValidationException(string message, string? details, Exception? innerException)
             : base(message, innerException)
         {
             Details = details;
         }
     }
-
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
 }

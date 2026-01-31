@@ -45,7 +45,7 @@ namespace AnglingClubWebsite
         #region Properties
 
         [ObservableProperty]
-        private bool _showDebugMessages = true;
+        private bool _showDebugMessages = false;
 
         #endregion Properties
 
@@ -88,18 +88,29 @@ namespace AnglingClubWebsite
 
         public void Receive(ShowConsoleMessage message)
         {
-            ShowConsoleMessage(message.Content);
+            ShowConsoleMessage(message.Content, message.showAlways);
         }
 
         #endregion Messaging
 
         #region Helpers
 
-        public void ShowConsoleMessage(string message)
+        public void ReportUiError(Exception ex)
         {
-            if (ShowDebugMessages)
+            // TODO: replace with your logger/toast/telemetry
+            Console.Error.WriteLine(ex);
+            _messenger.Send(new ShowMessage(MessageState.Error, "Something went wrong", "Please try again. If the problem persists, contact a committee member."));
+        }
+
+        public void ShowConsoleMessage(string message, bool showAlways = false)
+        {
+            if (ShowDebugMessages || showAlways)
             {
                 Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - {message}");
+            }
+            if (_currentUserService.User.Developer)
+            {
+                Console.WriteLine($"DEV: {DateTime.Now.ToString("HH:mm:ss")} - {message}");
             }
         }
 

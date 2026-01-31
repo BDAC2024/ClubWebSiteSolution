@@ -27,32 +27,14 @@ namespace AnglingClubWebsite.Services
         {
             var relativeEndpoint = $"{CONTROLLER}";
 
-            _logger.LogInformation($"GetAboutInfo: Accessing {Http.BaseAddress}{relativeEndpoint}");
-
             var response = await Http.GetAsync($"{relativeEndpoint}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"GetAboutInfo: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<AboutDto>();
-                    content!.API = Http.BaseAddress?.ToString() ?? "Unknown";
+            var content = await response.Content.ReadFromJsonAsync<AboutDto>();
+            content!.API = Http.BaseAddress?.ToString() ?? "Unknown";
 
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"GetAboutInfo: {ex.Message}");
-                    throw;
-                }
-            }
+            return content;
         }
-
     }
 
 }
+

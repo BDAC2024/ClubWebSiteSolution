@@ -79,6 +79,17 @@ builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY_LONG_RUNNING)
                 .AddHttpMessageHandler<AuthenticationHandler>()
                 .AddHttpMessageHandler<ProblemDetailsHttpHandler>();
 
+if (builder.HostEnvironment.IsDevelopment())
+{
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY}", LogLevel.Warning);
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY_LONG_RUNNING}", LogLevel.Information);
+}
+else
+{
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY}", LogLevel.Warning);
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY_LONG_RUNNING}", LogLevel.Warning);
+}
+
 // The app
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");

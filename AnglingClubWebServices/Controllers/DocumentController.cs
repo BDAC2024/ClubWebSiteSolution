@@ -1,9 +1,6 @@
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
-using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
-using AnglingClubShared.Models;
-using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
@@ -65,22 +60,13 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            try
+            foreach (var docItem in docItems)
             {
-                foreach (var docItem in docItems)
-                {
-                    docItem.Created = docItem.CreatedOffset.DateTime;
-                    await _documentService.SaveDocument(docItem, CurrentUser.MembershipNumber);
-                }
-                ReportTimer("Posting document item");
-                return Ok();
+                docItem.Created = docItem.CreatedOffset.DateTime;
+                await _documentService.SaveDocument(docItem, CurrentUser.MembershipNumber);
             }
-            catch (Exception ex)
-            {
-                var errMsg = "Failed to save document";
-                _logger.LogError(errMsg, ex);
-                return BadRequest(errMsg);
-            }
+            ReportTimer("Posting document item");
+            return Ok();
         }
 
         /// <summary>
@@ -105,37 +91,7 @@ namespace AnglingClubWebServices.Controllers
         [HttpGet("minutes/readonly/{id}")]
         public async Task<IActionResult> GetReadOnlyMinutes(string id)
         {
-            var doc = await _documentRepository.GetById(id + "ZZZZ");
-            //DocumentMeta doc = null;
-            //try
-            //{
-            //    var doc = await _documentRepository.GetById(id + "ZZZZ");
-            //    //doc = await _documentRepository.GetById(id);
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new NotFoundException($"Document '{id.Replace("Document:", "")}' was not found.", ex);
-            //}
-
-
-            var effectiveSeason = EnumUtils.SeasonForDate(doc.Created).Value;
-            var member = (await _memberRepository.GetMembers(effectiveSeason)).FirstOrDefault(x => x.MembershipNumber == CurrentUser.MembershipNumber);
-
-            var name = member != null ? member.Name : "";
-            var fileName = doc.StoredFileName;
-            var requestedAt = DateTime.Now;
-
-            var pdfBytes = await _documentService.GenerateWatermarkedPdfFromWordDocument(
-                fileName: fileName,
-                watermarkText: $"COPY FOR {name.ToUpper()}",
-                footerText: $"Requested by {name} on {requestedAt.ToString("dd MMM yyyy")} at {requestedAt.ToString("hh:mm tt")}",
-                ct: HttpContext.RequestAborted);
-
-            var pdfFileName = Path.ChangeExtension(fileName, ".pdf");
-
-            await _tmpFileRepository.SaveTmpFile(pdfFileName, pdfBytes, "application/pdf");
-
-            var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS, "application/pdf");
+            var url = _documentService.GetReadOnlyMinutesUrl(id, CurrentUser, HttpContext.RequestAborted);
 
             return Ok(url);
         }
@@ -143,19 +99,7 @@ namespace AnglingClubWebServices.Controllers
         [HttpGet("download/{id}")]
         public async Task<IActionResult> Download(string id)
         {
-            var doc = (await _documentRepository.Get()).SingleOrDefault(x => x.DbKey == id);
-
-            if (doc == null)
-            {
-                return BadRequest("Document could not be found.");
-            }
-
-            if (doc.DocumentType == DocumentType.MeetingMinutes && !CurrentUser.Secretary)
-            {
-                throw new ForbiddenException("Only club secretaries can download meeting minutes.");
-            }
-
-            var url = await _documentRepository.GetFilePresignedUrl(doc.StoredFileName, doc.OriginalFileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS);
+            var url = await _documentService.Download(id, CurrentUser);
 
             return Ok(url);
         }
@@ -167,20 +111,9 @@ namespace AnglingClubWebServices.Controllers
         {
             StartTimer();
 
-            try
-            {
-                await _documentRepository.DeleteDocument(id);
-                return Ok();
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            finally
-            {
-                ReportTimer("Deleting document");
-            }
+            await _documentRepository.DeleteDocument(id);
 
+            return NoContent();
         }
 
     }

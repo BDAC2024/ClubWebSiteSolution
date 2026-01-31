@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
@@ -20,15 +21,13 @@ namespace AnglingClubWebsite.Dialogs
         /// of setting Value="ShowingResults"
         /// </summary>
         [Parameter]
-        public EventCallback<bool> VisibleChanged
-        {
+        public EventCallback<bool> VisibleChanged {
             get; set;
         }
 
         // Signal to parent: “refresh your grid”
         [Parameter]
-        public EventCallback RefreshRequested
-        {
+        public EventCallback RefreshRequested {
             get; set;
         }
 
@@ -53,8 +52,7 @@ namespace AnglingClubWebsite.Dialogs
         }
 
         public DocumentMeta DocumentInfo { get; set; } = new DocumentMeta() { Created = DateTime.Now };
-        public MarkupString ErrorMessage
-        {
+        public MarkupString ErrorMessage {
             get; set;
         }
         public bool Uploading { get; set; } = false;
@@ -142,9 +140,33 @@ namespace AnglingClubWebsite.Dialogs
                 // Tell parent to refresh
                 await RefreshRequested.InvokeAsync();
             }
-            catch (Exception)
+            catch (ApiValidationException ex)
             {
-                _messenger.Send(new ShowMessage(MessageState.Warn, "Save failed", "Unable to save the docunent"));
+                _messenger.Send(new ShowMessage(MessageState.Warn, "Save failed", ex.Message));
+
+            }
+            catch (S3UploadException ex)
+            {
+                _messenger.Send(new ShowMessage(MessageState.Error, "Upload failed", ex.UserMessage));
+                _messenger.Send(new ShowConsoleMessage(ex.ResponseBody ?? ex.Message));
+                return;
+            }
+            catch (HttpRequestException ex)
+            {
+                _messenger.Send(new ShowMessage(MessageState.Error, "Upload failed",
+                    "The browser blocked the upload (network/CORS). Please try again."));
+                _messenger.Send(new ShowConsoleMessage(ex.Message));
+                return;
+            }
+            catch (Exception ex)
+            {
+                _messenger.Send(new ShowMessage(MessageState.Error, "Upload failed",
+                    "Please try again."));
+                _messenger.Send(new ShowConsoleMessage(ex.Message));
+                return;
+            }
+            finally
+            {
                 Uploading = false;
             }
 

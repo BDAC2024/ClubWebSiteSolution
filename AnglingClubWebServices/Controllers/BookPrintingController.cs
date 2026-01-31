@@ -5,11 +5,7 @@ using AnglingClubWebServices.Models;
 using AnglingClubWebServices.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Ocsp;
-using System;
 using System.Threading.Tasks;
-using static NodaTime.TimeZones.ZoneEqualityComparer;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -68,17 +64,7 @@ namespace AnglingClubWebServices.Controllers
             byte[] covers;
             byte[] content;
 
-            try
-            {
-                (covers, content) = _bookPrintingService.Impose(sourceStream, options);
-            }
-            catch (Exception ex)
-            {
-                return Problem(
-                    title: "Unable to impose PDF",
-                    detail: ex.Message,
-                    statusCode: 400);
-            }
+            (covers, content) = _bookPrintingService.Impose(sourceStream, options);
 
             var outputPath = _tmpFileType.OutputPath();
 

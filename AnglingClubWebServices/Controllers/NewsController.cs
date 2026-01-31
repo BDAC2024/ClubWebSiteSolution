@@ -52,7 +52,7 @@ namespace AnglingClubWebServices.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]List<NewsItem> newsItems)
+        public void Post([FromBody] List<NewsItem> newsItems)
         {
             StartTimer();
 
@@ -66,24 +66,14 @@ namespace AnglingClubWebServices.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            var errors = new List<string>();
-
-            try
-            {
-                _newsRepository.DeleteNewsItem(id).Wait();
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-
+            _newsRepository.DeleteNewsItem(id).Wait();
         }
     }
 }

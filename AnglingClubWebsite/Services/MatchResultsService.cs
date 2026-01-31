@@ -27,8 +27,6 @@ namespace AnglingClubWebsite.Services
         {
             var relativeEndpoint = $"{CONTROLLER}/{matchId}";
 
-            _logger.LogInformation($"GetResultsForMatch: Accessing {Http.BaseAddress}{relativeEndpoint}");
-
             var response = await Http.GetAsync($"{relativeEndpoint}");
 
             if (!response.IsSuccessStatusCode)

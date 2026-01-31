@@ -1,9 +1,10 @@
 ﻿using AnglingClubShared.Entities;
-using AnglingClubWebServices.Models;
+using AnglingClubWebServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 
 namespace AnglingClubWebServices.Controllers
@@ -21,8 +22,7 @@ namespace AnglingClubWebServices.Controllers
         #region Properties
 
         protected ILogger Logger { get; set; } = null;
-        protected bool IsProd 
-        {
+        protected bool IsProd {
             get
             {
                 var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
@@ -31,28 +31,27 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        protected string Caller
-        {
+        protected string Caller {
             get
             {
-                try 
+                try
                 {
                     Request.Headers.TryGetValue("Origin", out var caller);
                     return caller;
                 }
-                catch 
+                catch
                 {
                     return "CallerUnknown";
                 }
             }
         }
 
-        protected Member CurrentUser
-        {
+        protected Member CurrentUser {
             get
             {
                 if (_currentUser == null)
                 {
+                    await GetCurrentUserAsync(_authService).Result;
                     _currentUser = (Member)HttpContext.Items["User"];
                 }
 
@@ -102,5 +101,36 @@ namespace AnglingClubWebServices.Controllers
         }
 
         #endregion
+
+        //private Member? _currentUser;
+        private Task<Member>? _currentUserTask;
+
+        protected Task<Member> GetCurrentUserAsync(IAuthService authService)
+        {
+            if (_currentUser is not null)
+            {
+                return Task.FromResult(_currentUser);
+            }
+
+            if (_currentUserTask is not null)
+            {
+                return _currentUserTask;
+            }
+
+            var key = User.FindFirst("Key")?.Value;
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new UnauthorizedAccessException("Missing Key claim.");
+            }
+
+            _currentUserTask = LoadAsync(key, authService);
+            return _currentUserTask;
+
+            async Task<Member> LoadAsync(string userKey, IAuthService svc)
+            {
+                _currentUser = await svc.GetAuthorisedUserByKey(userKey);
+                return _currentUser;
+            }
+        }
     }
 }

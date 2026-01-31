@@ -94,6 +94,8 @@ namespace AnglingClubWebsite.Dialogs
 
         private async Task LoadAsync()
         {
+            ErrorMessage = new MarkupString();
+
             try
             {
                 ReadOnlyUrl = await _documentService.GetReadOnlyUrl(SelectedMeeting!.DbKey);

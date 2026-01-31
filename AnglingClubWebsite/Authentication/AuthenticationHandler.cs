@@ -1,5 +1,4 @@
-﻿using AnglingClubShared.Exceptions;
-using AnglingClubShared.Extensions;
+﻿using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
@@ -39,10 +38,10 @@ namespace AnglingClubWebsite.Authentication
 
             var jwt = await customAuthStateProvider.GetToken();
 
-            if (jwt == Constants.AUTH_EXPIRED)
-            {
-                throw new UserSessionExpiredException();
-            }
+            //if (jwt == Constants.AUTH_EXPIRED)
+            //{
+            //    throw new UserSessionExpiredException();
+            //}
 
             //Console.WriteLine($"Checking:{request.RequestUri?.AbsoluteUri}");
             //Console.WriteLine($"... to see if it starts with: {_configuration[Constants.API_ROOT_KEY]}");

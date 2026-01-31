@@ -17,7 +17,7 @@ namespace AnglingClubWebServices.Data
 {
     public class DocumentRepository : RepositoryBase, IDocumentRepository
     {
-        private const string _idPrefix = "Document";
+        private const string IDPREFIX = "Document";
 
         private readonly ILogger<DocumentRepository> _logger;
         private readonly RepositoryOptions _options;
@@ -52,7 +52,7 @@ namespace AnglingClubWebServices.Data
             {
                 if (file.IsNewItem)
                 {
-                    file.DbKey = file.GenerateDbKey(_idPrefix);
+                    file.DbKey = file.GenerateDbKey(IDPREFIX);
                 }
 
                 // Store the Id as a main attribute
@@ -88,15 +88,20 @@ namespace AnglingClubWebServices.Data
 
         public async Task<DocumentMeta> GetById(string docId)
         {
-            var items = await GetData(_idPrefix, $"AND ItemName() = '{docId}'");
+            var items = await GetData(IDPREFIX, $"AND ItemName() = '{docId}'");
 
-            return processItems(items).FirstOrDefault();
+            if (items.Count == 0)
+            {
+                throw new AppNotFoundException($"Document was not found.");
+            }
+
+            return processItems(items).First();
         }
 
         public async Task<List<DocumentMeta>> Get()
         {
             var files = new List<DocumentMeta>();
-            var items = await GetData(_idPrefix);
+            var items = await GetData(IDPREFIX);
 
             foreach (var item in processItems(items))
             {
@@ -202,7 +207,7 @@ namespace AnglingClubWebServices.Data
             var doc = (await Get()).SingleOrDefault(x => x.DbKey == id);
             if (doc == null)
             {
-                throw new NotFoundException($"Document '{id}' was not found.");
+                throw new AppNotFoundException($"Document was not found.");
             }
 
             DeleteAttributesRequest request = new DeleteAttributesRequest
@@ -211,42 +216,29 @@ namespace AnglingClubWebServices.Data
                 ItemName = $"{id}"
             };
 
-            try
+            if (doc.Searchable)
             {
-                if (doc.Searchable)
-                {
-                    var searchDataFile = doc.StorageSearchFilename();
-                    try
-                    {
-                        await base.deleteFile(searchDataFile, _options.DocumentBucket);
-                    }
-                    catch (Exception)
-                    {
-                        //Fail silently if unable to delete search data
-                        _logger.LogWarning($"Failed to delete search data {searchDataFile}");
-                    }
-                }
+                var searchDataFile = doc.StorageSearchFilename();
                 try
                 {
-                    await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
+                    await base.deleteFile(searchDataFile, _options.DocumentBucket);
                 }
                 catch (Exception)
                 {
-                    //Fail silently if unable to delete doc file
-                    _logger.LogWarning($"Failed to delete document file {doc.StoredFileName}");
+                    //Fail silently if unable to delete search data
+                    _logger.LogWarning($"Failed to delete search data {searchDataFile}");
                 }
-                await client.DeleteAttributesAsync(request);
             }
-            catch (AmazonSimpleDBException ex)
+            try
             {
-                _logger.LogError(ex, $"DeleteDocument Error Code: {ex.ErrorCode}, Error Type: {ex.ErrorType}");
-                throw;
+                await base.deleteFile(doc.StoredFileName, _options.DocumentBucket);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, $"DeleteDocument failed");
-                throw;
+                //Fail silently if unable to delete doc file
+                _logger.LogWarning($"Failed to delete document file {doc.StoredFileName}");
             }
+            await client.DeleteAttributesAsync(request);
         }
 
         public async Task<string> GetFilePresignedUrl(string storedFileName, string returnedFileName, int minutesBeforeExpiry)
