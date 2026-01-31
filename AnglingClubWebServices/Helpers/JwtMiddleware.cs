@@ -18,7 +18,7 @@ namespace AnglingClubWebServices.Helpers
         private readonly RequestDelegate _next;
         private readonly AuthOptions _authOptions;
 
-        public JwtMiddleware(RequestDelegate next, 
+        public JwtMiddleware(RequestDelegate next,
             IOptions<AuthOptions> opts)
         {
             _next = next;
@@ -31,13 +31,13 @@ namespace AnglingClubWebServices.Helpers
 
             if (token != null)
             {
-                attachUserToContext(context, memberService, token);
+                await attachUserToContext(context, memberService, token);
             }
 
             await _next(context);
         }
 
-        private void attachUserToContext(HttpContext context, IAuthService memberService, string token)
+        private async Task attachUserToContext(HttpContext context, IAuthService memberService, string token)
         {
             try
             {
@@ -49,29 +49,35 @@ namespace AnglingClubWebServices.Helpers
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
+                    ValidateLifetime = true,
                     // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userKey = jwtToken.Claims.First(x => x.Type == "Key").Value;
-
-
-                try
+                if (string.IsNullOrWhiteSpace(userKey))
                 {
-                    // attach user to context on successful jwt validation
-                    context.Items["User"] = memberService.GetAuthorisedUserByKey(userKey).Result;
+                    context.Items["AuthError"] = "invalid_token";
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    context.Items["UserError"] = ex.Message;
-                    throw;
-                }
+
+                // attach user to context on successful jwt validation
+                context.Items["User"] = await memberService.GetAuthorisedUserByKey(userKey);
             }
-            catch
+            catch (SecurityTokenExpiredException)
             {
-                // do nothing if jwt validation fails
-                // user is not attached to context so request won't have access to secure routes
+                context.Items["AuthError"] = "expired_token";
+            }
+            catch (SecurityTokenException)
+            {
+                context.Items["AuthError"] = "invalid_token";
+            }
+            catch (Exception ex)
+            {
+                // unexpected server-side failure while resolving user
+                context.Items["AuthError"] = "auth_failure";
+                context.Items["AuthErrorDetail"] = ex.Message; // log it, don't return it
             }
         }
     }

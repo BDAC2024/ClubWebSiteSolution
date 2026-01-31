@@ -1,6 +1,5 @@
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Models.Auth;
-using System.Threading.Tasks;
 
 namespace AnglingClubWebsite.Services
 {
@@ -13,6 +12,7 @@ namespace AnglingClubWebsite.Services
         Task LogoutAsync();
         //Task<bool> RefreshAsync();
         Task<bool> isLoggedIn();
+        Task<bool> sessionExpired();
         Task<bool> PinResetRequest(int membershipNumber);
 
         Task<ClientMemberDto> GetCurrentUser();

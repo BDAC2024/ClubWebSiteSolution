@@ -100,8 +100,8 @@ namespace AnglingClubWebsite.Authentication
                 }
                 else
                 {
-                    Console.Write("Token being saved to \"Token being saved to SessionStorage\"); - via console");
-                    _logger.LogWarning($"Token being saved to SessionStorage - via log - [{userSessionAsString}]");
+                    //Console.Write("Token being saved to \"Token being saved to SessionStorage\"); - via console");
+                    //_logger.LogInformation($"Token being saved to SessionStorage - via log - [{userSessionAsString}]");
                     await _sessionStorageService.SetItemAsStringAsync(Constants.AUTH_KEY, userSessionAsString); // TODO Ang to Blazor Migration - remove after migration
                     //await _sessionStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession); // TODO Ang to Blazor Migration - re-instate after migration
                 }

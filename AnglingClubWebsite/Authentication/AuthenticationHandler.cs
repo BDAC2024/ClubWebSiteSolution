@@ -1,4 +1,5 @@
 ﻿using AnglingClubShared.Extensions;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
@@ -61,21 +62,86 @@ namespace AnglingClubWebsite.Authentication
 
             //Console.WriteLine($"Therefore auth is: {request.Headers.Authorization}");
 
-            var response = await base.SendAsync(request, cancellationToken);
-
-            if (!_refreshing && response.StatusCode == HttpStatusCode.Unauthorized)
+            try
             {
-                // Handle the "Require re-login" setting
-                var user = await _authenticationService.GetCurrentUser();
-                if (!user.Id.IsNullOrEmpty())
+                var response = await base.SendAsync(request, cancellationToken);
+
+                if (!_refreshing && response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    // Must be a forced re-login
+                    // Handle the "Require re-login" setting
+                    var user = await _authenticationService.GetCurrentUser();
+                    if (!user.Id.IsNullOrEmpty())
+                    {
+                        // Must be a forced re-login
+                        _dialogQueue.Enqueue(new DialogRequest
+                        {
+                            Kind = DialogKind.Confirm,
+                            Severity = DialogSeverity.Info,
+                            Title = "Re-login required",
+                            Message = $"You have now been logged out. System changes require that you login again.",
+                            CancelText = "",
+                            ConfirmText = "OK",
+                            OnConfirmAsync = async () =>
+                            {
+                                await customAuthStateProvider.UpdateAuthenticationState(null, false, true);
+                            }
+                        });
+                    }
+
+                    try
+                    {
+                        _refreshing = true;
+
+                        throw new UnauthorizedAccessException("Login failed.");
+                        //if (await _authenticationService.RefreshAsync())
+                        //{
+                        //    jwt = await customAuthStateProvider.GetToken();
+
+                        //    if (isToServer && !string.IsNullOrEmpty(jwt))
+                        //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+
+                        //    response = await base.SendAsync(request, cancellationToken);
+                        //}
+                    }
+                    finally
+                    {
+                        _refreshing = false;
+                    }
+                }
+                return response;
+            }
+            catch (ApiUnauthorizedException ex)
+            {
+                // authError will be null or empty if a standard 401. If it has a value, it indicates a specific auth error message from the server (usually expired).
+                string? authError = ex.Problem?.ExtensionData?["authError"].GetString();
+
+                if (!string.IsNullOrEmpty(authError))
+                {
+                    string title = "Unexpected error";
+                    var message = "Please login again.";
+
+                    if (await _authenticationService.sessionExpired())
+                    {
+                        title = "Login expired";
+                        message = "Your login session has expired. Please login again.";
+                    }
+                    else
+                    {
+                        // Handle the "Require re-login" setting
+                        var user = await _authenticationService.GetCurrentUser();
+                        if (!user.Id.IsNullOrEmpty())
+                        {
+                            // Must be a forced re-login
+                            title = "Re-login required";
+                            message = "You have now been logged out. System changes require that you login again.";
+                        }
+                    }
                     _dialogQueue.Enqueue(new DialogRequest
                     {
                         Kind = DialogKind.Confirm,
                         Severity = DialogSeverity.Info,
-                        Title = "Re-login required",
-                        Message = $"You have now been logged out. System changes require that you login again.",
+                        Title = title,
+                        Message = message,
                         CancelText = "",
                         ConfirmText = "OK",
                         OnConfirmAsync = async () =>
@@ -83,30 +149,12 @@ namespace AnglingClubWebsite.Authentication
                             await customAuthStateProvider.UpdateAuthenticationState(null, false, true);
                         }
                     });
+
                 }
-
-                try
-                {
-                    _refreshing = true;
-
-                    throw new UnauthorizedAccessException("Login failed.");
-                    //if (await _authenticationService.RefreshAsync())
-                    //{
-                    //    jwt = await customAuthStateProvider.GetToken();
-
-                    //    if (isToServer && !string.IsNullOrEmpty(jwt))
-                    //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
-
-                    //    response = await base.SendAsync(request, cancellationToken);
-                    //}
-                }
-                finally
-                {
-                    _refreshing = false;
-                }
+                return new HttpResponseMessage();
             }
-            return response;
-        }
 
+        }
     }
+
 }

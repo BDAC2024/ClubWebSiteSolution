@@ -123,6 +123,16 @@ namespace Fishing.Client.Services
 
         }
 
+        public async Task<bool> sessionExpired()
+        {
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
+
+            var jwt = await customAuthStateProvider.GetToken();
+
+            return !string.IsNullOrEmpty(jwt) && jwt.ToUpper() == Constants.AUTH_EXPIRED;
+
+        }
+
         public async Task<bool> LoginAsync(AuthenticateRequest model, bool rememberMe = true)
         {
             var http = _factory.CreateClient(Constants.HTTP_CLIENT_KEY);
