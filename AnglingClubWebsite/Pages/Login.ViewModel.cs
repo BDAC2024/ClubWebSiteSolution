@@ -81,9 +81,10 @@ namespace AnglingClubWebsite.Pages
                     _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login about to NavPage to: {target}"));
                     NavToPage(target);
                 }
-                catch (ApiValidationException)
+                catch (ApiValidationException ex)
                 {
-                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Login Failed", "Invalid Membership No. or PIN"));
+                    var msg = ex.Problem?.Title ?? "";
+                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Login Failed", msg));
                 }
                 finally
                 {

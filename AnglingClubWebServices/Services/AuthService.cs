@@ -42,10 +42,10 @@ namespace AnglingClubWebServices.Services
 
                 if (newMember == null)
                 {
-                    return null;
+                    throw new AppValidationException($"Membership Number or PIN is incorrect");
                 }
 
-                throw new CustomException($"Sorry - You are not able to login until your membership starts on {EnumUtils.NextSeason().SeasonStarts().ToString("dd MMM yyyy")}");
+                throw new AppValidationException($"Sorry - You are not able to login until your membership starts on {EnumUtils.NextSeason().SeasonStarts().ToString("dd MMM yyyy")}");
             }
 
             // Dont trigger a backup if its just a normal logon

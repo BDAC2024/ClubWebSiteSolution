@@ -6,7 +6,7 @@ namespace AnglingClubWebsite.Services
 {
     public class MatchResultsService : DataServiceBase, IMatchResultsService
     {
-        private static string CONTROLLER = "MatchResults";
+        private const string CONTROLLER = "MatchResults";
 
         private readonly ILogger<MatchResultsService> _logger;
         private readonly IMessenger _messenger;

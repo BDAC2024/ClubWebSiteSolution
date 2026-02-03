@@ -6,7 +6,7 @@ namespace AnglingClubWebsite.Services
 {
     public class AboutService : DataServiceBase, IAboutService
     {
-        private static string CONTROLLER = "About";
+        private const string CONTROLLER = "About";
 
         private readonly ILogger<AboutService> _logger;
         private readonly IMessenger _messenger;
