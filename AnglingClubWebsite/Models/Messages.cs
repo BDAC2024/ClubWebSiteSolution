@@ -12,7 +12,7 @@ namespace AnglingClubWebsite.Models
 
     public record class TurnOnDebugMessages(bool YesOrNo);
 
-    public record class LoggedIn(ClientMemberDto User);
+    public record class LoggedIn(ClientMemberDto User, bool GotoLoginIfLoggedOut = false);
 
     public record class BrowserChange();
 
