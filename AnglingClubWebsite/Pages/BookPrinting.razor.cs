@@ -13,7 +13,7 @@ namespace AnglingClubWebsite.Pages
     public partial class BookPrinting : RazorComponentBase
     {
         //private readonly IAuthenticationService? _authenticationService;
-        //private readonly IMessenger? _messenger;
+        private readonly IMessenger _messenger;
         //private readonly ICurrentUserService? _currentUserService;
 
         private readonly ITmpFileService _tmpFileService;
@@ -28,6 +28,7 @@ namespace AnglingClubWebsite.Pages
         {
             _tmpFileService = tmpFileService;
             _bookPrintingService = bookPrintingService;
+            _messenger = messenger;
         }
 
         private UploadFiles? _file;
@@ -80,6 +81,10 @@ namespace AnglingClubWebsite.Pages
                 ErrorMessage = new MarkupString($"There was an error uploading the file: {ex.Message}");
             }
             catch (ApiNotFoundException ex)
+            {
+                ErrorMessage = new MarkupString($"There was an error uploading the file: {ex.Message}");
+            }
+            catch (ApiException ex)
             {
                 ErrorMessage = new MarkupString($"There was an error uploading the file: {ex.Message}");
             }

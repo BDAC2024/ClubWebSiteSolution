@@ -29,24 +29,8 @@ namespace AnglingClubWebsite.Services
 
             var response = await Http.GetAsync($"{relativeEndpoint}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"GetResultsForMatch: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<List<MatchResultOutputDto>>();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"GetResultsForMatch: {ex.Message}");
-                    throw;
-                }
-            }
+            var content = await response.Content.ReadFromJsonAsync<List<MatchResultOutputDto>>();
+            return content;
         }
 
     }

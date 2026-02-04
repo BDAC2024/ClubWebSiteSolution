@@ -1,4 +1,5 @@
 ﻿using AnglingClubShared.DTOs;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Syncfusion.Blazor.Inputs;
@@ -45,24 +46,9 @@ namespace AnglingClubWebsite.Services
 
             var response = await Http.PostAsync($"{relativeEndpoint}", JsonContent.Create(model));
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"GetFileUploadUrl: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<FileUploadUrlResult>();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"GetFileUploadUrl: {ex.Message}");
-                    throw;
-                }
-            }
+            var content = await response.Content.ReadFromJsonAsync<FileUploadUrlResult>();
+            return content;
+
         }
 
         public async Task UploadFileWithPresignedUrl(string uploadUrl, UploadFiles selectedFile)
@@ -91,7 +77,11 @@ namespace AnglingClubWebsite.Services
             if (!resp.IsSuccessStatusCode)
             {
                 var body = await resp.Content.ReadAsStringAsync();
-                throw new InvalidOperationException($"UploadFileWithPresignedUrl: upload failed: {(int)resp.StatusCode} {resp.ReasonPhrase}. {body}");
+
+                throw new S3UploadException(
+                    userMessage: "Upload failed. Please try again.",
+                    statusCode: (int)resp.StatusCode,
+                    responseBody: body);
             }
 
         }

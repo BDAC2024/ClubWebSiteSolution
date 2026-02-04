@@ -63,8 +63,6 @@ namespace AnglingClubWebsite.Services
         {
             var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/minutes/readOnly/{id}";
 
-            _logger.LogInformation("HttpClient.Timeout is {Timeout}", HttpLongRunning.Timeout);
-
             // Allow e.g. 10 minutes for conversion
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10));
 

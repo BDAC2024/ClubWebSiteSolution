@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace AnglingClubWebServices.Data
 {
     public class NewsRepository : RepositoryBase, INewsRepository
     {
-        private const string IdPrefix = "NewsItem";
+        private const string IDPREFIX = "NewsItem";
         private readonly ILogger<NewsRepository> _logger;
 
         public NewsRepository(
@@ -31,7 +30,7 @@ namespace AnglingClubWebServices.Data
 
             if (newsItem.IsNewItem)
             {
-                newsItem.DbKey = newsItem.GenerateDbKey(IdPrefix);
+                newsItem.DbKey = newsItem.GenerateDbKey(IDPREFIX);
             }
 
             BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -70,7 +69,7 @@ namespace AnglingClubWebServices.Data
 
             var newsItems = new List<NewsItem>();
 
-            var items = await GetData(IdPrefix, "AND Date > ''", "ORDER BY Date DESC");
+            var items = await GetData(IDPREFIX, "AND Date > ''", "ORDER BY Date DESC");
 
             foreach (var item in items)
             {

@@ -16,7 +16,7 @@ namespace AnglingClubWebServices.Data
     public class WaterRepository : RepositoryBase, IWaterRepository
     {
         private const string IdPrefix = "Water";
-        
+
         private readonly ILogger<WaterRepository> _logger;
 
         public WaterRepository(
@@ -215,7 +215,7 @@ namespace AnglingClubWebServices.Data
                         case "W3WCarPark":
                             water.W3wCarPark = attribute.Value;
                             break;
-                            
+
                         case "VideoShortCode":
                             water.VideoShortCode = attribute.Value;
                             break;

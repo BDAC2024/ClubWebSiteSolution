@@ -1,5 +1,4 @@
 ﻿using AnglingClubShared.Entities;
-using AnglingClubShared.Exceptions;
 using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Net.Http.Json;
@@ -49,22 +48,7 @@ namespace AnglingClubWebsite.Services
         {
             var relativeEndpoint = $"{CONTROLLER}{Constants.API_NEWS}";
 
-            _logger.LogInformation($"SaveNewsItem: Accessing {Http.BaseAddress}{relativeEndpoint}");
-
-            try
-            {
-                var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<NewsItem> { item });
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning($"SaveNewsItem: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                }
-            }
-            catch (UserSessionExpiredException)
-            {
-                _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Session expired", "You must log in again", "OK"));
-                await _authenticationService.LogoutAsync();
-            }
+            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", new List<NewsItem> { item });
 
             return;
         }
