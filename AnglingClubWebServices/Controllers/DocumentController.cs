@@ -91,7 +91,7 @@ namespace AnglingClubWebServices.Controllers
         [HttpGet("minutes/readonly/{id}")]
         public async Task<IActionResult> GetReadOnlyMinutes(string id)
         {
-            var url = _documentService.GetReadOnlyMinutesUrl(id, CurrentUser, HttpContext.RequestAborted);
+            var url = await _documentService.GetReadOnlyMinutesUrl(id, CurrentUser, HttpContext.RequestAborted);
 
             return Ok(url);
         }
