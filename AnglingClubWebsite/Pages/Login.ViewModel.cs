@@ -1,19 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AnglingClubShared.Models.Auth;
+using AnglingClubWebsite.Helpers;
+using AnglingClubWebsite.Models;
+using AnglingClubWebsite.Services;
+using AnglingClubWebsite.SharedComponents;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Logging;
-using Syncfusion.Blazor.Notifications;
-using System.Collections.ObjectModel;
-using System.Net.Http.Json;
-using System.Reflection;
-using AnglingClubWebsite.SharedComponents;
-using AnglingClubWebsite.Services;
-using AnglingClubShared.Models.Auth;
-using AnglingClubShared;
-using AnglingClubShared.Enums;
 using System.ComponentModel.DataAnnotations;
-using AnglingClubShared.Extensions;
-using AnglingClubWebsite.Models;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -82,24 +75,16 @@ namespace AnglingClubWebsite.Pages
             {
                 try
                 {
-                    if (await _authenticationService.LoginAsync(LoginModel, LoginInfo.RememberMe))
-                    {
-                        var target = _configuration["BaseHref"] + "/" + Caller ?? "";
-                        _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login about to NavPage to: {target}"));
-                        NavToPage(target);
-                    }
-                    else
-                    {
-                        _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Login Failed", "Invalid Membership No. or PIN"));
-                    }
+                    await _authenticationService.LoginAsync(LoginModel, LoginInfo.RememberMe);
 
+                    var target = _configuration["BaseHref"] + "/" + Caller ?? "";
+                    _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login about to NavPage to: {target}"));
+                    NavToPage(target);
                 }
-                catch (Exception ex)
+                catch (ApiValidationException ex)
                 {
-                    //_logger.LogError(ex, $"Login failed: {ex.Message}");
-                    _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"Login failed: {ex.Message}"));
-                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Error, "Login Failed", "An unexpected error occurred"));
-
+                    var msg = ex.Problem?.Title ?? "";
+                    _messenger.Send<ShowMessage>(new ShowMessage(MessageState.Warn, "Login Failed", msg));
                 }
                 finally
                 {

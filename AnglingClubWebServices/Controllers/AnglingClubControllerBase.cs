@@ -1,5 +1,4 @@
 ﻿using AnglingClubShared.Entities;
-using AnglingClubWebServices.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,8 +20,7 @@ namespace AnglingClubWebServices.Controllers
         #region Properties
 
         protected ILogger Logger { get; set; } = null;
-        protected bool IsProd 
-        {
+        protected bool IsProd {
             get
             {
                 var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
@@ -31,24 +29,22 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        protected string Caller
-        {
+        protected string Caller {
             get
             {
-                try 
+                try
                 {
                     Request.Headers.TryGetValue("Origin", out var caller);
                     return caller;
                 }
-                catch 
+                catch
                 {
                     return "CallerUnknown";
                 }
             }
         }
 
-        protected Member CurrentUser
-        {
+        protected Member CurrentUser {
             get
             {
                 if (_currentUser == null)
@@ -102,5 +98,6 @@ namespace AnglingClubWebServices.Controllers
         }
 
         #endregion
+
     }
 }

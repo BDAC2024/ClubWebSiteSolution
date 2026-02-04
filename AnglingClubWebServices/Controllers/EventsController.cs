@@ -1,6 +1,7 @@
+using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
-using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -11,12 +12,10 @@ using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AnglingClubShared.Entities;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -44,7 +43,7 @@ namespace AnglingClubWebServices.Controllers
         [HttpPost("export")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(void))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public IActionResult Export([FromBody]CalendarExportDto calendarExportDto)
+        public IActionResult Export([FromBody] CalendarExportDto calendarExportDto)
         {
             StartTimer();
 
@@ -172,8 +171,8 @@ namespace AnglingClubWebServices.Controllers
             var iCalSerializer = new CalendarSerializer();
             string result = iCalSerializer.SerializeToString(calendar);
 
-            _emailService.SendEmail(new List<string> { calendarExportDto.Email }, 
-                "BDAC Calendar", 
+            _emailService.SendEmail(new List<string> { calendarExportDto.Email },
+                "BDAC Calendar",
                 $"Hello,<br/><br/>" +
                     $"Please find attached the Boroughbridge & District Angling Club calendar for your selected events in the {EnumUtils.SeasonDisplay(calendarExportDto.Season)} season.<br/><br/>" +
                     "The email program on your phone/tablet/computer should recognise the attachment type and offer to load the events into your chosen calendar.<br/><br/>" +
@@ -192,7 +191,6 @@ namespace AnglingClubWebServices.Controllers
         // GET api/values
         [HttpGet("{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ClubEvent>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult Get(Season season)
         {
             StartTimer();
@@ -202,19 +200,11 @@ namespace AnglingClubWebServices.Controllers
             ReportTimer("Getting events");
 
             return Ok(events);
-
-            //var errors = new List<string>();
-            //for (int i = 0; i < 5; i++)
-            //{
-            //    errors.Add($"Can't find {i}");
-            //}
-
-            //return BadRequest(errors);
         }
 
         // POST api/values
         [HttpPost]
-        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody]List<ClubEventInputDto> events)
+        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody] List<ClubEventInputDto> events)
         {
             StartTimer();
             var errors = new List<string>();
@@ -257,7 +247,7 @@ namespace AnglingClubWebServices.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 

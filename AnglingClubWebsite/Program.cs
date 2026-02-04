@@ -1,5 +1,6 @@
 using AnglingClubWebsite;
 using AnglingClubWebsite.Authentication;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Pages;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
@@ -65,13 +66,29 @@ if (string.IsNullOrWhiteSpace(apiBaseUrl))
 
 var apiUri = new Uri(apiBaseUrl);
 
+builder.Services.AddSingleton<IClientTraceContext, ClientTraceContext>();
+builder.Services.AddTransient<ProblemDetailsHttpHandler>();
+
 builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY)
                 .ConfigureHttpClient(c => c.BaseAddress = apiUri)
-                .AddHttpMessageHandler<AuthenticationHandler>();
+                .AddHttpMessageHandler<AuthenticationHandler>()
+                .AddHttpMessageHandler<ProblemDetailsHttpHandler>();
 
 builder.Services.AddHttpClient(Constants.HTTP_CLIENT_KEY_LONG_RUNNING)
                 .ConfigureHttpClient(c => c.BaseAddress = apiUri)
-                .AddHttpMessageHandler<AuthenticationHandler>();
+                .AddHttpMessageHandler<AuthenticationHandler>()
+                .AddHttpMessageHandler<ProblemDetailsHttpHandler>();
+
+if (builder.HostEnvironment.IsDevelopment())
+{
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY}", LogLevel.Warning);
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY_LONG_RUNNING}", LogLevel.Information);
+}
+else
+{
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY}", LogLevel.Warning);
+    builder.Logging.AddFilter($"System.Net.Http.HttpClient.{Constants.HTTP_CLIENT_KEY_LONG_RUNNING}", LogLevel.Warning);
+}
 
 // The app
 builder.RootComponents.Add<App>("#app");

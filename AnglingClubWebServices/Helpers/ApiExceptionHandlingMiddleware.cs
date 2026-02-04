@@ -32,6 +32,7 @@
             {
                 var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
 
+
                 _logger.LogError(ex,
                     "Unhandled exception. TraceId={TraceId} Method={Method} Path={Path} User={User}",
                     traceId,
@@ -71,10 +72,10 @@
             // Expected, “clean” exceptions (we’ll add these in Step 2)
             return ex switch
             {
-                NotFoundException nf => (StatusCodes.Status404NotFound, nf.Message, null, "https://httpstatuses.com/404"),
-                ConflictException cf => (StatusCodes.Status409Conflict, cf.Message, null, "https://httpstatuses.com/409"),
-                ValidationException ve => (StatusCodes.Status400BadRequest, ve.Message, ve.Details, "https://httpstatuses.com/400"),
-                ForbiddenException fe => (StatusCodes.Status403Forbidden, fe.Message, null, "https://httpstatuses.com/403"),
+                AppNotFoundException nf => (StatusCodes.Status404NotFound, nf.Message, null, "https://httpstatuses.com/404"),
+                AppConflictException cf => (StatusCodes.Status409Conflict, cf.Message, null, "https://httpstatuses.com/409"),
+                AppValidationException ve => (StatusCodes.Status400BadRequest, ve.Message, ve.Details, "https://httpstatuses.com/400"),
+                AppForbiddenException fe => (StatusCodes.Status403Forbidden, fe.Message, null, "https://httpstatuses.com/403"),
 
                 // Everything else => 500, hide detail in prod
                 _ => (StatusCodes.Status500InternalServerError,

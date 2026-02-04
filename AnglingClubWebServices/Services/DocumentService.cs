@@ -1,6 +1,8 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
+using AnglingClubShared.Models;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -10,9 +12,11 @@ using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Parsing;
 using Syncfusion.Pdf.Security;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,17 +27,64 @@ namespace AnglingClubWebServices.Services
         private readonly IDocumentRepository _documentRepository;
         private readonly AuthOptions _authOptions;
         private readonly IMemberRepository _memberRepository;
+        private readonly ITmpFileRepository _tmpFileRepository;
         private readonly IMapper _mapper;
 
-        public DocumentService(IDocumentRepository documentRepository, IOptions<AuthOptions> authOpts, IMemberRepository memberRepository, IMapper mapper)
+        public DocumentService(IDocumentRepository documentRepository, IOptions<AuthOptions> authOpts, IMemberRepository memberRepository, IMapper mapper, ITmpFileRepository tmpFileRepository)
         {
             _documentRepository = documentRepository;
             _authOptions = authOpts.Value;
             _memberRepository = memberRepository;
             _mapper = mapper;
+            _tmpFileRepository = tmpFileRepository;
         }
 
-        public async Task<byte[]> GenerateWatermarkedPdfFromWordDocument(
+        public async Task<string> GetReadOnlyMinutesUrl(string id, Member user, CancellationToken ct)
+        {
+            //var doc = await _documentRepository.GetById(id + "ZZZZ");
+            var doc = await _documentRepository.GetById(id);
+
+            var effectiveSeason = EnumUtils.SeasonForDate(doc.Created).Value;
+            var member = (await _memberRepository.GetMembers(effectiveSeason)).FirstOrDefault(x => x.MembershipNumber == user.MembershipNumber);
+
+            var name = member != null ? member.Name : "";
+            var fileName = doc.StoredFileName;
+            var requestedAt = DateTime.Now;
+
+            var pdfBytes = await generateWatermarkedPdfFromWordDocument(
+                fileName: fileName,
+                watermarkText: $"COPY FOR {name.ToUpper()}",
+                footerText: $"Requested by {name} on {requestedAt.ToString("dd MMM yyyy")} at {requestedAt.ToString("hh:mm tt")}",
+                ct: ct);
+
+            var pdfFileName = Path.ChangeExtension(fileName, ".pdf");
+
+            await _tmpFileRepository.SaveTmpFile(pdfFileName, pdfBytes, "application/pdf");
+
+            var url = await _tmpFileRepository.GetFilePresignedUrl(pdfFileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS, "application/pdf");
+
+            return url;
+        }
+
+        public async Task<string> Download(string id, Member user)
+        {
+            var doc = (await _documentRepository.Get()).SingleOrDefault(x => x.DbKey == id);
+
+            if (doc == null)
+            {
+                throw new AppNotFoundException("Document could not be found.");
+            }
+
+            if (doc.DocumentType == DocumentType.MeetingMinutes && !user.Secretary)
+            {
+                throw new AppForbiddenException("Only club secretaries can download meeting minutes.");
+            }
+
+            var url = await _documentRepository.GetFilePresignedUrl(doc.StoredFileName, doc.OriginalFileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS);
+
+            return url;
+        }
+        private async Task<byte[]> generateWatermarkedPdfFromWordDocument(
             string fileName,
             string watermarkText,
             string footerText,
@@ -217,14 +268,25 @@ namespace AnglingClubWebServices.Services
 
         public async Task SaveDocument(DocumentMeta docItem, int createdByMember)
         {
-            docItem.UploadedByMembershipNumber = createdByMember;
-            if (docItem.Searchable)
+            try
             {
-                await _documentRepository.AddOrUpdateAndIndexDocument(docItem);
+                docItem.UploadedByMembershipNumber = createdByMember;
+                if (docItem.Searchable)
+                {
+                    await _documentRepository.AddOrUpdateAndIndexDocument(docItem);
+                }
+                else
+                {
+                    await _documentRepository.AddOrUpdateDocument(docItem);
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                await _documentRepository.AddOrUpdateDocument(docItem);
+                var detailedEx = new Exception("Save failed for for document" +
+                    JsonSerializer.Serialize(docItem), ex);
+
+                throw new AppValidationException("Failed to save document", "", detailedEx);
             }
         }
     }

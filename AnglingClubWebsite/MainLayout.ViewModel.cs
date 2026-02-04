@@ -1,15 +1,13 @@
-using AnglingClubShared;
 using AnglingClubShared.Enums;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Syncfusion.Blazor.Notifications;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase, 
+    public partial class MainLayoutViewModel : ViewModelBase,
         IRecipient<BrowserChange>,
         IRecipient<LoggedIn>,
         IRecipient<SelectMenuItem>
@@ -110,8 +108,16 @@ namespace AnglingClubWebsite
             else
             {
                 setupLoggedOutMenu();
-                SelectMenuItem("/");
-                _navigationService.NavigateTo("/", false);
+                if (message.GotoLoginIfLoggedOut)
+                {
+                    SelectMenuItem("/login");
+                    _navigationService.NavigateTo("/login", false);
+                }
+                else
+                {
+                    SelectMenuItem("/");
+                    _navigationService.NavigateTo("/", false);
+                }
             }
         }
 
@@ -149,7 +155,7 @@ namespace AnglingClubWebsite
 
             List<MenuItem> menuItems = new List<MenuItem>();
 
-            menuItems.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = menuUrl("/")});
+            menuItems.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = menuUrl("/") });
             menuItems.Add(new MenuItem { Id = "02", Name = "News", NavigateUrl = menuUrl("/News") });
             menuItems.Add(new MenuItem { Id = "03", Name = "Club Waters", NavigateUrl = menuUrl("/Waters") });
             menuItems.Add(new MenuItem { Id = "04", Name = "Matches", NavigateUrl = menuUrl("/Matches") });

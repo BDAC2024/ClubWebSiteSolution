@@ -1,4 +1,5 @@
-﻿using AnglingClubShared.Entities;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
 using AnglingClubShared.Models.Auth;
@@ -12,7 +13,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AnglingClubShared.DTOs;
 
 namespace AnglingClubWebServices.Services
 {
@@ -42,10 +42,10 @@ namespace AnglingClubWebServices.Services
 
                 if (newMember == null)
                 {
-                    return null;
+                    throw new AppValidationException($"Membership Number or PIN is incorrect");
                 }
 
-                throw new CustomException($"Sorry - You are not able to login until your membership starts on {EnumUtils.NextSeason().SeasonStarts().ToString("dd MMM yyyy")}");
+                throw new AppValidationException($"Sorry - You are not able to login until your membership starts on {EnumUtils.NextSeason().SeasonStarts().ToString("dd MMM yyyy")}");
             }
 
             // Dont trigger a backup if its just a normal logon
@@ -83,9 +83,8 @@ namespace AnglingClubWebServices.Services
             }
 
             // authentication successful so generate jwt token
-            var token = generateJwtToken(member);
-
-            var expiration = DateTime.UtcNow.AddMonths(12);
+            var expiration = DateTime.UtcNow.AddMinutes(_authOptions.AuthExpireMinutes);
+            var token = generateJwtToken(member, expiration);
 
             return new AuthenticateResponse(member.DbKey, token, expiration, (int)expiration.Subtract(DateTime.Now).TotalSeconds);
         }
@@ -125,7 +124,7 @@ namespace AnglingClubWebServices.Services
             return members.Single();
         }
 
-        private string generateJwtToken(Member member)
+        private string generateJwtToken(Member member, DateTime expires)
         {
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -133,7 +132,7 @@ namespace AnglingClubWebServices.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClientMemberDto().GetIdentity(member, GetDeveloperName()),
-                Expires = DateTime.UtcNow.AddMinutes(_authOptions.AuthExpireMinutes),
+                Expires = expires,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

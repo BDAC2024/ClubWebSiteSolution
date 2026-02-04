@@ -1,13 +1,8 @@
 ﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Enums;
-using AnglingClubWebsite.Models;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Syncfusion.Blazor.Inputs;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace AnglingClubWebsite.Services
 {
@@ -50,36 +45,11 @@ namespace AnglingClubWebsite.Services
 
             var relativeEndpoint = $"{_controller}";
 
-            _logger.LogInformation($"GetPrintReadyPDFs: Accessing {Http.BaseAddress}{relativeEndpoint}");
-
             var response = await Http.GetAsync($"{relativeEndpoint}/{Path.GetFileName(uploadUrlDetails.UploadedFileName)}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"GetPrintReadyPDFs: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
+            var content = await response.Content.ReadFromJsonAsync<BookPrintingResult>();
 
-                var body = await response.Content.ReadAsStringAsync();
-                var pd = JsonSerializer.Deserialize<ProblemDetails>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                if (pd != null)
-                {
-                    _messenger.Send(new ShowMessage(MessageState.Error, "Print-ready generation failed", pd.Detail));
-                }
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<BookPrintingResult>();
-
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"GetPrintReadyPDFs: {ex.Message}");
-                    throw;
-                }
-            }
+            return content;
         }
 
     }

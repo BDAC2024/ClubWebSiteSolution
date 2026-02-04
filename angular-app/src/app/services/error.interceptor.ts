@@ -45,6 +45,10 @@ export class ErrorIntercept implements HttpInterceptor {
                                 this.membershipExpired = true;
                             }
 
+                          if (error.status == 400) {
+                            errorMessage = error.error.title;
+                          }
+
                         } else {
                             errorMessage = `${prefix} Error Status: ${error.status}\nMessage: ${error.message}\nDetail: ${error.error}`;
                         }

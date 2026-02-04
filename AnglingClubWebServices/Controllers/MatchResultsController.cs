@@ -1,5 +1,7 @@
-using AnglingClubShared.Enums;
 using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -9,8 +11,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AnglingClubShared.Extensions;
-using AnglingClubShared.Entities;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -51,34 +51,26 @@ namespace AnglingClubWebServices.Controllers
 
             StartTimer();
 
-            try
+            var match = _eventRepository.GetEvents().Result.Single(x => x.Id == matchId);
+            var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetResults(matchId, match));
+            var members = _memberRepository.GetMembers(match.Season, true).Result;
+            foreach (var result in results)
             {
-                var match = _eventRepository.GetEvents().Result.Single(x => x.Id == matchId);
-                var results = _mapper.Map<List<MatchResultOutputDto>>(_matchResultService.GetResults(matchId, match));
-                var members = _memberRepository.GetMembers(match.Season, true).Result;
-                foreach (var result in results)
+                var member = members.FirstOrDefault(x => x.MembershipNumber == result.MembershipNumber);
+                if (member != null)
                 {
-                    var member = members.FirstOrDefault(x => x.MembershipNumber == result.MembershipNumber);
-                    if (member != null)
-                    {
-                        result.Name = member.Name;
-                    }
-                    else
-                    {
-                        result.Name = $"Member {result.MembershipNumber} not found";
-                    }
+                    result.Name = member.Name;
                 }
-
-                ReportTimer("Getting match results");
-
-                return Ok(results);
-
+                else
+                {
+                    result.Name = $"Member {result.MembershipNumber} not found";
+                }
             }
-            catch (Exception ex)
-            {
-                errors.Add(ex.Message);
-                return BadRequest(errors);
-            }
+
+            ReportTimer("Getting match results");
+
+            return Ok(results);
+
         }
 
         [HttpGet("member/{membershipNumber}/{matchType}/{season}")]
@@ -273,7 +265,7 @@ namespace AnglingClubWebServices.Controllers
 
         // POST api/values
         [HttpPost]
-        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody]List<MatchResultInputDto> results)
+        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody] List<MatchResultInputDto> results)
         {
             StartTimer();
 
@@ -299,7 +291,7 @@ namespace AnglingClubWebServices.Controllers
             catch (System.Exception ex)
             {
                 errors.Add(ex.Message);
-                
+
             }
             finally
             {
@@ -319,7 +311,7 @@ namespace AnglingClubWebServices.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 

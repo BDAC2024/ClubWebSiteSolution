@@ -1,8 +1,8 @@
+using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models.Auth;
-using AnglingClubShared.DTOs;
-using AnglingClubWebServices.Helpers;
+using AnglingClubWebServices.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -12,11 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using static AnglingClubWebServices.Services.UtilityService;
-using AnglingClubWebServices.DTOs;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -64,26 +62,16 @@ namespace AnglingClubWebServices.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequest model)
         {
-            try
-            {
-                var response = await _authService.Authenticate(model);
+            //try
+            //{
+            var response = await _authService.Authenticate(model);
 
-                if (response == null)
-                {
-                    return BadRequest(new { message = "Membership Number or PIN is incorrect" });
-                }
-
-                return Ok(response);
-            }
-            catch (CustomException cex)
+            if (response == null)
             {
-                return BadRequest(new { message = cex.Message });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = "Membership Number or PIN is incorrect" });
             }
 
+            return Ok(response);
         }
 
         // GET api/values
@@ -171,7 +159,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 foreach (var member in members)
                 {
-                    var existingMember = allMembers.FirstOrDefault(x => x.MembershipNumber == member.MembershipNumber && 
+                    var existingMember = allMembers.FirstOrDefault(x => x.MembershipNumber == member.MembershipNumber &&
                         x.Name.ToLower() == "anonymous" ? x.SeasonsActive.Contains(member.SeasonsActive.First()) : x.Name.ToLower() == member.Name.ToLower());
 
                     if (existingMember == null)
@@ -389,7 +377,7 @@ namespace AnglingClubWebServices.Controllers
 
             if (member.DbKey != CurrentUser.DbKey)
             {
-                return BadRequest("You cannot modify other member's details"); 
+                return BadRequest("You cannot modify other member's details");
             }
 
             member.AllowNameToBeUsed = prefs.AllowNameToBeUsed;

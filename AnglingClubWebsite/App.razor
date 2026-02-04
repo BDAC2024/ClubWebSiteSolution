@@ -7,21 +7,32 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData"
-                    DefaultLayout="@GetDefaultLayout()">
-                <NotAuthorized>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <p>You are not authorized to access this resource.</p>
-                    </LayoutView>
-                </NotAuthorized>
-                <Authorizing>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <p>Authorizing...</p>
-                    </LayoutView>
-                </Authorizing>
-            </AuthorizeRouteView>
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            <ErrorBoundary @ref="_errorBoundary">
+                <ChildContent>
+                    <AuthorizeRouteView RouteData="@routeData"
+                                        DefaultLayout="@GetDefaultLayout()">
+                        <NotAuthorized>
+                            <LayoutView Layout="@typeof(MainLayout)">
+                                <p>You are not authorized to access this resource.</p>
+                            </LayoutView>
+                        </NotAuthorized>
+                        <Authorizing>
+                            <LayoutView Layout="@typeof(MainLayout)">
+                                <p>Authorizing...</p>
+                            </LayoutView>
+                        </Authorizing>
+                    </AuthorizeRouteView>
+                    <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+                </ChildContent>
+
+                <ErrorContent Context="ex">
+                    @{
+                        _ = ReportUiErrorOnce(ex);
+                    }
+                </ErrorContent>
+            </ErrorBoundary>
         </Found>
+
         <NotFound>
             <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
@@ -34,6 +45,44 @@
 <SfMediaQuery @bind-ActiveBreakpoint="activeBreakpoint" OnBreakpointChanged="OnBreakpointChanged"></SfMediaQuery>
 
 @code {
+    private ErrorBoundary? _errorBoundary;
+
+    // If you already store the last API trace id somewhere (from your Http handler),
+    // plug it in here. For now this can remain null/empty.
+    // private string? _lastTraceId;
+
+    private Task RecoverAsync()
+    {
+        _errorReported = false;
+        _errorBoundary?.Recover();
+
+        // Optional: also navigate to same URI to force rerender
+        //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: false);
+
+        return Task.CompletedTask;
+    }
+
+    private bool _errorReported;
+    private async Task ReportUiErrorOnce(Exception ex)
+    {
+        if (_errorReported)
+        {
+            return;
+        }
+
+        _errorReported = true;
+
+        ViewModel.ReportUiError(ex);
+
+        // Give the UI a tick to render the popup before recovery.
+        await Task.Yield();
+
+        // IMPORTANT: reset the boundary so the app is usable again
+        _errorBoundary?.Recover();
+    }
+
+    
+
     // TODO Ang to Blazor Migration - only needed until migation complete
     private Type GetDefaultLayout()
     {

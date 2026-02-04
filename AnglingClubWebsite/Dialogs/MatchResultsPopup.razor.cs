@@ -1,11 +1,8 @@
 ﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
-using AnglingClubShared.Extensions;
-using AnglingClubWebsite.Pages;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;
-using System.Collections.ObjectModel;
 
 namespace AnglingClubWebsite.Dialogs
 {
@@ -19,7 +16,7 @@ namespace AnglingClubWebsite.Dialogs
         /// @bind-Visible="ShowingResults" rather than the 1-way method
         /// of setting Value="ShowingResults"
         /// </summary>
-        [Parameter] public EventCallback<bool> VisibleChanged { get; set; } 
+        [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
 
         [Parameter] required public ClubEvent SelectedMatch { get; set; }
 
@@ -57,8 +54,8 @@ namespace AnglingClubWebsite.Dialogs
         protected override async Task OnParametersSetAsync()
         {
             if (SelectedMatch == null)
-            {     
-                return; 
+            {
+                return;
             }
 
             if (_cachedMatchId != SelectedMatch.Id)

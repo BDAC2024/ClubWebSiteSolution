@@ -38,18 +38,26 @@
     {
         await Task.Delay(90);
 
-        if (firstRender && !(await authenticationService.isLoggedIn()))
+        if (firstRender)
         {
-            // TODO Ang to Blazor Migration - only required until migration complete
-            if (isEmbedded)
+            var expired = await authenticationService.sessionExpired();
+            if (!expired)
             {
-                var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
-                //Console.WriteLine($"[AuthorizeView OnAfterRenderAsync] redirect to ang login at ${returnPath}");
-                await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
-            }
-            else
-            {
-                navigationService.NavigateTo($"{_configuration["BaseHref"]}/login/{CallingRoute}"); // Just retain this line when migration complete
+                var loggedIn = await authenticationService.isLoggedIn();
+                if (!loggedIn)
+                {
+                    // TODO Ang to Blazor Migration - only required until migration complete
+                    if (isEmbedded)
+                    {
+                        var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
+                        //Console.WriteLine($"[AuthorizeView OnAfterRenderAsync] redirect to ang login at ${returnPath}");
+                        await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
+                    }
+                    else
+                    {
+                        navigationService.NavigateTo($"{_configuration["BaseHref"]}/login/{CallingRoute}"); // Just retain this line when migration complete
+                    }
+                }
             }
         }
     }

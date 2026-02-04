@@ -1,37 +1,81 @@
 ﻿using System;
 
+#nullable enable
+
 namespace AnglingClubWebServices.Helpers
 {
     public abstract class AppException : Exception
     {
         protected AppException(string message) : base(message) { }
-    }
 
-    public sealed class NotFoundException : AppException
-    {
-        public NotFoundException(string message) : base(message) { }
-    }
-
-    public sealed class ConflictException : AppException
-    {
-        public ConflictException(string message) : base(message) { }
-    }
-
-    public sealed class ForbiddenException : AppException
-    {
-        public ForbiddenException(string message) : base(message) { }
-    }
-
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-    public sealed class ValidationException : AppException
-    {
-        public string? Details
+        protected AppException(string message, Exception? innerException)
+            : base(message, innerException)
         {
+        }
+    }
+
+    public sealed class AppNotFoundException : AppException
+    {
+        /// <summary>
+        /// Used when an item does not exist. Add item name to message if it is user friendly
+        /// </summary>
+        public AppNotFoundException(string message)
+            : base(message)
+        {
+        }
+
+        /// <summary>
+        /// Used when an item does not exist. Add item name to message if it is user friendly
+        /// </summary>
+        public AppNotFoundException(string message, Exception? innerException)
+            : base(message, innerException)
+        {
+        }
+    }
+
+    public sealed class AppConflictException : AppException
+    {
+        public AppConflictException(string message)
+            : base(message)
+        {
+        }
+
+        public AppConflictException(string message, Exception? innerException)
+            : base(message, innerException)
+        {
+        }
+    }
+
+    public sealed class AppForbiddenException : AppException
+    {
+        public AppForbiddenException(string message)
+            : base(message)
+        {
+        }
+
+        public AppForbiddenException(string message, Exception? innerException)
+            : base(message, innerException)
+        {
+        }
+    }
+
+    public sealed class AppValidationException : AppException
+    {
+        public string? Details {
             get;
         }
-        public ValidationException(string message, string? details = null) : base(message)
-            => Details = details;
+
+        public AppValidationException(string message, string? details = null)
+            : base(message)
+        {
+            Details = details;
+        }
+
+        public AppValidationException(string message, string? details, Exception? innerException)
+            : base(message, innerException)
+        {
+            Details = details;
+        }
     }
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
 }

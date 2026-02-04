@@ -100,8 +100,8 @@ namespace AnglingClubWebsite.Authentication
                 }
                 else
                 {
-                    Console.Write("Token being saved to \"Token being saved to SessionStorage\"); - via console");
-                    _logger.LogWarning($"Token being saved to SessionStorage - via log - [{userSessionAsString}]");
+                    //Console.Write("Token being saved to \"Token being saved to SessionStorage\"); - via console");
+                    //_logger.LogInformation($"Token being saved to SessionStorage - via log - [{userSessionAsString}]");
                     await _sessionStorageService.SetItemAsStringAsync(Constants.AUTH_KEY, userSessionAsString); // TODO Ang to Blazor Migration - remove after migration
                     //await _sessionStorageService.SaveItemEncrypted(Constants.AUTH_KEY, userSession); // TODO Ang to Blazor Migration - re-instate after migration
                 }
@@ -124,11 +124,11 @@ namespace AnglingClubWebsite.Authentication
 
                 _authTokenStore.Current = null;
 
-                var anonUser = new LoggedIn(new ClientMemberDto());
 
                 // TODO Ang to Blazor Migration - only needed until migration is complete
                 if (!_isEmbedded)
                 {
+                    var anonUser = new LoggedIn(new ClientMemberDto(), true);
                     _messenger.Send(anonUser); // TODO Ang to Blazor Migration - keep just this once migration is complete
                 }
                 else
@@ -136,8 +136,9 @@ namespace AnglingClubWebsite.Authentication
                     if (requestHostLogout)
                     {
 
-                        // In embedded mode, we need to notify the host that the user has logged out
-                        await _js.InvokeVoidAsync("blazorHostBridge.requestLogout");
+                        // In embedded mode, we need to notify the host that the user has logged out and show login page
+                        await _js.InvokeVoidAsync("blazorHostBridge.requestLogoutShowLogin");
+
                     }
                 }
             }

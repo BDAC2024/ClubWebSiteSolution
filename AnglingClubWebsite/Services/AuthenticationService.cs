@@ -1,20 +1,13 @@
 using AnglingClubShared.DTOs;
-using AnglingClubShared.Entities;
 using AnglingClubShared.Models.Auth;
 using AnglingClubWebsite.Authentication;
-using AnglingClubWebsite.Extensions;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Syncfusion.Blazor.RichTextEditor;
-using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
-using System.Text.Json;
-using static System.Net.WebRequestMethods;
 
 
 namespace Fishing.Client.Services
@@ -39,12 +32,12 @@ namespace Fishing.Client.Services
         public event Action<string?>? LoginChange;
 
         public AuthenticationService(
-            IHttpClientFactory factory, 
-            ILocalStorageService 
-            localStorageService, 
-            AuthenticationStateProvider stateProvider, 
-            ILogger<AuthenticationService> logger, 
-            ICurrentUserService currentUserService, 
+            IHttpClientFactory factory,
+            ILocalStorageService
+            localStorageService,
+            AuthenticationStateProvider stateProvider,
+            ILogger<AuthenticationService> logger,
+            ICurrentUserService currentUserService,
             HostBridge hostBridge, // TODO Ang to Blazor Migration - remove when migration complete
             IAuthTokenStore authTokenStore) : base(factory)
         {
@@ -130,35 +123,30 @@ namespace Fishing.Client.Services
 
         }
 
+        public async Task<bool> sessionExpired()
+        {
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)_stateProvider;
+
+            var jwt = await customAuthStateProvider.GetToken();
+
+            return !string.IsNullOrEmpty(jwt) && jwt.ToUpper() == Constants.AUTH_EXPIRED;
+
+        }
+
         public async Task<bool> LoginAsync(AuthenticateRequest model, bool rememberMe = true)
         {
             var http = _factory.CreateClient(Constants.HTTP_CLIENT_KEY);
             http.BaseAddress = new Uri($"{http.BaseAddress!.ToString()}api/{CONTROLLER}/");
 
-            _logger.LogInformation($"Accessing {http.BaseAddress}{Constants.API_AUTHENTICATE}");
+            HttpResponseMessage response;
 
-            var response = await http.PostAsync(Constants.API_AUTHENTICATE,
-                                                        JsonContent.Create(model));
+            response = await http.PostAsync(Constants.API_AUTHENTICATE,
+                                                            JsonContent.Create(model));
+            var content = await response.Content.ReadFromJsonAsync<AuthenticateResponse>();
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return false;
-            }
+            await LoginWithResponseAsync(content!, rememberMe);
 
-            try
-            {
-                var content = await response.Content.ReadFromJsonAsync<AuthenticateResponse>();
-
-                await LoginWithResponseAsync(content!, rememberMe);
-
-                return true;
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            return true;
         }
 
 
@@ -188,7 +176,7 @@ namespace Fishing.Client.Services
                     var response = await _factory.CreateClient(Constants.HTTP_CLIENT_KEY).PostAsync("api/authentication/refresh",
                                                                 JsonContent.Create(model));
 
-                    if (!response.IsSuccessStatusCode)
+                    if (!response.isSuccessStatusCode)
                     {
                         await LogoutAsync();
 
@@ -214,24 +202,8 @@ namespace Fishing.Client.Services
 
             var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", "");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"PinResetRequest: failed : error {response.StatusCode} - {response.ReasonPhrase}");
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<bool>();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"PinResetRequest: {ex.Message}");
-                    throw;
-                }
-            }
-            return true;
+            var content = await response.Content.ReadFromJsonAsync<bool>();
+            return content;
         }
     }
 }

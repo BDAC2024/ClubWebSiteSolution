@@ -3,6 +3,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlazorBridgeService } from 'src/app/services/blazor-bridge.service';
 import { environment } from 'src/environments/environment';
+import { AuthenticationService } from '../../services/auth/authentication.service';
 
 @Component({
   selector: 'app-blazor-host',
@@ -26,6 +27,7 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
     private bridge: BlazorBridgeService,
     private router: Router,
     private route: ActivatedRoute,
+    private authenticationService: AuthenticationService
   ) {}
 
   ngOnInit(): void {
@@ -133,6 +135,9 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
       case 'REQUEST_LOGOUT':
         this.handleRequestLogout();
         break;
+      case 'REQUEST_LOGOUT_AND_LOGIN':
+        this.handleRequestLogoutAndShowLogin();
+        break;
       case 'REQUEST_PAGE':
         this.handleRequestPage(data.angPage);
         break;
@@ -149,6 +154,11 @@ export class BlazorHostComponent implements OnInit, OnDestroy {
 
   private handleRequestLogout() {
     this.router.navigate(['/logout/false']);
+  }
+
+  private handleRequestLogoutAndShowLogin() {
+    this.authenticationService.logout(false);
+    this.router.navigate(['/login']);
   }
 
   private handleRequestPage(angPage?: string) {

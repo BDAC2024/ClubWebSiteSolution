@@ -1,5 +1,7 @@
-﻿using AnglingClubShared.Enums;
-using AnglingClubShared.DTOs;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,8 +10,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AnglingClubShared.Entities;
-using AnglingClubShared.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +23,7 @@ namespace AnglingClubWebServices.Controllers
         private readonly ILogger<WatersController> _logger;
 
         public WatersController(
-            IWaterRepository waterRepository, 
+            IWaterRepository waterRepository,
             ILoggerFactory loggerFactory)
         {
             _waterRepository = waterRepository;
@@ -47,7 +47,7 @@ namespace AnglingClubWebServices.Controllers
             {
                 var waters = _waterRepository.GetWaters().Result;
 
-                foreach (var water in waters.Where( x => (CurrentUser == null && x.Access == WaterAccessType.DayTicketsAvailable) || (CurrentUser != null)))
+                foreach (var water in waters.Where(x => (CurrentUser == null && x.Access == WaterAccessType.DayTicketsAvailable) || (CurrentUser != null)))
                 {
                     var dto = new WaterOutputDto();
 
@@ -88,7 +88,7 @@ namespace AnglingClubWebServices.Controllers
                     for (int i = 0; i < paths.Length; i++)
                     {
                         var path = paths[i].Split(',');
-                        if (path.Length > 1) 
+                        if (path.Length > 1)
                         {
                             dto.Path.Add(new Position { Lat = double.Parse(path[0]), Long = double.Parse(path[1]) });
                         }
@@ -188,9 +188,9 @@ namespace AnglingClubWebServices.Controllers
                     var path = inputWater.Path.ToArray();
                     var positions = new List<string>();
 
-                    for (int i = 0; i < inputWater.Path.Count; i+=2)
+                    for (int i = 0; i < inputWater.Path.Count; i += 2)
                     {
-                        positions.Add($"{path[i]},{path[i+1]}");
+                        positions.Add($"{path[i]},{path[i + 1]}");
                     }
                     water.Path = string.Join("|", positions.ToArray());
 

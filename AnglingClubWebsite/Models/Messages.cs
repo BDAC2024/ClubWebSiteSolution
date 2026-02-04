@@ -1,6 +1,4 @@
 ﻿using AnglingClubShared.DTOs;
-using AnglingClubShared.Enums;
-using Syncfusion.Blazor.Notifications;
 
 namespace AnglingClubWebsite.Models
 {
@@ -14,7 +12,7 @@ namespace AnglingClubWebsite.Models
 
     public record class TurnOnDebugMessages(bool YesOrNo);
 
-    public record class LoggedIn(ClientMemberDto User);
+    public record class LoggedIn(ClientMemberDto User, bool GotoLoginIfLoggedOut = false);
 
     public record class BrowserChange();
 
@@ -24,7 +22,7 @@ namespace AnglingClubWebsite.Models
 
     public record class SelectMenuItem(string NavigateUrl);
 
-    public record class ShowConsoleMessage(string Content);
+    public record class ShowConsoleMessage(string Content, bool showAlways = false);
 
     public record class ShowMessage(MessageState State, string Title, string Body, string? CloseButtonTitle = "Cancel", MessageButton? confirmationButtonDetails = null);
 

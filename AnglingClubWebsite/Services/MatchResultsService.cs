@@ -6,7 +6,7 @@ namespace AnglingClubWebsite.Services
 {
     public class MatchResultsService : DataServiceBase, IMatchResultsService
     {
-        private static string CONTROLLER = "MatchResults";
+        private const string CONTROLLER = "MatchResults";
 
         private readonly ILogger<MatchResultsService> _logger;
         private readonly IMessenger _messenger;
@@ -27,28 +27,10 @@ namespace AnglingClubWebsite.Services
         {
             var relativeEndpoint = $"{CONTROLLER}/{matchId}";
 
-            _logger.LogInformation($"GetResultsForMatch: Accessing {Http.BaseAddress}{relativeEndpoint}");
-
             var response = await Http.GetAsync($"{relativeEndpoint}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning($"GetResultsForMatch: failed to return success: error {response.StatusCode} - {response.ReasonPhrase}");
-                return null;
-            }
-            else
-            {
-                try
-                {
-                    var content = await response.Content.ReadFromJsonAsync<List<MatchResultOutputDto>>();
-                    return content;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"GetResultsForMatch: {ex.Message}");
-                    throw;
-                }
-            }
+            var content = await response.Content.ReadFromJsonAsync<List<MatchResultOutputDto>>();
+            return content;
         }
 
     }
