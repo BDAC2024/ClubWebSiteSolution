@@ -1,4 +1,6 @@
 ﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Net.Http.Json;
 
@@ -30,6 +32,14 @@ namespace AnglingClubWebsite.Services
             var response = await Http.GetAsync($"{relativeEndpoint}");
 
             var content = await response.Content.ReadFromJsonAsync<List<MatchResultOutputDto>>();
+            return content;
+        }
+
+        public async Task<List<LeaguePosition>?> GetLeaguePositions(AggregateType aggType, Season season)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/standings/{(int)aggType}/{(int)season}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<List<LeaguePosition>>();
             return content;
         }
 

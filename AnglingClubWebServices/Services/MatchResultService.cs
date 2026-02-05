@@ -1,13 +1,12 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
-using AnglingClubWebServices.Data;
+using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
 //using MatchType = AnglingClubWebServices.Interfaces.MatchType;
 
 namespace AnglingClubWebServices.Services
@@ -59,7 +58,7 @@ namespace AnglingClubWebServices.Services
             int numberAtPos = 0;
 
             float lastWeight = results.Any() ? results.Max(r => r.WeightDecimal) : 0f;
-            float lastPoints = match.AggregateType == AggregateType.PairsPointsAsc? -10000 : 10000;
+            float lastPoints = match.AggregateType == AggregateType.PairsPointsAsc ? -10000 : 10000;
 
             foreach (var result in results)
             {
@@ -117,15 +116,33 @@ namespace AnglingClubWebServices.Services
             var matchIds = _eventRepository.GetEvents().Result.Where(x => x.AggregateType == aggType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
             var members = _memberRepository.GetMembers(season, true).Result;
+            var memberLookup = members.ToDictionary(m => m.MembershipNumber);
+
+            var distinctMatchMembers = matchResultsForLeague.DistinctBy(x => x.MembershipNumber).Select(x => x.MembershipNumber);
+
+            foreach (var member in distinctMatchMembers)
+            {
+                if (!memberLookup.ContainsKey(member))
+                {
+                    _logger.LogWarning($"GetLeagueStandings: Cannot find member {member}");
+                }
+            }
 
             var league = matchResultsForLeague
                 .GroupBy(x => x.MembershipNumber)
-                .Select(cl => new LeaguePosition
+                .Where(cl => memberLookup.ContainsKey(cl.Key))
+                .Select(cl =>
                 {
-                    MembershipNumber = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).MembershipNumber,
-                    Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
-                    Points = cl.Sum(c => c.Points),
-                    TotalWeightDecimal = cl.Sum(c => c.WeightDecimal)
+                    var member = memberLookup[cl.Key];
+
+                    return new LeaguePosition
+                    {
+                        MembershipNumber = cl.Key,
+                        Name = member.Name,
+                        Points = cl.Sum(c => c.Points),
+                        TotalWeightDecimal = cl.Sum(c => c.WeightDecimal)
+                    };
+
                 }).ToList();
 
             var pos = 1;
@@ -251,8 +268,8 @@ namespace AnglingClubWebServices.Services
             var members = _memberRepository.GetMembers(season, true).Result;
 
             List<TrophyWinner> trophyWinners = new List<TrophyWinner>();
-            
-            foreach (ClubEvent match in matchesWithTrophies) 
+
+            foreach (ClubEvent match in matchesWithTrophies)
             {
                 var trophyWinner = new TrophyWinner()
                 {

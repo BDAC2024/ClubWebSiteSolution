@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Models;
 using AnglingClubWebServices.Models;
 using System.Collections.Generic;
 

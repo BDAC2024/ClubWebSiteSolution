@@ -2,6 +2,7 @@ using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
+using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -222,20 +223,11 @@ namespace AnglingClubWebServices.Controllers
 
             StartTimer();
 
-            try
-            {
-                var standings = _matchResultService.GetLeagueStandings(aggType, season);
+            var standings = _matchResultService.GetLeagueStandings(aggType, season);
 
-                ReportTimer($"Getting league standings for {aggType} in {season}");
+            ReportTimer($"Getting league standings for {aggType} in {season}");
 
-                return Ok(standings);
-
-            }
-            catch (Exception ex)
-            {
-                errors.Add(ex.Message);
-                return BadRequest(errors);
-            }
+            return Ok(standings);
         }
 
         [HttpGet("aggregateWeights/{aggType}/{season}")]

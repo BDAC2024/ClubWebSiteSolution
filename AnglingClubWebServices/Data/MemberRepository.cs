@@ -28,7 +28,7 @@ namespace AnglingClubWebServices.Data
             SiteUrl = opts.Value.SiteUrl;
         }
 
-        public string SiteUrl { get;  }
+        public string SiteUrl { get; }
 
         public async Task AddOrUpdateMember(Member member)
         {
@@ -98,8 +98,6 @@ namespace AnglingClubWebServices.Data
 
         public async Task<List<Member>> GetMembers(Season? activeSeason = null, bool forMatchResults = false)
         {
-            _logger.LogWarning($"Getting members at : {DateTime.Now.ToString("HH:mm:ss.000")}");
-
             var members = new List<Member>();
 
             var items = await GetData(IdPrefix, "AND Name > ''", "ORDER BY Name");
@@ -169,7 +167,7 @@ namespace AnglingClubWebServices.Data
                         case "PinResetRequested":
                             member.PinResetRequested = attribute.Value == "0" ? false : true; ;
                             break;
-                            
+
                         case "AllowNameToBeUsed":
                             member.AllowNameToBeUsed = attribute.Value == "1";
                             break;

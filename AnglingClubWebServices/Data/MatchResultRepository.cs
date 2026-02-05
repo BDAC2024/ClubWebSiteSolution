@@ -112,8 +112,6 @@ namespace AnglingClubWebServices.Data
 
         public async Task<List<MatchResult>> GetAllMatchResults()
         {
-            _logger.LogWarning($"Getting all match results");
-
             var results = new List<MatchResult>();
 
             var items = await GetData(_idPrefix, "AND WeightDecimal > ''", "ORDER BY WeightDecimal DESC");

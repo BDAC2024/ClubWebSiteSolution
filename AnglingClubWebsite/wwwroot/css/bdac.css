@@ -550,6 +550,14 @@ fieldset {
     cursor: pointer;
 }
 
+.bdac-table.no-click tbody tr {
+    cursor: default;
+}
+
+    .bdac-table.no-click tbody tr:hover > td {
+        background-color: unset;
+    }
+
     .bdac-table tbody tr:hover > td {
         background-color: rgba(0, 0, 0, 0.03);
     }
@@ -684,6 +692,7 @@ fieldset {
 .bdac-table tbody td {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
+
 
 /* =========================================================
    End of BDAC QuickGrid styling (class: bdac-table)

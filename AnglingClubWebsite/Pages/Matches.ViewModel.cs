@@ -300,13 +300,6 @@ namespace AnglingClubWebsite.Pages
 
         #region Helper Classes
 
-        public class MatchTabData
-        {
-            public string HeaderFull { get; set; } = "";
-            public string HeaderBrief { get; set; } = "";
-            public MatchType MatchType { get; set; } = MatchType.Spring;
-            public bool Visible { get; set; } = false;
-        }
 
         #endregion Helper Classes
 
