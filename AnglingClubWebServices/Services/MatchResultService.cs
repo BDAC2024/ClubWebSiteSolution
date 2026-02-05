@@ -302,17 +302,24 @@ namespace AnglingClubWebServices.Services
                 if (matchResultsForTrophies.Any(x => x.MatchId == match.Id))
                 {
                     var winningWeight = matchResultsForTrophies.Where(x => x.MatchId == match.Id).OrderByDescending(x => x.WeightDecimal).First().WeightDecimal;
-                    var winners = matchResultsForTrophies.Where(x => x.MatchId == match.Id && x.WeightDecimal == winningWeight);
-
-                    trophyWinner.WeightDecimal = winningWeight;
-                    trophyWinner.Winner = "";
-                    foreach (var winner in winners)
+                    if (winningWeight == 0)
                     {
-                        if (!string.IsNullOrEmpty(trophyWinner.Winner))
+                        trophyWinner.Winner = "No one caught";
+                    }
+                    else
+                    {
+                        var winners = matchResultsForTrophies.Where(x => x.MatchId == match.Id && x.WeightDecimal == winningWeight);
+
+                        trophyWinner.WeightDecimal = winningWeight;
+                        trophyWinner.Winner = "";
+                        foreach (var winner in winners)
                         {
-                            trophyWinner.Winner += "/";
+                            if (!string.IsNullOrEmpty(trophyWinner.Winner))
+                            {
+                                trophyWinner.Winner += "/";
+                            }
+                            trophyWinner.Winner += members.Single(x => x.MembershipNumber == winner.MembershipNumber).Name;
                         }
-                        trophyWinner.Winner += members.Single(x => x.MembershipNumber == winner.MembershipNumber).Name;
                     }
                     trophyWinner.IsRunning = false;
                 }
