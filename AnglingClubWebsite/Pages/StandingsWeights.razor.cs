@@ -107,6 +107,7 @@ namespace AnglingClubWebsite.Pages
             SelectedAggType = 0;
             StandingsLoaded = false;
             await getMatches(season);
+            StateHasChanged();
         }
 
         private async Task getMatches(Season season)
