@@ -1,0 +1,83 @@
+﻿@page "/StandingsWeights"
+@using AnglingClubShared.Enums
+@using AnglingClubShared.Models
+@using AnglingClubWebsite.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+
+    <div class="page-header">
+        <h3 class="left-header">Aggregate Weights</h3>
+
+        <SeasonSelector OnSeasonChanged="SeasonChanged" />
+    </div>
+
+    <BusyIndicator IsReady="@TabsLoaded"></BusyIndicator>
+
+    @if (TabsLoaded)
+    {
+        <p>The drop-2 info can go here if applicable</p>
+
+        <SfTab ID="Tab" EnablePersistence="false" @bind-SelectedItem="SelectedTab">
+            <TabEvents Selected="OnTabSelected"></TabEvents>
+            <TabItems>
+                @foreach (MatchTabData Item in MatchTabItems)
+                {
+                    <TabItem>
+                        <HeaderTemplate>
+                            @if (BrowserSize == DeviceSize.Small)
+                            {
+                                <div>@(Item.HeaderBrief)</div>
+                            }
+                            else
+                            {
+                                <div>@(Item.HeaderFull)</div>
+                            }
+
+                        </HeaderTemplate>
+                    </TabItem>
+                }
+            </TabItems>
+        </SfTab>
+        <BusyIndicator IsReady="@StandingsLoaded"></BusyIndicator>
+
+        if (StandingsLoaded)
+        {
+            <QuickGrid Items="AggWeightsQueryable" Class="bdac-table no-click">
+
+                <TemplateColumn Title="Pos">
+                    <ChildContent Context="row">
+                         <div class="bdac-rowcell">
+                            @row.PositionOrdinal
+                         </div>
+                    </ChildContent>
+                </TemplateColumn>
+
+                 <TemplateColumn Title="Name">
+                    <ChildContent Context="row">
+                        <div class="bdac-rowcell">
+                            @row.Name
+                        </div>
+                    </ChildContent>
+                </TemplateColumn>
+
+                @if (ShowWeight)
+                {
+                    <TemplateColumn Title="Total Weight">
+                        <ChildContent Context="row">
+                            <div class="bdac-rowcell">
+                                @row.Weight
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+                }
+
+            </QuickGrid>
+        }
+    }
+
+</AuthorizationRequired>
+
+

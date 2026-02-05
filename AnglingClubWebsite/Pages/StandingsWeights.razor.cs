@@ -9,7 +9,7 @@ using Syncfusion.Blazor.Navigations;
 
 namespace AnglingClubWebsite.Pages
 {
-    public partial class StandingsLeague : RazorComponentBase, IRecipient<BrowserChange>
+    public partial class StandingsWeights : RazorComponentBase, IRecipient<BrowserChange>
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
@@ -19,20 +19,20 @@ namespace AnglingClubWebsite.Pages
         public readonly IGlobalService GlobalService;
         private readonly IMatchResultsService _matchResultsService;
         private readonly IClubEventService _clubEventService;
-        private readonly ILogger<StandingsLeague> _logger;
+        private readonly ILogger<StandingsWeights> _logger;
         private readonly IRefDataService _refDataService;
 
         private List<ClubEvent>? _allMatches = null;
         private List<MatchTabData> _matchTabs = new List<MatchTabData>();
 
-        public StandingsLeague(IAuthenticationService authenticationService,
+        public StandingsWeights(IAuthenticationService authenticationService,
                          IMessenger messenger,
                          ICurrentUserService currentUserService,
                          BrowserService browserService,
                          IGlobalService globalService,
                          IMatchResultsService matchResultsService,
                          IClubEventService clubEventService,
-                         ILogger<StandingsLeague> logger,
+                         ILogger<StandingsWeights> logger,
                          IRefDataService refDataService) : base(messenger, currentUserService, authenticationService)
         {
             messenger.Register<BrowserChange>(this);
@@ -60,8 +60,8 @@ namespace AnglingClubWebsite.Pages
 
         public List<MatchTabData> MatchTabItems = new List<MatchTabData>();
 
-        public List<LeaguePosition>? SeasonStandings { get; set; } = new List<LeaguePosition>();
-        public IQueryable<LeaguePosition>? SeasonStandingsQueryable;
+        public List<AggregateWeight>? AggWeights { get; set; } = new List<AggregateWeight>();
+        public IQueryable<AggregateWeight>? AggWeightsQueryable;
 
         public bool ShowWeight { get; set; } = true;
 
@@ -154,11 +154,11 @@ namespace AnglingClubWebsite.Pages
         {
             StandingsLoaded = false;
 
-            SeasonStandings = await _matchResultsService.GetLeaguePositions(SelectedAggType, season);
+            AggWeights = await _matchResultsService.GetAggreateWeights(SelectedAggType, season);
 
-            if (SeasonStandings != null)
+            if (AggWeights != null)
             {
-                SeasonStandingsQueryable = SeasonStandings.AsQueryable();
+                AggWeightsQueryable = AggWeights.AsQueryable();
             }
 
             StandingsLoaded = true;
@@ -172,10 +172,7 @@ namespace AnglingClubWebsite.Pages
             addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
             addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.ClubRiver, HeaderFull = "Club Match - River", HeaderBrief = "Club/River", });
             addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.ClubPond, HeaderFull = "Club Match - Pond", HeaderBrief = "Club/Pond", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.PairsPointsAsc, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.Junior, HeaderFull = "Junior", HeaderBrief = "Junior", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
+            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.Pairs, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
 
             MatchTabItems = new List<MatchTabData>(_matchTabs);
 

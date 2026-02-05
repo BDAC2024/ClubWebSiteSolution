@@ -4,7 +4,6 @@ using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
-using AnglingClubWebServices.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

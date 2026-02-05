@@ -43,6 +43,14 @@ namespace AnglingClubWebsite.Services
             return content;
         }
 
+        public async Task<List<AggregateWeight>?> GetAggreateWeights(AggregateType aggType, Season season)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/aggregateWeights/{(int)aggType}/{(int)season}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<List<AggregateWeight>>();
+            return content;
+        }
+
     }
 
 }

@@ -8,5 +8,6 @@ namespace AnglingClubWebsite.Services
     {
         Task<List<MatchResultOutputDto>?> GetResultsForMatch(string matchId);
         Task<List<LeaguePosition>?> GetLeaguePositions(AggregateType aggType, Season season);
+        Task<List<AggregateWeight>?> GetAggreateWeights(AggregateType aggType, Season season);
     }
 }

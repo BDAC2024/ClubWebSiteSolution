@@ -1,14 +1,12 @@
 ﻿using AnglingClubShared.Extensions;
-using System;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Models
 {
 
     public class AggregateWeight
     {
         public int Position { get; set; }
-        public string PositionOrdinal
-        {
+        public string PositionOrdinal {
             get
             {
                 return Position.Ordinal();
@@ -17,12 +15,11 @@ namespace AnglingClubWebServices.Models
 
         }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         public float TotalWeightDecimal { get; set; }
 
         public int MembershipNumber { get; set; }
-        public string Weight
-        {
+        public string Weight {
             get
             {
                 var wt = "";
