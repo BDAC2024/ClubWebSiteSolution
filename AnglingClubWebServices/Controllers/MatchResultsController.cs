@@ -5,6 +5,7 @@ using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -113,6 +114,7 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("members")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultOutputDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]

@@ -97,12 +97,12 @@ namespace AnglingClubWebsite.Pages
         /// </summary>
         /// <param name="season"></param>
         /// <returns></returns>
-        public async Task SeasonChanged(Season season)
+        public async Task SeasonChanged(Season? season)
         {
             SelectedTab = 0;
             SelectedType = 0;
             TrophiesLoaded = false;
-            await loadTrophyWinners(season);
+            await loadTrophyWinners(season!.Value);
             StateHasChanged();
         }
 

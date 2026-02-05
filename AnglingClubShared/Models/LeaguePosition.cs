@@ -37,6 +37,14 @@ namespace AnglingClubShared.Models
             }
 
         }
+
+        // Info related to dropping matches
+        public int MatchesInSeason { get; set; }
+        public int FishedMatches { get; set; }
+        public int DroppedMatches { get; set; }
+        public float DroppedPoints { get; set; }
+
+
     }
 
 }

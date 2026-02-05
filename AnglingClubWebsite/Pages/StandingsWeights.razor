@@ -18,61 +18,100 @@
 
     @if (TabsLoaded)
     {
-        <p>The drop-2 info can go here if applicable</p>
+        <p>@AboutInfo</p>
 
-        <SfTab ID="Tab" EnablePersistence="false" @bind-SelectedItem="SelectedTab">
-            <TabEvents Selected="OnTabSelected"></TabEvents>
-            <TabItems>
-                @foreach (TabData Item in MatchTabItems)
-                {
-                    <TabItem>
-                        <HeaderTemplate>
-                            @if (BrowserSize == DeviceSize.Small)
-                            {
-                                <div>@(Item.HeaderBrief)</div>
-                            }
-                            else
-                            {
-                                <div>@(Item.HeaderFull)</div>
-                            }
-
-                        </HeaderTemplate>
-                    </TabItem>
-                }
-            </TabItems>
-        </SfTab>
-        <BusyIndicator IsReady="@StandingsLoaded"></BusyIndicator>
-
-        if (StandingsLoaded)
+        @if (MatchTabItems.Any())
         {
-            <QuickGrid Items="AggWeightsQueryable" Class="bdac-table no-click">
+            <SfTab ID="Tab" EnablePersistence="false" @bind-SelectedItem="SelectedTab">
+                <TabEvents Selected="OnTabSelected"></TabEvents>
+                <TabItems>
+                    @foreach (TabData Item in MatchTabItems)
+                    {
+                        <TabItem>
+                            <HeaderTemplate>
+                                @if (BrowserSize == DeviceSize.Small)
+                                {
+                                    <div>@(Item.HeaderBrief)</div>
+                                }
+                                else
+                                {
+                                    <div>@(Item.HeaderFull)</div>
+                                }
 
-                <TemplateColumn Title="Pos">
-                    <ChildContent Context="row">
-                         <div class="bdac-rowcell">
-                            @row.PositionOrdinal
-                         </div>
-                    </ChildContent>
-                </TemplateColumn>
+                            </HeaderTemplate>
+                        </TabItem>
+                    }
+                </TabItems>
+            </SfTab>
+            <BusyIndicator IsReady="@StandingsLoaded"></BusyIndicator>
 
-                 <TemplateColumn Title="Name">
-                    <ChildContent Context="row">
-                        <div class="bdac-rowcell">
-                            @row.Name
-                        </div>
-                    </ChildContent>
-                </TemplateColumn>
+            if (StandingsLoaded)
+            {
+                <QuickGrid Items="AggWeightsQueryable" Class="bdac-table no-click">
 
-                <TemplateColumn Title="Weight">
-                    <ChildContent Context="row">
-                        <div class="bdac-rowcell">
-                            @row.Weight
-                        </div>
-                    </ChildContent>
-                </TemplateColumn>
+                    <TemplateColumn Title="Pos">
+                        <ChildContent Context="row">
+                            <div class="bdac-rowcell">
+                                @row.PositionOrdinal
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
 
-            </QuickGrid>
+                    <TemplateColumn Title="Name">
+                        <ChildContent Context="row">
+                            <div class="bdac-rowcell">
+                                @row.Name
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+
+                    <TemplateColumn Title="Weight">
+                        <ChildContent Context="row">
+                            <div class="bdac-rowcell">
+                                @row.Weight
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+
+                    @if (AggWeights!.First().MatchesInSeason > 0)
+                    {
+                        <TemplateColumn Title="Drop Wt" Align="Align.Right">
+                            <ChildContent Context="row">
+                                <div class="bdac-rowcell">
+                                    @row.DroppedWeight
+                                </div>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        @if (BrowserSize != DeviceSize.Small)
+                        {
+                            <TemplateColumn Title="Matches Fished" Align="Align.Right">
+                                <ChildContent Context="row">
+                                    <div class="bdac-rowcell">
+                                        @row.FishedMatches
+                                    </div>
+                                </ChildContent>
+                            </TemplateColumn>
+
+                            <TemplateColumn Title="Matches Dropped" Align="Align.Right">
+                                <ChildContent Context="row">
+                                    <div class="bdac-rowcell">
+                                        @row.DroppedMatches
+                                    </div>
+                                </ChildContent>
+                            </TemplateColumn>
+                        }
+
+                    }
+
+                </QuickGrid>
+            }
         }
+        else
+        {
+            <p>No matches available</p>
+        }
+
     }
 
 </AuthorizationRequired>

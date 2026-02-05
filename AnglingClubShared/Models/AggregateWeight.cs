@@ -36,6 +36,31 @@ namespace AnglingClubShared.Models
             }
 
         }
+
+        // Info related to dropping matches
+        public int MatchesInSeason { get; set; }
+        public int FishedMatches { get; set; }
+        public int DroppedMatches { get; set; }
+        public float DroppedWeightDecimal { get; set; }
+
+        public string DroppedWeight {
+            get
+            {
+                var wt = "0";
+
+                if (DroppedWeightDecimal > 0)
+                {
+                    var wtLb = Math.Floor(this.DroppedWeightDecimal);
+                    var wtOz = Math.Round((this.DroppedWeightDecimal - wtLb) * 16);
+                    wt = $"{wtLb}lb {wtOz}oz";
+                }
+
+                return wt;
+
+            }
+
+        }
+
     }
 
 }

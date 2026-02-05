@@ -50,6 +50,9 @@ namespace AnglingClubWebsite.Pages
 
         #region Properties
 
+        public string AboutInfo { get; set; } = "";
+        public int DropCount { get; set; } = 2;
+
         public DeviceSize BrowserSize = DeviceSize.Unknown;
 
         public int SelectedTab { get; set; } = 0;
@@ -100,29 +103,38 @@ namespace AnglingClubWebsite.Pages
         /// </summary>
         /// <param name="season"></param>
         /// <returns></returns>
-        public async Task SeasonChanged(Season season)
+        public async Task SeasonChanged(Season? season)
         {
             SelectedTab = 0;
             SelectedAggType = 0;
             StandingsLoaded = false;
-            await getMatches(season);
+            await getMatches(season!.Value);
+            StateHasChanged();
         }
 
         private async Task getMatches(Season season)
         {
+            TabsLoaded = false;
+            MatchTabItems = new List<TabData>();
+
             try
             {
                 var m = await _clubEventService.ReadEventsForSeason(season);
-                if (m != null)
+                if (m != null && m.Any())
                 {
                     _allMatches = m.Where(x => x.EventType == EventType.Match).ToList();
                     setupTabs(_allMatches);
+                    await loadLeague(season);
                 }
-                await loadLeague(season);
             }
             catch (Exception ex)
             {
+
                 _logger.LogError($"getMatches: {ex.Message}");
+            }
+            finally
+            {
+                TabsLoaded = true;
             }
         }
 
@@ -132,7 +144,6 @@ namespace AnglingClubWebsite.Pages
 
         private async Task getInitialData()
         {
-            TabsLoaded = false;
 
             try
             {
@@ -145,7 +156,7 @@ namespace AnglingClubWebsite.Pages
             }
             finally
             {
-                TabsLoaded = true;
+
             }
         }
 
@@ -158,10 +169,21 @@ namespace AnglingClubWebsite.Pages
             if (SeasonStandings != null)
             {
                 SeasonStandingsQueryable = SeasonStandings.AsQueryable();
+
+                setupAboutInfo(SeasonStandings);
             }
 
             StandingsLoaded = true;
 
+        }
+
+        private void setupAboutInfo(List<LeaguePosition> seasonStandings)
+        {
+            AboutInfo = "";
+            if (seasonStandings.First().MatchesInSeason != 0)
+            {
+                AboutInfo = $"Anglers best {seasonStandings.First().MatchesInSeason - DropCount} results count from all {seasonStandings.First().MatchesInSeason} matches.";
+            }
         }
 
         private void setupTabs(List<ClubEvent> allMatches)

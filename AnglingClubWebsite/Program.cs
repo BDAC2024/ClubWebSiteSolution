@@ -119,7 +119,6 @@ builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
 builder.Services.AddScoped<WatersViewModel>();
 builder.Services.AddScoped<MatchesViewModel>();
-builder.Services.AddScoped<SeasonSelectorViewModel>();
 
 
 // Component ViewModels

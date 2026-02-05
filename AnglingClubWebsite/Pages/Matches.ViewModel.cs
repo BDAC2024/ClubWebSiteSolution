@@ -289,11 +289,11 @@ namespace AnglingClubWebsite.Pages
         /// </summary>
         /// <param name="season"></param>
         /// <returns></returns>
-        public async Task SeasonChanged(Season season)
+        public async Task SeasonChanged(Season? season)
         {
             SelectedTab = 0;
             SelectedMatchType = 0;
-            await GetMatches(season);
+            await GetMatches(season!.Value);
         }
 
         #endregion Inter-component Methods

@@ -50,6 +50,9 @@ namespace AnglingClubWebsite.Pages
 
         #region Properties
 
+        public string AboutInfo { get; set; } = "";
+        public int DropCount { get; set; } = 2;
+
         public DeviceSize BrowserSize = DeviceSize.Unknown;
 
         public int SelectedTab { get; set; } = 0;
@@ -97,31 +100,39 @@ namespace AnglingClubWebsite.Pages
         /// </summary>
         /// <param name="season"></param>
         /// <returns></returns>
-        public async Task SeasonChanged(Season season)
+        public async Task SeasonChanged(Season? season)
         {
             SelectedTab = 0;
             SelectedAggType = 0;
             StandingsLoaded = false;
-            await getMatches(season);
+            await getMatches(season!.Value);
             StateHasChanged();
         }
 
         private async Task getMatches(Season season)
         {
+            TabsLoaded = false;
+            MatchTabItems = new List<TabData>();
+
             try
             {
                 var m = await _clubEventService.ReadEventsForSeason(season);
-                if (m != null)
+                if (m != null && m.Any())
                 {
                     _allMatches = m.Where(x => x.EventType == EventType.Match).ToList();
                     setupTabs(_allMatches);
+                    await loadLeague(season);
                 }
-                await loadLeague(season);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"getMatches: {ex.Message}");
             }
+            finally
+            {
+                TabsLoaded = true;
+            }
+
         }
 
         #endregion Events
@@ -156,10 +167,21 @@ namespace AnglingClubWebsite.Pages
             if (AggWeights != null)
             {
                 AggWeightsQueryable = AggWeights.AsQueryable();
+
+                setupAboutInfo(AggWeights);
             }
 
             StandingsLoaded = true;
 
+        }
+
+        private void setupAboutInfo(List<AggregateWeight> aggWeights)
+        {
+            AboutInfo = "";
+            if (aggWeights.First().MatchesInSeason != 0)
+            {
+                AboutInfo = $"Anglers best {aggWeights.First().MatchesInSeason - DropCount} weights count from all {aggWeights.First().MatchesInSeason} matches.";
+            }
         }
 
         private void setupTabs(List<ClubEvent> allMatches)
