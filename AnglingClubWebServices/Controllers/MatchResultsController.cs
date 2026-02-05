@@ -238,20 +238,12 @@ namespace AnglingClubWebServices.Controllers
 
             StartTimer();
 
-            try
-            {
-                var standings = _matchResultService.GetAggregateWeights(aggType, season);
+            var standings = _matchResultService.GetAggregateWeights(aggType, season);
 
-                ReportTimer($"Getting aggregate weights for {aggType} in {season}");
+            ReportTimer($"Getting aggregate weights for {aggType} in {season}");
 
-                return Ok(standings);
+            return Ok(standings);
 
-            }
-            catch (Exception ex)
-            {
-                errors.Add(ex.Message);
-                return BadRequest(errors);
-            }
         }
 
         // POST api/values

@@ -9,7 +9,7 @@ using Syncfusion.Blazor.Navigations;
 
 namespace AnglingClubWebsite.Pages
 {
-    public partial class StandingsWeights : RazorComponentBase, IRecipient<BrowserChange>
+    public partial class StandingsTrophies : RazorComponentBase, IRecipient<BrowserChange>
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
@@ -19,20 +19,20 @@ namespace AnglingClubWebsite.Pages
         public readonly IGlobalService GlobalService;
         private readonly IMatchResultsService _matchResultsService;
         private readonly IClubEventService _clubEventService;
-        private readonly ILogger<StandingsWeights> _logger;
+        private readonly ILogger<StandingsTrophies> _logger;
         private readonly IRefDataService _refDataService;
 
         private List<ClubEvent>? _allMatches = null;
         private List<TabData> _matchTabs = new List<TabData>();
 
-        public StandingsWeights(IAuthenticationService authenticationService,
+        public StandingsTrophies(IAuthenticationService authenticationService,
                          IMessenger messenger,
                          ICurrentUserService currentUserService,
                          BrowserService browserService,
                          IGlobalService globalService,
                          IMatchResultsService matchResultsService,
                          IClubEventService clubEventService,
-                         ILogger<StandingsWeights> logger,
+                         ILogger<StandingsTrophies> logger,
                          IRefDataService refDataService) : base(messenger, currentUserService, authenticationService)
         {
             messenger.Register<BrowserChange>(this);
@@ -53,15 +53,15 @@ namespace AnglingClubWebsite.Pages
         public DeviceSize BrowserSize = DeviceSize.Unknown;
 
         public int SelectedTab { get; set; } = 0;
-        public AggregateType SelectedAggType { get; set; } = AggregateType.Spring;
+        public TrophyType SelectedType { get; set; } = TrophyType.Senior;
 
         public bool TabsLoaded { get; set; } = false;
-        public bool StandingsLoaded { get; set; } = false;
+        public bool TrophiesLoaded { get; set; } = false;
 
-        public List<TabData> MatchTabItems = new List<TabData>();
+        public List<TabData> TabItems = new List<TabData>();
 
-        public List<AggregateWeight>? AggWeights { get; set; } = new List<AggregateWeight>();
-        public IQueryable<AggregateWeight>? AggWeightsQueryable;
+        public List<TrophyWinner>? TrophyWinners { get; set; } = new List<TrophyWinner>();
+        public IQueryable<TrophyWinner>? TrophyWinnersQueryable;
 
         public ReferenceData? RefData;
 
@@ -86,10 +86,10 @@ namespace AnglingClubWebsite.Pages
         {
             SelectedTab = args.SelectedIndex;
 
-            var selected = MatchTabItems.ToArray()[args.SelectedIndex].AggregateType;
+            var selected = TabItems.ToArray()[args.SelectedIndex].TrophyType;
             //Console.WriteLine($"Selected item: {args.SelectedIndex} - {selected}");
-            SelectedAggType = selected;
-            await loadLeague(GlobalService.GetStoredSeason(EnumUtils.CurrentSeason()));
+            SelectedType = selected;
+            await loadTrophyWinners(GlobalService.GetStoredSeason(EnumUtils.CurrentSeason()));
         }
 
         /// <summary>
@@ -100,33 +100,29 @@ namespace AnglingClubWebsite.Pages
         public async Task SeasonChanged(Season season)
         {
             SelectedTab = 0;
-            SelectedAggType = 0;
-            StandingsLoaded = false;
-            await getMatches(season);
+            SelectedType = 0;
+            TrophiesLoaded = false;
+            await loadTrophyWinners(season);
             StateHasChanged();
         }
 
-        private async Task getMatches(Season season)
-        {
-            try
-            {
-                var m = await _clubEventService.ReadEventsForSeason(season);
-                if (m != null)
-                {
-                    _allMatches = m.Where(x => x.EventType == EventType.Match).ToList();
-                    setupTabs(_allMatches);
-                }
-                await loadLeague(season);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"getMatches: {ex.Message}");
-            }
-        }
 
         #endregion Events
 
         #region Helper Methods
+
+        public string CellClass(TrophyWinner row)
+        {
+            var classes = "bdac-rowcell";
+
+            // Dim rows where still running (could still be won in future)
+            if (row.IsRunning)
+            {
+                classes += " bdac-row-still-running";
+            }
+
+            return classes;
+        }
 
         private async Task getInitialData()
         {
@@ -135,7 +131,8 @@ namespace AnglingClubWebsite.Pages
             try
             {
                 RefData = await _refDataService.ReadReferenceData();
-                await getMatches(GlobalService.GetStoredSeason(RefData!.CurrentSeason));
+                setupTabs();
+                await loadTrophyWinners(GlobalService.GetStoredSeason(RefData!.CurrentSeason));
             }
             catch (Exception ex)
             {
@@ -147,41 +144,30 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        private async Task loadLeague(Season season)
+        private async Task loadTrophyWinners(Season season)
         {
-            StandingsLoaded = false;
+            TrophiesLoaded = false;
 
-            AggWeights = await _matchResultsService.GetAggreateWeights(SelectedAggType, season);
+            TrophyWinners = await _matchResultsService.GetTrophyWinners(SelectedType, season);
 
-            if (AggWeights != null)
+            if (TrophyWinners != null)
             {
-                AggWeightsQueryable = AggWeights.AsQueryable();
+                TrophyWinnersQueryable = TrophyWinners.AsQueryable();
             }
 
-            StandingsLoaded = true;
+            TrophiesLoaded = true;
 
         }
 
-        private void setupTabs(List<ClubEvent> allMatches)
+        private void setupTabs()
         {
-            _matchTabs = new List<TabData>();
-
-            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
-            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.ClubRiver, HeaderFull = "Club Match - River", HeaderBrief = "Club/River", });
-            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.ClubPond, HeaderFull = "Club Match - Pond", HeaderBrief = "Club/Pond", });
-            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Pairs, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
-
-            MatchTabItems = new List<TabData>(_matchTabs);
+            TabItems = new List<TabData>()
+            {
+                new TabData { TrophyType = TrophyType.Senior, HeaderFull = "Senior", HeaderBrief = "Senior", },
+                new TabData { TrophyType = TrophyType.Junior, HeaderFull = "Junior", HeaderBrief = "Junior", }
+            };
 
             SelectedTab = 0;
-        }
-
-        private void addTab(List<ClubEvent> allMatches, List<TabData> matchTabs, TabData tabData)
-        {
-            if (allMatches.Any(x => x.AggregateType == tabData.AggregateType))
-            {
-                matchTabs.Add(tabData);
-            }
         }
 
         #endregion Helper Methods

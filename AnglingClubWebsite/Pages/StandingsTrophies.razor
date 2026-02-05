@@ -1,4 +1,4 @@
-﻿@page "/StandingsWeights"
+﻿@page "/StandingsTrophies"
 @using AnglingClubShared.Enums
 @using AnglingClubShared.Models
 @using AnglingClubWebsite.Models
@@ -9,7 +9,7 @@
 <AuthorizationRequired>
 
     <div class="page-header">
-        <h3 class="left-header">Aggregate Weights</h3>
+        <h3 class="left-header">Trophy Winners</h3>
 
         <SeasonSelector OnSeasonChanged="SeasonChanged" />
     </div>
@@ -18,12 +18,10 @@
 
     @if (TabsLoaded)
     {
-        <p>The drop-2 info can go here if applicable</p>
-
         <SfTab ID="Tab" EnablePersistence="false" @bind-SelectedItem="SelectedTab">
             <TabEvents Selected="OnTabSelected"></TabEvents>
             <TabItems>
-                @foreach (TabData Item in MatchTabItems)
+                @foreach (TabData Item in TabItems)
                 {
                     <TabItem>
                         <HeaderTemplate>
@@ -41,36 +39,54 @@
                 }
             </TabItems>
         </SfTab>
-        <BusyIndicator IsReady="@StandingsLoaded"></BusyIndicator>
+        <BusyIndicator IsReady="@TrophiesLoaded"></BusyIndicator>
 
-        if (StandingsLoaded)
+        if (TrophiesLoaded)
         {
-            <QuickGrid Items="AggWeightsQueryable" Class="bdac-table no-click">
+            <QuickGrid Items="TrophyWinnersQueryable" Class="bdac-table no-click">
 
-                <TemplateColumn Title="Pos">
+                <TemplateColumn Title="Trophy">
                     <ChildContent Context="row">
-                         <div class="bdac-rowcell">
-                            @row.PositionOrdinal
+                        <div class="@CellClass(row)">
+                            @row.Trophy
                          </div>
                     </ChildContent>
                 </TemplateColumn>
 
-                 <TemplateColumn Title="Name">
+                 <TemplateColumn Title="Winner">
                     <ChildContent Context="row">
-                        <div class="bdac-rowcell">
-                            @row.Name
+                        <div class="@CellClass(row)">
+                            @row.Winner
                         </div>
                     </ChildContent>
                 </TemplateColumn>
 
-                <TemplateColumn Title="Weight">
+                <TemplateColumn Title="Wt/Pts">
                     <ChildContent Context="row">
-                        <div class="bdac-rowcell">
-                            @row.Weight
+                        <div class="@CellClass(row)">
+                            @row.WeightPoints
                         </div>
                     </ChildContent>
                 </TemplateColumn>
 
+                @if (BrowserSize != DeviceSize.Small)
+                {
+                    <TemplateColumn Title="Venue">
+                        <ChildContent Context="row">
+                            <div class="@CellClass(row)">
+                                @row.Venue
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+
+                    <TemplateColumn Title="Date" IsDefaultSortColumn="true">
+                        <ChildContent Context="row">
+                            <div class="@CellClass(row)">
+                                @row.DateSummary
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+                }
             </QuickGrid>
         }
     }

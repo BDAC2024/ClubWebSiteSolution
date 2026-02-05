@@ -1,15 +1,13 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
-using AnglingClubWebServices.Helpers;
-using AnglingClubWebServices.Interfaces;
-using System;
+using MatchType = AnglingClubShared.Enums.MatchType;
 
-namespace AnglingClubWebServices.Models
+namespace AnglingClubShared.Models
 {
 
     public class TrophyWinnerBase : TableBase
     {
-        public string Trophy { get; set; }
+        public string Trophy { get; set; } = "";
         public TrophyType TrophyType { get; set; }
         public AggregateType? AggregateType { get; set; }
         public MatchType? MatchType { get; set; }
@@ -18,21 +16,20 @@ namespace AnglingClubWebServices.Models
         /// Is this a long-running trophy e.g. non known until end of season
         /// </summary>
         public bool IsRunning { get; set; }
-        
-        public string Winner { get; set; }
+
+        public string Winner { get; set; } = "";
         public float WeightDecimal { get; set; }
         public float Points { get; set; }
-        public string Venue { get; set; }
+        public string Venue { get; set; } = "";
         public DateTime? Date { get; set; }
-        public string DateDesc { get; set; } = null;
+        public string DateDesc { get; set; } = "";
         public Season Season { get; set; }
 
     }
 
     public class TrophyWinner : TrophyWinnerBase
     {
-        public string WeightPoints
-        {
+        public string WeightPoints {
             get
             {
                 var wtPts = "";
@@ -43,7 +40,7 @@ namespace AnglingClubWebServices.Models
                     var wtOz = Math.Round((this.WeightDecimal - wtLb) * 16);
                     wtPts = $"{wtLb}lb {wtOz}oz";
                 }
-                else if (Points > 0) 
+                else if (Points > 0)
                 {
                     wtPts = $"{this.Points} points";
                 }
@@ -58,8 +55,7 @@ namespace AnglingClubWebServices.Models
 
         }
 
-        public string DateSummary
-        {
+        public string DateSummary {
             get
             {
                 var dt = "";

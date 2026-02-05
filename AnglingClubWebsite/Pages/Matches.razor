@@ -28,7 +28,7 @@
         <SfTab ID="Tab" EnablePersistence="false" SelectedItem="ViewModel.SelectedTab">
             <TabEvents Selected="OnTabSelected"></TabEvents>
             <TabItems>
-                @foreach (MatchTabData Item in ViewModel.MatchTabItems)
+                @foreach (TabData Item in ViewModel.MatchTabItems)
                 {
                     <TabItem>
                         <HeaderTemplate>

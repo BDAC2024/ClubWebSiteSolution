@@ -23,7 +23,7 @@ namespace AnglingClubWebsite.Pages
         private readonly IRefDataService _refDataService;
 
         private List<ClubEvent>? _allMatches = null;
-        private List<MatchTabData> _matchTabs = new List<MatchTabData>();
+        private List<TabData> _matchTabs = new List<TabData>();
 
         public StandingsLeague(IAuthenticationService authenticationService,
                          IMessenger messenger,
@@ -58,7 +58,7 @@ namespace AnglingClubWebsite.Pages
         public bool TabsLoaded { get; set; } = false;
         public bool StandingsLoaded { get; set; } = false;
 
-        public List<MatchTabData> MatchTabItems = new List<MatchTabData>();
+        public List<TabData> MatchTabItems = new List<TabData>();
 
         public List<LeaguePosition>? SeasonStandings { get; set; } = new List<LeaguePosition>();
         public IQueryable<LeaguePosition>? SeasonStandingsQueryable;
@@ -82,7 +82,6 @@ namespace AnglingClubWebsite.Pages
         public void Receive(BrowserChange message)
         {
             BrowserSize = _browserService.DeviceSize;
-            Console.WriteLine($"BrowserSize: {BrowserSize}");
         }
 
         public async Task OnTabSelected(SelectEventArgs args)
@@ -167,22 +166,22 @@ namespace AnglingClubWebsite.Pages
 
         private void setupTabs(List<ClubEvent> allMatches)
         {
-            _matchTabs = new List<MatchTabData>();
+            _matchTabs = new List<TabData>();
 
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.ClubRiver, HeaderFull = "Club Match - River", HeaderBrief = "Club/River", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.ClubPond, HeaderFull = "Club Match - Pond", HeaderBrief = "Club/Pond", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.PairsPointsAsc, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.Junior, HeaderFull = "Junior", HeaderBrief = "Junior", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { AggregateType = AggregateType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.ClubRiver, HeaderFull = "Club Match - River", HeaderBrief = "Club/River", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.ClubPond, HeaderFull = "Club Match - Pond", HeaderBrief = "Club/Pond", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.PairsPointsAsc, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Junior, HeaderFull = "Junior", HeaderBrief = "Junior", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
 
-            MatchTabItems = new List<MatchTabData>(_matchTabs);
+            MatchTabItems = new List<TabData>(_matchTabs);
 
             SelectedTab = 0;
         }
 
-        private void addMatchTab(List<ClubEvent> allMatches, List<MatchTabData> matchTabs, MatchTabData tabData)
+        private void addTab(List<ClubEvent> allMatches, List<TabData> matchTabs, TabData tabData)
         {
             if (allMatches.Any(x => x.AggregateType == tabData.AggregateType))
             {

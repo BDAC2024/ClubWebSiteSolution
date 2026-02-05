@@ -51,6 +51,15 @@ namespace AnglingClubWebsite.Services
             return content;
         }
 
+        public async Task<List<TrophyWinner>?> GetTrophyWinners(TrophyType trophyType, Season season)
+        {
+            var relativeEndpoint = $"trophywinners/{(int)trophyType}/{(int)season}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<List<TrophyWinner>>();
+            return content;
+        }
+
+
     }
 
 }

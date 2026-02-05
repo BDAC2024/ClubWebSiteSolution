@@ -23,7 +23,7 @@
         <SfTab ID="Tab" EnablePersistence="false" @bind-SelectedItem="SelectedTab">
             <TabEvents Selected="OnTabSelected"></TabEvents>
             <TabItems>
-                @foreach (MatchTabData Item in MatchTabItems)
+                @foreach (TabData Item in MatchTabItems)
                 {
                     <TabItem>
                         <HeaderTemplate>
@@ -41,48 +41,52 @@
                 }
             </TabItems>
         </SfTab>
-        <BusyIndicator IsReady="@StandingsLoaded"></BusyIndicator>
+        <QuickGrid Items="SeasonStandingsQueryable" Class="bdac-table">
 
-        if (StandingsLoaded)
-        {
-            <QuickGrid Items="SeasonStandingsQueryable" Class="bdac-table no-click">
+            <TemplateColumn Title="Pos">
+                <ChildContent Context="row">
+                    <BdacGridCell TItem="LeaguePosition"
+                                  Item="row"
+                                  AdditionalClass="bdac-rowcell">
+                        @row.PositionOrdinal
+                    </BdacGridCell>
+                </ChildContent>
+            </TemplateColumn>
 
-                <TemplateColumn Title="Pos">
+            <TemplateColumn Title="Name">
+                <ChildContent Context="row">
+                    <BdacGridCell TItem="LeaguePosition"
+                                  Item="row"
+                                  AdditionalClass="bdac-rowcell">
+                        @row.Name
+                    </BdacGridCell>
+                </ChildContent>
+            </TemplateColumn>
+
+            @if (ShowWeight)
+            {
+                <TemplateColumn Title="Weight">
                     <ChildContent Context="row">
-                         <div class="bdac-rowcell">
-                            @row.PositionOrdinal
-                         </div>
+                        <BdacGridCell TItem="LeaguePosition"
+                                      Item="row"
+                                      AdditionalClass="bdac-rowcell">
+                            @row.Weight
+                        </BdacGridCell>
                     </ChildContent>
                 </TemplateColumn>
+            }
 
-                 <TemplateColumn Title="Name">
-                    <ChildContent Context="row">
-                        <div class="bdac-rowcell">
-                            @row.Name
-                        </div>
-                    </ChildContent>
-                </TemplateColumn>
+            <TemplateColumn Title="Pts" Align="Align.Right">
+                <ChildContent Context="row">
+                    <BdacGridCell TItem="LeaguePosition"
+                                  Item="row"
+                                  AdditionalClass="bdac-rowcell">
+                        @row.Points
+                    </BdacGridCell>
+                </ChildContent>
+            </TemplateColumn>
+        </QuickGrid>
 
-                @if (ShowWeight)
-                {
-                    <TemplateColumn Title="Weight">
-                        <ChildContent Context="row">
-                            <div class="bdac-rowcell">
-                                @row.Weight
-                            </div>
-                        </ChildContent>
-                    </TemplateColumn>
-                }
-
-                <TemplateColumn Title="Pts" Align="Align.Right">
-                    <ChildContent Context="row">
-                        <div class="bdac-rowcell">
-                            @row.Points
-                        </div>
-                    </ChildContent>
-                </TemplateColumn>
-            </QuickGrid>
-        }
     }
 
 </AuthorizationRequired>

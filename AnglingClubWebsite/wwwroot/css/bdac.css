@@ -576,6 +576,12 @@ fieldset {
     /* or: color: var(--bs-secondary-color); */
 }
 
+/* Rows still being contested (dimmed & italic) */
+.bdac-row-still-running {
+    font-weight: 300;
+    font-style: italic;
+}
+
 /* Helpers */
 .nowrap {
     white-space: nowrap;

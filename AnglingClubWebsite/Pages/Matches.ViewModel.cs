@@ -26,7 +26,7 @@ namespace AnglingClubWebsite.Pages
         public readonly IGlobalService GlobalService;
 
         private List<ClubEvent>? _allMatches = null;
-        private List<MatchTabData> _matchTabs = new List<MatchTabData>();
+        private List<TabData> _matchTabs = new List<TabData>();
 
         public MatchesViewModel(
             IAuthenticationService authenticationService,
@@ -94,7 +94,7 @@ namespace AnglingClubWebsite.Pages
         private ClubEvent _selectedMatch = new ClubEvent();
 
         [ObservableProperty]
-        private ObservableCollection<MatchTabData> _matchTabItems = new ObservableCollection<MatchTabData>();
+        private ObservableCollection<TabData> _matchTabItems = new ObservableCollection<TabData>();
 
         [ObservableProperty]
         private DeviceSize _browserSize = DeviceSize.Unknown;
@@ -246,19 +246,19 @@ namespace AnglingClubWebsite.Pages
 
         private void SetupTabs(MatchType selectedMatchType, List<ClubEvent> allMatches)
         {
-            _matchTabs = new List<MatchTabData>();
+            _matchTabs = new List<TabData>();
 
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Club, HeaderFull = "Club Match", HeaderBrief = "Club", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Junior, HeaderFull = "Junior Match", HeaderBrief = "Junior", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Specials, HeaderFull = "Specials", HeaderBrief = "Specials", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Pairs, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Visitors, HeaderFull = "Visiting Clubs", HeaderBrief = "Visitors", });
-            addMatchTab(allMatches, _matchTabs, new MatchTabData { MatchType = MatchType.Qualifier, HeaderFull = "Event Qualifiers", HeaderBrief = "Qualifiers", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Club, HeaderFull = "Club Match", HeaderBrief = "Club", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Junior, HeaderFull = "Junior Match", HeaderBrief = "Junior", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Specials, HeaderFull = "Specials", HeaderBrief = "Specials", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Pairs, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Visitors, HeaderFull = "Visiting Clubs", HeaderBrief = "Visitors", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Qualifier, HeaderFull = "Event Qualifiers", HeaderBrief = "Qualifiers", });
 
-            MatchTabItems = new ObservableCollection<MatchTabData>(_matchTabs);
+            MatchTabItems = new ObservableCollection<TabData>(_matchTabs);
 
             var i = 0;
             SelectedTab = 0;
@@ -272,7 +272,7 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
-        private void addMatchTab(List<ClubEvent> allMatches, List<MatchTabData> matchTabs, MatchTabData tabData)
+        private void addMatchTab(List<ClubEvent> allMatches, List<TabData> matchTabs, TabData tabData)
         {
             if (allMatches.Any(x => x.MatchType == tabData.MatchType))
             {

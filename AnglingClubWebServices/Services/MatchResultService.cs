@@ -2,7 +2,6 @@
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
-using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -210,14 +209,31 @@ namespace AnglingClubWebServices.Services
             var matchIds = _eventRepository.GetEvents().Result.Where(x => x.AggregateType == aggType && x.Season == season).Select(x => x.Id);
             var matchResultsForLeague = _matchResultRepository.GetAllMatchResults().Result.Where(x => matchIds.Contains(x.MatchId));
             var members = _memberRepository.GetMembers(season, true).Result;
+            var memberLookup = members.ToDictionary(m => m.MembershipNumber);
+
+            var distinctMatchMembers = matchResultsForLeague.DistinctBy(x => x.MembershipNumber).Select(x => x.MembershipNumber);
+
+            foreach (var member in distinctMatchMembers)
+            {
+                if (!memberLookup.ContainsKey(member))
+                {
+                    _logger.LogWarning($"GetAggregateWeights: Cannot find member {member}");
+                }
+            }
 
             var league = matchResultsForLeague
                 .GroupBy(x => x.MembershipNumber)
-                .Select(cl => new AggregateWeight
+                .Where(cl => memberLookup.ContainsKey(cl.Key))
+                .Select(cl =>
                 {
-                    Name = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).Name,
-                    TotalWeightDecimal = cl.Sum(x => x.WeightDecimal),
-                    MembershipNumber = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).MembershipNumber
+                    var member = memberLookup[cl.Key];
+
+                    return new AggregateWeight
+                    {
+                        Name = member.Name,
+                        TotalWeightDecimal = cl.Sum(x => x.WeightDecimal),
+                        MembershipNumber = members.Single(x => x.MembershipNumber == cl.First().MembershipNumber).MembershipNumber
+                    };
                 }).ToList();
 
             var pos = 1;
