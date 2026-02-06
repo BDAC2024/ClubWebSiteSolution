@@ -22,6 +22,7 @@ namespace AnglingClubWebsite.Dialogs
         [Parameter] required public AggregateType AggregateType { get; set; }
         [Parameter] required public Season Season { get; set; }
         [Parameter] required public bool BasedOnPoints { get; set; }
+        [Parameter] required public string AggregateName { get; set; }
 
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;

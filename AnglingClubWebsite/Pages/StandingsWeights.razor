@@ -18,7 +18,10 @@
 
     @if (TabsLoaded)
     {
-        <p>@AboutInfo</p>
+        <p>
+            You can see more detailed results by selecting the row.<br />
+            @AboutInfo
+        </p>
 
         @if (MatchTabItems.Any())
         {
@@ -99,7 +102,13 @@
                 </QuickGrid>
 
                 @* Note the 2-way binding of the Visible property *@
-                <AggResultsPopup @bind-Visible="ShowingResults" MembershipNumber="SelectedMembershipNumber" AggregateType="SelectedAggType" Season="SelectedSeason" BasedOnPoints="false"></AggResultsPopup>
+                <AggResultsPopup @bind-Visible="ShowingResults"
+                                 MembershipNumber="SelectedMembershipNumber"
+                                 AggregateType="SelectedAggType"
+                                 Season="SelectedSeason"
+                                 BasedOnPoints="false"
+                                 AggregateName="@MatchTabItems.First(x => x.AggregateType == SelectedAggType).HeaderFull">
+                </AggResultsPopup>
             }
         }
         else

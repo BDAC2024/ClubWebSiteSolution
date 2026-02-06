@@ -1,5 +1,4 @@
-﻿using AnglingClubShared.Entities;
-using AnglingClubShared.Enums;
+﻿using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
@@ -22,7 +21,6 @@ namespace AnglingClubWebsite.Pages
         private readonly ILogger<StandingsTrophies> _logger;
         private readonly IRefDataService _refDataService;
 
-        private List<ClubEvent>? _allMatches = null;
         private List<TabData> _matchTabs = new List<TabData>();
 
         public StandingsTrophies(IAuthenticationService authenticationService,

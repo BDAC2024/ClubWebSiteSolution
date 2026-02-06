@@ -11,7 +11,7 @@
 
                 <table class="match-table">
                     <tr><td class="label">Name:</td><td>@_aggResult.MemberName</td></tr>
-                    <tr><td class="label">Type:</td><td>@_aggResult.AggregateType</td></tr>
+                    <tr><td class="label">Type:</td><td>@AggregateName</td></tr>
                     <tr><td class="label">Matches in season:</td><td>@_aggResult.MatchesInSeason</td></tr>
                 </table>
                 <br />
@@ -47,7 +47,7 @@
                                     {
                                         <tr>
                                             <td class="left-align">@rowIndex</td>
-                                            <td class="left-align">@r.Date.BdacDate()</td>
+                                            <td class="left-align"><nobr>@r.Date.BdacDate()</nobr></td>
                                             <td class="left-align">@r.Venue</td>
                                             @if (BasedOnPoints)
                                             {
@@ -109,7 +109,7 @@
                                     {
                                         <tr>
                                             <td class="left-align">@rowIndex</td>
-                                            <td class="left-align">@r.Date.BdacDate()</td>
+                                            <td class="left-align"><nobr>@r.Date.BdacDate()</nobr></td>
                                             <td class="left-align">@r.Venue</td>
                                             @if (BasedOnPoints)
                                             {

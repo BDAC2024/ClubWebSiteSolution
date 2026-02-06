@@ -8,7 +8,7 @@ namespace AnglingClubShared.Models
     {
         public Season Season { get; set; }
         public int MembershipNumber { get; set; }
-        public string MemberName { get; set; }
+        public string MemberName { get; set; } = "";
         public AggregateType AggregateType { get; set; }
         public int MatchesInSeason { get; set; }
         public int MatchesFished { get; set; }

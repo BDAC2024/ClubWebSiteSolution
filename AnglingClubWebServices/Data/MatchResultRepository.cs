@@ -14,7 +14,7 @@ namespace AnglingClubWebServices.Data
 {
     public class MatchResultRepository : RepositoryBase, IMatchResultRepository
     {
-        private const string _idPrefix = "MatchResult";
+        private const string IDPREFIX = "MatchResult";
         private readonly IEventRepository _eventRepository;
         private readonly IMemberRepository _memberRepository;
         private readonly ILogger<MatchResultRepository> _logger;
@@ -69,7 +69,7 @@ namespace AnglingClubWebServices.Data
             // If key is still blank then generate a new one
             if (result.IsNewItem)
             {
-                result.DbKey = result.GenerateDbKey(_idPrefix);
+                result.DbKey = result.GenerateDbKey(IDPREFIX);
             }
 
             BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -114,7 +114,7 @@ namespace AnglingClubWebServices.Data
         {
             var results = new List<MatchResult>();
 
-            var items = await GetData(_idPrefix, "AND WeightDecimal > ''", "ORDER BY WeightDecimal DESC");
+            var items = await GetData(IDPREFIX, "AND WeightDecimal > ''", "ORDER BY WeightDecimal DESC");
 
             foreach (var item in items)
             {

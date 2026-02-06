@@ -15,7 +15,7 @@ namespace AnglingClubWebServices.Data
 {
     public class EventRepository : RepositoryBase, IEventRepository
     {
-        private const string IdPrefix = "Event";
+        private const string IDPREFIX = "Event";
         private readonly ILogger<EventRepository> _logger;
 
         private List<ClubEvent> _cachedEvents = null;
@@ -46,7 +46,7 @@ namespace AnglingClubWebServices.Data
 
                 if (clubEvent.IsNewItem)
                 {
-                    clubEvent.DbKey = clubEvent.GenerateDbKey(IdPrefix);
+                    clubEvent.DbKey = clubEvent.GenerateDbKey(IDPREFIX);
                 }
 
                 BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -98,7 +98,7 @@ namespace AnglingClubWebServices.Data
         {
             var events = new List<ClubEvent>();
 
-            var items = await GetData(IdPrefix, "AND Date > ''", "ORDER BY Date");
+            var items = await GetData(IDPREFIX, "AND Date > ''", "ORDER BY Date");
 
             foreach (var item in items)
             {
