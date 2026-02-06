@@ -52,17 +52,23 @@
 
                     <TemplateColumn Title="Pos">
                         <ChildContent Context="row">
-                            <div class="bdac-rowcell">
+                            <BdacGridCell TItem="LeaguePosition"
+                                          Item="row"
+                                          AdditionalClass="bdac-rowcell"
+                                          OnSelect="AnglerSelectedHandler">
                                 @row.PositionOrdinal
-                            </div>
+                            </BdacGridCell>
                         </ChildContent>
                     </TemplateColumn>
 
                     <TemplateColumn Title="Name">
                         <ChildContent Context="row">
-                            <div class="bdac-rowcell">
+                            <BdacGridCell TItem="LeaguePosition"
+                                          Item="row"
+                                          AdditionalClass="bdac-rowcell"
+                                          OnSelect="AnglerSelectedHandler">
                                 @row.Name
-                            </div>
+                            </BdacGridCell>
                         </ChildContent>
                     </TemplateColumn>
 
@@ -70,53 +76,46 @@
                     {
                         <TemplateColumn Title="Weight">
                             <ChildContent Context="row">
-                                <div class="bdac-rowcell">
+                                <BdacGridCell TItem="LeaguePosition"
+                                              Item="row"
+                                              AdditionalClass="bdac-rowcell"
+                                              OnSelect="AnglerSelectedHandler">
                                     @row.Weight
-                                </div>
+                                </BdacGridCell>
                             </ChildContent>
                         </TemplateColumn>
                     }
 
                     <TemplateColumn Title="Pts" Align="Align.Right">
                         <ChildContent Context="row">
-                            <div class="bdac-rowcell">
+                            <BdacGridCell TItem="LeaguePosition"
+                                          Item="row"
+                                          AdditionalClass="bdac-rowcell"
+                                          OnSelect="AnglerSelectedHandler">
                                 @row.Points
-                            </div>
+                            </BdacGridCell>
                         </ChildContent>
                     </TemplateColumn>
 
                     @if (SeasonStandings!.First().MatchesInSeason > 0)
                     {
 
-                        <TemplateColumn Title="Drop Pts" Align="Align.Right">
+                        <TemplateColumn Title="Pts Dropped" Align="Align.Right">
                             <ChildContent Context="row">
-                                <div class="bdac-rowcell">
+                                <BdacGridCell TItem="LeaguePosition"
+                                              Item="row"
+                                              AdditionalClass="bdac-rowcell"
+                                              OnSelect="AnglerSelectedHandler">
                                     @row.DroppedPoints
-                                </div>
+                                </BdacGridCell>
                             </ChildContent>
                         </TemplateColumn>
-
-                        @if (BrowserSize != DeviceSize.Small)
-                        {
-                            <TemplateColumn Title="Matches Fished" Align="Align.Right">
-                                <ChildContent Context="row">
-                                    <div class="bdac-rowcell">
-                                        @row.FishedMatches
-                                    </div>
-                                </ChildContent>
-                            </TemplateColumn>
-
-                            <TemplateColumn Title="Matches Dropped" Align="Align.Right">
-                                <ChildContent Context="row">
-                                    <div class="bdac-rowcell">
-                                        @row.DroppedMatches
-                                    </div>
-                                </ChildContent>
-                            </TemplateColumn>
-                        }
-
                     }
                 </QuickGrid>
+
+                @* Note the 2-way binding of the Visible property *@
+                <AggResultsPopup @bind-Visible="ShowingResults" MembershipNumber="SelectedMembershipNumber" AggregateType="SelectedAggType" Season="SelectedSeason" BasedOnPoints="true"></AggResultsPopup>
+
             }
         }
         else

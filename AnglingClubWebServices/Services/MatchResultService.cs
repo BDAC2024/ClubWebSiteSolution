@@ -1,19 +1,21 @@
-﻿using AnglingClubShared.Entities;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
+using AnglingClubShared.Services;
 using AnglingClubWebServices.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 //using MatchType = AnglingClubWebServices.Interfaces.MatchType;
 
 namespace AnglingClubWebServices.Services
 {
     public class MatchResultService : IMatchResultService
     {
-        private const int MATCHES_TO_DROP = 2;
-
         private readonly IMatchResultRepository _matchResultRepository;
         private readonly IEventRepository _eventRepository;
         private readonly IMemberRepository _memberRepository;
@@ -141,14 +143,16 @@ namespace AnglingClubWebServices.Services
                     var droppedPoints = 0f;
                     var droppedMatches = 0;
 
-                    if (matchesToBeDropped(aggType, season))
+                    var matchesToDrop = MatchHelperService.MatchesToBeDropped(aggType, season);
+
+                    if (matchesToDrop > 0)
                     {
                         var sortedPoints = cl.OrderByDescending(c => c.Points);
 
-                        points = sortedPoints.Take(matchesInSeason - MATCHES_TO_DROP).Sum(c => c.Points);
+                        points = sortedPoints.Take(matchesInSeason - matchesToDrop).Sum(c => c.Points);
                         fishedMatches = cl.Count(); ;
-                        droppedPoints = sortedPoints.Skip(matchesInSeason - MATCHES_TO_DROP).Sum(c => c.Points);
-                        droppedMatches = sortedPoints.Skip(matchesInSeason - MATCHES_TO_DROP).Count();
+                        droppedPoints = sortedPoints.Skip(matchesInSeason - matchesToDrop).Sum(c => c.Points);
+                        droppedMatches = sortedPoints.Skip(matchesInSeason - matchesToDrop).Count();
 
                     }
                     else
@@ -163,10 +167,8 @@ namespace AnglingClubWebServices.Services
                         Points = points,
                         TotalWeightDecimal = cl.Sum(c => c.WeightDecimal),
 
-                        MatchesInSeason = (matchesToBeDropped(aggType, season)) ? matchesInSeason : 0,
-                        FishedMatches = fishedMatches,
+                        MatchesInSeason = matchesToDrop > 0 ? matchesInSeason : 0,
                         DroppedPoints = droppedPoints,
-                        DroppedMatches = droppedMatches,
                     };
 
                 }).ToList();
@@ -263,14 +265,16 @@ namespace AnglingClubWebServices.Services
                     var droppedWeight = 0f;
                     var droppedMatches = 0;
 
-                    if (matchesToBeDropped(aggType, season))
+                    var matchesToDrop = MatchHelperService.MatchesToBeDropped(aggType, season);
+
+                    if (matchesToDrop > 0)
                     {
                         var sortedWeights = cl.OrderByDescending(c => c.WeightDecimal);
 
-                        weight = sortedWeights.Take(matchesInSeason - MATCHES_TO_DROP).Sum(c => c.WeightDecimal);
+                        weight = sortedWeights.Take(matchesInSeason - matchesToDrop).Sum(c => c.WeightDecimal);
                         fishedMatches = cl.Count();
-                        droppedWeight = sortedWeights.Skip(matchesInSeason - MATCHES_TO_DROP).Sum(c => c.WeightDecimal);
-                        droppedMatches = sortedWeights.Skip(matchesInSeason - MATCHES_TO_DROP).Count();
+                        droppedWeight = sortedWeights.Skip(matchesInSeason - matchesToDrop).Sum(c => c.WeightDecimal);
+                        droppedMatches = sortedWeights.Skip(matchesInSeason - matchesToDrop).Count();
 
                     }
                     else
@@ -284,10 +288,8 @@ namespace AnglingClubWebServices.Services
                         Name = member.Name,
                         TotalWeightDecimal = weight,
 
-                        MatchesInSeason = (matchesToBeDropped(aggType, season)) ? matchesInSeason : 0,
-                        FishedMatches = fishedMatches,
+                        MatchesInSeason = matchesToDrop > 0 ? matchesInSeason : 0,
                         DroppedWeightDecimal = droppedWeight,
-                        DroppedMatches = droppedMatches
 
                     };
                 }).ToList();
@@ -401,9 +403,155 @@ namespace AnglingClubWebServices.Services
             return trophyWinners.OrderBy(x => x.DateDesc).ThenBy(x => x.Date).ToList();
         }
 
-        private bool matchesToBeDropped(AggregateType aggType, Season season)
+        public List<MatchAllResultOutputDto> GetResultsForAllMembers()
         {
-            return season >= Season.S25To26 && aggType == AggregateType.ClubRiver;
+            var allMatches = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match);
+            var allMembers = _memberRepository.GetMembers().Result;
+
+            var results = getExpandedResults(allMatches, allMembers.AsEnumerable());
+
+            return results;
+        }
+
+        public async Task<MemberResultsInSeason> GetMemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints)
+        {
+            var results = new MemberResultsInSeason
+            {
+                MembershipNumber = membershipNumber,
+                Season = season,
+                AggregateType = aggType
+            };
+
+            var relevantMatches = (await _eventRepository.GetEvents()).Where(x => x.EventType == EventType.Match && x.AggregateType == aggType && x.Season == season);
+            var members = (await _memberRepository.GetMembers()).Where(x => x.MembershipNumber == membershipNumber && x.SeasonsActive.Contains(season));
+
+            if (relevantMatches.Any() && members.Any())
+            {
+                results.ResultsCounted = getExpandedResults(relevantMatches, members);
+
+                results.MatchesInSeason = relevantMatches.Count();
+                results.MatchesFished = results.ResultsCounted.Count();
+                results.MemberName = members.First().Name;
+
+                var matchesToDrop = MatchHelperService.MatchesToBeDropped(aggType, season);
+
+                if (matchesToDrop > 0)
+                {
+                    if (basedOnPoints)
+                    {
+                        var sortedResults = results.ResultsCounted.OrderByDescending(r => r.Points).ToList();
+                        results.ResultsDropped = sortedResults.Skip(results.MatchesInSeason - matchesToDrop).ToList();
+                        results.ResultsCounted = sortedResults.Take(results.MatchesInSeason - matchesToDrop).ToList();
+                        results.DroppedPoints = results.ResultsDropped.Sum(r => r.Points);
+                        results.MatchesDropped = results.ResultsDropped.Count();
+                        results.CountedPoints = results.ResultsCounted.Sum(r => r.Points);
+                    }
+                    else
+                    {
+                        var sortedResults = results.ResultsCounted.OrderByDescending(r => r.WeightDecimal).ToList();
+                        results.ResultsDropped = sortedResults.Skip(results.MatchesInSeason - matchesToDrop).ToList();
+                        results.ResultsCounted = sortedResults.Take(results.MatchesInSeason - matchesToDrop).ToList();
+                        results.DroppedWeightDecimal = results.ResultsDropped.Sum(r => r.WeightDecimal);
+                        results.MatchesDropped = results.ResultsDropped.Count();
+                        results.CountedWeightDecimal = results.ResultsCounted.Sum(r => r.WeightDecimal);
+                    }
+                }
+                else
+                {
+                    results.CountedPoints = results.ResultsCounted.Sum(r => r.Points);
+                    results.CountedWeightDecimal = results.ResultsCounted.Sum(r => r.WeightDecimal);
+                }
+            }
+
+            return results;
+        }
+
+
+        private List<MatchAllResultOutputDto> getExpandedResults(IEnumerable<ClubEvent> allMatches, IEnumerable<Member> allMembers)
+        {
+            List<MatchAllResultOutputDto> results = new List<MatchAllResultOutputDto>();
+
+            var allSeasons = allMatches.DistinctBy(x => x.Season).Select(x => x.Season).ToList();
+            var allResults = _matchResultRepository.GetAllMatchResults().Result;
+
+            foreach (var season in allSeasons)
+            {
+                var seasonMembers = allMembers.Where(x => x.SeasonsActive.Contains(season));
+                int memberPosition = 0;
+
+                foreach (var match in allMatches.Where(x => x.Season == season))
+                {
+                    var matchResults = allResults.Where(x => x.MatchId == match.Id);
+                    if (allMembers.Count() == 1)
+                    {
+                        matchResults = matchResults.Where(x => x.MembershipNumber == allMembers.First().MembershipNumber);
+                    }
+                    List<MatchAllResultOutputDto> matchResultsForMatch = new List<MatchAllResultOutputDto>();
+
+                    foreach (var matchResult in matchResults)
+                    {
+                        var member = seasonMembers.Single(x => x.MembershipNumber == matchResult.MembershipNumber);
+                        var result = new MatchAllResultOutputDto
+                        {
+                            Name = member.Name,
+                            WeightDecimal = matchResult.WeightDecimal,
+                            Position = memberPosition,
+                            MatchId = matchResult.MatchId,
+                            MembershipNumber = matchResult.MembershipNumber,
+                            Peg = matchResult.Peg,
+                            Points = matchResult.Points,
+                            MatchType = match.MatchType.Value.EnumDescription(),
+                            AggType = match.AggregateType.Value.EnumDescription(),
+                            Season = season.EnumDescription().Split(",")[0],
+                            Venue = match.Description,
+                            Date = match.Date
+                        };
+                        matchResultsForMatch.Add(result);
+                    }
+
+                    var pos = 1;
+                    int numberAtPos = 0;
+
+                    float lastWeight = matchResultsForMatch.Any() ? matchResultsForMatch.Max(r => r.WeightDecimal) : 0f;
+                    float lastPoints = 10000;
+
+                    foreach (var result in matchResultsForMatch)
+                    {
+                        if (match.MatchType == MatchType.OSU)
+                        {
+                            if (result.Points < lastPoints)
+                            {
+                                pos += numberAtPos;
+                                lastPoints = result.Points;
+                                numberAtPos = 0;
+
+                            }
+                        }
+                        else
+                        {
+                            if (result.WeightDecimal < lastWeight)
+                            {
+                                pos += numberAtPos;
+                                lastWeight = result.WeightDecimal;
+                                numberAtPos = 0;
+                            }
+
+                        }
+
+                        if (result.WeightDecimal == lastWeight)
+                        {
+                            numberAtPos++;
+                        }
+
+                        result.Position = match.MatchType == MatchType.OSU || result.WeightDecimal > 0 ? pos : 0;
+                    }
+
+                    results.AddRange(matchResultsForMatch);
+                }
+            }
+
+
+            return results;
         }
 
     }

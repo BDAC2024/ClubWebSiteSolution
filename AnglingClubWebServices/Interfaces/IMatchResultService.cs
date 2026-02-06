@@ -1,7 +1,9 @@
-﻿using AnglingClubShared.Entities;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Interfaces
 {
@@ -13,5 +15,7 @@ namespace AnglingClubWebServices.Interfaces
         List<AggregateWeight> GetAggregateWeights(AggregateType aggType, Season season);
 
         List<TrophyWinner> GetTrophyWinners(TrophyType trophyType, Season season);
+        List<MatchAllResultOutputDto> GetResultsForAllMembers();
+        Task<MemberResultsInSeason> GetMemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints);
     }
 }

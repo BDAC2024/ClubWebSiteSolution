@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
 using MatchType = AnglingClubShared.Enums.MatchType;
 
 namespace AnglingClubShared.Models
@@ -32,13 +33,13 @@ namespace AnglingClubShared.Models
         public string WeightPoints {
             get
             {
+
+
                 var wtPts = "";
 
                 if (WeightDecimal > 0)
                 {
-                    var wtLb = Math.Floor(this.WeightDecimal);
-                    var wtOz = Math.Round((this.WeightDecimal - wtLb) * 16);
-                    wtPts = $"{wtLb}lb {wtOz}oz";
+                    wtPts = WeightDecimal.WeightAsString();
                 }
                 else if (Points > 0)
                 {

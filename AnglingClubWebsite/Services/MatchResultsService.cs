@@ -59,7 +59,13 @@ namespace AnglingClubWebsite.Services
             return content;
         }
 
-
+        public async Task<MemberResultsInSeason?> GetMemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/memberResultsInSeason/{membershipNumber}/{(int)aggType}/{(int)season}/{basedOnPoints}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<MemberResultsInSeason>();
+            return content;
+        }
     }
 
 }

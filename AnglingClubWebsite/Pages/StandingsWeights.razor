@@ -51,60 +51,55 @@
 
                     <TemplateColumn Title="Pos">
                         <ChildContent Context="row">
-                            <div class="bdac-rowcell">
+                            <BdacGridCell TItem="AggregateWeight"
+                                          Item="row"
+                                          AdditionalClass="bdac-rowcell"
+                                          OnSelect="AnglerSelectedHandler">
                                 @row.PositionOrdinal
-                            </div>
+                            </BdacGridCell>
                         </ChildContent>
                     </TemplateColumn>
 
                     <TemplateColumn Title="Name">
                         <ChildContent Context="row">
-                            <div class="bdac-rowcell">
+                            <BdacGridCell TItem="AggregateWeight"
+                                          Item="row"
+                                          AdditionalClass="bdac-rowcell"
+                                          OnSelect="AnglerSelectedHandler">
                                 @row.Name
-                            </div>
+                            </BdacGridCell>
                         </ChildContent>
                     </TemplateColumn>
 
                     <TemplateColumn Title="Weight">
                         <ChildContent Context="row">
-                            <div class="bdac-rowcell">
+                            <BdacGridCell TItem="AggregateWeight"
+                                          Item="row"
+                                          AdditionalClass="bdac-rowcell"
+                                          OnSelect="AnglerSelectedHandler">
                                 @row.Weight
-                            </div>
+                            </BdacGridCell>
                         </ChildContent>
                     </TemplateColumn>
 
                     @if (AggWeights!.First().MatchesInSeason > 0)
                     {
-                        <TemplateColumn Title="Drop Wt" Align="Align.Right">
+                        <TemplateColumn Title="Wt Dropped" Align="Align.Right">
                             <ChildContent Context="row">
-                                <div class="bdac-rowcell">
+                                <BdacGridCell TItem="AggregateWeight"
+                                              Item="row"
+                                              AdditionalClass="bdac-rowcell"
+                                              OnSelect="AnglerSelectedHandler">
                                     @row.DroppedWeight
-                                </div>
+                                </BdacGridCell>
                             </ChildContent>
                         </TemplateColumn>
-
-                        @if (BrowserSize != DeviceSize.Small)
-                        {
-                            <TemplateColumn Title="Matches Fished" Align="Align.Right">
-                                <ChildContent Context="row">
-                                    <div class="bdac-rowcell">
-                                        @row.FishedMatches
-                                    </div>
-                                </ChildContent>
-                            </TemplateColumn>
-
-                            <TemplateColumn Title="Matches Dropped" Align="Align.Right">
-                                <ChildContent Context="row">
-                                    <div class="bdac-rowcell">
-                                        @row.DroppedMatches
-                                    </div>
-                                </ChildContent>
-                            </TemplateColumn>
-                        }
-
                     }
 
                 </QuickGrid>
+
+                @* Note the 2-way binding of the Visible property *@
+                <AggResultsPopup @bind-Visible="ShowingResults" MembershipNumber="SelectedMembershipNumber" AggregateType="SelectedAggType" Season="SelectedSeason" BasedOnPoints="false"></AggResultsPopup>
             }
         }
         else

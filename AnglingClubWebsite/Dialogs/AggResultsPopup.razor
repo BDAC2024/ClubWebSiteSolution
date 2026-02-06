@@ -1,0 +1,150 @@
+﻿@using AnglingClubShared.Enums;
+@using AnglingClubShared.Extensions;
+
+@inherits RazorComponentBase
+
+<SfDialog IsModal="true" Visible="@Visible" CssClass="bdac-dialog-scroll">
+    <DialogTemplates>
+        <Header>Matches Fished</Header>
+        <Content>
+            <div class="bdac-smaller">
+
+                <table class="match-table">
+                    <tr><td class="label">Name:</td><td>@_aggResult.MemberName</td></tr>
+                    <tr><td class="label">Type:</td><td>@_aggResult.AggregateType</td></tr>
+                    <tr><td class="label">Matches in season:</td><td>@_aggResult.MatchesInSeason</td></tr>
+                </table>
+                <br />
+                <b>Results</b>
+                <BusyIndicator IsReady="@_resultsLoaded"></BusyIndicator>
+                @if (_resultsLoaded)
+                {
+                    @if (_aggResult.ResultsCounted.Any())
+                    {
+                        <div>
+                            <table class="bdac-simple-table">
+                                <thead>
+                                    <tr>
+                                        <th class="left-align">No</th>
+                                        <th class="left-align">Date</th>
+                                        <th class="left-align">Venue</th>
+                                        @if (BasedOnPoints)
+                                        {
+                                            <th class="right-align">Points</th>
+                                        }
+                                        else
+                                        {
+                                            <th class="right-align">Weight</th>
+
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var rowIndex = 1;
+                                    }
+                                    @foreach (var r in _aggResult.ResultsCounted)
+                                    {
+                                        <tr>
+                                            <td class="left-align">@rowIndex</td>
+                                            <td class="left-align">@r.Date.BdacDate()</td>
+                                            <td class="left-align">@r.Venue</td>
+                                            @if (BasedOnPoints)
+                                            {
+                                                <td class="right-align">@r.Points</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="right-align">@r.Weight</td>
+                                            }
+                                        </tr>
+                                        rowIndex++;
+                                    }
+                                    <tr>
+                                        @if (BasedOnPoints)
+                                        {
+                                            <td colspan="4" class="right-align"><b>Total: @_aggResult.CountedPoints</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td colspan="4" class="right-align"><b>Total: @_aggResult.CountedWeight</b></td>
+
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    } 
+                    else
+                    {
+                        <p>No matches found</p>
+                    }
+                    if (_aggResult.ResultsDropped.Any())
+                    {
+                        <br />
+                        <b>Matches Dropped</b>
+                        <div>
+                            <table class="bdac-simple-table">
+                                <thead>
+                                    <tr>
+                                        <th class="left-align">No</th>
+                                        <th class="left-align">Date</th>
+                                        <th class="left-align">Venue</th>
+                                        @if (BasedOnPoints)
+                                        {
+                                            <th class="right-align">Points</th>
+                                        }
+                                        else
+                                        {
+                                            <th class="right-align">Weight</th>
+
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var rowIndex = 1;
+                                    }
+                                    @foreach (var r in _aggResult.ResultsDropped)
+                                    {
+                                        <tr>
+                                            <td class="left-align">@rowIndex</td>
+                                            <td class="left-align">@r.Date.BdacDate()</td>
+                                            <td class="left-align">@r.Venue</td>
+                                            @if (BasedOnPoints)
+                                            {
+                                                <td class="right-align">@r.Points</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="right-align">@r.Weight</td>
+
+                                            }
+                                        </tr>
+                                        rowIndex++;
+                                    }
+                                    <tr>
+                                        @if (BasedOnPoints)
+                                        {
+                                            <td colspan="4" class="right-align"><b>Total: @_aggResult.DroppedPoints</b></td>
+                                        }
+                                        else
+                                        {
+                                            <td colspan="4" class="right-align"><b>Total: @_aggResult.DroppedWeight</b></td>
+
+                                        }
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    }
+                }
+            </div>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Close" IsPrimary="true" OnClick="CloseAsync" />
+    </DialogButtons>
+</SfDialog>

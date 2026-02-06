@@ -23,25 +23,13 @@ namespace AnglingClubShared.Models
         public string Weight {
             get
             {
-                var wt = "";
-
-                if (TotalWeightDecimal > 0)
-                {
-                    var wtLb = Math.Floor(this.TotalWeightDecimal);
-                    var wtOz = Math.Round((this.TotalWeightDecimal - wtLb) * 16);
-                    wt = $"{wtLb}lb {wtOz}oz";
-                }
-
-                return wt;
-
+                return TotalWeightDecimal.WeightAsString();
             }
 
         }
 
         // Info related to dropping matches
         public int MatchesInSeason { get; set; }
-        public int FishedMatches { get; set; }
-        public int DroppedMatches { get; set; }
         public float DroppedPoints { get; set; }
 
 

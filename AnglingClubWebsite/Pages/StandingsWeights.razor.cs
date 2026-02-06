@@ -59,6 +59,8 @@ namespace AnglingClubWebsite.Pages
 
         public int SelectedTab { get; set; } = 0;
         public AggregateType SelectedAggType { get; set; } = AggregateType.Spring;
+        public Season SelectedSeason { get; set; }
+        public int SelectedMembershipNumber { get; set; }
 
         public bool TabsLoaded { get; set; } = false;
         public bool StandingsLoaded { get; set; } = false;
@@ -67,6 +69,8 @@ namespace AnglingClubWebsite.Pages
 
         public List<AggregateWeight>? AggWeights { get; set; } = new List<AggregateWeight>();
         public IQueryable<AggregateWeight>? AggWeightsQueryable;
+
+        public bool ShowingResults { get; set; } = false;
 
         public ReferenceData? RefData;
 
@@ -94,6 +98,7 @@ namespace AnglingClubWebsite.Pages
             var selected = MatchTabItems.ToArray()[args.SelectedIndex].AggregateType;
             //Console.WriteLine($"Selected item: {args.SelectedIndex} - {selected}");
             SelectedAggType = selected;
+            SelectedMembershipNumber = 0;
             await loadLeague(GlobalService.GetStoredSeason(EnumUtils.CurrentSeason()));
         }
 
@@ -104,11 +109,43 @@ namespace AnglingClubWebsite.Pages
         /// <returns></returns>
         public async Task SeasonChanged(Season? season)
         {
+            SelectedSeason = season!.Value;
             SelectedTab = 0;
+            SelectedMembershipNumber = 0;
             SelectedAggType = 0;
             StandingsLoaded = false;
-            await getMatches(season!.Value);
+            await getMatches(SelectedSeason);
             StateHasChanged();
+        }
+
+        public void AnglerSelectedHandler(AggregateWeight row)
+        {
+            SelectedMembershipNumber = row.MembershipNumber;
+            ShowingResults = true;
+        }
+
+        #endregion Events
+
+        #region Helper Methods
+
+        private async Task getInitialData()
+        {
+            TabsLoaded = false;
+
+            try
+            {
+                RefData = await _refDataService.ReadReferenceData();
+                SelectedSeason = GlobalService.GetStoredSeason(RefData!.CurrentSeason);
+                await getMatches(SelectedSeason);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"getRefData: {ex.Message}");
+            }
+            finally
+            {
+                TabsLoaded = true;
+            }
         }
 
         private async Task getMatches(Season season)
@@ -135,29 +172,6 @@ namespace AnglingClubWebsite.Pages
                 TabsLoaded = true;
             }
 
-        }
-
-        #endregion Events
-
-        #region Helper Methods
-
-        private async Task getInitialData()
-        {
-            TabsLoaded = false;
-
-            try
-            {
-                RefData = await _refDataService.ReadReferenceData();
-                await getMatches(GlobalService.GetStoredSeason(RefData!.CurrentSeason));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"getRefData: {ex.Message}");
-            }
-            finally
-            {
-                TabsLoaded = true;
-            }
         }
 
         private async Task loadLeague(Season season)

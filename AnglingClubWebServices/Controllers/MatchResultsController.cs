@@ -1,17 +1,16 @@
 using AnglingClubShared.DTOs;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
-using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -114,105 +113,31 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet("members")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultOutputDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public IActionResult GetAllMembersResults()
         {
-            var errors = new List<string>();
-            List<MatchAllResultOutputDto> results = new List<MatchAllResultOutputDto>();
-
             StartTimer();
 
-            try
-            {
-                var allMatches = _eventRepository.GetEvents().Result.Where(x => x.EventType == EventType.Match).ToList();
-                var allSeasons = allMatches.DistinctBy(x => x.Season).Select(x => x.Season).ToList();
-                var allMembers = _memberRepository.GetMembers().Result;
-                var allResults = _matchResultRepository.GetAllMatchResults().Result;
+            List<MatchAllResultOutputDto> results = _matchResultService.GetResultsForAllMembers();
 
-                foreach (var season in allSeasons)
-                {
-                    var seasonMembers = allMembers.Where(x => x.SeasonsActive.Contains(season));
-                    int memberPosition = 0;
+            ReportTimer("Getting all match results for all members");
 
-                    foreach (var match in allMatches.Where(x => x.Season == season))
-                    {
-                        var matchResults = allResults.Where(x => x.MatchId == match.Id);
-                        List<MatchAllResultOutputDto> matchResultsForMatch = new List<MatchAllResultOutputDto>();
+            return Ok(results);
+        }
 
-                        foreach (var matchResult in matchResults)
-                        {
-                            var member = seasonMembers.Single(x => x.MembershipNumber == matchResult.MembershipNumber);
-                            var result = new MatchAllResultOutputDto
-                            {
-                                Name = member.Name,
-                                WeightDecimal = matchResult.WeightDecimal,
-                                Position = memberPosition,
-                                MatchId = matchResult.MatchId,
-                                MembershipNumber = matchResult.MembershipNumber,
-                                Peg = matchResult.Peg,
-                                Points = matchResult.Points,
-                                MatchType = match.MatchType.Value.EnumDescription(),
-                                AggType = match.AggregateType.Value.EnumDescription(),
-                                Season = season.EnumDescription().Split(",")[0],
-                                Venue = match.Description
-                            };
-                            matchResultsForMatch.Add(result);
-                        }
+        [HttpGet("memberResultsInSeason/{membershipNumber}/{aggType}/{season}/{basedOnPoints}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MemberResultsInSeason>))]
+        public async Task<IActionResult> MemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints)
+        {
+            StartTimer();
 
-                        var pos = 1;
-                        int numberAtPos = 0;
+            var results = await _matchResultService.GetMemberResultsInSeason(membershipNumber, aggType, season, basedOnPoints);
 
-                        float lastWeight = matchResultsForMatch.Any() ? matchResultsForMatch.Max(r => r.WeightDecimal) : 0f;
-                        float lastPoints = 10000;
+            ReportTimer("Getting a members match results for a season");
 
-                        foreach (var result in matchResultsForMatch)
-                        {
-                            if (match.MatchType == MatchType.OSU)
-                            {
-                                if (result.Points < lastPoints)
-                                {
-                                    pos += numberAtPos;
-                                    lastPoints = result.Points;
-                                    numberAtPos = 0;
-
-                                }
-                            }
-                            else
-                            {
-                                if (result.WeightDecimal < lastWeight)
-                                {
-                                    pos += numberAtPos;
-                                    lastWeight = result.WeightDecimal;
-                                    numberAtPos = 0;
-                                }
-
-                            }
-
-                            if (result.WeightDecimal == lastWeight)
-                            {
-                                numberAtPos++;
-                            }
-
-                            result.Position = match.MatchType == MatchType.OSU || result.WeightDecimal > 0 ? pos : 0;
-                        }
-
-                        results.AddRange(matchResultsForMatch);
-                    }
-                }
-
-                ReportTimer("Getting all match results for all members");
-
-                return Ok(results);
-
-            }
-            catch (Exception ex)
-            {
-                errors.Add(ex.Message);
-                return BadRequest(errors);
-            }
+            return Ok(results);
         }
 
         [HttpGet("standings/{aggType}/{season}")]

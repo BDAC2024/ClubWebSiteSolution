@@ -10,5 +10,6 @@ namespace AnglingClubWebsite.Services
         Task<List<LeaguePosition>?> GetLeaguePositions(AggregateType aggType, Season season);
         Task<List<AggregateWeight>?> GetAggreateWeights(AggregateType aggType, Season season);
         Task<List<TrophyWinner>?> GetTrophyWinners(TrophyType trophyType, Season season);
+        Task<MemberResultsInSeason?> GetMemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints);
     }
 }
