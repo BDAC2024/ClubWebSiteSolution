@@ -12,7 +12,7 @@ namespace AnglingClubShared.Services
             {
                 if (aggType == AggregateType.ClubRiver)
                 {
-                    drop = 10;
+                    drop = 2;
                 }
 
             }

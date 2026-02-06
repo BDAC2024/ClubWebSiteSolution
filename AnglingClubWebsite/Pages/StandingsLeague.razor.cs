@@ -1,6 +1,7 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
+using AnglingClubShared.Services;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
@@ -53,7 +54,6 @@ namespace AnglingClubWebsite.Pages
         #region Properties
 
         public string AboutInfo { get; set; } = "";
-        public int DropCount { get; set; } = 2;
 
         public DeviceSize BrowserSize = DeviceSize.Unknown;
 
@@ -196,9 +196,11 @@ namespace AnglingClubWebsite.Pages
         private void setupAboutInfo(List<LeaguePosition> seasonStandings)
         {
             AboutInfo = "";
-            if (seasonStandings.First().MatchesInSeason != 0)
+            var dropCount = MatchHelperService.MatchesToBeDropped(SelectedAggType, SelectedSeason);
+
+            if (dropCount > 0)
             {
-                AboutInfo = $"Anglers best {seasonStandings.First().MatchesInSeason - DropCount} results count from all {seasonStandings.First().MatchesInSeason} matches.";
+                AboutInfo = $"Anglers best {seasonStandings.First().MatchesInSeason - dropCount} results count from all {seasonStandings.First().MatchesInSeason} matches.";
             }
         }
 
