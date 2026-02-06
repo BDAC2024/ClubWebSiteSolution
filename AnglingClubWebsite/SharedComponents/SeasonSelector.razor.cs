@@ -37,6 +37,8 @@ namespace AnglingClubWebsite.SharedComponents
             _refDataService = refDataService;
             _globalService = globalService;
             _browserService = browserService;
+
+            setBrowserDetails();
         }
 
         [Parameter]
@@ -62,7 +64,7 @@ namespace AnglingClubWebsite.SharedComponents
 
         public void Receive(BrowserChange message)
         {
-            BrowserSize = _browserService.DeviceSize;
+            setBrowserDetails();
         }
 
         #endregion Message Handlers
@@ -121,6 +123,14 @@ namespace AnglingClubWebsite.SharedComponents
 
         #endregion Events
 
+        #region Helper Methods
+
+        private void setBrowserDetails()
+        {
+            BrowserSize = _browserService.DeviceSize;
+        }
+
+        #endregion Helper Methods
     }
 
 }

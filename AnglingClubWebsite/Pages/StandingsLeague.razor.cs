@@ -46,6 +46,8 @@ namespace AnglingClubWebsite.Pages
             _clubEventService = clubEventService;
             _logger = logger;
             _refDataService = refDataService;
+
+            setBrowserDetails();
         }
 
         #region Properties
@@ -84,7 +86,7 @@ namespace AnglingClubWebsite.Pages
 
         public void Receive(BrowserChange message)
         {
-            BrowserSize = _browserService.DeviceSize;
+            setBrowserDetails();
         }
 
         public async Task OnTabSelected(SelectEventArgs args)
@@ -209,6 +211,11 @@ namespace AnglingClubWebsite.Pages
             {
                 matchTabs.Add(tabData);
             }
+        }
+
+        private void setBrowserDetails()
+        {
+            BrowserSize = _browserService.DeviceSize;
         }
 
         #endregion Helper Methods
