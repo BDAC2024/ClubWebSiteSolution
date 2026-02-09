@@ -1,21 +1,12 @@
 using AnglingClubShared.Enums;
-using AnglingClubShared.DTOs;
-using AnglingClubWebServices.Helpers;
+using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
-using AnglingClubWebServices.Models;
 using AutoMapper;
-using Ical.Net;
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AnglingClubWebServices.Controllers
 {
@@ -57,7 +48,7 @@ namespace AnglingClubWebServices.Controllers
 
         // POST api/values
         [HttpPost]
-        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody]List<TrophyWinner> trophyWinners)
+        public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody] List<TrophyWinner> trophyWinners)
         {
             StartTimer();
             var errors = new List<string>();

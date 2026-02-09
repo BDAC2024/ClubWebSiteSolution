@@ -161,9 +161,9 @@ namespace AnglingClubWebsite
             menuItems.Add(new MenuItem { Id = "04", Name = "Matches", NavigateUrl = menuUrl("/Matches") });
             menuItems.Add(new MenuItem { Id = "045", Name = "Junior Open Matches", NavigateUrl = menuUrl("/register") });
             menuItems.Add(new MenuItem { Id = "05", Name = "Standings", HasSubMenu = true });
-            menuItems.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues" });
-            menuItems.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights" });
-            menuItems.Add(new MenuItem { Id = "05.3", ParentId = "05", Name = "Trophies" });
+            menuItems.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues", NavigateUrl = menuUrl("/StandingsLeague") });
+            menuItems.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights", NavigateUrl = menuUrl("/StandingsWeights") });
+            menuItems.Add(new MenuItem { Id = "05.3", ParentId = "05", Name = "Trophies", NavigateUrl = menuUrl("/StandingsTrophies") });
             menuItems.Add(new MenuItem { Id = "06", Name = "Diary of Events", NavigateUrl = menuUrl("/diary") });
             menuItems.Add(new MenuItem { Id = "07", Name = "Buy Online", HasSubMenu = true, IsNew = false });
             menuItems.Add(new MenuItem { Id = "07.1", ParentId = "07", Name = "Memberships", NavigateUrl = menuUrl("/buyMemberships"), IsNew = false });

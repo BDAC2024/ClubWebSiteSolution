@@ -2,8 +2,6 @@
 using Amazon.SimpleDB.Model;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
-using AnglingClubShared.Models;
-using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
@@ -17,7 +15,7 @@ namespace AnglingClubWebServices.Data
 {
     public class EventRepository : RepositoryBase, IEventRepository
     {
-        private const string IdPrefix = "Event";
+        private const string IDPREFIX = "Event";
         private readonly ILogger<EventRepository> _logger;
 
         private List<ClubEvent> _cachedEvents = null;
@@ -48,7 +46,7 @@ namespace AnglingClubWebServices.Data
 
                 if (clubEvent.IsNewItem)
                 {
-                    clubEvent.DbKey = clubEvent.GenerateDbKey(IdPrefix);
+                    clubEvent.DbKey = clubEvent.GenerateDbKey(IDPREFIX);
                 }
 
                 BatchPutAttributesRequest request = new BatchPutAttributesRequest();
@@ -98,11 +96,9 @@ namespace AnglingClubWebServices.Data
 
         public async Task<List<ClubEvent>> GetEvents()
         {
-            _logger.LogWarning($"Getting events at : {DateTime.Now.ToString("HH:mm:ss.000")}");
-
             var events = new List<ClubEvent>();
 
-            var items = await GetData(IdPrefix, "AND Date > ''", "ORDER BY Date");
+            var items = await GetData(IDPREFIX, "AND Date > ''", "ORDER BY Date");
 
             foreach (var item in items)
             {
@@ -179,8 +175,8 @@ namespace AnglingClubWebServices.Data
             var events = await GetEvents();
 
             var dayTicketMatches = events
-                .Where(x => 
-                    x.EventType == EventType.Match 
+                .Where(x =>
+                    x.EventType == EventType.Match
                     && x.Season == EnumUtils.CurrentSeason()
                     && (x.Description.ToLower().Contains("cricket field") || x.Description.ToLower().Contains("ings lane"))
                 )

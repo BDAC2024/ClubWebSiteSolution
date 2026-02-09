@@ -1,0 +1,96 @@
+﻿@page "/StandingsTrophies"
+@using AnglingClubShared.Enums
+@using AnglingClubShared.Models
+@using AnglingClubWebsite.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+
+    <div class="page-header">
+        <h3 class="left-header">Trophy Winners</h3>
+
+        <SeasonSelector OnSeasonChanged="SeasonChanged" />
+    </div>
+
+    <BusyIndicator IsReady="@TabsLoaded"></BusyIndicator>
+
+    @if (TabsLoaded)
+    {
+        <SfTab ID="Tab" EnablePersistence="false" @bind-SelectedItem="SelectedTab">
+            <TabEvents Selected="OnTabSelected"></TabEvents>
+            <TabItems>
+                @foreach (TabData Item in TabItems)
+                {
+                    <TabItem>
+                        <HeaderTemplate>
+                            @if (BrowserSize == DeviceSize.Small)
+                            {
+                                <div>@(Item.HeaderBrief)</div>
+                            }
+                            else
+                            {
+                                <div>@(Item.HeaderFull)</div>
+                            }
+
+                        </HeaderTemplate>
+                    </TabItem>
+                }
+            </TabItems>
+        </SfTab>
+        <BusyIndicator IsReady="@TrophiesLoaded"></BusyIndicator>
+
+        if (TrophiesLoaded)
+        {
+            <QuickGrid Items="TrophyWinnersQueryable" Class="bdac-table no-click">
+
+                <TemplateColumn Title="Trophy">
+                    <ChildContent Context="row">
+                        <div class="@CellClass(row)">
+                            @row.Trophy
+                         </div>
+                    </ChildContent>
+                </TemplateColumn>
+
+                 <TemplateColumn Title="Winner">
+                    <ChildContent Context="row">
+                        <div class="@CellClass(row)">
+                            @row.Winner
+                        </div>
+                    </ChildContent>
+                </TemplateColumn>
+
+                <TemplateColumn Title="Wt/Pts">
+                    <ChildContent Context="row">
+                        <div class="@CellClass(row)">
+                            @row.WeightPoints
+                        </div>
+                    </ChildContent>
+                </TemplateColumn>
+
+                @if (BrowserSize != DeviceSize.Small)
+                {
+                    <TemplateColumn Title="Venue">
+                        <ChildContent Context="row">
+                            <div class="@CellClass(row)">
+                                @row.Venue
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+
+                    <TemplateColumn Title="Date" IsDefaultSortColumn="true">
+                        <ChildContent Context="row">
+                            <div class="@CellClass(row)">
+                                @row.DateSummary
+                            </div>
+                        </ChildContent>
+                    </TemplateColumn>
+                }
+            </QuickGrid>
+        }
+    }
+
+</AuthorizationRequired>
+
+

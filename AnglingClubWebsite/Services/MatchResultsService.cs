@@ -1,4 +1,6 @@
 ﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Enums;
+using AnglingClubShared.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Net.Http.Json;
 
@@ -33,6 +35,37 @@ namespace AnglingClubWebsite.Services
             return content;
         }
 
+        public async Task<List<LeaguePosition>?> GetLeaguePositions(AggregateType aggType, Season season)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/standings/{(int)aggType}/{(int)season}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<List<LeaguePosition>>();
+            return content;
+        }
+
+        public async Task<List<AggregateWeight>?> GetAggreateWeights(AggregateType aggType, Season season)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/aggregateWeights/{(int)aggType}/{(int)season}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<List<AggregateWeight>>();
+            return content;
+        }
+
+        public async Task<List<TrophyWinner>?> GetTrophyWinners(TrophyType trophyType, Season season)
+        {
+            var relativeEndpoint = $"trophywinners/{(int)trophyType}/{(int)season}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<List<TrophyWinner>>();
+            return content;
+        }
+
+        public async Task<MemberResultsInSeason?> GetMemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/memberResultsInSeason/{membershipNumber}/{(int)aggType}/{(int)season}/{basedOnPoints}";
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+            var content = await response.Content.ReadFromJsonAsync<MemberResultsInSeason>();
+            return content;
+        }
     }
 
 }

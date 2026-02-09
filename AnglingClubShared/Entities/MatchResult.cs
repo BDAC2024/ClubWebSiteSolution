@@ -15,29 +15,17 @@ namespace AnglingClubShared.Entities
     {
         public float WeightDecimal { get; set; }
 
-        public string Weight
-        {
+        public string Weight {
             get
             {
-                var wt = "DNW";
-
-                if (WeightDecimal > 0)
-                {
-                    var wtLb = Math.Floor(this.WeightDecimal);
-                    var wtOz = Math.Round((this.WeightDecimal - wtLb) * 16);
-                    wt = $"{wtLb}lb {wtOz}oz";
-                }
-
-                return wt;
-
+                return WeightDecimal.WeightAsString();
             }
 
         }
 
         public int Position { get; set; }
 
-        public string PositionOrdinal
-        {
+        public string PositionOrdinal {
             get
             {
                 return Position.Ordinal();

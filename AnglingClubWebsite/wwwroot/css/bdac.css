@@ -349,6 +349,23 @@ td.label {
         background-color: whitesmoke;
     }
 
+/* Dialog content shrink-to-fit */
+.bdac-dialog-scroll.e-dialog {
+    width: fit-content;
+    max-width: 90vw;
+    background-color: whitesmoke;
+}
+
+    .bdac-dialog-scroll.e-dialog .e-dlg-content {
+        display: inline-block;
+        overflow: auto;
+        overflow-y: scroll;
+        width: fit-content;
+        max-width: 90vw;
+        min-width: 0;
+        background-color: whitesmoke;
+    }
+
 .match-results-scroll {
     overflow-y: auto;
     overflow-x: auto;
@@ -550,6 +567,14 @@ fieldset {
     cursor: pointer;
 }
 
+.bdac-table.no-click tbody tr {
+    cursor: default;
+}
+
+    .bdac-table.no-click tbody tr:hover > td {
+        background-color: unset;
+    }
+
     .bdac-table tbody tr:hover > td {
         background-color: rgba(0, 0, 0, 0.03);
     }
@@ -566,6 +591,12 @@ fieldset {
 .bdac-row-past {
     font-weight: 300;
     /* or: color: var(--bs-secondary-color); */
+}
+
+/* Rows still being contested (dimmed & italic) */
+.bdac-row-still-running {
+    font-weight: 300;
+    font-style: italic;
 }
 
 /* Helpers */
@@ -684,6 +715,7 @@ fieldset {
 .bdac-table tbody td {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
+
 
 /* =========================================================
    End of BDAC QuickGrid styling (class: bdac-table)

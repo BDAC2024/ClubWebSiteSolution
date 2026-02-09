@@ -38,9 +38,9 @@
         <mat-icon class="menu-button" [ngClass]="{'rotated' : showStandingsSubMenu}">expand_more</mat-icon>
       </mat-list-item>
       <div class="submenu" [ngClass]="{'expanded' : showStandingsSubMenu}" *ngIf="showStandingsSubMenu">
-        <a mat-list-item routerLink="/standings">Leagues</a>
-        <a mat-list-item routerLink="/aggregateWeights">Weights</a>
-        <a mat-list-item routerLink="/trophyWinners">Trophies</a>
+        <a mat-list-item (click)="openBlazor('StandingsLeague', drawer)">Leagues</a>
+        <a mat-list-item (click)="openBlazor('StandingsWeights', drawer)">Weights</a>
+        <a mat-list-item (click)="openBlazor('StandingsTrophies', drawer)">Trophies</a>
       </div>
 
       <a mat-list-item routerLink="/diary">Diary of Events</a>

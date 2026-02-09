@@ -1,60 +1,62 @@
-﻿using AnglingClubShared;
-using AnglingClubShared.Enums;
+﻿using AnglingClubShared.Enums;
 using AnglingClubShared.Models;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.AspNetCore.Components;
 
 namespace AnglingClubWebsite.SharedComponents
 {
-    public partial class SeasonSelectorViewModel : ViewModelBase, IRecipient<BrowserChange>
+    public partial class SeasonSelector : RazorComponentBase, IRecipient<BrowserChange>
     {
-        private readonly IMessenger _messenger;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IMessenger _messenger;
         private readonly ICurrentUserService _currentUserService;
 
         private readonly IRefDataService _refDataService;
         private readonly IGlobalService _globalService;
-        private readonly ILogger<SeasonSelectorViewModel> _logger;
+        private readonly ILogger<SeasonSelector> _logger;
 
         private readonly BrowserService _browserService;
 
-        public SeasonSelectorViewModel(
-            IMessenger messenger,
+        public SeasonSelector(
             IAuthenticationService authenticationService,
+            IMessenger messenger,
             ICurrentUserService currentUserService,
+            ILogger<SeasonSelector> logger,
             IRefDataService refDataService,
             IGlobalService globalService,
-            BrowserService browserService,
-            ILogger<SeasonSelectorViewModel> logger) : base(messenger, currentUserService, authenticationService)
+            BrowserService browserService) : base(messenger, currentUserService, authenticationService)
         {
-            _messenger = messenger;
+            messenger.Register<BrowserChange>(this);
+
             _authenticationService = authenticationService;
+            _messenger = messenger;
             _currentUserService = currentUserService;
+            _logger = logger;
             _refDataService = refDataService;
             _globalService = globalService;
             _browserService = browserService;
 
-            messenger.Register<BrowserChange>(this);
-
             setBrowserDetails();
-            _logger = logger;
         }
+
+        [Parameter]
+        public EventCallback<Season?> SelectedSeasonChanged { get; set; }
+
+        // Host "method" to call whenever it changes
+        [Parameter]
+        public EventCallback<Season?> OnSeasonChanged { get; set; }
 
         #region Properties
 
-        [ObservableProperty]
-        private ReferenceData? _refData;
+        public ReferenceData? RefData;
 
-        [ObservableProperty]
-        private Season? _selectedSeason = Season.S20To21;
+        public Season? SelectedSeason = Season.S20To21;
 
-        [ObservableProperty]
-        private bool _refDataLoaded = false;
+        public bool RefDataLoaded = false;
 
-        [ObservableProperty]
-        private DeviceSize _browserSize = DeviceSize.Unknown;
+        public DeviceSize BrowserSize = DeviceSize.Unknown;
 
         #endregion Properties
 
@@ -91,47 +93,44 @@ namespace AnglingClubWebsite.SharedComponents
             }
         }
 
-        private void setBrowserDetails()
-        {
-            BrowserSize = _browserService.DeviceSize;
-        }
-
         #endregion Methods
 
         #region Events
 
-        async partial void OnSelectedSeasonChanged(Season? oldValue, Season? newValue)
+        protected override async Task OnParametersSetAsync()
         {
-            if (oldValue == newValue || newValue is null)
+            await base.OnParametersSetAsync();
+        }
+
+        private async Task OnValueChanged(Season? newSeason)
+        {
+            // 1) update our own state
+            SelectedSeason = newSeason;
+            _globalService.SetStoredSeason(SelectedSeason!.Value);
+
+            // 2) support bind-SelectedSeason on the host (optional but recommended)
+            if (SelectedSeasonChanged.HasDelegate)
             {
-                return;
+                await SelectedSeasonChanged.InvokeAsync(newSeason);
             }
 
-            _globalService.SetStoredSeason(newValue.Value);
-
-            var handler = OnSeasonChanged;
-            if (handler is null)
+            // 3) notify the host explicitly (your requirement)
+            if (OnSeasonChanged.HasDelegate)
             {
-                return;
-            }
-
-            try
-            {
-                await handler(newValue.Value);
-            }
-            catch (Exception ex)
-            {
-                // Log or handle – async void exceptions will otherwise crash the app
-                _logger?.LogError(ex, "OnSeasonChanged failed");
+                await OnSeasonChanged.InvokeAsync(newSeason);
             }
         }
 
         #endregion Events
 
-        #region Inter-component Events
+        #region Helper Methods
 
-        public Func<Season, Task>? OnSeasonChanged { get; set; }
+        private void setBrowserDetails()
+        {
+            BrowserSize = _browserService.DeviceSize;
+        }
 
-        #endregion Inter-component Events
+        #endregion Helper Methods
     }
+
 }

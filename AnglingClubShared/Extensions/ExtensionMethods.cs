@@ -158,5 +158,25 @@ namespace AnglingClubShared.Extensions
             }
         }
 
+        /// <summary>
+        /// Takes a float version of a weight and returns in Lb & Oz
+        /// </summary>
+        /// <param name="weightDecimal"></param>
+        /// <returns></returns>
+        public static string WeightAsString(this float weightDecimal)
+        {
+            var wt = "DNW";
+
+            if (weightDecimal > 0)
+            {
+                var wtLb = Math.Floor(weightDecimal);
+                var wtOz = Math.Round((weightDecimal - wtLb) * 16);
+                wt = $"{wtLb}lb {wtOz}oz";
+            }
+
+            return wt;
+
+        }
+
     }
 }

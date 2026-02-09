@@ -3,6 +3,7 @@
 @using AnglingClubShared.Entities
 @using AnglingClubShared.Enums
 @using AnglingClubShared.Models
+@using AnglingClubWebsite.Models
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.Grids
@@ -22,12 +23,12 @@
 
     @if (ViewModel.DataLoaded)
     {
-        <p>You can see more details of each match and the results by selecting the match.</p>
+        <p>You can see the results by selecting the match.</p>
 
         <SfTab ID="Tab" EnablePersistence="false" SelectedItem="ViewModel.SelectedTab">
             <TabEvents Selected="OnTabSelected"></TabEvents>
             <TabItems>
-                @foreach (MatchTabData Item in ViewModel.MatchTabItems)
+                @foreach (TabData Item in ViewModel.MatchTabItems)
                 {
                     <TabItem>
                         <HeaderTemplate>
