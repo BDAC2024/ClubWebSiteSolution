@@ -329,7 +329,7 @@ td.label {
 
     /* Ensure dialog body scrolls, not the whole dialog */
     .e-dialog .e-dlg-content {
-        max-height: calc(85vh - 110px); /* header + footer allowance */
+        max-height: calc(95vh - 110px); /* header + footer allowance */
         overflow-y: auto;
     }
 
