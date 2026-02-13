@@ -25,16 +25,14 @@ namespace AnglingClubShared.Entities
 
     public class ClubEvent : ClubEventBase
     {
-        public string Day
-        {
+        public string Day {
             get
             {
                 return Date.ToString("ddd");
             }
         }
 
-        public string Time
-        {
+        public string Time {
             get
             {
                 if (EventType != EventType.Match || (EventType == EventType.Match && MatchType == AnglingClubShared.Enums.MatchType.Evening))
@@ -49,8 +47,7 @@ namespace AnglingClubShared.Entities
             }
         }
 
-        public string DescriptionForTable
-        {
+        public string DescriptionForTable {
             get
             {
                 if (EventType == EventType.Work)
@@ -65,6 +62,7 @@ namespace AnglingClubShared.Entities
                         case AnglingClubShared.Enums.MatchType.Junior:
                         case AnglingClubShared.Enums.MatchType.Pairs:
                         case AnglingClubShared.Enums.MatchType.Evening:
+                        case AnglingClubShared.Enums.MatchType.Midweek:
                         case AnglingClubShared.Enums.MatchType.Spring:
                             return $"{MatchType.EnumDescription()} {(Number != null ? $"no.{Number}" : "")} at {Description}";
 
@@ -82,8 +80,7 @@ namespace AnglingClubShared.Entities
             }
         }
 
-        public bool InThePast
-        {
+        public bool InThePast {
             get
             {
                 return MatchEnd != null ? MatchEnd < DateTime.Now : Date < DateTime.Now.Date;

@@ -195,7 +195,7 @@ namespace AnglingClubWebsite.Pages
             AboutInfo = "";
             var dropCount = MatchHelperService.MatchesToBeDropped(SelectedAggType, SelectedSeason);
 
-            if (dropCount > 0)
+            if (aggWeights!.Any() && dropCount > 0)
             {
                 AboutInfo = $"Anglers best {aggWeights.First().MatchesInSeason - dropCount} weights count from all {aggWeights.First().MatchesInSeason} matches.";
             }

@@ -198,7 +198,7 @@ namespace AnglingClubWebsite.Pages
             AboutInfo = "";
             var dropCount = MatchHelperService.MatchesToBeDropped(SelectedAggType, SelectedSeason);
 
-            if (dropCount > 0)
+            if (seasonStandings!.Any() && dropCount > 0)
             {
                 AboutInfo = $"Anglers best {seasonStandings.First().MatchesInSeason - dropCount} results count from all {seasonStandings.First().MatchesInSeason} matches.";
             }
@@ -213,8 +213,9 @@ namespace AnglingClubWebsite.Pages
             addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.ClubPond, HeaderFull = "Club Match - Pond", HeaderBrief = "Club/Pond", });
             addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.PairsPointsAsc, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
             addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Junior, HeaderFull = "Junior", HeaderBrief = "Junior", });
-            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
             addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.Midweek, HeaderFull = "Midweek", HeaderBrief = "Midweek", });
+            addTab(allMatches, _matchTabs, new TabData { AggregateType = AggregateType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
 
             MatchTabItems = new List<TabData>(_matchTabs);
 

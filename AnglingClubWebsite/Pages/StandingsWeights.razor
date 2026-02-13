@@ -85,7 +85,7 @@
                         </ChildContent>
                     </TemplateColumn>
 
-                    @if (AggWeights!.First().MatchesInSeason > 0)
+                    @if (AggWeights!.Any() && AggWeights!.First().MatchesInSeason > 0)
                     {
                         <TemplateColumn Title="Wt Dropped" Align="Align.Right">
                             <ChildContent Context="row">
