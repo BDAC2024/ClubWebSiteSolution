@@ -251,11 +251,12 @@ namespace AnglingClubWebsite.Pages
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Spring, HeaderFull = "Spring League", HeaderBrief = "Spring", });
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Club, HeaderFull = "Club Match", HeaderBrief = "Club", });
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Junior, HeaderFull = "Junior Match", HeaderBrief = "Junior", });
-            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Specials, HeaderFull = "Specials", HeaderBrief = "Specials", });
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Pairs, HeaderFull = "Pairs", HeaderBrief = "Pairs", });
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Evening, HeaderFull = "Evening", HeaderBrief = "Evening", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Midweek, HeaderFull = "Midweek", HeaderBrief = "Midweek", });
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Visitors, HeaderFull = "Visiting Clubs", HeaderBrief = "Visitors", });
+            addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.OSU, HeaderFull = "Ouse/Swale/Ure", HeaderBrief = "OSU", });
             addMatchTab(allMatches, _matchTabs, new TabData { MatchType = MatchType.Qualifier, HeaderFull = "Event Qualifiers", HeaderBrief = "Qualifiers", });
 
             MatchTabItems = new ObservableCollection<TabData>(_matchTabs);
