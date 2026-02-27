@@ -61,7 +61,10 @@ namespace AnglingClubShared.Enums
         Visitors,
 
         [Description("Qualifier")]
-        Qualifier
+        Qualifier,
+
+        [Description("Midweek")]
+        Midweek
     }
 
     public enum OpenMatchType
@@ -106,6 +109,9 @@ namespace AnglingClubShared.Enums
 
         [Description("Pairs Points Asc")]
         PairsPointsAsc,
+
+        [Description("Midweek")]
+        Midweek,
 
     }
 

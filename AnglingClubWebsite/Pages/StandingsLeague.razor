@@ -100,7 +100,7 @@
                         </ChildContent>
                     </TemplateColumn>
 
-                    @if (SeasonStandings!.First().MatchesInSeason > 0)
+                    @if (SeasonStandings!.Any() && SeasonStandings!.First().MatchesInSeason > 0)
                     {
 
                         <TemplateColumn Title="Pts Dropped" Align="Align.Right">
