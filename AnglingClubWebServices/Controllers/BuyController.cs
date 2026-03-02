@@ -1,21 +1,16 @@
+using AnglingClubShared.DTOs;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
-using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
-using AnglingClubWebServices.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Stripe;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
@@ -68,7 +63,7 @@ namespace AnglingClubWebServices.Controllers
 
             var selectedMembership = _productMembershipRepository.GetProductMemberships().Result.FirstOrDefault(x => x.DbKey == membership.DbKey);
 
-            if (selectedMembership == null) 
+            if (selectedMembership == null)
             {
                 return BadRequest("Could not locate requested membership");
             }
@@ -79,7 +74,7 @@ namespace AnglingClubWebServices.Controllers
                 {
                     if (!string.IsNullOrEmpty(membership.DisabilityCertificateId))
                     {
-                        StoredFileMeta disabilityCertificateSavedFile = new StoredFileMeta { Id = membership.DisabilityCertificateId};
+                        StoredFileMeta disabilityCertificateSavedFile = new StoredFileMeta { Id = membership.DisabilityCertificateId };
                         await _savedFileRepository.AddOrUpdateTmpFile(disabilityCertificateSavedFile);
                     }
                 }
@@ -309,7 +304,7 @@ namespace AnglingClubWebServices.Controllers
                         metaData.Add("MembershipNumber", CurrentUser.MembershipNumber.ToString());
                     }
 
-                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest 
+                    var sessionId = await _paymentsService.CreateCheckoutSession(new CreateCustomCheckoutSessionRequest
                     {
                         SuccessUrl = gateKey.SuccessUrl,
                         CancelUrl = gateKey.CancelUrl,
@@ -519,6 +514,18 @@ namespace AnglingClubWebServices.Controllers
 
             return Ok();
 
+        }
+
+        [HttpGet("TestGuestTicket")]
+        public IActionResult TestGuestTicket()
+        {
+            if (CurrentUser.Name != _authService.GetDeveloperName())
+            {
+                return Unauthorized();
+            }
+            _ticketService.IssueGuestTicket(-1, DateTime.Now, DateTime.Now, "Test member", "Test Guest", -2, "steve@townendmail.co.uk", "test-PaymentId");
+
+            return Ok();
         }
 
         private void sendOrderAsTicket(Order order, OrderDetailDto orderDetails, string callerBaseUrl)

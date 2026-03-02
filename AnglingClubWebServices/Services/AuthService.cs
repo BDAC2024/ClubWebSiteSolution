@@ -131,7 +131,7 @@ namespace AnglingClubWebServices.Services
             var key = Encoding.ASCII.GetBytes(_authOptions.AuthSecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClientMemberDto().GetIdentity(member, GetDeveloperName()),
+                Subject = new ClientMemberDto().GetIdentity(member, GetDeveloperName(), true),
                 Expires = expires,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

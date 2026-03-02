@@ -1,9 +1,8 @@
-﻿using AnglingClubWebServices.Helpers;
+﻿using AnglingClubShared.Extensions;
+using AnglingClubShared.Models;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.IO;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -12,8 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
-using AnglingClubShared.Extensions;
-using AnglingClubShared.Models;
+using System.IO;
+using System.Linq;
 
 
 namespace AnglingClubWebServices.Services
@@ -58,17 +57,17 @@ namespace AnglingClubWebServices.Services
             try
             {
 
-                    ImageGenerationSettings settings = new ImageGenerationSettings();
-                    settings.ImageFormat = ImageFormat.Png;
-                    settings.RasterDpi = 144;
-                    settings.ImageCompressionQuality = ImageCompressionQuality.Low;
+                ImageGenerationSettings settings = new ImageGenerationSettings();
+                settings.ImageFormat = ImageFormat.Png;
+                settings.RasterDpi = 144;
+                settings.ImageCompressionQuality = ImageCompressionQuality.Low;
 
                 //_logger.LogWarning("Generating Doc...");
 
                 var ticketImgPdf = generateDayTicket(holdersName, ticketNumber, validOn, appSettings.DayTicketCost);
-                    //var ticketImages = ticketImgPdf.GenerateImages(settings);
-                    //_logger.LogWarning("Generating PDF...");
-                    var ticketPdf = ticketImgPdf.GeneratePdf();
+                //var ticketImages = ticketImgPdf.GenerateImages(settings);
+                //_logger.LogWarning("Generating PDF...");
+                var ticketPdf = ticketImgPdf.GeneratePdf();
 
                 //_logger.LogWarning("Sending PDF email...");
 
@@ -79,7 +78,7 @@ namespace AnglingClubWebServices.Services
                             "Make sure you have your ticket with you when fishing. Either on your phone or printed.<br/><br/>" +
                             $"Directions for the river and parking are shown here <a href='{callerBaseUrl}/waters#water3'>Club Website - Waters</a>.<br/><br/>" +
                             generateClosureTimesAsHtml(appSettings) +
-                            $"<br/><br/>"  +
+                            $"<br/><br/>" +
                             "Tight lines!,<br/>" +
                             "Boroughbridge & District Angling Club",
                         null,
@@ -135,7 +134,7 @@ namespace AnglingClubWebServices.Services
                     $"Your Guest Ticket for {validOn.PrettyDate()}",
                     $"Please find attached, your guest ticket to take {guestsName} fishing on {validOn.PrettyDate()}.<br/>" +
                         "Make sure you have your ticket with you when fishing. Either on your phone or printed.<br/>" +
-                        $"You must fish with {guestsName} and be responsible for them.<br/><br/>" + 
+                        $"You must fish with {guestsName} and be responsible for them.<br/><br/>" +
                         "Tight lines!,<br/>" +
                         "Boroughbridge & District Angling Club",
                     null,
@@ -300,6 +299,7 @@ namespace AnglingClubWebServices.Services
                     page.Size(10.4f + (margin * 2), headerHeight + dateHeight + notesHeight + (margin * 2), QuestPDF.Infrastructure.Unit.Centimetre);
                     page.Margin(margin, QuestPDF.Infrastructure.Unit.Centimetre);
                     page.DefaultTextStyle(y => y.FontFamily("Arial").FontSize(10));
+                    page.PageColor(Color.FromRGB(255, 255, 255));
 
                     page.Content()
                     .Column(column =>

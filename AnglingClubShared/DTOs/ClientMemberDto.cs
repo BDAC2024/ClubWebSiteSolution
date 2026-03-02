@@ -1,7 +1,6 @@
 ﻿using AnglingClubShared.Entities;
 using AnglingClubShared.Extensions;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 
 namespace AnglingClubShared.DTOs
@@ -34,7 +33,7 @@ namespace AnglingClubShared.DTOs
             this.MembershipNumber = token.Claims.First(claim => claim.Type == "MembershipNumber").Value;
             this.Admin = token.GetBoolClaim("Admin");
             this.Treasurer = token.GetBoolClaim("Treasurer");
-            this.CommitteeMember = token.GetBoolClaim("CommitteeMember"); 
+            this.CommitteeMember = token.GetBoolClaim("CommitteeMember");
             this.Secretary = token.GetBoolClaim("Secretary");
             this.MembershipSecretary = token.GetBoolClaim("MembershipSecretary");
             this.Previewer = token.GetBoolClaim("Previewer");
@@ -46,7 +45,7 @@ namespace AnglingClubShared.DTOs
             this.PinResetRequired = token.GetBoolClaim("PinResetRequired");
         }
 
-        public ClaimsIdentity GetIdentity(Member member, string developerName)
+        public ClaimsIdentity GetIdentity(Member member, string developerName, bool alwaysShowName = false)
         {
             return new ClaimsIdentity(new[]
             {
@@ -61,7 +60,7 @@ namespace AnglingClubShared.DTOs
                 new Claim("Developer", (member.Name == developerName).ToString()),
                 new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),
                 new Claim("PreferencesLastUpdated", member.PreferencesLastUpdated.ToString("u")),
-                new Claim("Name", member.AllowNameToBeUsed ? member.Name : "Anonymous"),
+                new Claim("Name", member.AllowNameToBeUsed || alwaysShowName ? member.Name : "Anonymous"),
                 new Claim("Email", member.Email),
                 new Claim("PinResetRequired", member.PinResetRequired.ToString())
             });
