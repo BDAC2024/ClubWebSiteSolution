@@ -1,0 +1,48 @@
+.documentation-page {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.documentation-tree-panel {
+    width: 340px;
+    min-width: 280px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    background: #f8f8f8;
+}
+
+.documentation-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.documentation-files-panel {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    background: #fff;
+    min-height: 420px;
+}
+
+.documentation-files-header {
+    margin-bottom: 10px;
+}
+
+.documentation-files-header h4 {
+    margin: 0 0 6px 0;
+}
+
+@media (max-width: 900px) {
+    .documentation-page {
+        flex-direction: column;
+    }
+
+    .documentation-tree-panel {
+        width: 100%;
+    }
+}

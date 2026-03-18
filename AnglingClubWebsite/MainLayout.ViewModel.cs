@@ -222,6 +222,7 @@ namespace AnglingClubWebsite
             menuItems.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "User Admins" });
             menuItems.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Book Printing v2", NavigateUrl = menuUrl("/BookPrinting") });
             menuItems.Add(new MenuItem { Id = "09.4", ParentId = "09", Name = "Payments" });
+            menuItems.Add(new MenuItem { Id = "09.5", ParentId = "09", Name = "Documentation", NavigateUrl = menuUrl("/Documentation") });
 
             Menu.AddRange(menuItems);
             Menu = Menu.OrderBy(x => x.Id).ToList();
