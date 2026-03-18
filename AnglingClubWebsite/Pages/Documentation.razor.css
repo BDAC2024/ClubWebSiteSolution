@@ -15,9 +15,10 @@
 
 .documentation-toolbar {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    align-items: center;
     margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
 .documentation-files-panel {

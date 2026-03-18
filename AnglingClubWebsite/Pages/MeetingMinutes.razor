@@ -9,137 +9,144 @@
 @inherits RazorComponentBase;
 
 <AuthorizationRequired>
-    <div class="page-header">
-        <h3>Meeting Minutes</h3>
-    </div>
-    <p>
-        Below are the minutes from the club's meetings. Click on a meeting to view the detailed minutes.
-    </p>
 
-    <BusyIndicator IsReady="DataLoaded" />
-
-    @if (DocumentsQueryable.Any() || !_model.SearchText.IsWhiteSpace())
+    @if (!(CurrentUser.Secretary || CurrentUser.CommitteeMember))
     {
-        <div class="bdac-grid shrinkwrap">
-
-            <EditForm EditContext="_editContext">
-                <div class="edit-button-panel">
-                    <SfTextBox @ref="@SearchComponent"
-                               Created="@AddSearchIcon"
-                               Placeholder="Search content & Summary"
-                               ValueChange="@Search"
-                               @bind-Value="_model.SearchText"
-                               Width="230px">
-                    </SfTextBox>
-                    <ValidationMessage For="@(() => _model.SearchText)" />
-                </div>
-                <br />
-                <br />
-            </EditForm>
-
-            @if (CurrentUser.Secretary)
-            {
-                <div class="edit-button-panel">
-                    <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
-                </div>
-                <br />
-                <br />
-            }
-
-            <QuickGrid Items="DocumentsQueryable" Class="bdac-table">
-
-                    <TemplateColumn Title="Date">
-                        <ChildContent Context="row">
-                            <BdacGridCell TItem="DocumentListItem"
-                                          Item="row"
-                                          AdditionalClass="@CellClass(row)"
-                                          OnSelect="MeetingSelectedHandler">
-                                <span class="nowrap">@row.Created.BdacDate()</span>
-                            </BdacGridCell>
-                        </ChildContent>
-                    </TemplateColumn>
-
-                    @if (IsWide())
-                    {
-                        <TemplateColumn Title="Created by">
-                            <ChildContent Context="row">
-                                <BdacGridCell TItem="DocumentListItem"
-                                              Item="row"
-                                              AdditionalClass="@CellClass(row)"
-                                              OnSelect="MeetingSelectedHandler">
-                                    <span class="nowrap">@row.UploadedBy</span>
-                                </BdacGridCell>
-                            </ChildContent>
-                        </TemplateColumn>
-                    }
-
-                    <TemplateColumn Title="Title">
-                        <ChildContent Context="row">
-                            <BdacGridCell TItem="DocumentListItem"
-                                          Item="row"
-                                          AdditionalClass="@CellClass(row)"
-                                          OnSelect="MeetingSelectedHandler">
-                                <span class="nowrap">@row.Title</span>
-                            </BdacGridCell>
-                        </ChildContent>
-                    </TemplateColumn>
-
-                    @if (IsWide())
-                    {
-                        <TemplateColumn Title="Summary">
-                            <ChildContent Context="row">
-                                <BdacGridCell TItem="DocumentListItem"
-                                              Item="row"
-                                              AdditionalClass="@CellClass(row)"
-                                              OnSelect="MeetingSelectedHandler">
-                                    <span class="nowrap">@row.Notes</span>
-                                </BdacGridCell>
-                            </ChildContent>
-                        </TemplateColumn>
-                    }
-
-                    @if(CurrentUser.Secretary)
-                    {
-                        <TemplateColumn Title="Actions" Align="Align.Center">
-                            <ChildContent Context="row">
-                                <BdacGridCell TItem="DocumentListItem"
-                                              Item="row"
-                                              AdditionalClass="@CellClass(row)">
-                                    <span >
-                                        <SfButton CssClass="grid-action-btn"
-                                              IconCss="fa-solid fa-download"
-                                              Title="Download"
-                                              OnClick="@(async () => await DownloadAsync(row))" />
-
-                                        <SfButton CssClass="grid-action-btn grid-action-btn--danger"
-                                              IconCss="fa-solid fa-trash"
-                                              Title="Delete"
-                                              OnClick="@(async () => await DeleteAsync(row))" />
-                                    </span>
-                                </BdacGridCell>
-                            </ChildContent>
-                        </TemplateColumn>
-                    }
-
-                </QuickGrid>
-
-        </div>
+        <b>You are not authorised to see this page</b>
     }
     else
     {
-        @if (DataLoaded)
+        <div class="page-header">
+            <h3>Meeting Minutes</h3>
+        </div>
+        <p>
+            Below are the minutes from the club's meetings. Click on a meeting to view the detailed minutes.
+        </p>
+
+        <BusyIndicator IsReady="DataLoaded" />
+
+        @if (DocumentsQueryable.Any() || !_model.SearchText.IsWhiteSpace())
         {
-            <p>No minutes found</p>
+            <div class="bdac-grid shrinkwrap">
 
-            <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
+                <EditForm EditContext="_editContext">
+                    <div class="edit-button-panel">
+                        <SfTextBox @ref="@SearchComponent"
+                                   Created="@AddSearchIcon"
+                                   Placeholder="Search content & Summary"
+                                   ValueChange="@Search"
+                                   @bind-Value="_model.SearchText"
+                                   Width="230px">
+                        </SfTextBox>
+                        <ValidationMessage For="@(() => _model.SearchText)" />
+                    </div>
+                    <br />
+                    <br />
+                </EditForm>
+
+                @if (CurrentUser.Secretary)
+                {
+                    <div class="edit-button-panel">
+                        <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
+                    </div>
+                    <br />
+                    <br />
+                }
+
+                <QuickGrid Items="DocumentsQueryable" Class="bdac-table">
+
+                        <TemplateColumn Title="Date">
+                            <ChildContent Context="row">
+                                <BdacGridCell TItem="DocumentListItem"
+                                              Item="row"
+                                              AdditionalClass="@CellClass(row)"
+                                              OnSelect="MeetingSelectedHandler">
+                                    <span class="nowrap">@row.Created.BdacDate()</span>
+                                </BdacGridCell>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        @if (IsWide())
+                        {
+                            <TemplateColumn Title="Created by">
+                                <ChildContent Context="row">
+                                    <BdacGridCell TItem="DocumentListItem"
+                                                  Item="row"
+                                                  AdditionalClass="@CellClass(row)"
+                                                  OnSelect="MeetingSelectedHandler">
+                                        <span class="nowrap">@row.UploadedBy</span>
+                                    </BdacGridCell>
+                                </ChildContent>
+                            </TemplateColumn>
+                        }
+
+                        <TemplateColumn Title="Title">
+                            <ChildContent Context="row">
+                                <BdacGridCell TItem="DocumentListItem"
+                                              Item="row"
+                                              AdditionalClass="@CellClass(row)"
+                                              OnSelect="MeetingSelectedHandler">
+                                    <span class="nowrap">@row.Title</span>
+                                </BdacGridCell>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        @if (IsWide())
+                        {
+                            <TemplateColumn Title="Summary">
+                                <ChildContent Context="row">
+                                    <BdacGridCell TItem="DocumentListItem"
+                                                  Item="row"
+                                                  AdditionalClass="@CellClass(row)"
+                                                  OnSelect="MeetingSelectedHandler">
+                                        <span class="nowrap">@row.Notes</span>
+                                    </BdacGridCell>
+                                </ChildContent>
+                            </TemplateColumn>
+                        }
+
+                        @if(CurrentUser.Secretary)
+                        {
+                            <TemplateColumn Title="Actions" Align="Align.Center">
+                                <ChildContent Context="row">
+                                    <BdacGridCell TItem="DocumentListItem"
+                                                  Item="row"
+                                                  AdditionalClass="@CellClass(row)">
+                                        <span >
+                                            <SfButton CssClass="grid-action-btn"
+                                                  IconCss="fa-solid fa-download"
+                                                  Title="Download"
+                                                  OnClick="@(async () => await DownloadAsync(row))" />
+
+                                            <SfButton CssClass="grid-action-btn grid-action-btn--danger"
+                                                  IconCss="fa-solid fa-trash"
+                                                  Title="Delete"
+                                                  OnClick="@(async () => await DeleteAsync(row))" />
+                                        </span>
+                                    </BdacGridCell>
+                                </ChildContent>
+                            </TemplateColumn>
+                        }
+
+                    </QuickGrid>
+
+            </div>
         }
+        else
+        {
+            @if (DataLoaded)
+            {
+                <p>No minutes found</p>
+
+                <SfButton CssClass="e-primary edit-button" @onclick="AddMinutesHandler"><i class="fa-solid fa-add" /> Upload Minutes</SfButton>
+            }
+        }
+
+
+
+        <AddMinutes @bind-Visible="AddingMinutes" RefreshRequested="RefreshGridAsync"></AddMinutes>
+
+        @* Note the 2-way binding of the Visible property *@
+        <MinutesDetails @bind-Visible="ShowingMeeting" SelectedMeeting="SelectedMeeting"></MinutesDetails>
     }
-
-
-
-    <AddMinutes @bind-Visible="AddingMinutes" RefreshRequested="RefreshGridAsync"></AddMinutes>
-
-    @* Note the 2-way binding of the Visible property *@
-    <MinutesDetails @bind-Visible="ShowingMeeting" SelectedMeeting="SelectedMeeting"></MinutesDetails>
-
 </AuthorizationRequired>
