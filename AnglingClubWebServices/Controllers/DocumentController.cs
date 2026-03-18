@@ -88,6 +88,36 @@ namespace AnglingClubWebServices.Controllers
             return Ok(new FileUploadUrlResult { UploadUrl = url, UploadedFileName = fileId });
         }
 
+
+
+        [HttpGet("documentation/listing")]
+        public async Task<IActionResult> GetDocumentationListing([FromQuery] string folderPath = "")
+        {
+            var result = await _documentService.GetDocumentationListing(folderPath);
+            return Ok(result);
+        }
+
+        [HttpPost("documentation/upload-url")]
+        public async Task<IActionResult> GetDocumentationUploadUrl([FromBody] DocumentationUploadUrlRequestDto req)
+        {
+            var result = await _documentService.GetDocumentationUploadUrl(req);
+            return Ok(result);
+        }
+
+        [HttpPost("documentation/folder")]
+        public async Task<IActionResult> CreateDocumentationFolder([FromBody] CreateDocumentationFolderRequestDto req)
+        {
+            await _documentService.CreateDocumentationFolder(req);
+            return Ok();
+        }
+
+        [HttpGet("documentation/download")]
+        public async Task<IActionResult> DownloadDocumentation([FromQuery] string key)
+        {
+            var url = await _documentService.GetDocumentationDownloadUrl(key);
+            return Ok(url);
+        }
+
         [HttpGet("minutes/readonly/{id}")]
         public async Task<IActionResult> GetReadOnlyMinutes(string id)
         {

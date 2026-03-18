@@ -248,5 +248,43 @@ namespace AnglingClubWebServices.Data
             return base.getFilePresignedUrl(storedFileName, _options.DocumentBucket, minutesBeforeExpiry, DownloadType.attachment, returnedFileName);
         }
 
+        public async Task<List<StoredFileMeta>> GetFilesByPrefix(string prefix)
+        {
+            var normalizedPrefix = prefix?.Trim('/') ?? string.Empty;
+            var allFiles = await base.getFilesFromS3(_options.DocumentBucket);
+
+            if (string.IsNullOrEmpty(normalizedPrefix))
+            {
+                return allFiles;
+            }
+
+            return allFiles.Where(x => x.Id.StartsWith($"{normalizedPrefix}/", StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        public async Task<bool> FileExists(string key)
+        {
+            var normalizedKey = key.Trim('/');
+
+            using (var s3Client = GetS3Client())
+            {
+                try
+                {
+                    await s3Client.GetObjectMetadataAsync(_options.DocumentBucket, normalizedKey);
+                    return true;
+                }
+                catch (Amazon.S3.AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public async Task CreateFolderMarker(string folderPath)
+        {
+            var normalizedFolder = folderPath.Trim('/');
+            var markerPath = string.IsNullOrWhiteSpace(normalizedFolder) ? ".keep" : $"{normalizedFolder}/.keep";
+            await base.saveFile(markerPath, Array.Empty<byte>(), "application/octet-stream", _options.DocumentBucket);
+        }
+
     }
 }

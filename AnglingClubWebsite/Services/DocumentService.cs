@@ -157,6 +157,49 @@ namespace AnglingClubWebsite.Services
             }
         }
 
+
+        public async Task<DocumentationListingDto?> GetDocumentationListing(string folderPath)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENTATION_LISTING}?folderPath={Uri.EscapeDataString(folderPath ?? string.Empty)}";
+            var response = await Http.GetAsync(relativeEndpoint);
+            return await response.Content.ReadFromJsonAsync<DocumentationListingDto>();
+        }
+
+        public async Task<DocumentationUploadUrlResultDto?> GetDocumentationUploadUrl(string folderPath, UploadFiles file, bool overwriteIfExists)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENTATION_UPLOADURL}";
+
+            var model = new DocumentationUploadUrlRequestDto
+            {
+                FolderPath = folderPath ?? string.Empty,
+                FileName = file.FileInfo.Name,
+                ContentType = file.File.ContentType,
+                OverwriteIfExists = overwriteIfExists
+            };
+
+            var response = await Http.PostAsync(relativeEndpoint, JsonContent.Create(model));
+            return await response.Content.ReadFromJsonAsync<DocumentationUploadUrlResultDto>();
+        }
+
+        public async Task CreateDocumentationFolder(string parentPath, string folderName)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENTATION_FOLDER}";
+            var model = new CreateDocumentationFolderRequestDto
+            {
+                ParentPath = parentPath ?? string.Empty,
+                FolderName = folderName
+            };
+
+            await Http.PostAsync(relativeEndpoint, JsonContent.Create(model));
+        }
+
+        public async Task<string?> GetDocumentationDownloadUrl(string fileKey)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_DOCUMENTATION_DOWNLOAD}?key={Uri.EscapeDataString(fileKey)}";
+            var response = await Http.GetAsync(relativeEndpoint);
+            return await response.Content.ReadAsStringAsync();
+        }
+
         public async Task DeleteDocument(string id)
         {
             var relativeEndpoint = $"{CONTROLLER}{Constants.API_DOCUMENT}/{id}";

@@ -1,4 +1,5 @@
-﻿using AnglingClubShared.Entities;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
 using AnglingClubShared.Models;
@@ -264,6 +265,141 @@ namespace AnglingClubWebServices.Services
             }
 
             return items;
+        }
+
+
+        public async Task<DocumentationListingDto> GetDocumentationListing(string folderPath)
+        {
+            var normalizedFolder = NormalizeFolderPath(folderPath);
+            var prefix = string.IsNullOrWhiteSpace(normalizedFolder) ? string.Empty : $"{normalizedFolder}/";
+
+            var s3Items = await _documentRepository.GetFilesByPrefix(string.Empty);
+
+            var dto = new DocumentationListingDto();
+            var folders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var item in s3Items)
+            {
+                var key = item.Id ?? string.Empty;
+                if (IsExcluded(key) || key.EndsWith("/.keep", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var keySegments = key.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                if (keySegments.Length > 1)
+                {
+                    var path = string.Empty;
+                    for (var i = 0; i < keySegments.Length - 1; i++)
+                    {
+                        path = string.IsNullOrEmpty(path) ? keySegments[i] : $"{path}/{keySegments[i]}";
+                        if (!IsExcluded(path))
+                        {
+                            folders.Add(path);
+                        }
+                    }
+                }
+
+                if (!key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var relativePath = key.Substring(prefix.Length);
+                if (string.IsNullOrWhiteSpace(relativePath) || relativePath.Contains('/'))
+                {
+                    continue;
+                }
+
+                dto.Files.Add(new DocumentationFileItemDto
+                {
+                    Key = key,
+                    FileName = relativePath,
+                    Created = item.Created
+                });
+            }
+
+            dto.Folders = folders.OrderBy(x => x).ToList();
+            dto.Files = dto.Files.OrderByDescending(x => x.Created).ThenBy(x => x.FileName).ToList();
+            return dto;
+        }
+
+        public async Task<DocumentationUploadUrlResultDto> GetDocumentationUploadUrl(DocumentationUploadUrlRequestDto req)
+        {
+            var folder = NormalizeFolderPath(req.FolderPath);
+            var safeFileName = Path.GetFileName(req.FileName);
+            if (string.IsNullOrWhiteSpace(safeFileName))
+            {
+                throw new AppValidationException("File name is required", "FileName");
+            }
+
+            var key = string.IsNullOrWhiteSpace(folder) ? safeFileName : $"{folder}/{safeFileName}";
+
+            if (IsExcluded(key))
+            {
+                throw new AppForbiddenException("The selected location is reserved and cannot be modified.");
+            }
+
+            var exists = await _documentRepository.FileExists(key);
+            if (exists && !req.OverwriteIfExists)
+            {
+                return new DocumentationUploadUrlResultDto { FileExists = true, UploadedFileName = key };
+            }
+
+            var uploadUrl = await _documentRepository.GetDocumentUploadUrl(key, req.ContentType);
+            return new DocumentationUploadUrlResultDto
+            {
+                FileExists = exists,
+                UploadedFileName = key,
+                UploadUrl = uploadUrl
+            };
+        }
+
+        public async Task CreateDocumentationFolder(CreateDocumentationFolderRequestDto req)
+        {
+            var parent = NormalizeFolderPath(req.ParentPath);
+            var folderName = (req.FolderName ?? string.Empty).Trim().Trim('/');
+
+            if (string.IsNullOrWhiteSpace(folderName) || folderName.Contains('/') || folderName.Contains('\\'))
+            {
+                throw new AppValidationException("Folder name contains invalid characters.", "FolderName");
+            }
+
+            var fullPath = string.IsNullOrWhiteSpace(parent) ? folderName : $"{parent}/{folderName}";
+
+            if (IsExcluded(fullPath))
+            {
+                throw new AppForbiddenException("The selected location is reserved and cannot be modified.");
+            }
+
+            await _documentRepository.CreateFolderMarker(fullPath);
+        }
+
+        public async Task<string> GetDocumentationDownloadUrl(string fileKey)
+        {
+            var normalizedKey = (fileKey ?? string.Empty).Trim().Trim('/');
+            if (string.IsNullOrWhiteSpace(normalizedKey))
+            {
+                throw new AppValidationException("File key is required", "fileKey");
+            }
+
+            if (IsExcluded(normalizedKey))
+            {
+                throw new AppForbiddenException("The selected file is reserved.");
+            }
+
+            var fileName = Path.GetFileName(normalizedKey);
+            return await _documentRepository.GetFilePresignedUrl(normalizedKey, fileName, SharedConstants.MINUTES_TO_EXPIRE_LINKS);
+        }
+
+        private static string NormalizeFolderPath(string folderPath)
+        {
+            return (folderPath ?? string.Empty).Trim().Trim('/');
+        }
+
+        private static bool IsExcluded(string path)
+        {
+            return path.StartsWith("Meetings/Minutes", StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task SaveDocument(DocumentMeta docItem, int createdByMember)

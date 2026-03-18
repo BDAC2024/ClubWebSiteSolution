@@ -23,6 +23,10 @@
         public const string API_DOCUMENT = "";
         public const string API_DOCUMENT_GETUPLOADURL = "GetUploadUrl";
         public const string API_DOCUMENT_READ = "GetDocuments";
+        public const string API_DOCUMENTATION_LISTING = "documentation/listing";
+        public const string API_DOCUMENTATION_UPLOADURL = "documentation/upload-url";
+        public const string API_DOCUMENTATION_FOLDER = "documentation/folder";
+        public const string API_DOCUMENTATION_DOWNLOAD = "documentation/download";
 
         public const string API_TMPFILE = "";
         public const string API_TMPFILE_GETUPLOADURL = "GetUploadUrl";

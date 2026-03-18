@@ -1,0 +1,92 @@
+@page "/Documentation"
+
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Navigations
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+    <div class="page-header">
+        <h3>Documentation</h3>
+    </div>
+
+    @if (!CurrentUser.Admin)
+    {
+        <p>You do not have access to this page.</p>
+    }
+    else
+    {
+        <BusyIndicator IsReady="DataLoaded" />
+
+        <div class="documentation-layout">
+            <div class="documentation-tree-panel">
+                <div class="documentation-toolbar">
+                    <SfTextBox Placeholder="New folder name" @bind-Value="NewFolderName" Width="190px" />
+                    <SfButton CssClass="e-primary" OnClick="CreateFolderAsync"><i class="fa-solid fa-folder-plus" /> Add Folder</SfButton>
+                </div>
+
+                <SfTreeView TValue="DocumentationNode"
+                            @bind-SelectedNodes="SelectedNodeIds"
+                            ExpandOn="ExpandAction.Click">
+                    <TreeViewFieldsSettings TValue="DocumentationNode"
+                                            Id="Id"
+                                            ParentID="ParentId"
+                                            DataSource="TreeNodes"
+                                            Text="Text"
+                                            Expanded="Expanded"
+                                            HasChildren="HasChildren"
+                                            IconCss="IconCss" />
+                    <TreeViewEvents TValue="DocumentationNode" NodeClicked="NodeClicked" />
+                </SfTreeView>
+            </div>
+
+            <div class="documentation-files-panel">
+                <h5>Folder: @(string.IsNullOrWhiteSpace(CurrentFolderPath) ? "/" : CurrentFolderPath)</h5>
+
+                <div class="documentation-toolbar">
+                    <SfUploader AutoUpload="false"
+                                AllowMultiple="false"
+                                EnableHtmlSanitizer="true"
+                                MaxFileSize="20971520">
+                        <UploaderEvents ValueChange="UploadChanged" OnRemove="RemoveUpload" />
+                    </SfUploader>
+                    <SfButton CssClass="e-primary" Disabled="SelectedUploadFile == null" OnClick="UploadAsync"><i class="fa-solid fa-upload" /> Upload</SfButton>
+                </div>
+
+                <table class="bdac-table documentation-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Created</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Files.Any())
+                        {
+                            @foreach (var file in Files)
+                            {
+                                <tr>
+                                    <td>@file.FileName</td>
+                                    <td>@file.Created.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                                    <td>
+                                        <SfButton CssClass="grid-action-btn"
+                                                  IconCss="fa-solid fa-download"
+                                                  Title="Download"
+                                                  OnClick="@(async () => await DownloadAsync(file))" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3">No files in this folder.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</AuthorizationRequired>

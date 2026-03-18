@@ -1,0 +1,27 @@
+.documentation-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.documentation-tree-panel {
+    min-width: 280px;
+    max-width: 320px;
+}
+
+.documentation-files-panel {
+    flex: 1;
+}
+
+.documentation-toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.documentation-table th,
+.documentation-table td {
+    padding: 8px;
+}
