@@ -1,4 +1,5 @@
-﻿using AnglingClubShared.Entities;
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using Syncfusion.DocIO.DLS;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +14,9 @@ namespace AnglingClubWebServices.Interfaces
         Task<DocumentMeta> GetById(string docId);
         Task<WordDocument> GetWordDocument(string fileName);
         Task<string> GetDocumentUploadUrl(string filename, string contentType);
+        Task<List<DocumentationStoredFileDto>> GetDocumentationFiles();
+        Task<bool> DocumentationFileExists(string fileName);
+        Task CreateDocumentationFolder(string folderPath);
         Task DeleteDocument(string id);
         Task<string> GetFilePresignedUrl(string storedFileName, string returnedFileName, int minutesBeforeExpiry);
         Task<string> GetRawText(DocumentMeta doc);

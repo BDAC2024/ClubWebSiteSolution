@@ -1,4 +1,5 @@
 using Amazon.SimpleDB;
+using AnglingClubShared.DTOs;
 using Amazon.SimpleDB.Model;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
@@ -198,6 +199,49 @@ namespace AnglingClubWebServices.Data
         public async Task<string> GetDocumentUploadUrl(string filename, string contentType)
         {
             return await base.getPreSignedUploadUrl(filename, contentType, _options.DocumentBucket);
+        }
+
+
+        public async Task<List<DocumentationStoredFileDto>> GetDocumentationFiles()
+        {
+            var files = await base.getFilesFromS3(_options.DocumentBucket);
+
+            return files
+                .Where(x => !x.Id.StartsWith("Meetings/Minutes", StringComparison.OrdinalIgnoreCase))
+                .Select(x => new DocumentationStoredFileDto
+                {
+                    Key = x.Id,
+                    Created = x.Created
+                })
+                .OrderBy(x => x.Key)
+                .ToList();
+        }
+
+        public async Task<bool> DocumentationFileExists(string fileName)
+        {
+            var files = await GetDocumentationFiles();
+            return files.Any(x => string.Equals(x.Key, fileName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task CreateDocumentationFolder(string folderPath)
+        {
+            if (string.IsNullOrWhiteSpace(folderPath))
+            {
+                throw new AppValidationException("Folder path is required", "folderPath");
+            }
+
+            var normalized = folderPath.Trim('/');
+            if (normalized.StartsWith("Meetings/Minutes", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new AppValidationException("Cannot create folders under Meetings/Minutes", "folderPath");
+            }
+
+            var markerKey = $"{normalized}/.folder";
+            var exists = await DocumentationFileExists(markerKey);
+            if (!exists)
+            {
+                await base.saveFile(markerKey, Array.Empty<byte>(), "application/x-directory", _options.DocumentBucket);
+            }
         }
 
         public async Task DeleteDocument(string id)

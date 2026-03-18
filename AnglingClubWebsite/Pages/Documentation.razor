@@ -1,0 +1,87 @@
+@page "/Documentation"
+
+@using AnglingClubShared.Extensions
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Navigations
+
+@inherits RazorComponentBase
+
+<AuthorizationRequired>
+    <div class="page-header">
+        <h3>Documentation</h3>
+    </div>
+
+    <BusyIndicator IsReady="DataLoaded" />
+
+    <div class="documentation-layout">
+        <div class="documentation-tree-panel">
+            <div class="documentation-tree-toolbar">
+                <SfTextBox Placeholder="New folder name" @bind-Value="NewFolderName"></SfTextBox>
+                <SfButton CssClass="e-primary" OnClick="CreateFolderAsync">Create Folder</SfButton>
+            </div>
+
+            <SfTreeView TValue="FolderNode" @bind-SelectedNodes="SelectedNodes" FullRowSelect="true">
+                <TreeViewFieldsSettings TValue="FolderNode"
+                                       Id="Id"
+                                       ParentID="ParentId"
+                                       Text="Text"
+                                       IconCss="IconCss"
+                                       DataSource="FolderTree"
+                                       HasChildren="HasChildren">
+                </TreeViewFieldsSettings>
+                <TreeViewEvents TValue="FolderNode" NodeClicked="OnFolderClicked"></TreeViewEvents>
+            </SfTreeView>
+        </div>
+
+        <div class="documentation-files-panel">
+            <div class="documentation-files-toolbar">
+                <span><b>Selected folder:</b> @(string.IsNullOrWhiteSpace(SelectedFolderPath) ? "/" : SelectedFolderPath)</span>
+            </div>
+
+            <table class="bdac-table documentation-table">
+                <thead>
+                    <tr>
+                        <th>File name</th>
+                        <th>Created</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (FilesInSelectedFolder.Any())
+                    {
+                        @foreach (var file in FilesInSelectedFolder.OrderBy(x => x.FileName))
+                        {
+                            <tr>
+                                <td>@file.FileName</td>
+                                <td>@file.Created.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>
+                                    <SfButton CssClass="grid-action-btn"
+                                              IconCss="fa-solid fa-download"
+                                              Title="Download"
+                                              OnClick="@(async () => await DownloadAsync(file.Key))" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No files in this folder</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="documentation-upload-panel">
+                <SfUploader AutoUpload="false"
+                            AllowMultiple="false"
+                            MaxFileSize="52428800"
+                            EnableHtmlSanitizer="true">
+                    <UploaderEvents ValueChange="FileSelectedAsync"></UploaderEvents>
+                </SfUploader>
+                <SfButton CssClass="e-primary" Disabled="@(SelectedUploadFile is null)" OnClick="UploadSelectedFileAsync">Upload</SfButton>
+            </div>
+        </div>
+    </div>
+</AuthorizationRequired>

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
@@ -86,6 +87,55 @@ namespace AnglingClubWebServices.Controllers
             var url = await _documentRepository.GetDocumentUploadUrl(fileId, docUploadUrlDto.ContentType);
 
             return Ok(new FileUploadUrlResult { UploadUrl = url, UploadedFileName = fileId });
+        }
+
+
+        [HttpGet("documentation/files")]
+        public async Task<IActionResult> GetDocumentationFiles()
+        {
+            var files = await _documentRepository.GetDocumentationFiles();
+            return Ok(files);
+        }
+
+        [HttpPost("documentation/folders")]
+        public async Task<IActionResult> CreateDocumentationFolder([FromBody] DocumentationCreateFolderRequest req)
+        {
+            await _documentRepository.CreateDocumentationFolder(req.FolderPath);
+            return NoContent();
+        }
+
+        [HttpPost("documentation/uploadurl")]
+        public async Task<IActionResult> GetDocumentationUploadUrl([FromBody] DocumentationUploadUrlRequest req)
+        {
+            var separator = req.FolderPath.IsNullOrEmpty() ? "" : (req.FolderPath.EndsWith("/") ? "" : "/");
+            var key = $"{req.FolderPath}{separator}{req.FileName}".Trim('/');
+
+            if (key.StartsWith("Meetings/Minutes", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Uploads to Meetings/Minutes are not allowed from this page.");
+            }
+
+            var exists = await _documentRepository.DocumentationFileExists(key);
+            if (exists && !req.OverwriteExisting)
+            {
+                return Conflict("A file with this name already exists in the selected folder.");
+            }
+
+            var url = await _documentRepository.GetDocumentUploadUrl(key, req.ContentType);
+
+            return Ok(new FileUploadUrlResult { UploadUrl = url, UploadedFileName = key });
+        }
+
+        [HttpPost("documentation/downloadurl")]
+        public async Task<IActionResult> GetDocumentationDownloadUrl([FromBody] DocumentationDownloadUrlRequest req)
+        {
+            if (req.Key.StartsWith("Meetings/Minutes", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Downloads from Meetings/Minutes are not allowed from this page.");
+            }
+
+            var url = await _documentRepository.GetFilePresignedUrl(req.Key, Path.GetFileName(req.Key), 10);
+            return Ok(url);
         }
 
         [HttpGet("minutes/readonly/{id}")]

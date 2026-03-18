@@ -167,6 +167,49 @@ namespace AnglingClubWebsite.Services
         }
 
 
+        public async Task<List<DocumentationStoredFileDto>?> GetDocumentationFiles()
+        {
+            var relativeEndpoint = $"{CONTROLLER}/documentation/files";
+            var response = await Http.GetAsync(relativeEndpoint);
+            return await response.Content.ReadFromJsonAsync<List<DocumentationStoredFileDto>>();
+        }
+
+        public async Task<FileUploadUrlResult?> GetDocumentationUploadUrl(string folderPath, string fileName, string contentType, bool overwriteExisting)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/documentation/uploadurl";
+            var model = new DocumentationUploadUrlRequest
+            {
+                FolderPath = folderPath,
+                FileName = fileName,
+                ContentType = contentType,
+                OverwriteExisting = overwriteExisting
+            };
+
+            var response = await Http.PostAsJsonAsync(relativeEndpoint, model);
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                throw new InvalidOperationException("FileAlreadyExists");
+            }
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<FileUploadUrlResult>();
+        }
+
+        public async Task<string?> GetDocumentationDownloadUrl(string key)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/documentation/downloadurl";
+            var response = await Http.PostAsJsonAsync(relativeEndpoint, new DocumentationDownloadUrlRequest { Key = key });
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<string>();
+        }
+
+        public async Task CreateDocumentationFolder(string folderPath)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/documentation/folders";
+            var response = await Http.PostAsJsonAsync(relativeEndpoint, new DocumentationCreateFolderRequest { FolderPath = folderPath });
+            response.EnsureSuccessStatusCode();
+        }
+
     }
 
 }
