@@ -163,6 +163,7 @@ namespace AnglingClubWebServices
             services.AddTransient<IOpenMatchRegistrationRepository, OpenMatchRegistrationRepository>();
             services.AddTransient<ITmpFileRepository, TmpFileRepository>();
             services.AddTransient<IDocumentRepository, DocumentRepository>();
+            services.AddTransient<IDocumentationRepository, DocumentationRepository>();
 
             services.AddTransient<IPaymentsService, PaymentService>();
             services.AddTransient<ITicketService, TicketService>();

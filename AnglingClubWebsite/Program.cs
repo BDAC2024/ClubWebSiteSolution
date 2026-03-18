@@ -137,6 +137,7 @@ builder.Services.AddTransient<IClubEventService, ClubEventService>();
 builder.Services.AddTransient<IMatchResultsService, MatchResultsService>();
 builder.Services.AddTransient<IAboutService, AboutService>();
 builder.Services.AddTransient<IDocumentService, DocumentService>();
+builder.Services.AddTransient<IDocumentationService, DocumentationService>();
 builder.Services.AddSingleton<IDialogQueue, DialogQueue>();
 builder.Services.AddTransient<ITmpFileService, TmpFileService>();
 builder.Services.AddTransient<IBookPrintingService, BookPrintingService>();

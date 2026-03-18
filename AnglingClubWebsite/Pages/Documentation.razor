@@ -1,0 +1,86 @@
+@page "/Documentation"
+
+@using AnglingClubShared.DTOs
+@using AnglingClubWebsite.Services
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Navigations
+
+@inherits RazorComponentBase
+
+<AuthorizationRequired>
+    <div class="page-header">
+        <h3>Documentation</h3>
+    </div>
+
+    <BusyIndicator IsReady="DataLoaded" />
+
+    @if (DataLoaded)
+    {
+        <div class="documentation-toolbar">
+            <SfTextBox Placeholder="New folder name" FloatLabelType="FloatLabelType.Auto" @bind-Value="NewFolderName" Width="220px" />
+            <SfButton CssClass="e-primary" @onclick="CreateFolderAsync">
+                <i class="fa-solid fa-folder-plus"></i> New Folder
+            </SfButton>
+
+            <InputFile OnChange="OnFileSelectedAsync" />
+            <SfButton CssClass="e-primary" Disabled="@(SelectedFile == null)" @onclick="UploadSelectedFileAsync">
+                <i class="fa-solid fa-upload"></i> Upload
+            </SfButton>
+
+            <span class="documentation-current-folder">Current folder: <strong>@DisplayFolder(SelectedFolderPath)</strong></span>
+        </div>
+
+        <div class="documentation-layout">
+            <div class="documentation-tree-panel">
+                <SfTreeView TValue="FolderNode" @bind-ExpandedNodes="ExpandedNodes">
+                    <TreeViewFieldsSettings TValue="FolderNode"
+                                            Id="Id"
+                                            ParentID="ParentId"
+                                            DataSource="@FolderNodes"
+                                            Text="Name"
+                                            HasChildren="HasChildren"
+                                            IconCss="IconCss">
+                    </TreeViewFieldsSettings>
+                    <TreeViewEvents TValue="FolderNode" NodeClicked="OnFolderClicked"></TreeViewEvents>
+                </SfTreeView>
+            </div>
+
+            <div class="documentation-files-panel">
+                <table class="bdac-table documentation-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Created</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (CurrentFolderFiles.Any())
+                        {
+                            @foreach (var file in CurrentFolderFiles)
+                            {
+                                <tr>
+                                    <td>@file.FileName</td>
+                                    <td>@file.Created.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <SfButton CssClass="grid-action-btn"
+                                                  IconCss="fa-solid fa-download"
+                                                  Title="Download"
+                                                  OnClick="@(async () => await DownloadFileAsync(file))" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3">No files in this folder.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</AuthorizationRequired>

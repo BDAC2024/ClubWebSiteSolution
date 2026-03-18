@@ -1,0 +1,44 @@
+.documentation-toolbar {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.documentation-current-folder {
+    margin-left: auto;
+}
+
+.documentation-layout {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) 1fr;
+    gap: 1rem;
+}
+
+.documentation-tree-panel,
+.documentation-files-panel {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.75rem;
+    background: #fff;
+}
+
+.documentation-table {
+    width: 100%;
+}
+
+.documentation-table th,
+.documentation-table td {
+    padding: 0.5rem;
+}
+
+@media (max-width: 900px) {
+    .documentation-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .documentation-current-folder {
+        margin-left: 0;
+    }
+}
