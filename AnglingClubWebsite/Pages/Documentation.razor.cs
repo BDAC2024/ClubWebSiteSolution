@@ -1,5 +1,5 @@
 using AnglingClubShared.DTOs;
-using AnglingClubShared.Extensions;
+using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
@@ -228,7 +228,7 @@ namespace AnglingClubWebsite.Pages
             var uploadDetails = await _documentService.GetDocumentationUploadUrl(SelectedFolderPath, selectedFile, overwrite);
             if (uploadDetails == null)
             {
-                throw new ApiException("Unable to get upload url");
+                throw new Exception("Unable to get upload url");
             }
 
             if (uploadDetails.FileAlreadyExists)

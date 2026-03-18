@@ -7,6 +7,10 @@ using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
 {
@@ -51,12 +55,12 @@ namespace AnglingClubWebServices.Data
                     results.Add(new DocumentationBucketItemDto
                     {
                         Key = s3Object.Key,
-                        LastModifiedUtc = s3Object.LastModified.ToUniversalTime(),
+                        LastModifiedUtc = s3Object.LastModified.Value.ToUniversalTime(),
                         IsFolderPlaceholder = s3Object.Key.EndsWith('/')
                     });
                 }
 
-                continuationToken = listResponse.IsTruncated ? listResponse.NextContinuationToken : null;
+                continuationToken = listResponse.IsTruncated.Value ? listResponse.NextContinuationToken : null;
             }
             while (!string.IsNullOrWhiteSpace(continuationToken));
 

@@ -2,6 +2,8 @@ using AnglingClubShared.DTOs;
 using AnglingClubWebServices.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Controllers
 {

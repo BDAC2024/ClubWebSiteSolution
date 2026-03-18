@@ -1,4 +1,6 @@
 using AnglingClubShared.DTOs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Interfaces
 {
