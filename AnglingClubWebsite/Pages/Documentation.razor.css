@@ -47,6 +47,14 @@
     margin-bottom: 10px;
 }
 
+.documentation-files-content ::deep .bdac-table thead th,
+.documentation-files-content ::deep .bdac-table thead th .col-header-content,
+.documentation-files-content ::deep .bdac-table thead th .col-title,
+.documentation-files-content ::deep .bdac-table thead th .col-title-text {
+    text-align: left !important;
+    justify-content: flex-start !important;
+}
+
 .documentation-files-header {
     margin-bottom: 10px;
 }

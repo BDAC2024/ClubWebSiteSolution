@@ -83,10 +83,10 @@
                             @if (FilesInSelectedFolder.Any())
                             {
                                 <QuickGrid Items="FilesInSelectedFolder.AsQueryable()" Class="bdac-table no-click">
-                                    <PropertyColumn Property="x => x.FileName" Title="File name" />
+                                    <PropertyColumn Property="x => x.FileName" Title="File name" Sortable="true" />
                                     @if (IsWide())
                                     {
-                                        <TemplateColumn Title="Created">
+                                        <TemplateColumn Title="Created" Sortable="true" SortBy="@SortByCreatedUtc">
                                             <span style="padding-left: 10px;">@((context.CreatedUtc.ToLocalTime()).BdacDateTime())</span>
                                         </TemplateColumn>
                                     }

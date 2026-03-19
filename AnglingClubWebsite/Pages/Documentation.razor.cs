@@ -5,6 +5,7 @@ using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.AspNetCore.Components.QuickGrid;
 using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.Navigations;
 
@@ -350,6 +351,9 @@ namespace AnglingClubWebsite.Pages
         {
             BrowserSize = _browserService.DeviceSize;
         }
+
+        public static readonly GridSort<DocumentationFileItem> SortByCreatedUtc =
+            GridSort<DocumentationFileItem>.ByAscending(x => x.CreatedUtc);
 
         public class DocumentationTreeNode
         {
