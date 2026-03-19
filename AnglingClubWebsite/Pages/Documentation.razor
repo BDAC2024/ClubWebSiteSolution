@@ -1,0 +1,118 @@
+@page "/Documentation"
+
+@using AnglingClubShared.DTOs
+@using AnglingClubShared.Extensions;
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+    <div class="page-header">
+        <h3>Documentation</h3>
+    </div>
+
+    <p>
+        Browse and manage Club Documentation
+    </p>
+
+    <BusyIndicator IsReady="DataLoaded" />
+
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <SfMessage Severity="MessageSeverity.Error">
+            @Message
+        </SfMessage>
+    }
+    else
+    {
+
+        @if (DataLoaded)
+        {
+            <div class="documentation-page">
+                <div class="documentation-tree-panel">
+                    <div class="documentation-toolbar">
+                        <SfTextBox CssClass="documentation-folder-input" Placeholder="New folder name" @bind-Value="NewFolderName"></SfTextBox>
+                        <SfButton CssClass="e-primary" OnClick="CreateFolderAsync">
+                            <i class="fa-solid fa-folder-plus" /> Add Folder
+                        </SfButton>
+                    </div>
+
+                    <SfTreeView TValue="DocumentationTreeNode" @bind-SelectedNodes="SelectedTreeNodes">
+                        <TreeViewFieldsSettings TValue="DocumentationTreeNode"
+                                               Id="Id"
+                                               ParentID="ParentId"
+                                               DataSource="TreeNodes"
+                                               Text="Name"
+                                               HasChildren="HasChildren"
+                                               IconCss="IconCss"
+                                               Expanded="Expanded">
+                        </TreeViewFieldsSettings>
+                        <TreeViewEvents TValue="DocumentationTreeNode" NodeClicked="OnFolderClicked"></TreeViewEvents>
+                    </SfTreeView>
+                </div>
+                <div class="documentation-files-panel">
+                    <div class="documentation-files-header">
+                        <h4>Files in: @SelectedFolderLabel</h4>
+                    </div>
+
+                    <div class="documentation-files-content shrinkwrap">
+                        @if (!HasFolderSelected)
+                        {
+                            <p>Select a folder to manage files.</p>
+                        }
+                        else
+                        {
+                            @if (!IsBackupFolderSelected)
+                            {
+                                <SfUploader CssClass="documentation-uploader"
+                                            AutoUpload="true"
+                                            AllowMultiple="false"
+                                            ShowFileList="false"
+                                            MaxFileSize="20971520"
+                                            EnableHtmlSanitizer="true">
+                                    <UploaderEvents ValueChange="UploadHandler"></UploaderEvents>
+                                </SfUploader>
+                            }
+                            else
+                            {
+                                <p>Upload is disabled in backup folders. A maximum of 5 backups are kept for each file.</p>
+                            }
+
+                            @if (FilesInSelectedFolder.Any())
+                            {
+                                <QuickGrid Items="FilesInSelectedFolder.AsQueryable()" Class="bdac-table no-click">
+                                    <PropertyColumn Property="x => x.FileName" Title="File name" Sortable="true" />
+                                    @if (IsWide())
+                                    {
+                                        <TemplateColumn Title="Created" Sortable="true" SortBy="@SortByCreatedUtc">
+                                            <span style="padding-left: 10px;">@((context.CreatedUtc.ToLocalTime()).BdacDateTime())</span>
+                                        </TemplateColumn>
+                                    }
+                                    <TemplateColumn Title="Actions" Align="Align.Center">
+                                        <span>
+                                            <SfButton CssClass="grid-action-btn"
+                                                      IconCss="fa-solid fa-download"
+                                                      Title="Download"
+                                                      OnClick="@(async () => await DownloadAsync(context))" />
+                                            <SfButton CssClass="grid-action-btn grid-action-btn--danger"
+                                                      IconCss="fa-solid fa-trash"
+                                                      Title="Delete"
+                                                      OnClick="@(async () => await DeleteAsync(context))" />
+                                        </span>
+                                    </TemplateColumn>
+                                </QuickGrid>
+                            }
+                            else
+                            {
+                                <p>No files in this folder.</p>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</AuthorizationRequired>
