@@ -1,4 +1,5 @@
 using AnglingClubShared.DTOs;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,11 @@ namespace AnglingClubWebServices.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DocumentationListResponse))]
         public async Task<IActionResult> GetItems()
         {
+            if (!CurrentUser.Admin)
+            {
+                throw new AppForbiddenException("Only Administrators can access this.");
+            }
+
             var items = await _documentationRepository.GetDocumentationItems();
             return Ok(new DocumentationListResponse { Items = items });
         }
@@ -29,6 +35,11 @@ namespace AnglingClubWebServices.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateFolder([FromBody] CreateDocumentationFolderRequest req)
         {
+            if (!CurrentUser.Admin)
+            {
+                throw new AppForbiddenException("Only Administrators can access this.");
+            }
+
             await _documentationRepository.CreateFolder(req.FolderPath);
             return Ok();
         }
@@ -37,6 +48,11 @@ namespace AnglingClubWebServices.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DocumentationUploadUrlResponse))]
         public async Task<IActionResult> GetUploadUrl([FromBody] DocumentationUploadUrlRequest req)
         {
+            if (!CurrentUser.Admin)
+            {
+                throw new AppForbiddenException("Only Administrators can access this.");
+            }
+
             var response = await _documentationRepository.GetUploadUrl(req);
             return Ok(response);
         }
@@ -45,6 +61,11 @@ namespace AnglingClubWebServices.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         public async Task<IActionResult> GetDownloadUrl([FromQuery] string key)
         {
+            if (!CurrentUser.Admin)
+            {
+                throw new AppForbiddenException("Only Administrators can access this.");
+            }
+
             var fileName = Path.GetFileName(key);
             var url = await _documentationRepository.GetDownloadUrl(key, fileName, 10);
             return Ok(url);

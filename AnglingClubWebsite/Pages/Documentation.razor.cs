@@ -40,6 +40,8 @@ namespace AnglingClubWebsite.Pages
 
         public bool DataLoaded { get; set; }
 
+        public string Message { get; set; }
+
         private const string RootFolderId = "__root__";
 
         public string SelectedFolderLabel => string.IsNullOrWhiteSpace(SelectedFolderPath) ? "Root" : SelectedFolderPath;
@@ -53,15 +55,24 @@ namespace AnglingClubWebsite.Pages
         private async Task RefreshAsync()
         {
             DataLoaded = false;
+            try
+            {
+                var response = await _documentService.GetDocumentationItems();
+                BucketItems = response?.Items ?? new List<DocumentationBucketItemDto>();
 
-            var response = await _documentService.GetDocumentationItems();
-            BucketItems = response?.Items ?? new List<DocumentationBucketItemDto>();
+                BuildTree();
+                RefreshFilesForSelectedFolder();
+            }
+            catch (ApiForbiddenException ex)
+            {
+                Message = "You are not authorised to use this page";
+            }
+            finally
+            {
+                DataLoaded = true;
+                StateHasChanged();
+            }
 
-            BuildTree();
-            RefreshFilesForSelectedFolder();
-
-            DataLoaded = true;
-            StateHasChanged();
         }
 
         private void BuildTree()

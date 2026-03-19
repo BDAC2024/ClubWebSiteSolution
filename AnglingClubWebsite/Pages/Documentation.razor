@@ -14,24 +14,27 @@
         <h3>Documentation</h3>
     </div>
 
-    @if (!CurrentUser.Secretary)
+    <p>
+        Browse and manage Club Documentation
+    </p>
+
+    <BusyIndicator IsReady="DataLoaded" />
+
+    @if (!string.IsNullOrEmpty(Message))
     {
-        <b>You are not authorised to see this page</b>
+        <SfMessage Severity="MessageSeverity.Error">
+            @Message
+        </SfMessage>
     }
     else
     {
-        <p>
-            Browse and manage Club Documentation
-        </p>
-
-        <BusyIndicator IsReady="DataLoaded" />
 
         @if (DataLoaded)
         {
             <div class="documentation-page">
                 <div class="documentation-tree-panel">
                     <div class="documentation-toolbar">
-                        <SfTextBox Placeholder="New folder name" @bind-Value="NewFolderName" Width="190px"></SfTextBox>
+                        <SfTextBox CssClass="documentation-folder-input" Placeholder="New folder name" @bind-Value="NewFolderName"></SfTextBox>
                         <SfButton CssClass="e-primary" OnClick="CreateFolderAsync">
                             <i class="fa-solid fa-folder-plus" /> Add Folder
                         </SfButton>

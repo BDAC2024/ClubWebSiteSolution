@@ -14,11 +14,19 @@
 }
 
 .documentation-toolbar {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 10px;
     align-items: center;
     margin-bottom: 12px;
-    flex-wrap: wrap;
+}
+
+.documentation-toolbar ::deep .documentation-folder-input {
+    width: 100%;
+}
+
+.documentation-toolbar ::deep .e-btn {
+    white-space: nowrap;
 }
 
 .documentation-files-panel {
