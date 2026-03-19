@@ -34,7 +34,7 @@ namespace AnglingClubWebsite.Pages
         public List<DocumentationTreeNode> TreeNodes { get; set; } = new();
         public List<DocumentationFileItem> FilesInSelectedFolder { get; set; } = new();
 
-        public string[] SelectedTreeNodes { get; set; } = new[] { RootFolderId };
+        public string[] SelectedTreeNodes { get; set; } = Array.Empty<string>();
         public string SelectedFolderPath { get; set; } = string.Empty;
         public string NewFolderName { get; set; } = string.Empty;
 
@@ -42,9 +42,8 @@ namespace AnglingClubWebsite.Pages
 
         public string Message { get; set; }
 
-        private const string RootFolderId = "__root__";
-
-        public string SelectedFolderLabel => string.IsNullOrWhiteSpace(SelectedFolderPath) ? "Root" : SelectedFolderPath;
+        public bool HasFolderSelected => !string.IsNullOrWhiteSpace(SelectedFolderPath);
+        public string SelectedFolderLabel => HasFolderSelected ? SelectedFolderPath : "Select a folder";
 
         public override async Task Loaded()
         {
@@ -77,10 +76,7 @@ namespace AnglingClubWebsite.Pages
 
         private void BuildTree()
         {
-            var folderSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            {
-                string.Empty
-            };
+            var folderSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var item in BucketItems)
             {
@@ -99,18 +95,7 @@ namespace AnglingClubWebsite.Pages
                 }
             }
 
-            var nodes = new List<DocumentationTreeNode>
-            {
-                new DocumentationTreeNode
-                {
-                    Id = RootFolderId,
-                    ParentId = null,
-                    Name = "Root",
-                    IconCss = "fa-solid fa-folder-tree",
-                    Expanded = true,
-                    HasChildren = true
-                }
-            };
+            var nodes = new List<DocumentationTreeNode>();
 
             foreach (var folder in folderSet.Where(x => !string.IsNullOrWhiteSpace(x)).OrderBy(x => x))
             {
@@ -118,7 +103,7 @@ namespace AnglingClubWebsite.Pages
                 nodes.Add(new DocumentationTreeNode
                 {
                     Id = folder,
-                    ParentId = string.IsNullOrWhiteSpace(parent) ? RootFolderId : parent,
+                    ParentId = string.IsNullOrWhiteSpace(parent) ? null : parent,
                     Name = Path.GetFileName(folder),
                     IconCss = "fa-solid fa-folder",
                     Expanded = false,
@@ -132,12 +117,18 @@ namespace AnglingClubWebsite.Pages
             if (!TreeNodes.Any(x => x.Id == SelectedFolderPath))
             {
                 SelectedFolderPath = string.Empty;
-                SelectedTreeNodes = new[] { RootFolderId };
+                SelectedTreeNodes = Array.Empty<string>();
             }
         }
 
         private void RefreshFilesForSelectedFolder()
         {
+            if (!HasFolderSelected)
+            {
+                FilesInSelectedFolder = new List<DocumentationFileItem>();
+                return;
+            }
+
             var prefix = string.IsNullOrWhiteSpace(SelectedFolderPath) ? string.Empty : $"{SelectedFolderPath.TrimEnd('/')}/";
 
             FilesInSelectedFolder = BucketItems
@@ -165,8 +156,17 @@ namespace AnglingClubWebsite.Pages
                 return Task.CompletedTask;
             }
 
-            SelectedFolderPath = args.NodeData.Id == RootFolderId ? string.Empty : args.NodeData.Id;
-            SelectedTreeNodes = new[] { args.NodeData.Id };
+            if (string.Equals(SelectedFolderPath, args.NodeData.Id, StringComparison.OrdinalIgnoreCase))
+            {
+                SelectedFolderPath = string.Empty;
+                SelectedTreeNodes = Array.Empty<string>();
+            }
+            else
+            {
+                SelectedFolderPath = args.NodeData.Id;
+                SelectedTreeNodes = new[] { args.NodeData.Id };
+            }
+
             RefreshFilesForSelectedFolder();
             return Task.CompletedTask;
         }
@@ -209,6 +209,12 @@ namespace AnglingClubWebsite.Pages
 
         private async Task UploadHandler(UploadChangeEventArgs args)
         {
+            if (!HasFolderSelected)
+            {
+                _messenger.Send(new ShowMessage(MessageState.Warn, "Select a folder", "Upload is only allowed inside a folder."));
+                return;
+            }
+
             if (!args.Files.Any())
             {
                 return;
@@ -236,6 +242,11 @@ namespace AnglingClubWebsite.Pages
 
         private async Task UploadWithOverwriteOption(UploadFiles selectedFile, bool overwrite)
         {
+            if (!HasFolderSelected)
+            {
+                throw new Exception("Upload is only allowed inside a folder.");
+            }
+
             var uploadDetails = await _documentService.GetDocumentationUploadUrl(SelectedFolderPath, selectedFile, overwrite);
             if (uploadDetails == null)
             {
