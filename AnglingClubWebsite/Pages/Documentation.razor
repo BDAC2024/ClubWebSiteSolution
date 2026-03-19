@@ -70,6 +70,7 @@
                                 <SfUploader CssClass="documentation-uploader"
                                             AutoUpload="true"
                                             AllowMultiple="false"
+                                            ShowFileList="false"
                                             MaxFileSize="20971520"
                                             EnableHtmlSanitizer="true">
                                     <UploaderEvents ValueChange="UploadHandler"></UploaderEvents>
@@ -77,7 +78,7 @@
                             }
                             else
                             {
-                                <p>Upload is disabled in backup folders.</p>
+                                <p>Upload is disabled in backup folders. A maximum of 5 backups are kept for each file.</p>
                             }
 
                             @if (FilesInSelectedFolder.Any())

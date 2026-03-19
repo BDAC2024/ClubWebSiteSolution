@@ -162,7 +162,7 @@ namespace AnglingClubWebsite.Pages
                     FileName = Path.GetFileName(x.Key),
                     CreatedUtc = x.LastModifiedUtc
                 })
-                .OrderByDescending(x => x.CreatedUtc)
+                .OrderBy(x => x.FileName, StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
 
