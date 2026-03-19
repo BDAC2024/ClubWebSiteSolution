@@ -84,9 +84,12 @@
                             {
                                 <QuickGrid Items="FilesInSelectedFolder.AsQueryable()" Class="bdac-table no-click">
                                     <PropertyColumn Property="x => x.FileName" Title="File name" />
-                                    <TemplateColumn Title="Created" >
-                                        <span style="padding-left: 10px;">@((context.CreatedUtc.ToLocalTime()).BdacDateTime())</span>
-                                    </TemplateColumn>
+                                    @if (IsWide())
+                                    {
+                                        <TemplateColumn Title="Created">
+                                            <span style="padding-left: 10px;">@((context.CreatedUtc.ToLocalTime()).BdacDateTime())</span>
+                                        </TemplateColumn>
+                                    }
                                     <TemplateColumn Title="Actions" Align="Align.Center">
                                         <span>
                                             <SfButton CssClass="grid-action-btn"

@@ -1,4 +1,5 @@
 using AnglingClubShared.DTOs;
+using AnglingClubShared.Enums;
 using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
@@ -9,12 +10,13 @@ using Syncfusion.Blazor.Navigations;
 
 namespace AnglingClubWebsite.Pages
 {
-    public partial class Documentation : RazorComponentBase
+    public partial class Documentation : RazorComponentBase, IRecipient<BrowserChange>
     {
         private readonly IDocumentService _documentService;
         private readonly IDialogQueue _dialogQueue;
         private readonly IMessenger _messenger;
         private readonly INavigationService _navigationService;
+        private readonly BrowserService _browserService;
 
         public Documentation(
             ICurrentUserService currentUserService,
@@ -22,12 +24,16 @@ namespace AnglingClubWebsite.Pages
             IMessenger messenger,
             IDocumentService documentService,
             IDialogQueue dialogQueue,
-            INavigationService navigationService) : base(messenger, currentUserService, authenticationService)
+            INavigationService navigationService,
+            BrowserService browserService) : base(messenger, currentUserService, authenticationService)
         {
             _documentService = documentService;
             _dialogQueue = dialogQueue;
             _messenger = messenger;
             _navigationService = navigationService;
+            _browserService = browserService;
+
+            BrowserSize = _browserService.DeviceSize;
         }
 
         private List<DocumentationBucketItemDto> BucketItems { get; set; } = new();
@@ -40,7 +46,14 @@ namespace AnglingClubWebsite.Pages
 
         public bool DataLoaded { get; set; }
 
-        public string Message { get; set; }
+        public string Message { get; set; } = "";
+
+        public DeviceSize BrowserSize = DeviceSize.Unknown;
+
+        public bool IsWide()
+        {
+            return BrowserSize != DeviceSize.Small;
+        }
 
         public bool HasFolderSelected => !string.IsNullOrWhiteSpace(SelectedFolderPath);
         public bool IsBackupFolderSelected => HasFolderSelected && SelectedFolderPath
@@ -331,6 +344,11 @@ namespace AnglingClubWebsite.Pages
             });
 
             await Task.CompletedTask;
+        }
+
+        public void Receive(BrowserChange message)
+        {
+            BrowserSize = _browserService.DeviceSize;
         }
 
         public class DocumentationTreeNode
