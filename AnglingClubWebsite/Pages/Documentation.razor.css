@@ -38,6 +38,15 @@
     min-height: 420px;
 }
 
+.documentation-files-content {
+    min-width: min(300px, 100%);
+}
+
+.documentation-files-content ::deep .documentation-uploader.e-upload {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 .documentation-files-header {
     margin-bottom: 10px;
 }
