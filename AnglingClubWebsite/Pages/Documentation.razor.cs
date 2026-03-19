@@ -34,6 +34,8 @@ namespace AnglingClubWebsite.Pages
             _navigationService = navigationService;
             _browserService = browserService;
 
+            messenger.Register<BrowserChange>(this);
+
             BrowserSize = _browserService.DeviceSize;
         }
 
