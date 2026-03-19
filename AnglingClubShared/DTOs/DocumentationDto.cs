@@ -31,4 +31,9 @@ namespace AnglingClubShared.DTOs
         public string UploadUrl { get; set; } = "";
         public string StorageKey { get; set; } = "";
     }
+
+    public class DocumentationBackupRequest
+    {
+        public string Key { get; set; } = "";
+    }
 }

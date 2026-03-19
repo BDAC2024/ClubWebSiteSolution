@@ -18,6 +18,7 @@ namespace AnglingClubWebsite.Services
         Task<DocumentationListResponse?> GetDocumentationItems();
         Task CreateDocumentationFolder(string folderPath);
         Task<DocumentationUploadUrlResponse?> GetDocumentationUploadUrl(string folderPath, UploadFiles file, bool overwriteExisting);
+        Task CreateDocumentationBackup(string key);
         Task<string?> GetDocumentationDownloadUrl(string key);
         Task DeleteDocumentationFile(string key);
     }

@@ -43,6 +43,9 @@ namespace AnglingClubWebsite.Pages
         public string Message { get; set; }
 
         public bool HasFolderSelected => !string.IsNullOrWhiteSpace(SelectedFolderPath);
+        public bool IsBackupFolderSelected => HasFolderSelected && SelectedFolderPath
+            .Split('/', StringSplitOptions.RemoveEmptyEntries)
+            .Any(x => string.Equals(x, "_backup", StringComparison.OrdinalIgnoreCase));
         public string SelectedFolderLabel => HasFolderSelected ? SelectedFolderPath : "Select a folder";
 
         public override async Task Loaded()
@@ -269,6 +272,14 @@ namespace AnglingClubWebsite.Pages
             }
 
             await _documentService.UploadDocumentWithPresignedUrl(uploadDetails.UploadUrl, selectedFile);
+            try
+            {
+                await _documentService.CreateDocumentationBackup(uploadDetails.StorageKey);
+            }
+            catch (Exception)
+            {
+                _messenger.Send(new ShowMessage(MessageState.Warn, "Backup warning", "File uploaded, but backup creation failed."));
+            }
             _messenger.Send(new ShowToast(MessageState.Success, $"Uploaded {selectedFile.FileInfo.Name}"));
             await RefreshAsync();
         }

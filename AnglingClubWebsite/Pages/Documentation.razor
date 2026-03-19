@@ -65,13 +65,20 @@
                         }
                         else
                         {
-                            <SfUploader CssClass="documentation-uploader"
-                                        AutoUpload="true"
-                                        AllowMultiple="false"
-                                        MaxFileSize="20971520"
-                                        EnableHtmlSanitizer="true">
-                                <UploaderEvents ValueChange="UploadHandler"></UploaderEvents>
-                            </SfUploader>
+                            @if (!IsBackupFolderSelected)
+                            {
+                                <SfUploader CssClass="documentation-uploader"
+                                            AutoUpload="true"
+                                            AllowMultiple="false"
+                                            MaxFileSize="20971520"
+                                            EnableHtmlSanitizer="true">
+                                    <UploaderEvents ValueChange="UploadHandler"></UploaderEvents>
+                                </SfUploader>
+                            }
+                            else
+                            {
+                                <p>Upload is disabled in backup folders.</p>
+                            }
 
                             @if (FilesInSelectedFolder.Any())
                             {

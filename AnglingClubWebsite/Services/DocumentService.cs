@@ -198,6 +198,15 @@ namespace AnglingClubWebsite.Services
             return await response.Content.ReadFromJsonAsync<DocumentationUploadUrlResponse>();
         }
 
+        public async Task CreateDocumentationBackup(string key)
+        {
+            var relativeEndpoint = "Documentation/backup";
+            await Http.PostAsJsonAsync(relativeEndpoint, new DocumentationBackupRequest
+            {
+                Key = key
+            });
+        }
+
         public async Task<string?> GetDocumentationDownloadUrl(string key)
         {
             var relativeEndpoint = $"Documentation/download-url?key={Uri.EscapeDataString(key)}";
