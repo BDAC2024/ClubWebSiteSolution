@@ -283,6 +283,34 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
+        private async Task DeleteAsync(DocumentationFileItem item)
+        {
+            _dialogQueue.Enqueue(new DialogRequest
+            {
+                Kind = DialogKind.Confirm,
+                Severity = DialogSeverity.Warn,
+                Title = "Please confirm",
+                Message = $"Do you really want to delete '{item.FileName}'?",
+                CancelText = "Cancel",
+                ConfirmText = "Delete",
+                OnConfirmAsync = async () =>
+                {
+                    try
+                    {
+                        await _documentService.DeleteDocumentationFile(item.Key);
+                        await RefreshAsync();
+                        _messenger.Send(new ShowToast(MessageState.Success, "Requested file has been deleted"));
+                    }
+                    catch (Exception)
+                    {
+                        _messenger.Send(new ShowMessage(MessageState.Error, "Deletion failed", "Unable to delete requested file."));
+                    }
+                }
+            });
+
+            await Task.CompletedTask;
+        }
+
         public class DocumentationTreeNode
         {
             public string Id { get; set; } = string.Empty;

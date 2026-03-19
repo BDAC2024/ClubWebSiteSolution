@@ -73,11 +73,17 @@
                             <TemplateColumn Title="Created" >
                                 <span style="padding-left: 10px;">@((context.CreatedUtc.ToLocalTime()).BdacDateTime())</span>
                             </TemplateColumn>
-                            <TemplateColumn Title="Download" Align="Align.Center">
-                                <SfButton CssClass="grid-action-btn"
-                                          IconCss="fa-solid fa-download"
-                                          Title="Download"
-                                          OnClick="@(async () => await DownloadAsync(context))" />
+                            <TemplateColumn Title="Actions" Align="Align.Center">
+                                <span>
+                                    <SfButton CssClass="grid-action-btn"
+                                              IconCss="fa-solid fa-download"
+                                              Title="Download"
+                                              OnClick="@(async () => await DownloadAsync(context))" />
+                                    <SfButton CssClass="grid-action-btn grid-action-btn--danger"
+                                              IconCss="fa-solid fa-trash"
+                                              Title="Delete"
+                                              OnClick="@(async () => await DeleteAsync(context))" />
+                                </span>
                             </TemplateColumn>
                         </QuickGrid>
                     }

@@ -44,6 +44,19 @@ namespace AnglingClubWebServices.Controllers
             return Ok();
         }
 
+        [HttpDelete("file")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteFile([FromQuery] string key)
+        {
+            if (!CurrentUser.Admin)
+            {
+                throw new AppForbiddenException("Only Administrators can access this.");
+            }
+
+            await _documentationRepository.DeleteFile(key);
+            return Ok();
+        }
+
         [HttpPost("upload-url")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DocumentationUploadUrlResponse))]
         public async Task<IActionResult> GetUploadUrl([FromBody] DocumentationUploadUrlRequest req)

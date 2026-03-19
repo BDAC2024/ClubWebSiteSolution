@@ -81,6 +81,23 @@ namespace AnglingClubWebServices.Data
             });
         }
 
+        public async Task DeleteFile(string key)
+        {
+            var normalizedKey = normalizeFileKey(key);
+
+            if (!await objectExists(normalizedKey))
+            {
+                throw new AppNotFoundException("Requested file does not exist.");
+            }
+
+            using var s3Client = GetS3Client();
+            await s3Client.DeleteObjectAsync(new DeleteObjectRequest
+            {
+                BucketName = _options.DocumentBucket,
+                Key = normalizedKey
+            });
+        }
+
         public async Task<DocumentationUploadUrlResponse> GetUploadUrl(DocumentationUploadUrlRequest req)
         {
             var folderPath = normalizeFolderPath(req.FolderPath);
@@ -164,6 +181,31 @@ namespace AnglingClubWebServices.Data
             }
 
             return normalized.EndsWith('/') ? normalized : $"{normalized}/";
+        }
+
+        private static string normalizeFileKey(string key)
+        {
+            var normalized = (key ?? string.Empty)
+                .Trim()
+                .Trim('/')
+                .Replace("\\", "/", StringComparison.Ordinal);
+
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                throw new AppValidationException("A file key is required.");
+            }
+
+            if (normalized.EndsWith('/'))
+            {
+                throw new AppValidationException("Only files can be deleted.");
+            }
+
+            if (isExcluded(normalized))
+            {
+                throw new AppValidationException("The Meetings/Minutes path is managed elsewhere and cannot be changed here.");
+            }
+
+            return normalized;
         }
     }
 }

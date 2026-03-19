@@ -205,6 +205,12 @@ namespace AnglingClubWebsite.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task DeleteDocumentationFile(string key)
+        {
+            var relativeEndpoint = $"Documentation/file?key={Uri.EscapeDataString(key)}";
+            await Http.DeleteAsync(relativeEndpoint);
+        }
+
 
     }
 
