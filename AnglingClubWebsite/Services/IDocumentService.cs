@@ -15,5 +15,11 @@ namespace AnglingClubWebsite.Services
         Task<string?> GetReadOnlyUrl(string id);
         Task DeleteDocument(string id);
         Task<string?> Download(string id);
+        Task<DocumentationListResponse?> GetDocumentationItems();
+        Task CreateDocumentationFolder(string folderPath);
+        Task<DocumentationUploadUrlResponse?> GetDocumentationUploadUrl(string folderPath, UploadFiles file, bool overwriteExisting);
+        Task CreateDocumentationBackup(string key);
+        Task<string?> GetDocumentationDownloadUrl(string key);
+        Task DeleteDocumentationFile(string key);
     }
 }

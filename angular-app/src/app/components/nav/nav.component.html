@@ -120,6 +120,7 @@
       </mat-list-item>
       <div class="submenu" [ngClass]="{'expanded' : showAdminSubMenu}" *ngIf="showAdminSubMenu && authenticationService.isAdmin">
         <a mat-list-item routerLink="/members">Members</a>
+        <a mat-list-item (click)="openBlazor('Documentation', drawer)" *ngIf="this.refDataService.isMemberSecretary()">Documentation</a>
         <a mat-list-item routerLink="/userAdmins">User Admins</a>
         <!-- <a mat-list-item routerLink="/guestTickets" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC">
     <div class="preview-option">

@@ -167,6 +167,60 @@ namespace AnglingClubWebsite.Services
         }
 
 
+        public async Task<DocumentationListResponse?> GetDocumentationItems()
+        {
+            var relativeEndpoint = "Documentation/items";
+            var response = await Http.GetAsync(relativeEndpoint);
+            var content = await response.Content.ReadFromJsonAsync<DocumentationListResponse>();
+            return content;
+        }
+
+        public async Task CreateDocumentationFolder(string folderPath)
+        {
+            var relativeEndpoint = "Documentation/folders";
+            await Http.PostAsJsonAsync(relativeEndpoint, new CreateDocumentationFolderRequest
+            {
+                FolderPath = folderPath
+            });
+        }
+
+        public async Task<DocumentationUploadUrlResponse?> GetDocumentationUploadUrl(string folderPath, UploadFiles file, bool overwriteExisting)
+        {
+            var relativeEndpoint = "Documentation/upload-url";
+            var response = await Http.PostAsJsonAsync(relativeEndpoint, new DocumentationUploadUrlRequest
+            {
+                FolderPath = folderPath,
+                FileName = file.FileInfo.Name,
+                ContentType = file.File.ContentType,
+                OverwriteExisting = overwriteExisting
+            });
+
+            return await response.Content.ReadFromJsonAsync<DocumentationUploadUrlResponse>();
+        }
+
+        public async Task CreateDocumentationBackup(string key)
+        {
+            var relativeEndpoint = "Documentation/backup";
+            await Http.PostAsJsonAsync(relativeEndpoint, new DocumentationBackupRequest
+            {
+                Key = key
+            });
+        }
+
+        public async Task<string?> GetDocumentationDownloadUrl(string key)
+        {
+            var relativeEndpoint = $"Documentation/download-url?key={Uri.EscapeDataString(key)}";
+            var response = await Http.GetAsync(relativeEndpoint);
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task DeleteDocumentationFile(string key)
+        {
+            var relativeEndpoint = $"Documentation/file?key={Uri.EscapeDataString(key)}";
+            await Http.DeleteAsync(relativeEndpoint);
+        }
+
+
     }
 
 }
