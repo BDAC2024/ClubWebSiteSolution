@@ -1,7 +1,15 @@
 <div>
-    <div style="display: flex;">
-        <h1 class="left-header">Junior Open Matches</h1>
-    </div>  
+  <div style="display: flex;">
+    <h1 class="left-header">Junior Open Matches</h1>
+    <span [ngClass]="[this.screenService.IsHandset ? 'example-fill-remaining-space' : 'season-selector-margin-desktop']"></span>
+    <mat-form-field class="season-selector" *ngIf="!isLoading">
+      <mat-label>Season</mat-label>
+      <mat-select [(ngModel)]="selectedSeason" (selectionChange)="getMatches()">
+        <mat-option *ngFor="let season of refData.seasons" [value]="season.season">{{season.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </div>  
 
     <div *ngIf="isLoading">
         <mat-spinner diameter="32" ></mat-spinner>

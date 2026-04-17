@@ -12,6 +12,9 @@ import { JuniorAgeGroup } from 'src/app/models/open-match-enum';
 import { OpenMatchRegistration } from 'src/app/models/open-match-registration';
 import { OpenMatchService } from 'src/app/services/open-match.service';
 import { ScreenService } from 'src/app/services/screen.service';
+import { GlobalService } from '../../services/global.service';
+import { RefData } from '../../models/refData';
+import { RefDataService } from '../../services/ref-data.service';
 
 @Component({
   selector: 'app-registration-panel',
@@ -32,7 +35,9 @@ export class RegistrationPanelComponent implements OnInit, AfterViewInit {
   public isRegistering: boolean = false;
   public isSubmitting: boolean = false;
   public registrationSuccessful: boolean = false;
-  
+
+  public refData!: RefData;
+
   public displayedMatchColumns: string[];
   public displayedRegistrationColumns: string[];
 
@@ -47,13 +52,13 @@ export class RegistrationPanelComponent implements OnInit, AfterViewInit {
   constructor(
         public screenService: ScreenService,
         public openMatchService: OpenMatchService,
+        public globalService: GlobalService,
+        public refDataService: RefDataService,
         private dialog: MatDialog
       ) 
   { 
     this.displayedMatchColumns = [];
     this.displayedRegistrationColumns = [];
-
-    this.selectedSeason = 25;
 
     this.setDisplayedColumns(this.screenService.IsHandsetPortrait);
     
@@ -64,14 +69,23 @@ export class RegistrationPanelComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.getMatches();
+    this.getRefData();
   }
 
   ngAfterViewInit(): void {
     this.registrations.sort = this.sort;
   }
 
-  private getMatches() : void {
+  public getRefData() {
+    this.refDataService.getRefData()
+      .subscribe(data => {
+        this.refData = data;
+        this.selectedSeason = this.globalService.getStoredSeason(data.currentSeason);
+        this.getMatches();
+      });
+  }
+
+  public getMatches() : void {
     this.isLoading = true;
     this.isRegistering = false;
     this.registrationSuccessful = false;
