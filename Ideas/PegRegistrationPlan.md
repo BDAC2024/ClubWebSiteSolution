@@ -41,7 +41,7 @@ Create `PegAllocation : TableBase` with:
 - `string Peg`
 - `Season Season`
 - `int MembershipNumber`
-- `DateTime DateAllocated`
+- `DateOnly DateAllocated`
 - `string Name` (normal property, not persisted to DB; populated during repository reads)
 
 #### 1.3 `Name` property behavior (confirmed)
@@ -90,7 +90,7 @@ Use naming/method style consistent with existing repositories (e.g., `OpenMatchR
   - `Peg`
   - `Season`
   - `MembershipNumber`
-  - `DateAllocated` (ISO string)
+  - `DateAllocated` (ISO string format for stable parse/sort)
 
 #### 3.3 Parsing & filtering
 - Use existing enum parsing conventions for `Season`.
@@ -145,19 +145,21 @@ Flow:
 2. Call repository delete.
 3. Return `Ok` / `NotFound` behavior consistent with existing controllers.
 
-#### 5.4 `POST AllocatePeg`
+#### 5.4 `POST AllocatePeg` (Admin only)
 Parameters:
 - `Stretch` (string)
 - `Peg` (string)
 - `MembershipNumber` (int)
-- `DateAllocated` (DateTime)
+- `DateAllocated` (DateOnly)
 
 Flow:
-1. Validate membership exists (recommended).
-2. Set `Season` using an existing extension method that derives season from the passed `DateAllocated`.
-3. Build `PegAllocation`.
-4. `AddOrUpdatePegAllocation`.
-5. Return `Ok`.
+1. Validate user is admin/committee.
+2. Validate membership exists (recommended).
+3. Set `Season` using an existing extension method that derives season from the passed `DateAllocated`.
+4. Check for uniqueness: ensure no existing allocation for same `Stretch`/`Peg`/`DateAllocated`.
+5. Build `PegAllocation`.
+6. `AddOrUpdatePegAllocation`.
+7. Return `Ok`.
 
 #### 5.5 `GET GetPegAllocations`
 Parameter: `Season` (string)
@@ -188,27 +190,7 @@ Flow:
 
 ---
 
-## Open Questions / Clarifications Needed
-
-1. **Duplicate rules for allocations**
-   - Should we prevent duplicate allocations for same `Stretch`/`Peg`/`Season`, or allow updates to overwrite existing record?
-2. **Authorization rules**
-   - Should `AllocatePeg` be admin/committee-only?
-3. **Date handling standard**
-   - Should new dates be stored as UTC always (`DateTime.UtcNow`) and serialized in ISO-8601?
-
----
-
-## Additional Suggestions
-
-1. Add lightweight request/response DTOs for the new endpoints rather than many primitive query/body parameters, to improve validation and future extensibility.
-2. Add repository-level query methods filtered by `Season` and optionally by `MembershipNumber` to avoid transferring/filtering all rows in controller.
-3. Add uniqueness guard for registration at repository or controller level with a normalized key strategy (`Stretch.Trim().ToLowerInvariant()`, `Peg.Trim().ToLowerInvariant()`).
-4. Add structured error responses with consistent problem details to match modern API patterns.
-
----
-
 ## Deliverables
 
 - `PegRegistrationPlan.md` (this file)
-- After clarification, implementation can proceed in a follow-up change set.
+- Implementation can proceed in a follow-up change set.

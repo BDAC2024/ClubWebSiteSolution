@@ -152,6 +152,8 @@ namespace AnglingClubWebServices
             services.AddTransient<IMatchResultService, MatchResultService>();
             services.AddTransient<IHealthService, HealthService>();
             services.AddTransient<IMemberRepository, MemberRepository>();
+            services.AddTransient<IPegRegistrationRepository, PegRegistrationRepository>();
+            services.AddTransient<IPegAllocationRepository, PegAllocationRepository>();
             services.AddTransient<INewsRepository, NewsRepository>();
             services.AddTransient<IUserAdminRepository, UserAdminRepository>();
             services.AddTransient<IBackupRepository, BackupRepository>();
