@@ -106,6 +106,8 @@
                 }
                 else if (SelectedTab == 2)
                 {
+                    <p><b>Note</b>: There are <b>46</b> reserved days between 16th June and 31st July and <b>@(QueryablePegRegistrations.Count())</b> people are currently registered.</p>
+
                     <QuickGrid Items="QueryablePegRegistrations">
 
                         <TemplateColumn Title="Member Name">
@@ -132,13 +134,8 @@
                 }
                 else if (SelectedTab == 3)
                 {
+                    <p>This can be completed in real-time as the draw takes place.</p>
                     <QuickGrid Items="QueryablePegAllocations">
-
-                        <TemplateColumn Title="No" Align="Align.Center">
-                            <ChildContent Context="row">
-                                <span tabindex="-1">@(row.DateAllocated.DayNumber - (ReservationStartDate.DayNumber - 1))</span>
-                            </ChildContent>
-                        </TemplateColumn>
 
                         <TemplateColumn Title="Date">
                             <ChildContent Context="row">

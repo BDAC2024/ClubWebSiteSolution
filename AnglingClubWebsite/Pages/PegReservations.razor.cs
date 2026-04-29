@@ -111,7 +111,7 @@ namespace AnglingClubWebsite.Pages
 
                 }
 
-                CurrentPegRegistrations = (await _pegReservationService.ReadRegistrations(SelectedSeason)) ?? new List<PegRegistrationOutputDto>();
+                CurrentPegRegistrations = (await _pegReservationService.ReadRegistrations(SelectedSeason))!.OrderBy(x => x.Name).ToList() ?? new List<PegRegistrationOutputDto>();
                 QueryablePegRegistrations = CurrentPegRegistrations.OrderBy(x => x.DateRegistered).AsQueryable();
             }
             catch (ApiForbiddenException ex)
