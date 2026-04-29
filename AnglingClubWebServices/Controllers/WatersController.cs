@@ -230,7 +230,7 @@ namespace AnglingClubWebServices.Controllers
                 };
 
                 await _pegAllocationRepository.AddOrUpdatePegAllocation(allocation);
-                return Ok();
+                return Ok(allocation.DbKey);
             }
             catch (Exception ex)
             {

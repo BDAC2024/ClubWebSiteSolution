@@ -78,16 +78,27 @@ namespace AnglingClubWebsite.Services
             return content ?? new List<PegAllocationOutputDto>();
         }
 
-        public async Task AllocatePeg(PegAllocationRequestDto allocation)
+        public async Task<string> AllocatePeg(PegAllocationRequestDto allocation)
         {
             var relativeEndpoint = $"{CONTROLLER}/{Constants.API_REGISTRATION_ALLOCATE_PEG}";
 
             var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", allocation);
 
-            return;
+            var content = await response.Content.ReadAsStringAsync();
+
+            return content ?? "";
 
         }
 
+        public async Task DeleteAllocatedPeg(string id)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_REGISTRATION_PEG_ALLOCATIONS}/{id}";
+
+            var response = await Http.DeleteAsync($"{relativeEndpoint}");
+
+            return;
+
+        }
 
     }
 }

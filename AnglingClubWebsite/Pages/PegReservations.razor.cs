@@ -1,5 +1,6 @@
 ﻿using AnglingClubShared.DTOs;
 using AnglingClubShared.Enums;
+using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
@@ -14,6 +15,7 @@ namespace AnglingClubWebsite.Pages
         private readonly ILogger<PegReservations> _logger;
         private readonly IPegReservationService _pegReservationService;
         private readonly IClubEventService _clubEventService;
+        private readonly ICurrentUserService _currentUserService;
 
         public PegReservations(
             IAuthenticationService authenticationService,
@@ -27,17 +29,26 @@ namespace AnglingClubWebsite.Pages
             _logger = logger;
             _pegReservationService = pegReservationService;
             _clubEventService = clubEventService;
+            _currentUserService = currentUserService;
         }
 
+        public Season SelectedSeason { get; set; }
         public int SelectedTab { get; set; } = 0;
         public bool DataLoaded { get; set; } = false;
         public bool Registered { get; set; } = true;
         public bool RegisterMe { get; set; } = false;
         public bool RegistrationComplete { get; set; } = false;
+        public bool IsAdmin { get; set; } = false;
 
 
         public PegRegistrationOutputDto? ExistingRegistration { get; set; } = null;
         public DateTime PresentationNightDate { get; set; } = DateTime.MinValue;
+        public DateOnly ReservationStartDate { get; set; }
+        public List<PegAllocationOutputDto> PegAllocations { get; set; } = new List<PegAllocationOutputDto>();
+        public IQueryable<PegAllocationOutputDto> QueryablePegAllocations { get; set; } = Enumerable.Empty<PegAllocationOutputDto>().AsQueryable();
+        public IQueryable<PegAllocationOutputDto> QueryableExistingPegAllocations { get; set; }
+        public List<PegRegistrationOutputDto> CurrentPegRegistrations { get; set; } = new List<PegRegistrationOutputDto>();
+        public IQueryable<PegRegistrationOutputDto> QueryablePegRegistrations { get; set; }
 
         public override async Task Loaded()
         {
@@ -48,20 +59,60 @@ namespace AnglingClubWebsite.Pages
         private async Task RefreshAsync()
         {
             DataLoaded = false;
+
+            IsAdmin = _currentUserService.User.Admin;
+            SelectedSeason = EnumUtils.CurrentSeason();
+
             try
             {
                 ExistingRegistration = await _pegReservationService.ReadRegistration(new PegRegistrationRequestDto
                 {
                     Stretch = "MilbyIsland",
                     Peg = "1",
-                    Season = EnumUtils.CurrentSeason()
+                    Season = SelectedSeason
                 });
 
-                var PresentationNight = (await _clubEventService.GetPresentationNightForSeason(EnumUtils.CurrentSeason())).FirstOrDefault();
+                var PresentationNight = (await _clubEventService.GetPresentationNightForSeason(SelectedSeason))!.FirstOrDefault();
                 if (PresentationNight != null)
                 {
                     PresentationNightDate = PresentationNight.Date;
                 }
+
+                var ExistingAllocations = await _pegReservationService.ReadAllocations(SelectedSeason);
+
+                if (IsAdmin)
+                {
+                    ReservationStartDate = DateOnly.FromDateTime(new DateTime(SelectedSeason.SeasonStarts().Year, 6, 16)); ;
+                    var reservationEndDate = DateOnly.FromDateTime(new DateTime(ReservationStartDate.Year, 7, 31));
+
+                    var d = ReservationStartDate;
+                    while (d <= reservationEndDate)
+                    {
+                        var existingAlloc = ExistingAllocations.FirstOrDefault(x => x.DateAllocated == d);
+                        if (existingAlloc != null)
+                        {
+                            PegAllocations.Add(existingAlloc);
+                        }
+                        else
+                        {
+                            PegAllocations.Add(new PegAllocationOutputDto
+                            {
+                                Stretch = "MilbyIsland",
+                                Peg = "1",
+                                DateAllocated = d,
+                                MembershipNumber = 0
+                            });
+                        }
+                        d = d.AddDays(1);
+                    }
+
+                    PegAllocations = PegAllocations.OrderBy(x => x.DateAllocated).ToList();
+                    QueryablePegAllocations = PegAllocations.AsQueryable();
+
+                }
+
+                CurrentPegRegistrations = (await _pegReservationService.ReadRegistrations(SelectedSeason)) ?? new List<PegRegistrationOutputDto>();
+                QueryablePegRegistrations = CurrentPegRegistrations.OrderBy(x => x.DateRegistered).AsQueryable();
             }
             catch (ApiForbiddenException ex)
             {
@@ -74,9 +125,19 @@ namespace AnglingClubWebsite.Pages
             }
 
         }
-        public void OnTabSelected(SelectEventArgs args)
+        public async Task OnTabSelected(SelectEventArgs args)
         {
             SelectedTab = args.SelectedIndex;
+
+            switch (SelectedTab)
+            {
+                case 1: // Always show an up to date list of allocations
+                    await GetAllocations();
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         public async Task OnRegistering(Microsoft.AspNetCore.Components.ChangeEventArgs args)
@@ -89,7 +150,7 @@ namespace AnglingClubWebsite.Pages
                 {
                     Stretch = "MilbyIsland",
                     Peg = "1",
-                    Season = EnumUtils.CurrentSeason()
+                    Season = SelectedSeason
                 });
                 RegistrationComplete = true;
             }
@@ -105,5 +166,39 @@ namespace AnglingClubWebsite.Pages
 
         }
 
+        private async Task OnAllocationChanged(int membershipNumber, PegAllocationOutputDto alloc)
+        {
+            alloc.MembershipNumber = membershipNumber;
+
+            if (membershipNumber != 0)
+            {
+                {
+                    var id = await _pegReservationService.AllocatePeg(new PegAllocationRequestDto
+                    {
+                        DateAllocated = alloc.DateAllocated,
+                        MembershipNumber = alloc.MembershipNumber,
+                        Peg = alloc.Peg,
+                        Stretch = alloc.Stretch
+                    });
+
+                    alloc.DbKey = id;
+
+                    return;
+                }
+            }
+            else
+            {
+                await _pegReservationService.DeleteAllocatedPeg(alloc.DbKey);
+            }
+        }
+
+        private async Task GetAllocations()
+        {
+            var existingAllocations =
+                    await _pegReservationService.ReadAllocations(SelectedSeason)
+                    ?? [];
+
+            QueryableExistingPegAllocations = existingAllocations.AsQueryable();
+        }
     }
 }

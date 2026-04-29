@@ -9,6 +9,7 @@ namespace AnglingClubWebsite.Services
         Task<PegRegistrationOutputDto?> ReadRegistration(PegRegistrationRequestDto registration);
         Task RegisterPeg(PegRegistrationRequestDto registration);
         Task<List<PegAllocationOutputDto>> ReadAllocations(Season season);
-        Task AllocatePeg(PegAllocationRequestDto allocation);
+        Task<string> AllocatePeg(PegAllocationRequestDto allocation);
+        Task DeleteAllocatedPeg(string id);
     }
 }

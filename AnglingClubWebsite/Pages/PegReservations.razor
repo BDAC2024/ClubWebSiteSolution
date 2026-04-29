@@ -1,5 +1,7 @@
 ﻿@page "/PegReservations"
+@using AnglingClubShared.DTOs
 @using AnglingClubShared.Extensions;
+@using Microsoft.AspNetCore.Components.QuickGrid
 
 @inherits RazorComponentBase;
 
@@ -36,6 +38,19 @@
                         Allocations
                     </HeaderTemplate>
                 </TabItem>
+                @if (IsAdmin)
+                {
+                    <TabItem>
+                        <HeaderTemplate>
+                            Current Registrations (Admin only)
+                        </HeaderTemplate>
+                    </TabItem>
+                    <TabItem>
+                        <HeaderTemplate>
+                            Allocate Pegs (Admin only)
+                        </HeaderTemplate>
+                    </TabItem>
+                }
             </TabItems>
         </SfTab>
 
@@ -61,12 +76,104 @@
                         }
                     }
                 }
-                else
+                else if (SelectedTab == 1)
                 {
-                    <p>
-                        @((PresentationNightDate).BdacDate())
-                    </p>
+                    @if (QueryableExistingPegAllocations?.Any() == true)
+                    {
+                        <QuickGrid Items="QueryableExistingPegAllocations">
+
+                            <TemplateColumn Title="Date">
+                                <ChildContent Context="row">
+                                    <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
+                                </ChildContent>
+                            </TemplateColumn>
+
+                            <TemplateColumn Title="Member Name">
+                                <ChildContent Context="row">
+                                    <span tabindex="-1">@row.Name</span>
+                                </ChildContent>
+                            </TemplateColumn>
+
+                        </QuickGrid>
+                    }
+                    else
+                    {
+                        <p>
+                            There are no peg allocations at present. The draw will take place at the next Presentation Night on <b>@((PresentationNightDate).BdacDate())</b> and the results will be posted here.
+                        </p>
+                    }
+
                 }
+                else if (SelectedTab == 2)
+                {
+                    <QuickGrid Items="QueryablePegRegistrations">
+
+                        <TemplateColumn Title="Member Name">
+                            <ChildContent Context="row">
+                                <span tabindex="-1" class="nowrap">@row.Name</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Member" Align="Align.Center">
+                            <ChildContent Context="row">
+                                <span tabindex="-1">@(row.MembershipNumber != 0 ? row.MembershipNumber : "")</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Registered on">
+                            <ChildContent Context="row">
+                                <span tabindex="-1" class="nowrap">@row.DateRegistered.BdacDate()</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+
+                    </QuickGrid>
+
+                }
+                else if (SelectedTab == 3)
+                {
+                    <QuickGrid Items="QueryablePegAllocations">
+
+                        <TemplateColumn Title="No" Align="Align.Center">
+                            <ChildContent Context="row">
+                                <span tabindex="-1">@(row.DateAllocated.DayNumber - (ReservationStartDate.DayNumber - 1))</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Date">
+                            <ChildContent Context="row">
+                                <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Member Name">
+                            <ChildContent Context="row">
+                                <SfComboBox TValue="int"
+                                            TItem="PegRegistrationOutputDto"
+                                            Placeholder=""
+                                            Width="150px"
+                                            AllowFiltering="true"
+                                            FilterType="FilterType.Contains"
+                                            FloatLabelType="FloatLabelType.Never"
+                                            DataSource="@CurrentPegRegistrations"
+                                            Value="@row.MembershipNumber"
+                                            ValueChanged="@(val => OnAllocationChanged(val, row))">
+                                    <ComboBoxFieldSettings Value="MembershipNumber" Text="Name"></ComboBoxFieldSettings>
+                                </SfComboBox>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Member" Align="Align.Center">
+                            <ChildContent Context="row">
+                                <span tabindex="-1">@(row.MembershipNumber != 0 ? row.MembershipNumber : "")</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                    </QuickGrid>
+
+                }
+
+
             </CardContent>
         </SfCard>
     }
