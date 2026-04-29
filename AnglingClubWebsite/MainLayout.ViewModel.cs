@@ -203,6 +203,7 @@ namespace AnglingClubWebsite
 
             List<MenuItem> menuItems = new List<MenuItem>();
 
+            menuItems.Add(new MenuItem { Id = "03.1", Name = "Reserved Pegs", IsNew = true, NavigateUrl = menuUrl("/PegReservations") });
             menuItems.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets", NavigateUrl = menuUrl("/buyGuestTickets"), IsNew = false });
             menuItems.Add(new MenuItem { Id = "10", Name = "My Details" });
             menuItems.Add(new MenuItem { Id = "11", Name = "Logout", NavigateUrl = menuUrl("/Logout") });
@@ -223,6 +224,7 @@ namespace AnglingClubWebsite
             menuItems.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Book Printing v2", NavigateUrl = menuUrl("/BookPrinting") });
             menuItems.Add(new MenuItem { Id = "09.4", ParentId = "09", Name = "Payments" });
             menuItems.Add(new MenuItem { Id = "09.5", ParentId = "09", Name = "Documentation", NavigateUrl = menuUrl("/Documentation") });
+            menuItems.Add(new MenuItem { Id = "09.6", ParentId = "09", Name = "Peg Allocator", NavigateUrl = menuUrl("/PegAllocator") });
 
             Menu.AddRange(menuItems);
             Menu = Menu.OrderBy(x => x.Id).ToList();

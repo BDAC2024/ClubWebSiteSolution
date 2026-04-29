@@ -35,6 +35,16 @@ namespace AnglingClubWebsite.Services
             return content;
         }
 
+        public async Task<List<ClubEvent>?> GetPresentationNightForSeason(Season season)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_PRES_NIGHT}/{season}";
+
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+
+            var content = await response.Content.ReadFromJsonAsync<List<ClubEvent>>();
+            return content;
+        }
+
     }
 
 }

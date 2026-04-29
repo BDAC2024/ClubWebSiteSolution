@@ -1,0 +1,51 @@
+﻿@page "/PegAllocator"
+@using AnglingClubShared.DTOs
+@using AnglingClubShared.Extensions;
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+    <div class="page-header">
+        <h3>Reserved Peg Allocator</h3>
+    </div>
+
+    <BusyIndicator IsReady="DataLoaded" />
+
+    @if(DataLoaded)
+    {
+        <QuickGrid Items="QueryablePegAllocations" >
+
+            <TemplateColumn Title="Date">
+                <ChildContent Context="row">
+                    <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
+                </ChildContent>
+            </TemplateColumn>
+
+            <TemplateColumn Title="Member Name">
+                <ChildContent Context="row">
+                    <SfComboBox TValue="int"
+                                    TItem="PegRegistrationOutputDto"
+                                    Placeholder=""
+                                    Width="200px"
+                                    AllowFiltering="true"
+                                    FilterType="FilterType.Contains"
+                                    FloatLabelType="FloatLabelType.Never"
+                                    DataSource="@PegRegistrations"
+                                    Value="@row.MembershipNumber"
+                                    ValueChanged="@(val => OnAllocationChanged(val, row))">
+                        <ComboBoxFieldSettings Value="MembershipNumber" Text="Name"></ComboBoxFieldSettings>
+                    </SfComboBox>
+                </ChildContent>
+            </TemplateColumn>
+
+            <TemplateColumn Title="Member" Align="Align.Center">
+                <ChildContent Context="row">
+                    <span tabindex="-1">@(row.MembershipNumber != 0 ? row.MembershipNumber : "")</span>
+                </ChildContent>
+            </TemplateColumn>
+
+        </QuickGrid>
+    }
+
+</AuthorizationRequired>

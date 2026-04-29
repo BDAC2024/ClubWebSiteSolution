@@ -202,6 +202,19 @@ namespace AnglingClubWebServices.Controllers
             return Ok(events);
         }
 
+        [HttpGet("PresentationNight/{season}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ClubEvent>))]
+        public IActionResult GetPresentationNight(Season season)
+        {
+            StartTimer();
+
+            var events = (_eventRepository.GetEvents().Result).Where(x => x.Season == season && x.Description.Contains("Presentation Night"));
+
+            ReportTimer("Getting PresentationNight");
+
+            return Ok(events);
+        }
+
         // POST api/values
         [HttpPost]
         public async System.Threading.Tasks.Task<IActionResult> PostAsync([FromBody] List<ClubEventInputDto> events)

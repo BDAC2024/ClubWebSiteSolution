@@ -22,17 +22,18 @@
         </div>
       </a>
       <a mat-list-item routerLink="/waters">Club Waters</a>
-      <a mat-list-item (click)="openBlazor('matches', drawer)">Matches</a>
-      <a mat-list-item routerLink="/register">
+      <a mat-list-item (click)="openBlazor('PegReservations', drawer)">
         <div class="custom-badge-opens-menu"
              matBadge="new"
              matBadgeOverlap="false"
              matBadgePosition="after"
              matBadgeSize="small"
              matBadgeColor="accent">
-          Junior Open Matches
+          Reserved Pegs
         </div>
       </a>
+      <a mat-list-item (click)="openBlazor('matches', drawer)">Matches</a>
+      <a mat-list-item routerLink="/register">Junior Open Matches</a>
       <mat-list-item (click)="showStandingsSubMenu = !showStandingsSubMenu" class="parent">
         <span class="full-width">Standings</span>
         <mat-icon class="menu-button" [ngClass]="{'rotated' : showStandingsSubMenu}">expand_more</mat-icon>
@@ -120,7 +121,8 @@
       </mat-list-item>
       <div class="submenu" [ngClass]="{'expanded' : showAdminSubMenu}" *ngIf="showAdminSubMenu && authenticationService.isAdmin">
         <a mat-list-item routerLink="/members">Members</a>
-        <a mat-list-item (click)="openBlazor('Documentation', drawer)" *ngIf="this.refDataService.isMemberSecretary()">Documentation</a>
+        <a mat-list-item (click)="openBlazor('Documentation', drawer)">Documentation</a>
+        <a mat-list-item (click)="openBlazor('PegAllocator', drawer)">Peg Allocator</a>
         <a mat-list-item routerLink="/userAdmins">User Admins</a>
         <!-- <a mat-list-item routerLink="/guestTickets" *ngIf="isPreviewer()"  title="PREVIEWERS ONLY - NOT PUBLIC">
     <div class="preview-option">

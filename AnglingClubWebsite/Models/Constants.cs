@@ -18,6 +18,7 @@
         public const string API_WATERS = "";
         public const string API_REF_DATA = "";
         public const string API_CLUB_EVENTS = "";
+        public const string API_PRES_NIGHT = "PresentationNight";
         public const string API_WATERS_UPDATE = "UpdateDescription";
 
         public const string API_DOCUMENT = "";
@@ -26,6 +27,12 @@
 
         public const string API_TMPFILE = "";
         public const string API_TMPFILE_GETUPLOADURL = "GetUploadUrl";
+
+        public const string API_REGISTRATIONS_READ = "PegRegistrations";
+        public const string API_REGISTRATION_READ = "PegRegistration";
+        public const string API_REGISTRATION_REGISTER_PEG = "RegisterPeg";
+        public const string API_REGISTRATION_PEG_ALLOCATIONS = "PegAllocations";
+        public const string API_REGISTRATION_ALLOCATE_PEG = "AllocatePeg";
 
     }
 }

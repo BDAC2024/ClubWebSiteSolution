@@ -1,0 +1,14 @@
+﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Enums;
+
+namespace AnglingClubWebsite.Services
+{
+    public interface IPegReservationService
+    {
+        Task<List<PegRegistrationOutputDto>?> ReadRegistrations(Season season);
+        Task<PegRegistrationOutputDto?> ReadRegistration(PegRegistrationRequestDto registration);
+        Task RegisterPeg(PegRegistrationRequestDto registration);
+        Task<List<PegAllocationOutputDto>> ReadAllocations(Season season);
+        Task AllocatePeg(PegAllocationRequestDto allocation);
+    }
+}

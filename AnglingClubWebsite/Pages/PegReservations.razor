@@ -1,0 +1,75 @@
+﻿@page "/PegReservations"
+@using AnglingClubShared.Extensions;
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+    <div class="page-header">
+        <h3>Reserved Pegs</h3>
+    </div>
+
+    <p>
+        Peg 1 (the one nearest the bridge) on the Milby Island stretch is reserved during the period from 16th June until 31st July (inclusive). You can register your interest in fishing this peg during this period using the <b>Register</b> tab.
+        <br />
+        <br />
+        Registered names will be drawn at random during the club's Presentation Night on <b>@((PresentationNightDate).BdacDate())</b>.
+        Once the draw has taken place, a list of each inclusive date along with the name of the selected member will be available on the <b>Allocations</b> tab.
+        <br />
+        <br />
+        If you are unable to fish on your allocated day, you can swap with another member by contacting them directly.
+    </p>
+
+    <BusyIndicator IsReady="DataLoaded" />
+
+    @if (DataLoaded)
+    {
+        <SfTab ID="Tab" EnablePersistence="false" SelectedItem="SelectedTab">
+            <TabEvents Selected="OnTabSelected"></TabEvents>
+            <TabItems>
+                <TabItem>
+                    <HeaderTemplate>
+                        Register
+                    </HeaderTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>
+                        Allocations
+                    </HeaderTemplate>
+                </TabItem>
+            </TabItems>
+        </SfTab>
+
+        <SfCard>
+            <CardContent>
+                @if (SelectedTab == 0)
+                {
+                    <p><b>Note</b>: You can only register once per season. If fewer people register than there are reserved dates then we will repeat drawing names until all dates have been allocated. You may therefore be allocated more than one date.</p>
+                    @if(ExistingRegistration != null)
+                    {
+                        <p>You are already registered. You registered on <b>@((ExistingRegistration.DateRegistered).BdacDate())</b></p>
+                    }
+                    else
+                    {
+                        @if (RegistrationComplete == false)
+                        {
+                            <SfCheckBox Label="Tick here to register" CssClass="smt-e-customsize" @bind-Checked="@RegisterMe" @onchange="OnRegistering"></SfCheckBox>
+                            <BusyIndicator IsReady="Registered" />
+                        }
+                        else
+                        {
+                            <p>You are now registered. The draw will take place at the next Presentation Night on <b>@((PresentationNightDate).BdacDate())</b>. Results will be posted in the <b>Allocations</b> tab</p>
+                        }
+                    }
+                }
+                else
+                {
+                    <p>
+                        @((PresentationNightDate).BdacDate())
+                    </p>
+                }
+            </CardContent>
+        </SfCard>
+    }
+
+
+</AuthorizationRequired>

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -160,36 +161,29 @@ namespace AnglingClubWebServices.Controllers
         }
 
         [HttpGet("PegRegistrations")]
-        public async System.Threading.Tasks.Task<IActionResult> GetPegRegistrations([FromQuery] Season? season = null)
+        public async System.Threading.Tasks.Task<IActionResult> GetPegRegistrations([FromQuery] Season season)
         {
             StartTimer();
 
-            var registrations = await _pegRegistrationRepository.GetPegRegistrations();
-            if (season.HasValue)
+            var registrations = await getRegistrationsForSeason(season);
+
+            return Ok(registrations);
+        }
+
+        [HttpPost("PegRegistration")]
+        public async System.Threading.Tasks.Task<IActionResult> GetPegRegistration([FromBody] PegRegistrationRequestDto registration)
+        {
+            StartTimer();
+
+            var registrations = await getRegistrationsForSeason(registration.Season);
+            var existingRegistation = registrations.SingleOrDefault(x => x.MembershipNumber == CurrentUser.MembershipNumber);
+
+            if (existingRegistation == null)
             {
-                registrations = registrations.Where(x => x.Season == season.Value).ToList();
+                return NotFound();
             }
 
-            var members = await _memberRepository.GetMembers(season);
-            var membersByNumber = members.ToLookup(x => x.MembershipNumber, x => x.Name);
-
-            var results = registrations
-                .OrderBy(x => x.Stretch)
-                .ThenBy(x => x.Peg)
-                .ThenBy(x => x.MembershipNumber)
-                .Select(x => new PegRegistrationOutputDto
-                {
-                    DbKey = x.DbKey,
-                    Stretch = x.Stretch,
-                    Peg = x.Peg,
-                    Season = x.Season,
-                    MembershipNumber = x.MembershipNumber,
-                    Name = membersByNumber[x.MembershipNumber].FirstOrDefault() ?? x.MembershipNumber.ToString(),
-                    DateRegistered = x.DateRegistered
-                })
-                .ToList();
-
-            return Ok(results);
+            return Ok(existingRegistation);
         }
 
         [HttpDelete("PegRegistrations/{id}")]
@@ -465,5 +459,36 @@ namespace AnglingClubWebServices.Controllers
         public void Delete(int id)
         {
         }
+
+        #region Helper Methods
+
+        private async Task<List<PegRegistrationOutputDto>> getRegistrationsForSeason(Season season)
+        {
+            var registrations = await _pegRegistrationRepository.GetPegRegistrations();
+            registrations = registrations.Where(x => x.Season == season).ToList();
+
+            var members = await _memberRepository.GetMembers(season);
+            var membersByNumber = members.ToLookup(x => x.MembershipNumber, x => x.Name);
+
+            var results = registrations
+                .OrderBy(x => x.Stretch)
+                .ThenBy(x => x.Peg)
+                .ThenBy(x => x.MembershipNumber)
+                .Select(x => new PegRegistrationOutputDto
+                {
+                    DbKey = x.DbKey,
+                    Stretch = x.Stretch,
+                    Peg = x.Peg,
+                    Season = x.Season,
+                    MembershipNumber = x.MembershipNumber,
+                    Name = membersByNumber[x.MembershipNumber].FirstOrDefault() ?? x.MembershipNumber.ToString(),
+                    DateRegistered = x.DateRegistered
+                })
+                .ToList();
+
+            return results;
+        }
+
+        #endregion Helper Methods
     }
 }
