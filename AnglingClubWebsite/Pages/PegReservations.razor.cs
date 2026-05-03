@@ -227,7 +227,7 @@ namespace AnglingClubWebsite.Pages
 
         private async Task GetEligibleMembers()
         {
-            var members = await _pegReservationService.ReadEligibleMembers((EnumUtils.SeasonForDate(DateTime.Parse("2025-06-06"))).Value);
+            var members = await _pegReservationService.ReadEligibleMembers(SelectedSeason);
             EligibleMembers = new List<Member>();
             EligibleMembers.Add(new Member
             {
