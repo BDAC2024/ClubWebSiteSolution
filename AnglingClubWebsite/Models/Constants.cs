@@ -30,7 +30,9 @@
 
         public const string API_REGISTRATIONS_READ = "PegRegistrations";
         public const string API_REGISTRATION_READ = "PegRegistration";
+        public const string API_REGISTRATION_READ_ELIGIBLE_MEMBERS = "MembersEligilbleForPegRegistration";
         public const string API_REGISTRATION_REGISTER_PEG = "RegisterPeg";
+        public const string API_REGISTRATION_REGISTER_OTHERS_PEG = "RegisterOthersPeg";
         public const string API_REGISTRATION_PEG_ALLOCATIONS = "PegAllocations";
         public const string API_REGISTRATION_ALLOCATE_PEG = "AllocatePeg";
 

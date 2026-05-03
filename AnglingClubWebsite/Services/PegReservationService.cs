@@ -1,4 +1,5 @@
 ﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubWebsite.Helpers;
 using AnglingClubWebsite.Models;
@@ -65,6 +66,38 @@ namespace AnglingClubWebsite.Services
 
             return;
 
+        }
+
+        /// <summary>
+        /// Admin only - register a peg on behalf of another member
+        /// </summary>
+        /// <param name="membershipNumber"></param>
+        /// <param name="registration"></param>
+        /// <returns></returns>
+        public async Task RegisterOthersPeg(int membershipNumber, PegRegistrationRequestDto registration)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_REGISTRATION_REGISTER_OTHERS_PEG}/{membershipNumber}";
+
+            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", registration);
+
+            return;
+
+        }
+
+        /// <summary>
+        /// Get a list of members that havent yey registered for a peg in the specified season;
+        /// </summary>
+        /// <param name="season"></param>
+        /// <returns></returns>
+        public async Task<List<Member>> ReadEligibleMembers(Season season)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/{Constants.API_REGISTRATION_READ_ELIGIBLE_MEMBERS}?Season={(int)season}";
+
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+
+            var content = await response.Content.ReadFromJsonAsync<List<Member>>();
+
+            return content ?? new List<Member>();
         }
 
         public async Task<List<PegAllocationOutputDto>> ReadAllocations(Season season)

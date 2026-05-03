@@ -1,5 +1,6 @@
 ﻿@page "/PegReservations"
 @using AnglingClubShared.DTOs
+@using AnglingClubShared.Entities
 @using AnglingClubShared.Extensions;
 @using Microsoft.AspNetCore.Components.QuickGrid
 
@@ -43,6 +44,11 @@
                 </TabItem>
                 @if (IsAdmin)
                 {
+                    <TabItem>
+                        <HeaderTemplate>
+                            Register Another Member (Admin only)
+                        </HeaderTemplate>
+                    </TabItem>
                     <TabItem>
                         <HeaderTemplate>
                             Current Registrations (Admin only)
@@ -117,6 +123,36 @@
                 }
                 else if (SelectedTab == 2)
                 {
+                    @if (DateOnly.FromDateTime(DateTime.Now).DayNumber < DateOnly.FromDateTime(PresentationNightDate).DayNumber - 1)
+                    {
+                        <p>Please select the member that wishes to register for the reserved peg.</p>
+                        <p><b>Note</b> You can start typing part of the name to filter the list.</p>
+                        <SfComboBox TValue="int"
+                                    TItem="Member"
+                                    Placeholder=""
+                                    Width="150px"
+                                    AllowFiltering="true"
+                                    FilterType="FilterType.Contains"
+                                    FloatLabelType="FloatLabelType.Never"
+                                    DataSource="@EligibleMembers"
+                                    @bind-Value="@OtherMembershipNumber">
+                            <ComboBoxFieldSettings Value="MembershipNumber" Text="Name"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                        <SfButton Disabled="@(OtherMembershipNumber == 0)" CssClass="e-primary edit-button" @onclick="RegistraterOtherMember">Register</SfButton>
+                        <BusyIndicator IsReady="RegisteredOther" />
+                        @if (RegisteredOtherComplete)
+                        {
+                            <p>Registration complete</p>
+                        }
+
+                    }
+                    else
+                    {
+                        <p>Sorry, registrations are closed for this year.</p>
+                    }
+                }
+                else if (SelectedTab == 3)
+                {
                     <p><b>Note</b>: There are <b>46</b> reserved days between 16th June and 31st July and <b>@(QueryablePegRegistrations.Count())</b> people are currently registered.</p>
 
                     <QuickGrid Items="QueryablePegRegistrations">
@@ -143,7 +179,7 @@
                     </QuickGrid>
 
                 }
-                else if (SelectedTab == 3)
+                else if (SelectedTab == 4)
                 {
                     <p>This can be completed in real-time as the draw takes place.</p>
                     <QuickGrid Items="QueryablePegAllocations">

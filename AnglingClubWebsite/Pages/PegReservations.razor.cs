@@ -1,4 +1,5 @@
 ﻿using AnglingClubShared.DTOs;
+using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Helpers;
@@ -48,7 +49,12 @@ namespace AnglingClubWebsite.Pages
         public IQueryable<PegAllocationOutputDto> QueryablePegAllocations { get; set; } = Enumerable.Empty<PegAllocationOutputDto>().AsQueryable();
         public IQueryable<PegAllocationOutputDto> QueryableExistingPegAllocations { get; set; }
         public List<PegRegistrationOutputDto> CurrentPegRegistrations { get; set; } = new List<PegRegistrationOutputDto>();
-        public IQueryable<PegRegistrationOutputDto> QueryablePegRegistrations { get; set; }
+        public IQueryable<PegRegistrationOutputDto> QueryablePegRegistrations { get; set; } = new List<PegRegistrationOutputDto>().AsQueryable();
+
+        public List<Member> EligibleMembers { get; set; } = new List<Member>();
+        public int OtherMembershipNumber { get; set; }
+        public bool RegisteredOther { get; set; } = true;
+        public bool RegisteredOtherComplete { get; set; } = false;
 
         public override async Task Loaded()
         {
@@ -111,8 +117,6 @@ namespace AnglingClubWebsite.Pages
 
                 }
 
-                CurrentPegRegistrations = (await _pegReservationService.ReadRegistrations(SelectedSeason))!.OrderBy(x => x.Name).ToList() ?? new List<PegRegistrationOutputDto>();
-                QueryablePegRegistrations = CurrentPegRegistrations.OrderBy(x => x.DateRegistered).AsQueryable();
             }
             catch (ApiForbiddenException ex)
             {
@@ -133,6 +137,15 @@ namespace AnglingClubWebsite.Pages
             {
                 case 1: // Always show an up to date list of allocations
                     await GetAllocations();
+                    break;
+
+                case 2: // Always show an up to date list of eligible members
+                    RegisteredOtherComplete = false;
+                    await GetEligibleMembers();
+                    break;
+
+                case 3: // Always show an up to date list of registrations
+                    await GetRegistrations();
                     break;
 
                 default:
@@ -192,6 +205,41 @@ namespace AnglingClubWebsite.Pages
             }
         }
 
+        private async Task RegistraterOtherMember()
+        {
+            if (OtherMembershipNumber != 0)
+            {
+                {
+                    RegisteredOther = false;
+                    await _pegReservationService.RegisterOthersPeg(OtherMembershipNumber, new PegRegistrationRequestDto
+                    {
+                        Stretch = "MilbyIsland",
+                        Peg = "1",
+                        Season = SelectedSeason
+                    });
+                    RegisteredOther = true;
+                    RegisteredOtherComplete = true;
+                    await GetEligibleMembers();
+                    return;
+                }
+            }
+        }
+
+        private async Task GetEligibleMembers()
+        {
+            var members = await _pegReservationService.ReadEligibleMembers((EnumUtils.SeasonForDate(DateTime.Parse("2025-06-06"))).Value);
+            EligibleMembers = new List<Member>();
+            EligibleMembers.Add(new Member
+            {
+                MembershipNumber = 0,
+                Name = "Please select..."
+            });
+            EligibleMembers.AddRange(members);
+            OtherMembershipNumber = EligibleMembers.First().MembershipNumber;
+            StateHasChanged();
+
+        }
+
         private async Task GetAllocations()
         {
             var existingAllocations =
@@ -199,6 +247,13 @@ namespace AnglingClubWebsite.Pages
                     ?? [];
 
             QueryableExistingPegAllocations = existingAllocations.AsQueryable();
+        }
+
+        private async Task GetRegistrations()
+        {
+            CurrentPegRegistrations = (await _pegReservationService.ReadRegistrations(SelectedSeason))!.OrderBy(x => x.Name).ToList() ?? new List<PegRegistrationOutputDto>();
+            QueryablePegRegistrations = CurrentPegRegistrations.OrderBy(x => x.DateRegistered).AsQueryable();
+
         }
     }
 }

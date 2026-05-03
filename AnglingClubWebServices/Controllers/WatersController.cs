@@ -160,6 +160,64 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
+        [HttpPost("RegisterOthersPeg/{membershipNumber}")]
+        public async System.Threading.Tasks.Task<IActionResult> RegisterOthersPeg([FromRoute] int membershipNumber, [FromBody] PegRegistrationRequestDto request)
+        {
+            StartTimer();
+
+            if (CurrentUser == null || !CurrentUser.Admin)
+            {
+                return Forbid();
+            }
+
+            if (request == null && membershipNumber < 1)
+            {
+                return BadRequest("MembershipNumber and Request body is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Stretch) || string.IsNullOrWhiteSpace(request.Peg))
+            {
+                return BadRequest("Stretch and Peg are required.");
+            }
+
+            try
+            {
+                var registration = new PegRegistration
+                {
+                    Stretch = request.Stretch.Trim(),
+                    Peg = request.Peg.Trim(),
+                    Season = request.Season,
+                    MembershipNumber = membershipNumber,
+                    DateRegistered = DateTime.UtcNow
+                };
+
+                await _pegRegistrationRepository.AddOrUpdatePegRegistration(registration);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new[] { ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of Members that have not yet registered for a peg for the specified season.
+        /// </summary>
+        /// <param name="season"></param>
+        /// <returns></returns>
+        [HttpGet("MembersEligilbleForPegRegistration")]
+        public async System.Threading.Tasks.Task<IActionResult> MembersEligilbleForPegRegistration([FromQuery] Season season)
+        {
+            StartTimer();
+
+            var currentRegistrations = await getRegistrationsForSeason(season);
+            var currentMembers = await _memberRepository.GetMembers(season);
+
+            var eligibleMembers = currentMembers.Where(m => !currentRegistrations.Any(r => r.MembershipNumber == m.MembershipNumber) && m.MembershipNumber > 0).ToList();
+
+            return Ok(eligibleMembers);
+        }
+
         [HttpGet("PegRegistrations")]
         public async System.Threading.Tasks.Task<IActionResult> GetPegRegistrations([FromQuery] Season season)
         {
