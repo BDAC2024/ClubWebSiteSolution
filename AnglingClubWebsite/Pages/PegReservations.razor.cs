@@ -232,7 +232,7 @@ namespace AnglingClubWebsite.Pages
             EligibleMembers.Add(new Member
             {
                 MembershipNumber = 0,
-                Name = "Please select..."
+                Name = ""
             });
             EligibleMembers.AddRange(members);
             OtherMembershipNumber = EligibleMembers.First().MembershipNumber;
