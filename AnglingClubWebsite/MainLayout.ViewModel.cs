@@ -203,6 +203,7 @@ namespace AnglingClubWebsite
 
             List<MenuItem> menuItems = new List<MenuItem>();
 
+            menuItems.Add(new MenuItem { Id = "03.1", Name = "Reserved Pegs", IsNew = true, NavigateUrl = menuUrl("/PegReservations") });
             menuItems.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets", NavigateUrl = menuUrl("/buyGuestTickets"), IsNew = false });
             menuItems.Add(new MenuItem { Id = "10", Name = "My Details" });
             menuItems.Add(new MenuItem { Id = "11", Name = "Logout", NavigateUrl = menuUrl("/Logout") });

@@ -1,0 +1,226 @@
+﻿@page "/PegReservations"
+@using AnglingClubShared.DTOs
+@using AnglingClubShared.Entities
+@using AnglingClubShared.Extensions;
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@inherits RazorComponentBase;
+
+<AuthorizationRequired>
+    <div class="page-header">
+        <h3>Reserved Pegs</h3>
+    </div>
+
+    @if (PresentationNightDate > DateTime.MinValue)
+    {
+        <p>
+            Peg 1 (the one nearest the bridge) on the Milby Island stretch is reserved during the period from 16th June until 31st July (inclusive). You can register your interest in fishing this peg during this period using the <b>Register</b> tab.
+            <br />
+            <br />
+            Registered names will be drawn at random during the club's Presentation Night on <b>@((PresentationNightDate).BdacDate())</b>.
+            Once the draw has taken place, a list of each inclusive date along with the name of the selected member will be available on the <b>Allocations</b> tab.
+            <br />
+            <br />
+            If you are unable to fish on your allocated day, you can swap with another member by contacting them directly.
+        </p>
+    }
+
+    <BusyIndicator IsReady="DataLoaded" />
+
+    @if (DataLoaded)
+    {
+        <SfTab ID="Tab" EnablePersistence="false" SelectedItem="SelectedTab">
+            <TabEvents Selected="OnTabSelected"></TabEvents>
+            <TabItems>
+                <TabItem>
+                    <HeaderTemplate>
+                        Register
+                    </HeaderTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>
+                        Allocations
+                    </HeaderTemplate>
+                </TabItem>
+                @if (IsAdmin)
+                {
+                    <TabItem>
+                        <HeaderTemplate>
+                            Register Another Member (Admin only)
+                        </HeaderTemplate>
+                    </TabItem>
+                    <TabItem>
+                        <HeaderTemplate>
+                            Current Registrations (Admin only)
+                        </HeaderTemplate>
+                    </TabItem>
+                    <TabItem>
+                        <HeaderTemplate>
+                            Allocate Pegs (Admin only)
+                        </HeaderTemplate>
+                    </TabItem>
+                }
+            </TabItems>
+        </SfTab>
+
+        <SfCard>
+            <CardContent>
+                @if (SelectedTab == 0)
+                {
+                    @if (DateOnly.FromDateTime(DateTime.Now).DayNumber < DateOnly.FromDateTime(PresentationNightDate).DayNumber - 1)
+                    {
+                        <p><b>Note</b>: You can only register once per season. If fewer people register than there are reserved dates then we will repeat drawing names until all dates have been allocated. You may therefore be allocated more than one date.</p>
+                        @if (ExistingRegistration != null)
+                        {
+                            <p>You are already registered. You registered on <b>@((ExistingRegistration.DateRegistered).BdacDate())</b></p>
+                        }
+                        else
+                        {
+                            @if (RegistrationComplete == false)
+                            {
+                                <SfCheckBox Label="Tick here to register" CssClass="smt-e-customsize" @bind-Checked="@RegisterMe" @onchange="OnRegistering"></SfCheckBox>
+                                <BusyIndicator IsReady="Registered" />
+                            }
+                            else
+                            {
+                                <p>You are now registered. The draw will take place at the next Presentation Night on <b>@((PresentationNightDate).BdacDate())</b>. Results will be posted in the <b>Allocations</b> tab</p>
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        <p>Sorry, registrations are closed for this year.</p>
+                    }
+                }
+                else if (SelectedTab == 1)
+                {
+                    @if (QueryableExistingPegAllocations?.Any() == true)
+                    {
+                        <QuickGrid Items="QueryableExistingPegAllocations">
+
+                            <TemplateColumn Title="Date">
+                                <ChildContent Context="row">
+                                    <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
+                                </ChildContent>
+                            </TemplateColumn>
+
+                            <TemplateColumn Title="Member Name">
+                                <ChildContent Context="row">
+                                    <span tabindex="-1">@row.Name</span>
+                                </ChildContent>
+                            </TemplateColumn>
+
+                        </QuickGrid>
+                    }
+                    else
+                    {
+                        <p>
+                            There are no peg allocations at present. The draw will take place at the next Presentation Night on <b>@((PresentationNightDate).BdacDate())</b> and the results will be posted here.
+                        </p>
+                    }
+
+                }
+                else if (SelectedTab == 2)
+                {
+                    @if (DateOnly.FromDateTime(DateTime.Now).DayNumber < DateOnly.FromDateTime(PresentationNightDate).DayNumber - 1)
+                    {
+                        <p>Please select the member that wishes to register for the reserved peg.</p>
+                        <p><b>Note</b> You can start typing part of the name to filter the list.</p>
+                        <SfComboBox TValue="int"
+                                    TItem="Member"
+                                    Placeholder=""
+                                    Width="150px"
+                                    AllowFiltering="true"
+                                    FilterType="FilterType.Contains"
+                                    FloatLabelType="FloatLabelType.Never"
+                                    DataSource="@EligibleMembers"
+                                    @bind-Value="@OtherMembershipNumber">
+                            <ComboBoxFieldSettings Value="MembershipNumber" Text="Name"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                        <SfButton Disabled="@(OtherMembershipNumber == 0)" CssClass="e-primary edit-button" @onclick="RegistraterOtherMember">Register</SfButton>
+                        <BusyIndicator IsReady="RegisteredOther" />
+                        @if (RegisteredOtherComplete)
+                        {
+                            <p>Registration complete</p>
+                        }
+
+                    }
+                    else
+                    {
+                        <p>Sorry, registrations are closed for this year.</p>
+                    }
+                }
+                else if (SelectedTab == 3)
+                {
+                    <p><b>Note</b>: There are <b>46</b> reserved days between 16th June and 31st July and <b>@(QueryablePegRegistrations.Count())</b> people are currently registered.</p>
+
+                    <QuickGrid Items="QueryablePegRegistrations">
+
+                        <TemplateColumn Title="Member Name">
+                            <ChildContent Context="row">
+                                <span tabindex="-1" class="nowrap">@row.Name</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Member" Align="Align.Center">
+                            <ChildContent Context="row">
+                                <span tabindex="-1">@(row.MembershipNumber != 0 ? row.MembershipNumber : "")</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Registered on">
+                            <ChildContent Context="row">
+                                <span tabindex="-1" class="nowrap">@row.DateRegistered.BdacDate()</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+
+                    </QuickGrid>
+
+                }
+                else if (SelectedTab == 4)
+                {
+                    <p>This can be completed in real-time as the draw takes place.</p>
+                    <QuickGrid Items="QueryablePegAllocations">
+
+                        <TemplateColumn Title="Date">
+                            <ChildContent Context="row">
+                                <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Member Name">
+                            <ChildContent Context="row">
+                                <SfComboBox TValue="int"
+                                            TItem="PegRegistrationOutputDto"
+                                            Placeholder=""
+                                            Width="150px"
+                                            AllowFiltering="true"
+                                            FilterType="FilterType.Contains"
+                                            FloatLabelType="FloatLabelType.Never"
+                                            DataSource="@CurrentPegRegistrations"
+                                            Value="@row.MembershipNumber"
+                                            ValueChanged="@(val => OnAllocationChanged(val, row))">
+                                    <ComboBoxFieldSettings Value="MembershipNumber" Text="Name"></ComboBoxFieldSettings>
+                                </SfComboBox>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Member" Align="Align.Center">
+                            <ChildContent Context="row">
+                                <span tabindex="-1">@(row.MembershipNumber != 0 ? row.MembershipNumber : "")</span>
+                            </ChildContent>
+                        </TemplateColumn>
+
+                    </QuickGrid>
+
+                }
+
+
+            </CardContent>
+        </SfCard>
+    }
+
+
+</AuthorizationRequired>

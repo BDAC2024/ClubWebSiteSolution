@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,13 +21,22 @@ namespace AnglingClubWebServices.Controllers
     public class WatersController : AnglingClubControllerBase
     {
         private readonly IWaterRepository _waterRepository;
+        private readonly IPegRegistrationRepository _pegRegistrationRepository;
+        private readonly IPegAllocationRepository _pegAllocationRepository;
+        private readonly IMemberRepository _memberRepository;
         private readonly ILogger<WatersController> _logger;
 
         public WatersController(
             IWaterRepository waterRepository,
+            IPegRegistrationRepository pegRegistrationRepository,
+            IPegAllocationRepository pegAllocationRepository,
+            IMemberRepository memberRepository,
             ILoggerFactory loggerFactory)
         {
             _waterRepository = waterRepository;
+            _pegRegistrationRepository = pegRegistrationRepository;
+            _pegAllocationRepository = pegAllocationRepository;
+            _memberRepository = memberRepository;
             _logger = loggerFactory.CreateLogger<WatersController>();
             base.Logger = _logger;
         }
@@ -110,6 +120,226 @@ namespace AnglingClubWebServices.Controllers
 
         }
 
+        [HttpPost("RegisterPeg")]
+        public async System.Threading.Tasks.Task<IActionResult> RegisterPeg([FromBody] PegRegistrationRequestDto request)
+        {
+            StartTimer();
+
+            if (request == null)
+            {
+                return BadRequest("Request body is required.");
+            }
+
+            if (CurrentUser == null)
+            {
+                return Unauthorized();
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Stretch) || string.IsNullOrWhiteSpace(request.Peg))
+            {
+                return BadRequest("Stretch and Peg are required.");
+            }
+
+            try
+            {
+                var registration = new PegRegistration
+                {
+                    Stretch = request.Stretch.Trim(),
+                    Peg = request.Peg.Trim(),
+                    Season = request.Season,
+                    MembershipNumber = CurrentUser.MembershipNumber,
+                    DateRegistered = DateTime.UtcNow
+                };
+
+                await _pegRegistrationRepository.AddOrUpdatePegRegistration(registration);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new[] { ex.Message });
+            }
+        }
+
+        [HttpPost("RegisterOthersPeg/{membershipNumber}")]
+        public async System.Threading.Tasks.Task<IActionResult> RegisterOthersPeg([FromRoute] int membershipNumber, [FromBody] PegRegistrationRequestDto request)
+        {
+            StartTimer();
+
+            if (CurrentUser == null || !CurrentUser.Admin)
+            {
+                return Forbid();
+            }
+
+            if (request == null && membershipNumber < 1)
+            {
+                return BadRequest("MembershipNumber and Request body is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Stretch) || string.IsNullOrWhiteSpace(request.Peg))
+            {
+                return BadRequest("Stretch and Peg are required.");
+            }
+
+            try
+            {
+                var registration = new PegRegistration
+                {
+                    Stretch = request.Stretch.Trim(),
+                    Peg = request.Peg.Trim(),
+                    Season = request.Season,
+                    MembershipNumber = membershipNumber,
+                    DateRegistered = DateTime.UtcNow
+                };
+
+                await _pegRegistrationRepository.AddOrUpdatePegRegistration(registration);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new[] { ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of Members that have not yet registered for a peg for the specified season.
+        /// </summary>
+        /// <param name="season"></param>
+        /// <returns></returns>
+        [HttpGet("MembersEligilbleForPegRegistration")]
+        public async System.Threading.Tasks.Task<IActionResult> MembersEligilbleForPegRegistration([FromQuery] Season season)
+        {
+            StartTimer();
+
+            var currentRegistrations = await getRegistrationsForSeason(season);
+            var currentMembers = await _memberRepository.GetMembers(season);
+
+            var eligibleMembers = currentMembers.Where(m => !currentRegistrations.Any(r => r.MembershipNumber == m.MembershipNumber) && m.MembershipNumber > 0).ToList();
+
+            return Ok(eligibleMembers);
+        }
+
+        [HttpGet("PegRegistrations")]
+        public async System.Threading.Tasks.Task<IActionResult> GetPegRegistrations([FromQuery] Season season)
+        {
+            StartTimer();
+
+            var registrations = await getRegistrationsForSeason(season);
+
+            return Ok(registrations);
+        }
+
+        [HttpPost("PegRegistration")]
+        public async System.Threading.Tasks.Task<IActionResult> GetPegRegistration([FromBody] PegRegistrationRequestDto registration)
+        {
+            StartTimer();
+
+            var registrations = await getRegistrationsForSeason(registration.Season);
+            var existingRegistation = registrations.SingleOrDefault(x => x.MembershipNumber == CurrentUser.MembershipNumber);
+
+            if (existingRegistation == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(existingRegistation);
+        }
+
+        [HttpDelete("PegRegistrations/{id}")]
+        public async System.Threading.Tasks.Task<IActionResult> DeletePegRegistration(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("Id is required.");
+            }
+
+            await _pegRegistrationRepository.DeletePegRegistration(id);
+            return Ok();
+        }
+
+        [HttpPost("AllocatePeg")]
+        public async System.Threading.Tasks.Task<IActionResult> AllocatePeg([FromBody] PegAllocationRequestDto request)
+        {
+            StartTimer();
+
+            if (request == null)
+            {
+                return BadRequest("Request body is required.");
+            }
+
+            if (CurrentUser == null || !CurrentUser.Admin)
+            {
+                return Forbid();
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Stretch) || string.IsNullOrWhiteSpace(request.Peg))
+            {
+                return BadRequest("Stretch, Peg and DateAllocated are required.");
+            }
+
+            try
+            {
+                var allocation = new PegAllocation
+                {
+                    Stretch = request.Stretch.Trim(),
+                    Peg = request.Peg.Trim(),
+                    MembershipNumber = request.MembershipNumber,
+                    DateAllocated = request.DateAllocated,
+                    Season = EnumUtils.SeasonForDate(request.DateAllocated.ToDateTime(TimeOnly.MinValue)) ?? throw new Exception("DateAllocated does not fall within a known season.")
+                };
+
+                await _pegAllocationRepository.AddOrUpdatePegAllocation(allocation);
+                return Ok(allocation.DbKey);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new[] { ex.Message });
+            }
+        }
+
+        [HttpGet("PegAllocations")]
+        public async System.Threading.Tasks.Task<IActionResult> GetPegAllocations([FromQuery] Season? season = null)
+        {
+            StartTimer();
+
+            var allocations = await _pegAllocationRepository.GetPegAllocations();
+            if (season.HasValue)
+            {
+                allocations = allocations.Where(x => x.Season == season.Value).ToList();
+            }
+
+            var members = await _memberRepository.GetMembers(season);
+            var membersByNumber = members.ToLookup(x => x.MembershipNumber, x => x.Name);
+
+            var results = allocations
+                .OrderBy(x => x.Stretch)
+                .ThenBy(x => x.Peg)
+                .ThenBy(x => x.DateAllocated)
+                .Select(x => new PegAllocationOutputDto
+                {
+                    DbKey = x.DbKey,
+                    Stretch = x.Stretch,
+                    Peg = x.Peg,
+                    Season = x.Season,
+                    MembershipNumber = x.MembershipNumber,
+                    Name = membersByNumber[x.MembershipNumber].FirstOrDefault() ?? x.MembershipNumber.ToString(),
+                    DateAllocated = x.DateAllocated
+                })
+                .ToList();
+
+            return Ok(results);
+        }
+
+        [HttpDelete("PegAllocations/{id}")]
+        public async System.Threading.Tasks.Task<IActionResult> DeletePegAllocation(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("Id is required.");
+            }
+
+            await _pegAllocationRepository.DeletePegAllocation(id);
+            return Ok();
+        }
 
         // GET api/<WatersController1>/5
         [HttpGet("{id}")]
@@ -287,5 +517,36 @@ namespace AnglingClubWebServices.Controllers
         public void Delete(int id)
         {
         }
+
+        #region Helper Methods
+
+        private async Task<List<PegRegistrationOutputDto>> getRegistrationsForSeason(Season season)
+        {
+            var registrations = await _pegRegistrationRepository.GetPegRegistrations();
+            registrations = registrations.Where(x => x.Season == season).ToList();
+
+            var members = await _memberRepository.GetMembers(season);
+            var membersByNumber = members.ToLookup(x => x.MembershipNumber, x => x.Name);
+
+            var results = registrations
+                .OrderBy(x => x.Stretch)
+                .ThenBy(x => x.Peg)
+                .ThenBy(x => x.MembershipNumber)
+                .Select(x => new PegRegistrationOutputDto
+                {
+                    DbKey = x.DbKey,
+                    Stretch = x.Stretch,
+                    Peg = x.Peg,
+                    Season = x.Season,
+                    MembershipNumber = x.MembershipNumber,
+                    Name = membersByNumber[x.MembershipNumber].FirstOrDefault() ?? x.MembershipNumber.ToString(),
+                    DateRegistered = x.DateRegistered
+                })
+                .ToList();
+
+            return results;
+        }
+
+        #endregion Helper Methods
     }
 }

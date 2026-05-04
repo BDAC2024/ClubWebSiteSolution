@@ -118,6 +118,16 @@ namespace AnglingClubShared.Extensions
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        public static string BdacDate(this DateOnly value)
+        {
+            return value.ToString("dd MMM yy");
+        }
+
+        /// <summary>
+        /// Returns a date of the form "18 Dec 25"
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string BdacDateTime(this DateTime value)
         {
             return value.ToString("dd MMM yy HH:mm");
