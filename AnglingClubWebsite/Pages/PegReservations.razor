@@ -97,7 +97,13 @@
                 {
                     @if (QueryableExistingPegAllocations?.Any() == true)
                     {
-                        <QuickGrid Items="QueryableExistingPegAllocations">
+                        <QuickGrid Items="QueryableExistingPegAllocations" Class="bdac-simple-table">
+
+                            <TemplateColumn Title="Day">
+                                <ChildContent Context="row">
+                                    <span tabindex="-1" class="nowrap">@row.DateAllocated.ToString("ddd")</span>
+                                </ChildContent>
+                            </TemplateColumn>
 
                             <TemplateColumn Title="Date">
                                 <ChildContent Context="row">

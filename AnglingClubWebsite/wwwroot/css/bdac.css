@@ -736,7 +736,7 @@ fieldset {
     .bdac-simple-table th,
     .bdac-simple-table td {
         border-bottom: 1px solid #ddd;
-        padding: 11px 12px 13px 12px;
+        padding: 11px 12px 13px 0px;
     }
 
         .bdac-simple-table th.center-align,
