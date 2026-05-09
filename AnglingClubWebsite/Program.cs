@@ -154,4 +154,7 @@ var host = builder.Build();
 var tokenStore = host.Services.GetRequiredService<IAuthTokenStore>();
 await tokenStore.InitializeAsync();
 
+var hostBridge = host.Services.GetRequiredService<HostBridge>();
+await hostBridge.InitializeAsync();
+
 await host.RunAsync();

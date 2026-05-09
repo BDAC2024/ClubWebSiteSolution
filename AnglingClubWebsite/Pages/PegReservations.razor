@@ -29,7 +29,7 @@
 
     @if (DataLoaded)
     {
-        <SfTab ID="Tab" EnablePersistence="false" SelectedItem="SelectedTab">
+        <SfTab @key="CurrentUser.Admin" ID="Tab" EnablePersistence="false" SelectedItem="SelectedTab">
             <TabEvents Selected="OnTabSelected"></TabEvents>
             <TabItems>
                 <TabItem>

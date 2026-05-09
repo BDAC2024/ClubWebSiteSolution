@@ -3,6 +3,7 @@ using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
 using AnglingClubWebsite.Helpers;
+using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,7 +11,7 @@ using Syncfusion.Blazor.Navigations;
 
 namespace AnglingClubWebsite.Pages
 {
-    public partial class PegReservations : RazorComponentBase
+    public partial class PegReservations : RazorComponentBase, IRecipient<LoggedIn>, IDisposable
     {
         private readonly IMessenger _messenger;
         private readonly ILogger<PegReservations> _logger;
@@ -55,10 +56,47 @@ namespace AnglingClubWebsite.Pages
         public bool RegisteredOther { get; set; } = true;
         public bool RegisteredOtherComplete { get; set; } = false;
 
-        protected override async Task OnParametersSetAsync()
+        private bool _isLoggingIn = false;
+
+        protected override async Task OnInitializedAsync()
+        {
+            _messenger.Register<LoggedIn>(this);
+
+            await base.OnInitializedAsync();
+        }
+
+        public void Receive(LoggedIn message)
+        {
+            _currentUserService.User = message.User;
+            CurrentUser = message.User;
+            //Console.WriteLine("LOGIN RECEIVED");
+
+            // Guard against concurrent/duplicate refresh calls
+            if (_isLoggingIn)
+            {
+                //Console.WriteLine("LOGIN IGNORED - ALREADY DONE");
+                return;
+            }
+
+            //Console.WriteLine("LOGIN PROCESSED");
+
+            _isLoggingIn = true;
+            _ = RefreshAsync();
+
+        }
+
+        public void Dispose()
+        {
+            _messenger.Unregister<LoggedIn>(this);
+        }
+
+        public override async Task Loaded()
         {
             await RefreshAsync();
+        }
 
+        protected override async Task OnParametersSetAsync()
+        {
             await base.OnParametersSetAsync();
         }
 
@@ -82,9 +120,6 @@ namespace AnglingClubWebsite.Pages
                 {
                     PresentationNightDate = PresentationNight.Date;
                 }
-
-
-
             }
             catch (ApiForbiddenException ex)
             {
@@ -94,13 +129,11 @@ namespace AnglingClubWebsite.Pages
             {
                 _logger.LogError($"RefreshAsync: {ex.Message}");
             }
-
             finally
             {
                 DataLoaded = true;
                 StateHasChanged();
             }
-
         }
         public async Task OnTabSelected(SelectEventArgs args)
         {

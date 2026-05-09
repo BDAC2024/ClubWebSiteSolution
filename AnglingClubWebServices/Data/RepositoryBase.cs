@@ -24,22 +24,40 @@ namespace AnglingClubWebServices.Data
         private const int QUERY_BATCH_SIZE = 2000;
         private const int UPDATE_BATCH_SIZE = 25;
         protected const string BACKUP_KEYNAME = "dbKey";
+        private const int SimpleDbRetryCount = 3;
+        private const int SimpleDbRetryDelayMs = 1000;
 
         private int batchNumber = 0;
 
         protected const string MultiValueSeparator = "~|";
         protected const int MultiValueSegmentSize = 1000;
 
+        // Static cache: domain check result shared across all instances
+        private static readonly object _domainCheckLock = new object();
+        private static Dictionary<string, bool> _domainExistenceCache = new Dictionary<string, bool>();
+
         public RepositoryBase(RepositoryOptions options, ILoggerFactory loggerFactory)
         {
             _options = options;
             _logger = loggerFactory.CreateLogger<RepositoryBase>();
 
-            if (!checkDomainExists(_options.SimpleDbDomain).Result)
+            // Only check domain once per unique domain name across the entire application lifetime
+            lock (_domainCheckLock)
             {
-                createDomain(_options.SimpleDbDomain).Wait();
+                if (!_domainExistenceCache.ContainsKey(_options.SimpleDbDomain))
+                {
+                    try
+                    {
+                        EnsureSimpleDbDomainAsync().GetAwaiter().GetResult();
+                        _domainExistenceCache[_options.SimpleDbDomain] = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Unable to ensure SimpleDB domain exists. The service may be unavailable or misconfigured.");
+                        _domainExistenceCache[_options.SimpleDbDomain] = false;
+                    }
+                }
             }
-
         }
 
         internal string Domain
@@ -47,6 +65,33 @@ namespace AnglingClubWebServices.Data
             get
             {
                 return _options.SimpleDbDomain;
+            }
+        }
+
+        private async Task EnsureSimpleDbDomainAsync()
+        {
+            for (int attempt = 1; attempt <= SimpleDbRetryCount; attempt++)
+            {
+                try
+                {
+                    if (!await checkDomainExists(_options.SimpleDbDomain).ConfigureAwait(false))
+                    {
+                        await createDomain(_options.SimpleDbDomain).ConfigureAwait(false);
+                    }
+
+                    return;
+                }
+                catch (AmazonSimpleDBException ex) when (attempt < SimpleDbRetryCount)
+                {
+                    _logger.LogWarning(ex, "SimpleDB check/create failed on attempt {Attempt}. Retrying...", attempt);
+                    await Task.Delay(SimpleDbRetryDelayMs * attempt).ConfigureAwait(false);
+                }
+            }
+
+            // Final attempt, let the exception bubble so it is logged at the call site
+            if (!await checkDomainExists(_options.SimpleDbDomain).ConfigureAwait(false))
+            {
+                await createDomain(_options.SimpleDbDomain).ConfigureAwait(false);
             }
         }
 
@@ -58,7 +103,7 @@ namespace AnglingClubWebServices.Data
 
             CreateDomainRequest request = new CreateDomainRequest(domainName);
 
-            CreateDomainResponse response = await client.CreateDomainAsync(request);
+            CreateDomainResponse response = await client.CreateDomainAsync(request).ConfigureAwait(false);
 
             _logger.LogDebug("createDomain returned");
             _logger.LogDebug(response.ToString());
@@ -73,7 +118,7 @@ namespace AnglingClubWebServices.Data
 
             ListDomainsRequest request = new ListDomainsRequest();
 
-            ListDomainsResponse response = await client.ListDomainsAsync(request);
+            ListDomainsResponse response = await client.ListDomainsAsync(request).ConfigureAwait(false);
 
             _logger.LogDebug(response.ToString());
 

@@ -109,10 +109,7 @@ namespace AnglingClubWebsite.Authentication
                 _authTokenStore.Current = userSession;
 
                 // TODO Ang to Blazor Migration - only needed until migration is complete
-                if (!_isEmbedded)
-                {
-                    _messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));  // TODO Ang to Blazor Migration - keep just this once migration is complete
-                }
+                _messenger.Send(new LoggedIn(new ClientMemberDto(new JwtSecurityTokenHandler().ReadJwtToken(userSession.Token))));  // TODO Ang to Blazor Migration - keep just this once migration is complete
 
             }
             else
@@ -126,20 +123,19 @@ namespace AnglingClubWebsite.Authentication
 
 
                 // TODO Ang to Blazor Migration - only needed until migration is complete
-                if (!_isEmbedded)
+
+                if (requestHostLogout)
                 {
-                    var anonUser = new LoggedIn(new ClientMemberDto(), true);
-                    _messenger.Send(anonUser); // TODO Ang to Blazor Migration - keep just this once migration is complete
+
+                    // In embedded mode, we need to notify the host that the user has logged out and show login page
+                    await _js.InvokeVoidAsync("blazorHostBridge.requestLogoutShowLogin");
+
                 }
                 else
                 {
-                    if (requestHostLogout)
-                    {
+                    var anonUser = new LoggedIn(new ClientMemberDto(), true);
+                    _messenger.Send(anonUser); // TODO Ang to Blazor Migration - keep just this once migration is complete
 
-                        // In embedded mode, we need to notify the host that the user has logged out and show login page
-                        await _js.InvokeVoidAsync("blazorHostBridge.requestLogoutShowLogin");
-
-                    }
                 }
             }
 
