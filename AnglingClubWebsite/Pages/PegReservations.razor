@@ -42,7 +42,7 @@
                         Allocations
                     </HeaderTemplate>
                 </TabItem>
-                @if (IsAdmin)
+                @if (IsAdmin())
                 {
                     <TabItem>
                         <HeaderTemplate>
@@ -95,36 +95,46 @@
                 }
                 else if (SelectedTab == 1)
                 {
-                    @if (QueryableExistingPegAllocations?.Any() == true)
+                    @if (AllocationsLoaded)
                     {
-                        <QuickGrid Items="QueryableExistingPegAllocations" Class="bdac-simple-table">
+                        @if (QueryableExistingPegAllocations?.Any() == true)
+                        {
+                            <QuickGrid Items="QueryableExistingPegAllocations" Class="bdac-simple-table">
 
-                            <TemplateColumn Title="Day">
-                                <ChildContent Context="row">
-                                    <span tabindex="-1" class="nowrap">@row.DateAllocated.ToString("ddd")</span>
-                                </ChildContent>
-                            </TemplateColumn>
+                                <TemplateColumn Title="Day">
+                                    <ChildContent Context="row">
+                                        <span tabindex="-1" class="nowrap">@row.DateAllocated.ToString("ddd")</span>
+                                    </ChildContent>
+                                </TemplateColumn>
 
-                            <TemplateColumn Title="Date">
-                                <ChildContent Context="row">
-                                    <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
-                                </ChildContent>
-                            </TemplateColumn>
+                                <TemplateColumn Title="Date">
+                                    <ChildContent Context="row">
+                                        <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
+                                    </ChildContent>
+                                </TemplateColumn>
 
-                            <TemplateColumn Title="Member Name">
-                                <ChildContent Context="row">
-                                    <span tabindex="-1">@row.Name</span>
-                                </ChildContent>
-                            </TemplateColumn>
+                                <TemplateColumn Title="Member Name">
+                                    <ChildContent Context="row">
+                                        <span tabindex="-1">@row.Name</span>
+                                    </ChildContent>
+                                </TemplateColumn>
 
-                        </QuickGrid>
+                            </QuickGrid>
+                        }
+                        else
+                        {
+                            <p>
+                                There are no peg allocations at present. The draw will take place at the next Presentation Night on <b>@((PresentationNightDate).BdacDate())</b> and the results will be posted here.
+                            </p>
+                        }
+
                     }
                     else
                     {
-                        <p>
-                            There are no peg allocations at present. The draw will take place at the next Presentation Night on <b>@((PresentationNightDate).BdacDate())</b> and the results will be posted here.
-                        </p>
+                        <BusyIndicator IsReady="AllocationsLoaded" />
                     }
+                    
+
 
                 }
                 else if (SelectedTab == 2)
@@ -188,6 +198,7 @@
                 else if (SelectedTab == 4)
                 {
                     <p>This can be completed in real-time as the draw takes place.</p>
+
                     <QuickGrid Items="QueryablePegAllocations">
 
                         <TemplateColumn Title="Date">
@@ -213,13 +224,24 @@
                             </ChildContent>
                         </TemplateColumn>
 
-                        <TemplateColumn Title="Member" Align="Align.Center">
+                        <TemplateColumn Title="No" Align="Align.Center">
                             <ChildContent Context="row">
                                 <span tabindex="-1">@(row.MembershipNumber != 0 ? row.MembershipNumber : "")</span>
                             </ChildContent>
                         </TemplateColumn>
 
+                        <TemplateColumn Title="Del" Align="Align.Center">
+                            <ChildContent Context="row">
+                                @if (row.DbKey != "")
+                                {
+                                    <i @onclick="(async () => await DeleteAllocation(row))" class="fa-solid fa-trash clickable"></i>
+                                }
+                            </ChildContent>
+                        </TemplateColumn>
+
                     </QuickGrid>
+
+                    <BusyIndicator IsReady="QueryablePegAllocations.Any()" />
 
                 }
 

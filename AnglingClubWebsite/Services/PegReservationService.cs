@@ -55,6 +55,11 @@ namespace AnglingClubWebsite.Services
             {
                 return null;
             }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ReadRegistration: {ex.Message}");
+                return null;
+            }
 
         }
 

@@ -756,3 +756,7 @@ fieldset {
 /* =========================================================
    End of BDAC Simple html table styling (class: bdac-simple-table)
    ========================================================= */
+
+.clickable {
+    cursor: pointer;
+}

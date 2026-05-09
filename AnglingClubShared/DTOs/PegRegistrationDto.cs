@@ -1,4 +1,3 @@
-using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 
 namespace AnglingClubShared.DTOs
@@ -36,7 +35,7 @@ namespace AnglingClubShared.DTOs
         public string Peg { get; set; } = "";
         public Season Season { get; set; }
         public int MembershipNumber { get; set; }
-        public string Name { get; set; } = "";
+        public string? Name { get; set; } = null;
         public DateOnly DateAllocated { get; set; }
     }
 }

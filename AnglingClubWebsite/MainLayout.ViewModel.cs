@@ -158,6 +158,7 @@ namespace AnglingClubWebsite
             menuItems.Add(new MenuItem { Id = "01", Name = "Welcome", NavigateUrl = menuUrl("/") });
             menuItems.Add(new MenuItem { Id = "02", Name = "News", NavigateUrl = menuUrl("/News") });
             menuItems.Add(new MenuItem { Id = "03", Name = "Club Waters", NavigateUrl = menuUrl("/Waters") });
+            menuItems.Add(new MenuItem { Id = "03.1", Name = "Reserved Pegs", IsNew = true, NavigateUrl = menuUrl("/PegReservations") });
             menuItems.Add(new MenuItem { Id = "04", Name = "Matches", NavigateUrl = menuUrl("/Matches") });
             menuItems.Add(new MenuItem { Id = "045", Name = "Junior Open Matches", NavigateUrl = menuUrl("/register") });
             menuItems.Add(new MenuItem { Id = "05", Name = "Standings", HasSubMenu = true });
@@ -203,7 +204,6 @@ namespace AnglingClubWebsite
 
             List<MenuItem> menuItems = new List<MenuItem>();
 
-            menuItems.Add(new MenuItem { Id = "03.1", Name = "Reserved Pegs", IsNew = true, NavigateUrl = menuUrl("/PegReservations") });
             menuItems.Add(new MenuItem { Id = "07.3", ParentId = "07", Name = "Guest Tickets", NavigateUrl = menuUrl("/buyGuestTickets"), IsNew = false });
             menuItems.Add(new MenuItem { Id = "10", Name = "My Details" });
             menuItems.Add(new MenuItem { Id = "11", Name = "Logout", NavigateUrl = menuUrl("/Logout") });

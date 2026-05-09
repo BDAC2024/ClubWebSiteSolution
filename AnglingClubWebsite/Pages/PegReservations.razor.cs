@@ -36,11 +36,10 @@ namespace AnglingClubWebsite.Pages
         public Season SelectedSeason { get; set; }
         public int SelectedTab { get; set; } = 0;
         public bool DataLoaded { get; set; } = false;
+        public bool AllocationsLoaded { get; set; } = false;
         public bool Registered { get; set; } = true;
         public bool RegisterMe { get; set; } = false;
         public bool RegistrationComplete { get; set; } = false;
-        public bool IsAdmin { get; set; } = false;
-
 
         public PegRegistrationOutputDto? ExistingRegistration { get; set; } = null;
         public DateTime PresentationNightDate { get; set; } = DateTime.MinValue;
@@ -56,17 +55,17 @@ namespace AnglingClubWebsite.Pages
         public bool RegisteredOther { get; set; } = true;
         public bool RegisteredOtherComplete { get; set; } = false;
 
-        public override async Task Loaded()
+        protected override async Task OnParametersSetAsync()
         {
             await RefreshAsync();
-            await base.Loaded();
+
+            await base.OnParametersSetAsync();
         }
 
         private async Task RefreshAsync()
         {
             DataLoaded = false;
 
-            IsAdmin = _currentUserService.User.Admin;
             SelectedSeason = EnumUtils.CurrentSeason();
 
             try
@@ -84,44 +83,18 @@ namespace AnglingClubWebsite.Pages
                     PresentationNightDate = PresentationNight.Date;
                 }
 
-                var ExistingAllocations = await _pegReservationService.ReadAllocations(SelectedSeason);
 
-                if (IsAdmin)
-                {
-                    ReservationStartDate = DateOnly.FromDateTime(new DateTime(SelectedSeason.SeasonStarts().Year, 6, 16)); ;
-                    var reservationEndDate = DateOnly.FromDateTime(new DateTime(ReservationStartDate.Year, 7, 31));
-
-                    var d = ReservationStartDate;
-                    while (d <= reservationEndDate)
-                    {
-                        var existingAlloc = ExistingAllocations.FirstOrDefault(x => x.DateAllocated == d);
-                        if (existingAlloc != null)
-                        {
-                            PegAllocations.Add(existingAlloc);
-                        }
-                        else
-                        {
-                            PegAllocations.Add(new PegAllocationOutputDto
-                            {
-                                Stretch = "MilbyIsland",
-                                Peg = "1",
-                                DateAllocated = d,
-                                MembershipNumber = 0
-                            });
-                        }
-                        d = d.AddDays(1);
-                    }
-
-                    PegAllocations = PegAllocations.OrderBy(x => x.DateAllocated).ToList();
-                    QueryablePegAllocations = PegAllocations.AsQueryable();
-
-                }
 
             }
             catch (ApiForbiddenException ex)
             {
                 //                Message = "You are not authorised to use this page";
             }
+            catch (Exception ex)
+            {
+                _logger.LogError($"RefreshAsync: {ex.Message}");
+            }
+
             finally
             {
                 DataLoaded = true;
@@ -148,9 +121,19 @@ namespace AnglingClubWebsite.Pages
                     await GetRegistrations();
                     break;
 
+                case 4: // Always show an up to date list of registrations
+                    await SetupAllocator();
+                    break;
+
                 default:
                     break;
             }
+
+        }
+
+        public bool IsAdmin()
+        {
+            return _currentUserService.User.Admin;
         }
 
         public async Task OnRegistering(Microsoft.AspNetCore.Components.ChangeEventArgs args)
@@ -181,10 +164,9 @@ namespace AnglingClubWebsite.Pages
 
         private async Task OnAllocationChanged(int membershipNumber, PegAllocationOutputDto alloc)
         {
-            alloc.MembershipNumber = membershipNumber;
-
             if (membershipNumber != 0)
             {
+                alloc.MembershipNumber = membershipNumber;
                 {
                     var id = await _pegReservationService.AllocatePeg(new PegAllocationRequestDto
                     {
@@ -199,10 +181,16 @@ namespace AnglingClubWebsite.Pages
                     return;
                 }
             }
-            else
-            {
-                await _pegReservationService.DeleteAllocatedPeg(alloc.DbKey);
-            }
+        }
+
+        public async Task DeleteAllocation(PegAllocationOutputDto alloc)
+        {
+            await _pegReservationService.DeleteAllocatedPeg(alloc.DbKey);
+
+            alloc.DbKey = "";
+            alloc.MembershipNumber = 0;
+            alloc.Name = null;
+            StateHasChanged();
         }
 
         private async Task RegistraterOtherMember()
@@ -242,17 +230,61 @@ namespace AnglingClubWebsite.Pages
 
         private async Task GetAllocations()
         {
+            AllocationsLoaded = false;
+
             var existingAllocations =
                     await _pegReservationService.ReadAllocations(SelectedSeason)
                     ?? [];
 
             QueryableExistingPegAllocations = existingAllocations.AsQueryable();
+
+            AllocationsLoaded = true;
         }
 
         private async Task GetRegistrations()
         {
             CurrentPegRegistrations = (await _pegReservationService.ReadRegistrations(SelectedSeason))!.OrderBy(x => x.Name).ToList() ?? new List<PegRegistrationOutputDto>();
             QueryablePegRegistrations = CurrentPegRegistrations.OrderBy(x => x.DateRegistered).AsQueryable();
+
+        }
+
+        private async Task SetupAllocator()
+        {
+            if (IsAdmin())
+            {
+                PegAllocations = new List<PegAllocationOutputDto>();
+
+                await GetRegistrations();
+                var ExistingAllocations = await _pegReservationService.ReadAllocations(SelectedSeason);
+
+                ReservationStartDate = DateOnly.FromDateTime(new DateTime(SelectedSeason.SeasonStarts().Year, 6, 16)); ;
+                var reservationEndDate = DateOnly.FromDateTime(new DateTime(ReservationStartDate.Year, 7, 31));
+
+                var d = ReservationStartDate;
+                while (d <= reservationEndDate)
+                {
+                    var existingAlloc = ExistingAllocations.FirstOrDefault(x => x.DateAllocated == d);
+                    if (existingAlloc != null)
+                    {
+                        PegAllocations.Add(existingAlloc);
+                    }
+                    else
+                    {
+                        PegAllocations.Add(new PegAllocationOutputDto
+                        {
+                            Stretch = "MilbyIsland",
+                            Peg = "1",
+                            DateAllocated = d,
+                            MembershipNumber = 0
+                        });
+                    }
+                    d = d.AddDays(1);
+                }
+
+                PegAllocations = PegAllocations.OrderBy(x => x.DateAllocated).ToList();
+                QueryablePegAllocations = PegAllocations.AsQueryable();
+
+            }
 
         }
     }
