@@ -1,0 +1,80 @@
+﻿@using AnglingClubShared.Enums;
+@using AnglingClubShared.Extensions;
+
+@inherits RazorComponentBase
+
+<SfDialog IsModal="true" Visible="@Visible" CssClass="bdac-dialog">
+    <DialogTemplates>
+        <Header>Match Results Entry</Header>
+        <Content>
+            <div class="bdac-smaller">
+                <table class="match-table">
+                    <tr><td class="label">Venue:</td><td>@SelectedMatch!.Description</td><td class="label">Date:</td><td>@SelectedMatch!.Day @SelectedMatch!.Date.BdacDate()</td></tr>
+                </table>
+
+                <br />
+                <h3>Results</h3>
+                <BusyIndicator IsReady="@_resultsLoaded"></BusyIndicator>
+                @if (_resultsLoaded)
+                {
+                    <div class="match-results-scroll">
+                        <table class="bdac-simple-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Peg</th>
+                                    <th>Weight (lb)</th>
+                                    <th>Weight (oz)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var r in _matchResults.First().Pegs)
+                                {
+                                    <tr>
+                                        <td class="left-align">
+                                            <SfComboBox TValue="int"
+                                                        TItem="KeyValuePair<int, string>"
+                                                        Placeholder=""
+                                                        Width="150px"
+                                                        AllowFiltering="true"
+                                                        FilterType="FilterType.Contains"
+                                                        FloatLabelType="FloatLabelType.Never"
+                                                        DataSource="@_matchResults.First().Members"
+                                                        @bind-value="r.MembershipNumber">
+                                                <ComboBoxFieldSettings Value="Key" Text="Value"></ComboBoxFieldSettings>
+                                            </SfComboBox>
+                                        </td>
+                                        <td class="right-align">
+                                            <SfTextBox Width="5" @bind-value=r.Peg ValueChange="@NewRowRequired"></SfTextBox>
+                                        </td>
+                                        <td class="right-align">
+                                            <SfNumericTextBox Width="5" TValue="int" @bind-value=r.Lb ShowSpinButton="false"></SfNumericTextBox>
+                                        </td>
+                                        <td class="right-align">
+                                            <SfNumericTextBox Width="5" TValue="float" @bind-value=r.Oz ShowSpinButton="false"></SfNumericTextBox>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Cancel" IsPrimary="false" OnClick="CloseAsync" />
+        <DialogButton Content="Submit" IsPrimary="true" OnClick="CloseAsync" />
+    </DialogButtons>
+</SfDialog>
+<style>
+    .e-textbox {
+        text-align: right;
+        max-width: 50px;
+    }
+
+    .e-numeric {
+        text-align: right;
+        max-width: 70px;
+    }
+</style>

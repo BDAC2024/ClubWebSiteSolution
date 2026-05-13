@@ -19,6 +19,37 @@ namespace AnglingClubShared.DTOs
         }
     }
 
+    public class MatchResultEditDto
+    {
+        public Dictionary<int, string> Members { get; set; } = new Dictionary<int, string>();
+
+        public List<MatchResultPegDto> Pegs { get; set; } = new List<MatchResultPegDto>();
+
+    }
+
+    public class MatchResultPegDto : MatchResult
+    {
+        public string Name { get; set; } = "";
+        public int Lb { get; set; }
+        public float Oz { get; set; }
+
+
+        // Getters
+        public int LbForDisplay {
+            get
+            {
+                return (int)Math.Floor(WeightDecimal);
+            }
+        }
+        public float OzForDisplay {
+            get
+            {
+                return (int)Math.Round((WeightDecimal - LbForDisplay) * 16);
+            }
+        }
+
+    }
+
     public class MatchResultOutputDto : MatchResult
     {
         public string Name { get; set; } = "";
