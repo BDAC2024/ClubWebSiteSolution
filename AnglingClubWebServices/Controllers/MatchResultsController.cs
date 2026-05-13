@@ -274,12 +274,6 @@ namespace AnglingClubWebServices.Controllers
 
             var errors = new List<string>();
 
-            // Correct values are being passed. I now need to calculate the points values before storing
-            // I'll do this by populating List<MatchResultInputDto> from the passed data.
-            // Almost done, just need : -
-            // - the service to account for multiple people on the same weight
-            // - the edit panel to close and the results to update
-
             try
             {
                 List<MatchResultInputDto> processedResults = _matchResultService.CalculatePoints(matchId, results);

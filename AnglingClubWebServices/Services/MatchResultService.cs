@@ -492,11 +492,23 @@ namespace AnglingClubWebServices.Services
                 result.Position = pos;
             }
 
-            float startingPoints = 7f;
+            int startingPoints = 7;
 
             foreach (var result in results.OrderBy(x => x.Position))
             {
-                result.Points = startingPoints - result.Position + 1;
+                var numberAtSamePos = results.Count(x => x.Position == result.Position);
+                var highPoints = startingPoints - result.Position + 1;
+
+                if (numberAtSamePos == 1)
+                {
+                    result.Points = highPoints;
+                }
+                else
+                {
+                    var totalPointsForAllAtThisPosition = SumConsecutive(highPoints - numberAtSamePos + 1, highPoints);
+
+                    result.Points = (float)totalPointsForAllAtThisPosition / numberAtSamePos;
+                }
             }
 
             foreach (var result in results)
@@ -604,6 +616,10 @@ namespace AnglingClubWebServices.Services
             return results;
         }
 
+        private int SumConsecutive(int low, int high)
+        {
+            return ((high - low + 1) * (low + high)) / 2;
+        }
     }
 
 }
