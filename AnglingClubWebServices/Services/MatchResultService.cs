@@ -466,8 +466,58 @@ namespace AnglingClubWebServices.Services
             return results;
         }
 
+        public List<MatchResultInputDto> CalculatePoints(string matchId, List<MatchResultPegDto> results)
+        {
+            List<MatchResultInputDto> processedResults = new List<MatchResultInputDto>(); ;
 
-        private List<MatchAllResultOutputDto> getExpandedResults(IEnumerable<ClubEvent> allMatches, IEnumerable<Member> allMembers)
+            // First calculate the positions, we can determine points afterwards
+            float lastWeight = results.Any() ? results.Max(r => r.WeightDecimal) : 0f;
+            int numberAtPos = 0;
+            var pos = 1;
+
+            foreach (var result in results.OrderByDescending(x => x.WeightDecimalForInput))
+            {
+                if (result.WeightDecimalForInput < lastWeight)
+                {
+                    pos += numberAtPos;
+                    lastWeight = result.WeightDecimalForInput;
+                    numberAtPos = 0;
+                }
+
+                if (result.WeightDecimalForInput == lastWeight)
+                {
+                    numberAtPos++;
+                }
+
+                result.Position = pos;
+            }
+
+            float startingPoints = 7f;
+
+            foreach (var result in results.OrderBy(x => x.Position))
+            {
+                result.Points = startingPoints - result.Position + 1;
+            }
+
+            foreach (var result in results)
+            {
+                processedResults.Add(new MatchResultInputDto
+                {
+                    DbKey = result.DbKey,
+                    MatchId = matchId,
+                    MembershipNumber = result.MembershipNumber,
+                    Peg = result.Peg,
+                    Lb = result.Lb,
+                    Oz = result.Oz,
+                    Points = result.Points
+                });
+            }
+
+            return processedResults;
+        }
+
+
+        private List<MatchAllResultOutputDto> getExpandedResults(IEnumerable<ClubEvent> allMatches, IEnumerable<AnglingClubShared.Entities.Member> allMembers)
         {
             List<MatchAllResultOutputDto> results = new List<MatchAllResultOutputDto>();
 

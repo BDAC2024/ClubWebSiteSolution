@@ -267,6 +267,60 @@ namespace AnglingClubWebServices.Controllers
             }
         }
 
+        [HttpPost("SaveEditable/{matchId}")]
+        public async System.Threading.Tasks.Task<IActionResult> PostEditableResultsAsync([FromRoute] string matchId, [FromBody] List<MatchResultPegDto> results)
+        {
+            StartTimer();
+
+            var errors = new List<string>();
+
+            // Correct values are being passed. I now need to calculate the points values before storing
+            // I'll do this by populating List<MatchResultInputDto> from the passed data.
+            // Almost done, just need : -
+            // - the service to account for multiple people on the same weight
+            // - the edit panel to close and the results to update
+
+            try
+            {
+                List<MatchResultInputDto> processedResults = _matchResultService.CalculatePoints(matchId, results);
+
+                var matchResults = _mapper.Map<List<MatchResult>>(processedResults);
+
+                foreach (var result in matchResults)
+                {
+                    try
+                    {
+                        await _matchResultRepository.AddOrUpdateMatchResult(result);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        errors.Add($"{result.MatchId}, Member: {result.MembershipNumber} - {ex.Message}");
+                    }
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                errors.Add(ex.Message);
+
+            }
+            finally
+            {
+                ReportTimer("Posting match results");
+
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+            else
+            {
+                return Ok();
+            }
+        }
+
+
         // PUT api/values/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

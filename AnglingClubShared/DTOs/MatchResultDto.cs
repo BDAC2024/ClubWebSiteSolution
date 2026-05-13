@@ -48,6 +48,18 @@ namespace AnglingClubShared.DTOs
             }
         }
 
+        public float WeightDecimalForInput {
+            get
+            {
+                float wt = (Lb * 1f + Oz / 16f);
+
+                return wt;
+
+            }
+
+        }
+
+
     }
 
     public class MatchResultOutputDto : MatchResult

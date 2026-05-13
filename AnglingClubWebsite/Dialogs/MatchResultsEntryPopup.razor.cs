@@ -104,6 +104,11 @@ namespace AnglingClubWebsite.Dialogs
             await VisibleChanged.InvokeAsync(false);
         }
 
+        private async Task SubmitResults()
+        {
+            await _matchResultsService.SaveResultsForMatch(SelectedMatch.Id, _matchResults.First().Pegs.Where(x => x.MembershipNumber != 0).ToList());
+        }
+
         private void AddNewRow()
         {
             _matchResults.First().Pegs.Add(new MatchResultPegDto
