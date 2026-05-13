@@ -94,5 +94,12 @@ namespace AnglingClubWebsite.Dialogs
             // Tell the parent to update its source of truth
             await VisibleChanged.InvokeAsync(false);
         }
+
+        public async Task OnSubmitComplete()
+        {
+            // This is called by the child MatchResultsEntryPopup when it has completed a successful submit
+            // We can then trigger a refresh of the results to show the updated data
+            await GetMatchResults(SelectedMatch.Id);
+        }
     }
 }

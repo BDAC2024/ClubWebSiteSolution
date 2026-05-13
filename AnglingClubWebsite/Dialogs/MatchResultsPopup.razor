@@ -102,7 +102,7 @@
                 }
             </div> 
             @* Note the 2-way binding of the Visible property *@
-            <MatchResultsEntryPopup @bind-Visible="ShowingResultsEntry" SelectedMatch="@SelectedMatch"></MatchResultsEntryPopup>
+            <MatchResultsEntryPopup @bind-Visible="ShowingResultsEntry" SelectedMatch="@SelectedMatch" OnSubmit="OnSubmitComplete"></MatchResultsEntryPopup>
 
         </Content>
     </DialogTemplates>

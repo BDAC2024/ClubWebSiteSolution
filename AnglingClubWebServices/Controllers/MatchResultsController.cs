@@ -276,7 +276,7 @@ namespace AnglingClubWebServices.Controllers
 
             try
             {
-                List<MatchResultInputDto> processedResults = _matchResultService.CalculatePoints(matchId, results);
+                List<MatchResultInputDto> processedResults = await _matchResultService.CalculatePoints(matchId, results);
 
                 var matchResults = _mapper.Map<List<MatchResult>>(processedResults);
 

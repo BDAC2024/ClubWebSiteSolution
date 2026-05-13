@@ -57,14 +57,15 @@
                                 }
                             </tbody>
                         </table>
+                        <BusyIndicator IsReady="@_resultsSubmitted"></BusyIndicator>
                     </div>
                 }
             </div>
         </Content>
     </DialogTemplates>
     <DialogButtons>
-        <DialogButton Content="Cancel" IsPrimary="false" OnClick="CloseAsync" />
-        <DialogButton Content="Submit" IsPrimary="true" OnClick="SubmitResults" />
+        <DialogButton Content="Cancel" IsPrimary="false" OnClick="CloseAsync" Disabled="@(!_resultsSubmitted)" />
+        <DialogButton Content="Submit" IsPrimary="true" OnClick="SubmitResults" Disabled="@(!_resultsSubmitted)" />
     </DialogButtons>
 </SfDialog>
 <style>

@@ -21,6 +21,10 @@ namespace AnglingClubWebsite.Dialogs
 
         [Parameter] required public ClubEvent SelectedMatch { get; set; }
 
+        [Parameter]
+        public EventCallback OnSubmit { get; set; }
+
+
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
 
@@ -48,7 +52,7 @@ namespace AnglingClubWebsite.Dialogs
 
         private List<MatchResultEditDto> _matchResults = new List<MatchResultEditDto>();
         private bool _resultsLoaded = false;
-        private bool _showPeg = true;
+        private bool _resultsSubmitted = true;
 
         private string _cachedMatchId = "";
 
@@ -104,9 +108,18 @@ namespace AnglingClubWebsite.Dialogs
             await VisibleChanged.InvokeAsync(false);
         }
 
+        public Action OnSubmitted { get; set; } = delegate { };
+
         private async Task SubmitResults()
         {
+            _resultsSubmitted = false;
+
             await _matchResultsService.SaveResultsForMatch(SelectedMatch.Id, _matchResults.First().Pegs.Where(x => x.MembershipNumber != 0).ToList());
+
+            await OnSubmit.InvokeAsync();
+            await VisibleChanged.InvokeAsync(false);
+
+            _resultsSubmitted = true;
         }
 
         private void AddNewRow()
