@@ -14,6 +14,7 @@ namespace AnglingClubShared.DTOs
         public bool CommitteeMember { get; set; } = false;
         public bool Secretary { get; set; } = false;
         public bool MembershipSecretary { get; set; } = false;
+        public bool MatchSecretary { get; set; } = false;
         public bool Previewer { get; set; } = false;
         public bool Developer { get; set; } = false;
         public bool AllowNameToBeUsed { get; set; } = false;
@@ -36,6 +37,7 @@ namespace AnglingClubShared.DTOs
             this.CommitteeMember = token.GetBoolClaim("CommitteeMember");
             this.Secretary = token.GetBoolClaim("Secretary");
             this.MembershipSecretary = token.GetBoolClaim("MembershipSecretary");
+            this.MatchSecretary = token.GetBoolClaim("MatchSecretary");
             this.Previewer = token.GetBoolClaim("Previewer");
             this.Developer = token.GetBoolClaim("Developer");
             this.AllowNameToBeUsed = token.GetBoolClaim("AllowNameToBeUsed");
@@ -56,6 +58,7 @@ namespace AnglingClubShared.DTOs
                 new Claim("CommitteeMember", member.CommitteeMember.ToString()),
                 new Claim("Secretary", member.Secretary.ToString()),
                 new Claim("MembershipSecretary", member.MembershipSecretary.ToString()),
+                new Claim("MatchSecretary", member.MatchSecretary.ToString()),
                 new Claim("Previewer", member.Previewer.ToString()),
                 new Claim("Developer", (member.Name == developerName).ToString()),
                 new Claim("AllowNameToBeUsed", member.AllowNameToBeUsed.ToString()),

@@ -14,6 +14,7 @@ export class Member {
   committeeMember: boolean = false;
   secretary: boolean = false;
   membershipSecretary: boolean = false;
+  matchSecretary: boolean = false;
   previewer: boolean = false;
   allowNameToBeUsed: boolean = false;
   @Type(() => Date)
@@ -36,6 +37,7 @@ export class Member {
       this.committeeMember = Member.getBoolClaim(tokenDecoded.CommitteeMember);
       this.secretary = Member.getBoolClaim(tokenDecoded.Secretary);
       this.membershipSecretary = Member.getBoolClaim(tokenDecoded.MembershipSecretary);
+      this.matchSecretary = Member.getBoolClaim(tokenDecoded.MatchSecretary);
       this.previewer = Member.getBoolClaim(tokenDecoded.Previewer);
       this.allowNameToBeUsed = Member.getBoolClaim(tokenDecoded.AllowNameToBeUsed);
       this.preferencesLastUpdated = new Date(tokenDecoded.PreferencesLastUpdated);
