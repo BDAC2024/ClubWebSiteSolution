@@ -77,6 +77,16 @@ export class AuthenticationService {
 
   }
 
+  public get isMatchSecretary(): boolean {
+    if (this.isLoggedIn) {
+      var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");
+      return Member.getBoolClaim(tokenDecoded.MatchSecretary);
+    } else {
+      return false;
+    }
+
+  }
+
   public get isSecretary(): boolean {
     if (this.isLoggedIn) {
       var tokenDecoded: any = jwt_decode(this.currentMemberSubject.value.token || "");

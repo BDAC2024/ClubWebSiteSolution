@@ -329,6 +329,7 @@ namespace AnglingClubWebServices.Controllers
                 member.CommitteeMember = memberDto.CommitteeMember;
                 member.Secretary = memberDto.Secretary;
                 member.MembershipSecretary = memberDto.MembershipSecretary;
+                member.MatchSecretary = memberDto.MatchSecretary;
                 member.Previewer = memberDto.Previewer;
                 member.MembershipNumber = memberDto.MembershipNumber;
                 member.ReLoginRequired = memberDto.ReLoginRequired;

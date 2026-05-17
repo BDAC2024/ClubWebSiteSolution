@@ -7,9 +7,11 @@ namespace AnglingClubWebsite.Services
     public interface IMatchResultsService
     {
         Task<List<MatchResultOutputDto>?> GetResultsForMatch(string matchId);
+        Task<List<MatchResultEditDto>?> GetEditableResultsForMatch(string matchId);
         Task<List<LeaguePosition>?> GetLeaguePositions(AggregateType aggType, Season season);
         Task<List<AggregateWeight>?> GetAggreateWeights(AggregateType aggType, Season season);
         Task<List<TrophyWinner>?> GetTrophyWinners(TrophyType trophyType, Season season);
         Task<MemberResultsInSeason?> GetMemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints);
+        Task SaveResultsForMatch(string matchId, List<MatchResultPegDto> results);
     }
 }

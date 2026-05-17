@@ -466,6 +466,87 @@ namespace AnglingClubWebServices.Services
             return results;
         }
 
+        public async Task<List<MatchResultInputDto>> CalculatePoints(string matchId, List<MatchResultPegDto> results)
+        {
+            var match = (await _eventRepository.GetEvents()).Single(x => x.Id == matchId);
+
+            List<MatchResultInputDto> processedResults = new List<MatchResultInputDto>(); ;
+
+            // First calculate the positions, we can determine points afterwards
+            float lastWeight = results.Any() ? results.Max(r => r.WeightDecimalForInput) : 0f;
+            int numberAtPos = 0;
+            var pos = 1;
+
+            results = results.OrderByDescending(x => x.WeightDecimalForInput).ToList();
+
+            foreach (var result in results)
+            {
+                Console.WriteLine($"result.WeightDecimalForInput: {result.WeightDecimalForInput}, lastWeight: {lastWeight}");
+                if (result.WeightDecimalForInput < lastWeight)
+                {
+                    pos += numberAtPos;
+                    lastWeight = result.WeightDecimalForInput;
+                    numberAtPos = 0;
+                }
+
+                if (result.WeightDecimalForInput == lastWeight)
+                {
+                    numberAtPos++;
+                }
+
+                result.Position = pos;
+            }
+
+            int startingPoints = 7;
+
+            foreach (var result in results.OrderBy(x => x.Position))
+            {
+                if (result.Position <= 7)
+                {
+                    var numberAtSamePos = results.Count(x => x.Position == result.Position);
+                    var highPoints = startingPoints - result.Position + 1;
+
+                    if (numberAtSamePos == 1)
+                    {
+                        result.Points = highPoints;
+                    }
+                    else
+                    {
+                        var totalPointsForAllAtThisPosition = SumConsecutive(highPoints - numberAtSamePos + 1, highPoints);
+
+                        result.Points = (float)totalPointsForAllAtThisPosition / numberAtSamePos;
+                    }
+                }
+                else
+                {
+                    // All river anglers that catch get at least 1 point
+                    if (match.AggregateType == AggregateType.ClubRiver)
+                    {
+                        if (result.WeightDecimalForInput > 0)
+                        {
+                            result.Points = 1;
+                        }
+                    }
+                }
+            }
+
+            foreach (var result in results)
+            {
+                processedResults.Add(new MatchResultInputDto
+                {
+                    DbKey = result.DbKey,
+                    MatchId = matchId,
+                    MembershipNumber = result.MembershipNumber,
+                    Peg = result.Peg,
+                    Lb = result.Lb,
+                    Oz = result.Oz,
+                    Points = result.Points
+                });
+            }
+
+            return processedResults;
+        }
+
 
         private List<MatchAllResultOutputDto> getExpandedResults(IEnumerable<ClubEvent> allMatches, IEnumerable<Member> allMembers)
         {
@@ -554,6 +635,10 @@ namespace AnglingClubWebServices.Services
             return results;
         }
 
+        private int SumConsecutive(int low, int high)
+        {
+            return ((high - low + 1) * (low + high)) / 2;
+        }
     }
 
 }

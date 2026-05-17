@@ -35,6 +35,25 @@ namespace AnglingClubWebsite.Services
             return content;
         }
 
+        public async Task<List<MatchResultEditDto>?> GetEditableResultsForMatch(string matchId)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/GetForEdit/{matchId}";
+
+            var response = await Http.GetAsync($"{relativeEndpoint}");
+
+            var content = await response.Content.ReadFromJsonAsync<List<MatchResultEditDto>>();
+            return content;
+        }
+
+        public async Task SaveResultsForMatch(string matchId, List<MatchResultPegDto> results)
+        {
+            var relativeEndpoint = $"{CONTROLLER}/SaveEditable/{matchId}";
+
+            var response = await Http.PostAsJsonAsync($"{relativeEndpoint}", results);
+
+            return;
+        }
+
         public async Task<List<LeaguePosition>?> GetLeaguePositions(AggregateType aggType, Season season)
         {
             var relativeEndpoint = $"{CONTROLLER}/standings/{(int)aggType}/{(int)season}";

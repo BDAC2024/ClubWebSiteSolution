@@ -3,10 +3,11 @@ using AnglingClubShared.Entities;
 using AnglingClubWebsite.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Inputs;
 
 namespace AnglingClubWebsite.Dialogs
 {
-    public partial class MatchResultsPopup
+    public partial class MatchResultsEntryPopup
     {
         [Parameter] required public bool Visible { get; set; } = false;
         /// <summary>
@@ -20,6 +21,10 @@ namespace AnglingClubWebsite.Dialogs
 
         [Parameter] required public ClubEvent SelectedMatch { get; set; }
 
+        [Parameter]
+        public EventCallback OnSubmit { get; set; }
+
+
         private readonly IAuthenticationService _authenticationService;
         private readonly IMessenger _messenger;
 
@@ -28,7 +33,7 @@ namespace AnglingClubWebsite.Dialogs
         private readonly IMatchResultsService _matchResultsService;
         private readonly ILogger<MatchResultsPopup> _logger;
 
-        public MatchResultsPopup(
+        public MatchResultsEntryPopup(
             ICurrentUserService currentUserService,
             IGlobalService globalService,
             BrowserService browserService,
@@ -45,13 +50,11 @@ namespace AnglingClubWebsite.Dialogs
             _logger = logger;
         }
 
-        private List<MatchResultOutputDto> _matchResults = new List<MatchResultOutputDto>();
+        private List<MatchResultEditDto> _matchResults = new List<MatchResultEditDto>();
         private bool _resultsLoaded = false;
-        private bool _showPeg = true;
+        private bool _resultsSubmitted = true;
 
         private string _cachedMatchId = "";
-
-        public bool ShowingResultsEntry { get; set; } = false;
 
         protected override async Task OnParametersSetAsync()
         {
@@ -75,9 +78,10 @@ namespace AnglingClubWebsite.Dialogs
 
             try
             {
-                var resultsFromService = await _matchResultsService.GetResultsForMatch(matchId);
-                var results = (resultsFromService ?? new List<MatchResultOutputDto>()).ToList();
+                var resultsFromService = await _matchResultsService.GetEditableResultsForMatch(matchId);
+                var results = (resultsFromService ?? new List<MatchResultEditDto>()).ToList();
                 _matchResults = results;
+                AddNewRow();
             }
             catch (Exception ex)
             {
@@ -89,17 +93,41 @@ namespace AnglingClubWebsite.Dialogs
             }
         }
 
+
+        private void NewRowRequired(ChangedEventArgs args)
+        {
+            if (!_matchResults.First().Pegs.Any(x => x.Peg == ""))
+            {
+                AddNewRow();
+            }
+        }
+
         private async Task CloseAsync()
         {
             // Tell the parent to update its source of truth
             await VisibleChanged.InvokeAsync(false);
         }
 
-        public async Task OnSubmitComplete()
+        public Action OnSubmitted { get; set; } = delegate { };
+
+        private async Task SubmitResults()
         {
-            // This is called by the child MatchResultsEntryPopup when it has completed a successful submit
-            // We can then trigger a refresh of the results to show the updated data
-            await GetMatchResults(SelectedMatch.Id);
+            _resultsSubmitted = false;
+
+            await _matchResultsService.SaveResultsForMatch(SelectedMatch.Id, _matchResults.First().Pegs.Where(x => x.MembershipNumber != 0).ToList());
+
+            await OnSubmit.InvokeAsync();
+            await VisibleChanged.InvokeAsync(false);
+
+            _resultsSubmitted = true;
+        }
+
+        private void AddNewRow()
+        {
+            _matchResults.First().Pegs.Add(new MatchResultPegDto
+            {
+            });
+
         }
     }
 }

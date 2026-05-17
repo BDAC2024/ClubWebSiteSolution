@@ -9,8 +9,7 @@ namespace AnglingClubShared.Entities
         private string _email = "";
 
         public string Name { get; set; } = "";
-        public string Email
-        {
+        public string Email {
             get
             {
                 return _email.Replace(" ", "");
@@ -28,6 +27,7 @@ namespace AnglingClubShared.Entities
         public bool CommitteeMember { get; set; } = false;
         public bool Secretary { get; set; } = false;
         public bool MembershipSecretary { get; set; } = false;
+        public bool MatchSecretary { get; set; } = false;
         public bool Previewer { get; set; } = false;
         /// <summary>
         /// Will be set to 0 once user has set a new pin
@@ -44,8 +44,7 @@ namespace AnglingClubShared.Entities
         public List<Season> SeasonsActive { get; set; } = new List<Season>();
         public bool ReLoginRequired { get; set; } = false;
 
-        public string Surname
-        {
+        public string Surname {
             get
             {
                 if (Name != "Anonymous" && Name.Contains("."))

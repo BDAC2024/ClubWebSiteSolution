@@ -73,6 +73,54 @@ namespace AnglingClubWebServices.Controllers
 
         }
 
+        [HttpGet("GetForEdit/{matchId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultEditDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public IActionResult GetForEdit(string matchId)
+        {
+            var errors = new List<string>();
+
+            StartTimer();
+            var results = new List<MatchResultEditDto>();
+
+            var match = _eventRepository.GetEvents().Result.Single(x => x.Id == matchId);
+            var rawResults = _matchResultService.GetResults(matchId, match);
+            var pegResults = _mapper.Map<List<MatchResultPegDto>>(rawResults);
+            var members = _memberRepository.GetMembers(match.Season, false).Result;
+            foreach (var result in pegResults)
+            {
+                var member = members.FirstOrDefault(x => x.MembershipNumber == result.MembershipNumber);
+                if (member != null)
+                {
+                    result.Name = member.Name;
+                }
+                else
+                {
+                    result.Name = $"Member {result.MembershipNumber} not found";
+                }
+
+                result.Lb = result.LbForDisplay;
+                result.Oz = result.OzForDisplay;
+            }
+
+            var membersLookup = new Dictionary<int, string>();
+            foreach (var member in members.Where(x => x.MembershipNumber > 0))
+            {
+                membersLookup.Add(member.MembershipNumber, member.Name);
+            }
+
+            results.Add(new MatchResultEditDto
+            {
+                Members = membersLookup,
+                Pegs = pegResults
+            });
+
+            ReportTimer("Getting match edit results");
+
+            return Ok(results);
+
+        }
+
         [HttpGet("member/{membershipNumber}/{matchType}/{season}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchResultOutputDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
@@ -218,6 +266,54 @@ namespace AnglingClubWebServices.Controllers
                 return Ok();
             }
         }
+
+        [HttpPost("SaveEditable/{matchId}")]
+        public async System.Threading.Tasks.Task<IActionResult> PostEditableResultsAsync([FromRoute] string matchId, [FromBody] List<MatchResultPegDto> results)
+        {
+            StartTimer();
+
+            var errors = new List<string>();
+
+            try
+            {
+                List<MatchResultInputDto> processedResults = await _matchResultService.CalculatePoints(matchId, results);
+
+                var matchResults = _mapper.Map<List<MatchResult>>(processedResults);
+
+                foreach (var result in matchResults)
+                {
+                    try
+                    {
+                        await _matchResultRepository.AddOrUpdateMatchResult(result);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        errors.Add($"{result.MatchId}, Member: {result.MembershipNumber} - {ex.Message}");
+                    }
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                errors.Add(ex.Message);
+
+            }
+            finally
+            {
+                ReportTimer("Posting match results");
+
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+            else
+            {
+                return Ok();
+            }
+        }
+
 
         // PUT api/values/5
         [HttpPut("{id}")]

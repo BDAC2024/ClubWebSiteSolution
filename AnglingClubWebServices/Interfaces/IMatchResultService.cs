@@ -17,5 +17,6 @@ namespace AnglingClubWebServices.Interfaces
         List<TrophyWinner> GetTrophyWinners(TrophyType trophyType, Season season);
         List<MatchAllResultOutputDto> GetResultsForAllMembers();
         Task<MemberResultsInSeason> GetMemberResultsInSeason(int membershipNumber, AggregateType aggType, Season season, bool basedOnPoints);
+        Task<List<MatchResultInputDto>> CalculatePoints(string matchId, List<MatchResultPegDto> results);
     }
 }
