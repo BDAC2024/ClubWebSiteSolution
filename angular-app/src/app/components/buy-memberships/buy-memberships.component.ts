@@ -126,7 +126,7 @@ export class BuyMembershipsComponent implements OnInit {
 
     if (this.selectedMembership.description == "Junior")
     {
-      maximumDate.setFullYear(nextApril.getFullYear() - 11);
+      maximumDate = new Date();
 
     } else if (this.selectedMembership.description == "Intermediate") {
 
