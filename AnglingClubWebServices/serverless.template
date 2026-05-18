@@ -191,7 +191,7 @@
       "Type": "AWS::Serverless::Function",
       "Properties": {
         "Handler": "AnglingClubWebServices::AnglingClubWebServices.LambdaEntryPoint::FunctionHandlerAsync",
-        "Runtime": "dotnet8",
+        "Runtime": "dotnet10",
         "CodeUri": "",
         "MemorySize": 1024,
 		"AutoPublishAlias": "prod",
