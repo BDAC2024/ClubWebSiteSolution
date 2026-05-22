@@ -102,11 +102,11 @@ export class BuyMembershipsComponent implements OnInit {
 
     if (this.selectedMembership.description == "Junior")
     {
-      minimumDate.setFullYear(nextApril.getFullYear() - 16);
+      minimumDate.setFullYear(nextApril.getFullYear() - 17);
 
     } else if (this.selectedMembership.description == "Intermediate") {
 
-      minimumDate.setFullYear(nextApril.getFullYear() - 18);
+      minimumDate.setFullYear(nextApril.getFullYear() - 19);
 
     } else {
       minimumDate.setFullYear(1);
@@ -130,10 +130,10 @@ export class BuyMembershipsComponent implements OnInit {
 
     } else if (this.selectedMembership.description == "Intermediate") {
 
-      maximumDate.setFullYear(nextApril.getFullYear() - 16);
+      maximumDate.setFullYear(nextApril.getFullYear() - 17);
 
     } else {
-      maximumDate.setFullYear(nextApril.getFullYear() - 18);
+      maximumDate.setFullYear(nextApril.getFullYear() - 19);
     }
 
     // console.log("maximumDate");
