@@ -1,0 +1,257 @@
+@page "/JuniorOpenMatches"
+@page "/register"
+
+@using AnglingClubShared.DTOs
+@using AnglingClubShared.Enums
+@using AnglingClubShared.Extensions
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Navigations
+
+@inherits RazorComponentBase;
+
+<div class="page-header junior-open-header">
+    <h3 class="left-header">Junior Open Matches</h3>
+</div>
+
+<BusyIndicator IsReady="DataLoaded" />
+
+@if (DataLoaded)
+{
+    <SfTab ID="JuniorOpenMatchesTab" EnablePersistence="false" SelectedItem="SelectedTab">
+        <TabEvents Selected="OnTabSelected"></TabEvents>
+        <TabItems>
+            <TabItem>
+                <HeaderTemplate>Details</HeaderTemplate>
+            </TabItem>
+            <TabItem>
+                <HeaderTemplate>Register</HeaderTemplate>
+            </TabItem>
+            <TabItem>
+                <HeaderTemplate>Match Location</HeaderTemplate>
+            </TabItem>
+            <TabItem>
+                <HeaderTemplate>Pond/Match Rules</HeaderTemplate>
+            </TabItem>
+        </TabItems>
+    </SfTab>
+
+    <SfCard CssClass="junior-open-card">
+        <CardContent>
+            @if (SelectedTab == 0)
+            {
+                <div class="details-tab">
+                    <SfButton CssClass="e-primary register-button" OnClick="ShowRegistrationTab">Register here for Junior Open Matches</SfButton>
+                    <img src="images/placeholders/JuniorOpen2026PosterImage.png" class="open-match-poster" alt="Junior Open Matches poster" />
+                </div>
+            }
+            else if (SelectedTab == 1)
+            {
+                <div class="registration-tab">
+                    <div class="registration-toolbar">
+                        <h4>Junior Open Match Registrations</h4>
+                        <SeasonSelector OnSeasonChanged="SeasonChanged" />
+                    </div>
+
+                    <BusyIndicator IsReady="MatchesLoaded" />
+
+                    @if (MatchesLoaded)
+                    {
+                        @if (!string.IsNullOrWhiteSpace(Message))
+                        {
+                            <SfMessage Severity="MessageSeverity.Info">@Message</SfMessage>
+                        }
+
+                        @if (Matches.Any())
+                        {
+                            <SfGrid DataSource="Matches" AllowSorting="true" CssClass="junior-open-grid">
+                                <GridColumns>
+                                    <GridColumn Field="Date" HeaderText="Date" Width="110" Format="dd MMM yy" Type="ColumnType.Date" TextAlign="TextAlign.Right"></GridColumn>
+                                    <GridColumn Field="DrawTime" HeaderText="Draw" Width="85" TextAlign="TextAlign.Center"></GridColumn>
+                                    <GridColumn Field="StartTime" HeaderText="Starts" Width="85" TextAlign="TextAlign.Center"></GridColumn>
+                                    <GridColumn Field="EndTime" HeaderText="Ends" Width="85" TextAlign="TextAlign.Center"></GridColumn>
+                                    <GridColumn Field="PegsRemaining" HeaderText="Pegs Remaining" Width="130" TextAlign="TextAlign.Center"></GridColumn>
+                                    <GridColumn HeaderText="" Width="150">
+                                        <Template Context="matchContext">
+                                            @{
+                                                var match = (OpenMatchDto)matchContext;
+                                            }
+                                            @if (match.InThePast)
+                                            {
+                                                <span class="past-event">Finished</span>
+                                            }
+                                            else if (match.PegsRemaining < 1)
+                                            {
+                                                <span>Fully booked</span>
+                                            }
+                                            else
+                                            {
+                                                <SfButton CssClass="e-primary" OnClick="@(() => StartRegistration(match))">Register</SfButton>
+                                            }
+                                        </Template>
+                                    </GridColumn>
+                                    @if (IsAdmin)
+                                    {
+                                        <GridColumn HeaderText="Registrations" Width="140">
+                                            <Template Context="matchContext">
+                                                @{
+                                                    var match = (OpenMatchDto)matchContext;
+                                                }
+                                                <SfButton CssClass="e-primary" OnClick="@(() => ViewRegistrations(match))">View</SfButton>
+                                            </Template>
+                                        </GridColumn>
+                                    }
+                                </GridColumns>
+                            </SfGrid>
+                        }
+                        else
+                        {
+                            <p>No Junior Open matches are currently available for this season.</p>
+                        }
+                    }
+
+                    @if (IsRegistering && RegistrationMatch is not null)
+                    {
+                        <div class="registration-panel">
+                            <h4>Registration for Match on @RegistrationMatch.Date.BdacDate()</h4>
+
+                            <EditForm Model="Registration" OnValidSubmit="SubmitRegistration">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary />
+
+                                <div class="form-field">
+                                    <label for="anglerName">Angler's Name</label>
+                                    <SfTextBox ID="anglerName" @bind-Value="Registration.Name"></SfTextBox>
+                                    <ValidationMessage For="@(() => Registration.Name)" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="ageGroup">Age Group</label>
+                                    <SfDropDownList ID="ageGroup"
+                                                    TValue="JuniorAgeGroup?"
+                                                    TItem="AgeGroupOption"
+                                                    DataSource="AgeGroupOptions"
+                                                    @bind-Value="Registration.AgeGroup">
+                                        <DropDownListFieldSettings Value="Value" Text="Text"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                    <ValidationMessage For="@(() => Registration.AgeGroup)" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="address">Address</label>
+                                    <SfTextBox ID="address" @bind-Value="Registration.Address"></SfTextBox>
+                                    <ValidationMessage For="@(() => Registration.Address)" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="parentName">Parent or Guardian Name</label>
+                                    <SfTextBox ID="parentName" @bind-Value="Registration.ParentName"></SfTextBox>
+                                    <ValidationMessage For="@(() => Registration.ParentName)" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="phone">Emergency Contact Phone No. (of parent or guardian)</label>
+                                    <SfTextBox ID="phone" @bind-Value="Registration.EmergencyContactPhone"></SfTextBox>
+                                    <ValidationMessage For="@(() => Registration.EmergencyContactPhone)" />
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="email">Email Address (optional - confirmation sent if given)</label>
+                                    <SfTextBox ID="email" Type="InputType.Email" @bind-Value="Registration.ContactEmail"></SfTextBox>
+                                    <ValidationMessage For="@(() => Registration.ContactEmail)" />
+                                </div>
+
+                                <div class="button-panel">
+                                    <SfButton CssClass="e-primary" Type="Submit" Disabled="IsSubmitting">Submit</SfButton>
+                                    <SfButton CssClass="e-flat" Type="Button" OnClick="CancelRegistration" Disabled="IsSubmitting">Cancel</SfButton>
+                                </div>
+                            </EditForm>
+                        </div>
+                    }
+
+                    @if (RegistrationSuccessful && SuccessfulRegistration is not null && RegistrationMatch is not null)
+                    {
+                        <SfMessage Severity="MessageSeverity.Success">
+                            @SuccessfulRegistration.Name has been registered for the match on @RegistrationMatch.Date.BdacDate().
+                        </SfMessage>
+                    }
+
+                    @if (IsListing && IsAdmin && RegistrationMatch is not null)
+                    {
+                        <div class="registrations-panel">
+                            <h4>Registrations for Match on @RegistrationMatch.Date.BdacDate()</h4>
+
+                            <BusyIndicator IsReady="RegistrationsLoaded" />
+
+                            @if (RegistrationsLoaded)
+                            {
+                                @if (SelectedRegistrations.Any())
+                                {
+                                    <p>@RegistrationSummary</p>
+                                    <SfGrid DataSource="SelectedRegistrations" AllowSorting="true" CssClass="junior-open-grid">
+                                        <GridColumns>
+                                            <GridColumn Field="Name" HeaderText="Name" Width="140"></GridColumn>
+                                            <GridColumn Field="AgeGroupAsString" HeaderText="Age Group" Width="120"></GridColumn>
+                                            <GridColumn Field="EmergencyContactPhone" HeaderText="Contact" Width="150"></GridColumn>
+                                            <GridColumn Field="Address" HeaderText="Address" Width="180"></GridColumn>
+                                            <GridColumn Field="ParentName" HeaderText="Parent" Width="160"></GridColumn>
+                                            <GridColumn Field="ContactEmail" HeaderText="Email" Width="180"></GridColumn>
+                                            <GridColumn HeaderText="" Width="110">
+                                                <Template Context="registrationContext">
+                                                    @{
+                                                        var registration = (OpenMatchRegistrationDto)registrationContext;
+                                                    }
+                                                    <SfButton CssClass="e-danger" OnClick="@(() => ConfirmDeleteRegistration(registration))">Delete</SfButton>
+                                                </Template>
+                                            </GridColumn>
+                                        </GridColumns>
+                                    </SfGrid>
+                                }
+                                else
+                                {
+                                    <p>No registrations have been received for this match.</p>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else if (SelectedTab == 2)
+            {
+                <h4>Roecliffe Pond</h4>
+                <div>
+                    Entry is via Becklands lane on the left after Becklands Industrial Estate, then right at the end.
+                    <br />
+                    <br />
+                    <div title="What 3 Words divides the world into 3 metre squares and gives each square a unique combination of three words. Clicking the link will open it on a map.">
+                        What 3 Words address for start of Becklands Lane:
+                        <ul>
+                            <li class="rule-list-item">
+                                <a target="_blank" rel="noopener noreferrer" href="https://what3Words.com/cheaper.senses.sprayer?maptype=road">///cheaper.senses.sprayer</a>
+                            </li>
+                        </ul>
+                    </div>
+                    Park in the fenced-off area taking care not to obstruct the public footpath.
+                </div>
+                <br />
+                <img src="images/placeholders/JuniorOpenMatchLocation2.jpg" class="open-match-map" alt="Map showing Junior Open Match location at Roecliffe Pond" />
+            }
+            else if (SelectedTab == 3)
+            {
+                <h4>Pond/Match Rules</h4>
+                <ul class="rule-list">
+                    <li>Anglers under 13 years of age <b>MUST</b> be accompanied by a parent/guardian</li>
+                    <li>Keep to the footpaths around the ponds. No trespassing from the paths as you will disturb the wildlife.</li>
+                    <li>NO DOGS allowed at ANY TIME as they will disturb the wildlife.</li>
+                    <li>NO night fishing (after daylight).</li>
+                    <li>NO boilies, boilie derivatives or wafter baits to be used at any time.</li>
+                    <li>NO floating baits, pop ups baits or bread.</li>
+                    <li>NO artificial baits.</li>
+                    <li>Pellets must be fishmeal only.</li>
+                    <li>NO camping or fires of any kind.</li>
+                    <li>NO fish to be taken for any purpose.</li>
+                    <li>Fishing from permanent pegs only.</li>
+                </ul>
+            }
+        </CardContent>
+    </SfCard>
+}
