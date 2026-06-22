@@ -17,6 +17,10 @@
 
 @if (DataLoaded)
 {
+    <SfButton CssClass="e-primary e-danger register-button" OnClick="ShowRegistrationTab">Register here for Junior Open Matches</SfButton>
+    <br />
+    <br />
+
     <SfTab ID="JuniorOpenMatchesTab" EnablePersistence="false" SelectedItem="SelectedTab">
         <TabEvents Selected="OnTabSelected"></TabEvents>
         <TabItems>
@@ -40,7 +44,6 @@
             @if (SelectedTab == 0)
             {
                 <div class="details-tab">
-                    <SfButton CssClass="e-primary register-button" OnClick="ShowRegistrationTab">Register here for Junior Open Matches</SfButton>
                     <img src="images/OpenMatches/JuniorOpen2026PosterImage.png" class="open-match-poster" alt="Junior Open Matches poster" />
                 </div>
             }
