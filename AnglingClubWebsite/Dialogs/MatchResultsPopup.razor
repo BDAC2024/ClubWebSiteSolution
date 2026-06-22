@@ -11,7 +11,7 @@
                 @if (CurrentUser.MatchSecretary && _resultsLoaded)
                 {
                     <div>
-                        @if (SelectedMatch.MatchType == MatchType.Club || SelectedMatch.MatchType == MatchType.Spring || SelectedMatch.MatchType == MatchType.Specials)
+                        @if (SelectedMatch.MatchType == MatchType.Club || SelectedMatch.MatchType == MatchType.Spring || SelectedMatch.MatchType == MatchType.Specials || SelectedMatch.MatchType == MatchType.Midweek)
                         {
                             <span style="padding-right: 20px;">
                                 <SfButton CssClass="e-btn e-outline e-primary" @onclick="(() => ShowingResultsEntry = true)"> <i class="@($"fa-solid fa-pencil card-icon")" /> Edit </SfButton>
