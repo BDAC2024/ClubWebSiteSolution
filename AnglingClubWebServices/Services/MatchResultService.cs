@@ -508,13 +508,20 @@ namespace AnglingClubWebServices.Services
 
                     if (numberAtSamePos == 1)
                     {
-                        result.Points = highPoints;
+                        result.Points = result.WeightDecimalForInput > 0 ? highPoints : 0;
                     }
                     else
                     {
-                        var totalPointsForAllAtThisPosition = SumConsecutive(highPoints - numberAtSamePos + 1, highPoints);
+                        var lowPoints = highPoints - numberAtSamePos + 1 > 1 ? highPoints - numberAtSamePos + 1 : 1;
 
-                        result.Points = (float)totalPointsForAllAtThisPosition / numberAtSamePos;
+                        var totalPointsForAllAtThisPosition = SumConsecutive(lowPoints, highPoints);
+
+                        result.Points = result.WeightDecimalForInput > 0 ? (float)totalPointsForAllAtThisPosition / numberAtSamePos : 0;
+
+                        if (result.Points > 0 && result.Points < 1)
+                        {
+                            result.Points = 1;
+                        }
                     }
                 }
                 else
