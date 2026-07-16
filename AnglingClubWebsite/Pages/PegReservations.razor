@@ -103,19 +103,19 @@
 
                                 <TemplateColumn Title="Day">
                                     <ChildContent Context="row">
-                                        <span tabindex="-1" class="nowrap">@row.DateAllocated.ToString("ddd")</span>
+                                        <span tabindex="-1" class="nowrap @RowStyle(row)">@row.DateAllocated.ToString("ddd")</span>
                                     </ChildContent>
                                 </TemplateColumn>
 
                                 <TemplateColumn Title="Date">
                                     <ChildContent Context="row">
-                                        <span tabindex="-1" class="nowrap">@row.DateAllocated.BdacDate()</span>
+                                        <span tabindex="-1" class="nowrap @RowStyle(row)">@row.DateAllocated.BdacDate()</span>
                                     </ChildContent>
                                 </TemplateColumn>
 
                                 <TemplateColumn Title="Member Name">
                                     <ChildContent Context="row">
-                                        <span tabindex="-1">@row.Name</span>
+                                        <span tabindex="-1" class="@RowStyle(row)">@row.Name</span>
                                     </ChildContent>
                                 </TemplateColumn>
 

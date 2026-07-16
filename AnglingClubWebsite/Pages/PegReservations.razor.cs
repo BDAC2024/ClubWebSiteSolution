@@ -281,6 +281,13 @@ namespace AnglingClubWebsite.Pages
 
         }
 
+        public string RowStyle(PegAllocationOutputDto row)
+        {
+            var style = row.DateAllocated < DateOnly.FromDateTime(DateTime.Today) ? "bdac-row-past" : "fw-bold";
+
+            return style;
+        }
+
         private async Task SetupAllocator()
         {
             if (IsAdmin())
