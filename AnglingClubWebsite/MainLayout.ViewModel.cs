@@ -160,7 +160,7 @@ namespace AnglingClubWebsite
             menuItems.Add(new MenuItem { Id = "03", Name = "Club Waters", NavigateUrl = menuUrl("/Waters") });
             menuItems.Add(new MenuItem { Id = "03.1", Name = "Reserved Pegs", IsNew = true, NavigateUrl = menuUrl("/PegReservations") });
             menuItems.Add(new MenuItem { Id = "04", Name = "Matches", NavigateUrl = menuUrl("/Matches") });
-            menuItems.Add(new MenuItem { Id = "045", Name = "Junior Open Matches", NavigateUrl = menuUrl("/register") });
+            menuItems.Add(new MenuItem { Id = "045", Name = "Junior Open Matches", NavigateUrl = menuUrl("/JuniorOpenMatches") });
             menuItems.Add(new MenuItem { Id = "05", Name = "Standings", HasSubMenu = true });
             menuItems.Add(new MenuItem { Id = "05.1", ParentId = "05", Name = "Leagues", NavigateUrl = menuUrl("/StandingsLeague") });
             menuItems.Add(new MenuItem { Id = "05.2", ParentId = "05", Name = "Weights", NavigateUrl = menuUrl("/StandingsWeights") });
