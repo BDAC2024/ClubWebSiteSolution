@@ -11,13 +11,14 @@ using DialogSeverity = AnglingClubWebsite.Models.DialogSeverity;
 
 namespace AnglingClubWebsite.Pages
 {
-    public partial class JuniorOpenMatches : RazorComponentBase
+    public partial class JuniorOpenMatches : RazorComponentBase, IRecipient<BrowserChange>
     {
         private readonly IOpenMatchService _openMatchService;
         private readonly IRefDataService _refDataService;
         private readonly IGlobalService _globalService;
         private readonly IDialogQueue _dialogQueue;
         private readonly ILogger<JuniorOpenMatches> _logger;
+        private readonly BrowserService _browserService;
 
         public JuniorOpenMatches(
             ICurrentUserService currentUserService,
@@ -27,12 +28,18 @@ namespace AnglingClubWebsite.Pages
             IRefDataService refDataService,
             IGlobalService globalService,
             IDialogQueue dialogQueue,
+            BrowserService browserService,
             ILogger<JuniorOpenMatches> logger) : base(messenger, currentUserService, authenticationService)
         {
             _openMatchService = openMatchService;
             _refDataService = refDataService;
             _globalService = globalService;
             _dialogQueue = dialogQueue;
+            _browserService = browserService;
+
+            messenger.Register<BrowserChange>(this);
+            BrowserSize = _browserService.DeviceSize;
+
             _logger = logger;
         }
 
@@ -47,8 +54,15 @@ namespace AnglingClubWebsite.Pages
         public int SelectedTab { get; set; }
         public Season SelectedSeason { get; set; }
         public string Message { get; set; } = string.Empty;
+
+        private DeviceSize BrowserSize = DeviceSize.Unknown;
+
         public List<OpenMatchDto> Matches { get; set; } = new();
+        public IQueryable<OpenMatchDto>? MatchesQueryable;
+
         public List<OpenMatchRegistrationDto> SelectedRegistrations { get; set; } = new();
+        public IQueryable<OpenMatchRegistrationDto>? SelectedRegistrationsQueryable;
+
         public OpenMatchDto? RegistrationMatch { get; set; }
         public OpenMatchRegistrationDto Registration { get; set; } = new();
         public OpenMatchRegistrationDto? SuccessfulRegistration { get; set; }
@@ -59,8 +73,7 @@ namespace AnglingClubWebsite.Pages
             new AgeGroupOption { Value = JuniorAgeGroup.ThirteenTo18, Text = "13 to 18 years" }
         };
 
-        public string RegistrationSummary
-        {
+        public string RegistrationSummary {
             get
             {
                 var upTo12 = SelectedRegistrations.Count(x => x.AgeGroup == JuniorAgeGroup.UpTo12);
@@ -68,9 +81,15 @@ namespace AnglingClubWebsite.Pages
                 var upTo12IsAre = upTo12 == 1 ? "is" : "are";
                 var thirteenTo18IsAre = thirteenTo18 == 1 ? "is" : "are";
 
-                return $"Currently {SelectedRegistrations.Count} registered; {upTo12} {upTo12IsAre} up to 12 and {thirteenTo18} {thirteenTo18IsAre} 13 to 18";
+                return $"Currently <b>{SelectedRegistrations.Count}</b> registered; <b>{upTo12}</b> {upTo12IsAre} up to 12 and <b>{thirteenTo18}</b> {thirteenTo18IsAre} 13 to 18";
             }
         }
+
+        public void Receive(BrowserChange message)
+        {
+            BrowserSize = _browserService.DeviceSize;
+        }
+
 
         public override async Task Loaded()
         {
@@ -225,12 +244,14 @@ namespace AnglingClubWebsite.Pages
                 Matches = (await _openMatchService.ReadMatches(SelectedSeason))
                     .OrderBy(x => x.Date)
                     .ToList();
+                MatchesQueryable = Matches.AsQueryable();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to load Junior Open Matches for {Season}", SelectedSeason);
                 Message = "Junior Open matches could not be loaded. Please try again later.";
                 Matches = new List<OpenMatchDto>();
+                MatchesQueryable = Matches.AsQueryable();
             }
             finally
             {
@@ -252,6 +273,7 @@ namespace AnglingClubWebsite.Pages
                     .OrderBy(x => x.Name)
                     .Select(EnsureAgeGroupDescription)
                     .ToList();
+                SelectedRegistrationsQueryable = SelectedRegistrations.AsQueryable();
             }
             catch (Exception ex)
             {

@@ -42,8 +42,10 @@
 
 .registration-panel,
 .registrations-panel {
-    max-width: 760px;
+    /*max-width: 370px;*/
     margin-top: 1.5rem;
+    background-color: whitesmoke;
+    padding: 10px;
 }
 
 .form-field {
