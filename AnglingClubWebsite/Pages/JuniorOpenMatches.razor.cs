@@ -331,6 +331,20 @@ namespace AnglingClubWebsite.Pages
 
             return registration;
         }
+
+        public string CellClass(OpenMatchDto row)
+        {
+            var classes = "bdac-rowcell";
+
+            // Dim past rows
+            if (row.InThePast)
+            {
+                classes += " bdac-row-past";
+            }
+
+            return classes;
+        }
+
     }
 
     public class AgeGroupOption

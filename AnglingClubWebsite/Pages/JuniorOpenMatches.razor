@@ -68,6 +68,7 @@
                                 <TemplateColumn Title="Date" IsDefaultSortColumn="true" Sortable="false">
                                     <ChildContent Context="row">
                                         <BdacGridCell TItem="OpenMatchDto"
+                                                      AdditionalClass="@CellClass(row)"
                                                       Item="row">
                                             <span class="nowrap">@row.Date.BdacDate()</span>
                                         </BdacGridCell>
@@ -77,6 +78,7 @@
                                 <TemplateColumn Title="Draw" IsDefaultSortColumn="true" Sortable="false" Align="Align.Center">
                                     <ChildContent Context="row">
                                         <BdacGridCell TItem="OpenMatchDto"
+                                                      AdditionalClass="@CellClass(row)"
                                                       Item="row">
                                             <span class="nowrap">@row.DrawTime</span>
                                         </BdacGridCell>
@@ -86,6 +88,7 @@
                                 <TemplateColumn Title="Starts" IsDefaultSortColumn="true" Sortable="false" Align="Align.Center">
                                     <ChildContent Context="row">
                                         <BdacGridCell TItem="OpenMatchDto"
+                                                      AdditionalClass="@CellClass(row)"
                                                       Item="row">
                                             <span class="nowrap">@row.StartTime</span>
                                         </BdacGridCell>
@@ -95,6 +98,7 @@
                                 <TemplateColumn Title="Ends" IsDefaultSortColumn="true" Sortable="false" Align="Align.Center">
                                     <ChildContent Context="row">
                                         <BdacGridCell TItem="OpenMatchDto"
+                                                      AdditionalClass="@CellClass(row)"
                                                       Item="row">
                                             <span class="nowrap">@row.EndTime</span>
                                         </BdacGridCell>
@@ -104,6 +108,7 @@
                                 <TemplateColumn Title="" IsDefaultSortColumn="true" Sortable="false" Align="Align.Center">
                                     <ChildContent Context="row">
                                         <BdacGridCell TItem="OpenMatchDto"
+                                                      AdditionalClass="@CellClass(row)"
                                                       Item="row">
                                             @if (row.PegsRemaining > 0 && !row.InThePast)
                                             {
@@ -132,46 +137,7 @@
 
                             </QuickGrid>
 
-@*                             <SfGrid DataSource="Matches" AllowSorting="true" CssClass="junior-open-grid">
-                                <GridColumns>
-                                    <GridColumn Field="Date" HeaderText="Date" Width="110" Format="dd MMM yy" Type="ColumnType.Date" TextAlign="TextAlign.Right"></GridColumn>
-                                    <GridColumn Field="DrawTime" HeaderText="Draw" Width="85" TextAlign="TextAlign.Center"></GridColumn>
-                                    <GridColumn Field="StartTime" HeaderText="Starts" Width="85" TextAlign="TextAlign.Center"></GridColumn>
-                                    <GridColumn Field="EndTime" HeaderText="Ends" Width="85" TextAlign="TextAlign.Center"></GridColumn>
-                                    <GridColumn Field="PegsRemaining" HeaderText="Pegs Remaining" Width="130" TextAlign="TextAlign.Center"></GridColumn>
-                                    <GridColumn HeaderText="" Width="150">
-                                        <Template Context="matchContext">
-                                            @{
-                                                var match = (OpenMatchDto)matchContext;
-                                            }
-                                            @if (match.InThePast)
-                                            {
-                                                <span class="past-event">Finished</span>
-                                            }
-                                            else if (match.PegsRemaining < 1)
-                                            {
-                                                <span>Fully booked</span>
-                                            }
-                                            else
-                                            {
-                                                <SfButton CssClass="e-primary" OnClick="@(() => StartRegistration(match))">Register</SfButton>
-                                            }
-                                        </Template>
-                                    </GridColumn>
-                                    @if (IsAdmin)
-                                    {
-                                        <GridColumn HeaderText="Registrations" Width="140">
-                                            <Template Context="matchContext">
-                                                @{
-                                                    var match = (OpenMatchDto)matchContext;
-                                                }
-                                                <SfButton CssClass="e-primary" OnClick="@(() => ViewRegistrations(match))">View</SfButton>
-                                            </Template>
-                                        </GridColumn>
-                                    }
-                                </GridColumns>
-                            </SfGrid>
- *@                        }
+                        }
                         else
                             {
                                 <p>No Junior Open matches are currently available for this season.</p>
@@ -326,26 +292,7 @@
 
                                         </QuickGrid>
 
-@*                                         <SfGrid DataSource="SelectedRegistrations" AllowSorting="true" CssClass="junior-open-grid">
-                                            <GridColumns>
-                                                <GridColumn Field="Name" HeaderText="Name" Width="140"></GridColumn>
-                                                <GridColumn Field="AgeGroupAsString" HeaderText="Age Group" Width="120"></GridColumn>
-                                                <GridColumn Field="EmergencyContactPhone" HeaderText="Contact" Width="150"></GridColumn>
-
-                                                 <GridColumn Field="Address" HeaderText="Address" Width="180"></GridColumn>
-                                                <GridColumn Field="ParentName" HeaderText="Parent" Width="160"></GridColumn>
-                                                <GridColumn Field="ContactEmail" HeaderText="Email" Width="180"></GridColumn>
-                                                <GridColumn HeaderText="" Width="110">
-                                                    <Template Context="registrationContext">
-                                                        @{
-                                                            var registration = (OpenMatchRegistrationDto)registrationContext;
-                                                        }
-                                                        <SfButton CssClass="e-danger" OnClick="@(() => ConfirmDeleteRegistration(registration))">Delete</SfButton>
-                                                    </Template>
-                                                </GridColumn>
-                                            </GridColumns>
-                                        </SfGrid>
- *@                                    }
+                                    }
                                     else
                                     {
                                         <p>No registrations have been received for this match.</p>
@@ -380,13 +327,17 @@
                     <h4>Pond/Match Rules</h4>
                     <ul class="rule-list">
                         <li>Anglers under 13 years of age <b>MUST</b> be accompanied by a parent/guardian</li>
-                        <li>Keep to the footpaths around the ponds. No trespassing from the paths as you will disturb the wildlife.</li>
-                        <li>NO DOGS allowed at ANY TIME as they will disturb the wildlife.</li>
-                        <li>NO night fishing (after daylight).</li>
+                        <li>Casting can be done by the accompanying adult, but the rod 	must then be immediately passed to the Junior angler </li>
+                        <li>There are no feeding restrictions by the adult, other than the normal pond rules.</li>
+                        <li>When reeling in and landing a fish ALL juniors must have one hand on the rod with their other hand on the reel. An adult may only help by the supporting of and the raising of the rod itself and may assist with all aspects of netting and unhooking of the fish.</li>
+                        <li>ANY fish accidentally hooked by an adult MUST be immediately and freely returned to the water.</li>
                         <li>NO boilies, boilie derivatives or wafter baits to be used at any time.</li>
                         <li>NO floating baits, pop ups baits or bread.</li>
                         <li>NO artificial baits.</li>
                         <li>Pellets must be fishmeal only.</li>
+                        <li>Keep to the footpaths around the ponds. No trespassing from the paths as you will disturb the wildlife.</li>
+                        <li>NO DOGS allowed at ANY TIME as they will disturb the wildlife.</li>
+                        <li>NO night fishing (after daylight).</li>
                         <li>NO camping or fires of any kind.</li>
                         <li>NO fish to be taken for any purpose.</li>
                         <li>Fishing from permanent pegs only.</li>
