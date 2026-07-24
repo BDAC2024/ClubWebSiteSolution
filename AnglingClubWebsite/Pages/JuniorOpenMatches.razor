@@ -24,23 +24,29 @@
     <br />
     <br />
 
-    <SfTab ID="JuniorOpenMatchesTab" EnablePersistence="false" SelectedItem="SelectedTab">
-        <TabEvents Selected="OnTabSelected"></TabEvents>
-        <TabItems>
-            <TabItem>
-                <HeaderTemplate>Details</HeaderTemplate>
-            </TabItem>
-            <TabItem>
-                <HeaderTemplate>Register</HeaderTemplate>
-            </TabItem>
-            <TabItem>
-                <HeaderTemplate>Match Location</HeaderTemplate>
-            </TabItem>
-            <TabItem>
-                <HeaderTemplate>Pond/Match Rules</HeaderTemplate>
-            </TabItem>
-        </TabItems>
-    </SfTab>
+    <MobileTabScroller ScrollAmount="180">
+        <SfTab ID="JuniorOpenMatchesTab"
+               EnablePersistence="false"
+               SelectedItem="SelectedTab"
+               OverflowMode="OverflowMode.Scrollable"
+               Width="100%">
+            <TabEvents Selected="OnTabSelected"></TabEvents>
+            <TabItems>
+                <TabItem>
+                    <HeaderTemplate>Details</HeaderTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>Register</HeaderTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>Match Location</HeaderTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>Pond/Match Rules</HeaderTemplate>
+                </TabItem>
+            </TabItems>
+        </SfTab>
+    </MobileTabScroller>
 
     <SfCard CssClass="junior-open-card">
         <CardContent>

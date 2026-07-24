@@ -29,39 +29,46 @@
 
     @if (DataLoaded)
     {
-        <SfTab @key="CurrentUser.Admin" ID="Tab" EnablePersistence="false" SelectedItem="SelectedTab">
-            <TabEvents Selected="OnTabSelected"></TabEvents>
-            <TabItems>
-                <TabItem>
-                    <HeaderTemplate>
-                        Register
-                    </HeaderTemplate>
-                </TabItem>
-                <TabItem>
-                    <HeaderTemplate>
-                        Allocations
-                    </HeaderTemplate>
-                </TabItem>
-                @if (IsAdmin())
-                {
+        <MobileTabScroller ScrollAmount="180">
+            <SfTab @key="CurrentUser.Admin"
+                   ID="Tab"
+                   EnablePersistence="false"
+                   SelectedItem="SelectedTab"
+                   OverflowMode="OverflowMode.Scrollable"
+                   Width="100%">
+                <TabEvents Selected="OnTabSelected"></TabEvents>
+                <TabItems>
                     <TabItem>
                         <HeaderTemplate>
-                            Register Another Member (Admin only)
+                            Register
                         </HeaderTemplate>
                     </TabItem>
                     <TabItem>
                         <HeaderTemplate>
-                            Current Registrations (Admin only)
+                            Allocations
                         </HeaderTemplate>
                     </TabItem>
-                    <TabItem>
-                        <HeaderTemplate>
-                            Allocate Pegs (Admin only)
-                        </HeaderTemplate>
-                    </TabItem>
-                }
-            </TabItems>
-        </SfTab>
+                    @if (IsAdmin())
+                    {
+                        <TabItem>
+                            <HeaderTemplate>
+                                Register Another Member (Admin only)
+                            </HeaderTemplate>
+                        </TabItem>
+                        <TabItem>
+                            <HeaderTemplate>
+                                Current Registrations (Admin only)
+                            </HeaderTemplate>
+                        </TabItem>
+                        <TabItem>
+                            <HeaderTemplate>
+                                Allocate Pegs (Admin only)
+                            </HeaderTemplate>
+                        </TabItem>
+                    }
+                </TabItems>
+            </SfTab>
+        </MobileTabScroller>
 
         <SfCard>
             <CardContent>
