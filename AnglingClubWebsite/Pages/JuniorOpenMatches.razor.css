@@ -1,0 +1,83 @@
+.junior-open-header {
+    margin-bottom: 1rem;
+}
+
+.junior-open-card {
+    margin-top: 1rem;
+}
+
+.details-tab {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.register-button {
+    margin-bottom: 0.5rem;
+}
+
+.open-match-poster {
+    max-width: min(100%, 760px);
+    height: auto;
+}
+
+.open-match-map {
+    max-width: min(100%, 900px);
+    height: auto;
+}
+
+.registration-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.junior-open-grid {
+    margin-bottom: 1rem;
+}
+
+.registration-panel,
+.registrations-panel {
+    /*max-width: 370px;*/
+    margin-top: 1.5rem;
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+.form-field {
+    margin-bottom: 1rem;
+}
+
+.form-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.button-panel {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.rule-list,
+.rule-list-item {
+    padding-left: 1.25rem;
+}
+
+.past-event {
+    color: #777;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .registration-panel,
+    .registrations-panel {
+        max-width: 100%;
+    }
+}

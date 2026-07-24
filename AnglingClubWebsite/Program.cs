@@ -141,6 +141,7 @@ builder.Services.AddSingleton<IDialogQueue, DialogQueue>();
 builder.Services.AddTransient<ITmpFileService, TmpFileService>();
 builder.Services.AddTransient<IBookPrintingService, BookPrintingService>();
 builder.Services.AddTransient<IPegReservationService, PegReservationService>();
+builder.Services.AddTransient<IOpenMatchService, OpenMatchService>();
 
 builder.Services.AddAuthorizationCore();
 
