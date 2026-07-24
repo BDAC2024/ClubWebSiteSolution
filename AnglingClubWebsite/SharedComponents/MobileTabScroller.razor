@@ -1,0 +1,27 @@
+﻿@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<div class="mobile-tab-scroller @CssClass"
+     @ref="_container">
+
+    <button type="button"
+            class="mobile-tab-arrow mobile-tab-arrow-left"
+            aria-label="@LeftArrowLabel"
+            title="@LeftArrowLabel"
+            @onclick="ScrollLeftAsync">
+        <span aria-hidden="true">&#x2039;</span>
+    </button>
+
+    @ChildContent
+
+    <button type="button"
+            class="mobile-tab-arrow mobile-tab-arrow-right"
+            aria-label="@RightArrowLabel"
+            title="@RightArrowLabel"
+            @onclick="ScrollRightAsync">
+        <span aria-hidden="true">&#x203A;</span>
+    </button>
+
+</div>
+

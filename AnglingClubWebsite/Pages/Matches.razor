@@ -25,27 +25,34 @@
     {
         <p>You can see the results by selecting the match.</p>
 
-        <SfTab ID="Tab" EnablePersistence="false" SelectedItem="ViewModel.SelectedTab">
-            <TabEvents Selected="OnTabSelected"></TabEvents>
-            <TabItems>
-                @foreach (TabData Item in ViewModel.MatchTabItems)
-                {
-                    <TabItem>
-                        <HeaderTemplate>
-                            @if (ViewModel.BrowserSize == DeviceSize.Small)
-                            {
-                                <div>@(Item.HeaderBrief)</div>
-                            }
-                            else
-                            {
-                                <div>@(Item.HeaderFull)</div>
-                            }
+        <MobileTabScroller ScrollAmount="180">
+            <SfTab ID="Tab"
+                   EnablePersistence="false"
+                   SelectedItem="ViewModel.SelectedTab"
+                   OverflowMode="OverflowMode.Scrollable"
+                   Width="100%">
+                <TabEvents Selected="OnTabSelected"></TabEvents>
+                <TabItems>
+                    @foreach (TabData Item in ViewModel.MatchTabItems)
+                    {
+                        <TabItem>
+                            <HeaderTemplate>
+                                @if (ViewModel.BrowserSize == DeviceSize.Small)
+                                {
+                                    <div>@(Item.HeaderBrief)</div>
+                                }
+                                else
+                                {
+                                    <div>@(Item.HeaderFull)</div>
+                                }
 
-                        </HeaderTemplate>
-                    </TabItem>
-                }
-            </TabItems>
-        </SfTab>
+                            </HeaderTemplate>
+                        </TabItem>
+                    }
+                </TabItems>
+            </SfTab>
+        </MobileTabScroller>
+
         <QuickGrid Items="ViewModel.MatchesQueryable" Class="bdac-table">
 
             <TemplateColumn Title="Date" IsDefaultSortColumn="true" Sortable="true" SortBy="@MatchesViewModel.SortByDate">
