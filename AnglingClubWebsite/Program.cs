@@ -118,7 +118,6 @@ builder.Services.AddScoped<LoginViewModel>();
 builder.Services.AddScoped<LogoutViewModel>();
 builder.Services.AddScoped<NewsViewModel>();
 builder.Services.AddScoped<WatersViewModel>();
-builder.Services.AddScoped<MatchesViewModel>();
 
 
 // Component ViewModels
