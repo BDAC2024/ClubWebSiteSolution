@@ -1,0 +1,65 @@
+﻿.mobile-tab-scroller {
+    position: relative;
+    min-width: 0;
+}
+
+.mobile-tab-arrow {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-tab-scroller {
+        overflow: hidden;
+    }
+
+    .mobile-tab-arrow {
+        position: absolute;
+        top: 0;
+        z-index: 20;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.5rem;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: var(--bs-body-bg, white);
+        font: inherit;
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+
+        .mobile-tab-arrow span {
+            display: block;
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+    .mobile-tab-arrow-left {
+        left: 0;
+        border-right: 1px solid var(--bs-border-color, #ddd);
+    }
+
+    .mobile-tab-arrow-right {
+        right: 0;
+        border-left: 1px solid var(--bs-border-color, #ddd);
+    }
+
+    .mobile-tab-scroller.can-scroll-left
+    .mobile-tab-arrow-left {
+        display: flex;
+    }
+
+    .mobile-tab-scroller.can-scroll-right
+    .mobile-tab-arrow-right {
+        display: flex;
+    }
+
+    .mobile-tab-arrow-right {
+        background: linear-gradient( to right, transparent, var(--bs-body-bg, white) 35% );
+    }
+
+    .mobile-tab-arrow-left {
+        background: linear-gradient( to left, transparent, var(--bs-body-bg, white) 35% );
+    }
+}

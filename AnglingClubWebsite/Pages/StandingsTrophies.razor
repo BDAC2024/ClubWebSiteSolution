@@ -18,27 +18,34 @@
 
     @if (TabsLoaded)
     {
-        <SfTab ID="Tab" EnablePersistence="false" @bind-SelectedItem="SelectedTab">
-            <TabEvents Selected="OnTabSelected"></TabEvents>
-            <TabItems>
-                @foreach (TabData Item in TabItems)
-                {
-                    <TabItem>
-                        <HeaderTemplate>
-                            @if (BrowserSize == DeviceSize.Small)
-                            {
-                                <div>@(Item.HeaderBrief)</div>
-                            }
-                            else
-                            {
-                                <div>@(Item.HeaderFull)</div>
-                            }
+        <MobileTabScroller ScrollAmount="180">
+            <SfTab ID="Tab"
+                   EnablePersistence="false"
+                   @bind-SelectedItem="SelectedTab"
+                   OverflowMode="OverflowMode.Scrollable"
+                   Width="100%">
+                <TabEvents Selected="OnTabSelected"></TabEvents>
+                <TabItems>
+                    @foreach (TabData Item in TabItems)
+                    {
+                        <TabItem>
+                            <HeaderTemplate>
+                                @if (BrowserSize == DeviceSize.Small)
+                                {
+                                    <div>@(Item.HeaderBrief)</div>
+                                }
+                                else
+                                {
+                                    <div>@(Item.HeaderFull)</div>
+                                }
 
-                        </HeaderTemplate>
-                    </TabItem>
-                }
-            </TabItems>
-        </SfTab>
+                            </HeaderTemplate>
+                        </TabItem>
+                    }
+                </TabItems>
+            </SfTab>
+        </MobileTabScroller>
+
         <BusyIndicator IsReady="@TrophiesLoaded"></BusyIndicator>
 
         if (TrophiesLoaded)

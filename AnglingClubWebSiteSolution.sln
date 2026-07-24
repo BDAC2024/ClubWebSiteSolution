@@ -62,7 +62,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		FileExplorer = |..\..\..\OneDrive\Documents\Fishing\Club Website\Config\
 		SolutionGuid = {FDD666BE-8135-440A-B0CF-F96A7D137869}
+		FileExplorer = |..\..\..\OneDrive\Documents\Fishing\Club Website\Config\
 	EndGlobalSection
 EndGlobal
