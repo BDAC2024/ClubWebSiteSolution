@@ -6,6 +6,7 @@ using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Navigations;
 using DialogSeverity = AnglingClubWebsite.Models.DialogSeverity;
 
@@ -42,6 +43,9 @@ namespace AnglingClubWebsite.Pages
 
             _logger = logger;
         }
+
+        [Parameter]
+        public int? Tab { get; set; }
 
         public bool DataLoaded { get; set; }
         public bool MatchesLoaded { get; set; }
@@ -94,6 +98,13 @@ namespace AnglingClubWebsite.Pages
         public override async Task Loaded()
         {
             await LoadInitialData();
+
+            if (Tab.HasValue)
+            {
+                SelectedTab = Tab.Value;
+                await LoadSelectedTabData();
+            }
+
             await base.Loaded();
         }
 
@@ -101,6 +112,11 @@ namespace AnglingClubWebsite.Pages
         {
             SelectedTab = args.SelectedIndex;
 
+            await LoadSelectedTabData();
+        }
+
+        private async Task LoadSelectedTabData()
+        {
             if (SelectedTab == 1 && !MatchesLoaded)
             {
                 await LoadMatches();

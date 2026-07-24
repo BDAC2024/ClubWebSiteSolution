@@ -1,5 +1,6 @@
 @page "/JuniorOpenMatches"
 @page "/register"
+@page "/JuniorOpenMatches/{Tab:int}"
 
 @using AnglingClubShared.DTOs
 @using AnglingClubShared.Enums
@@ -11,7 +12,7 @@
 @inherits RazorComponentBase;
 
 <div class="page-header junior-open-header">
-    <h3 class="left-header">Junior Open Matches</h3>
+    <h3 class="left-header">Junior Opens</h3>
     <SeasonSelector OnSeasonChanged="SeasonChanged" />
 </div>
 
@@ -61,6 +62,12 @@
                             <SfMessage Severity="MessageSeverity.Info">@Message</SfMessage>
                         }
 
+                        <span>
+                            Draw is <b>10:30am</b>, fish <b>12pm</b> until <b>4pm</b>
+                            <br/>
+                            <br />
+                        </span>
+
                         @if (Matches.Any())
                         {
                             <QuickGrid Items="MatchesQueryable" Class="bdac-table">
@@ -75,32 +82,12 @@
                                     </ChildContent>
                                 </TemplateColumn>
 
-                                <TemplateColumn Title="Draw" Sortable="false" Align="Align.Center">
+                                <TemplateColumn Title="Pegs left" Sortable="false" Align="Align.Center">
                                     <ChildContent Context="row">
                                         <BdacGridCell TItem="OpenMatchDto"
                                                       AdditionalClass="@CellClass(row)"
                                                       Item="row">
-                                            <span class="nowrap">@row.DrawTime</span>
-                                        </BdacGridCell>
-                                    </ChildContent>
-                                </TemplateColumn>
-
-                                <TemplateColumn Title="Starts" Sortable="false" Align="Align.Center">
-                                    <ChildContent Context="row">
-                                        <BdacGridCell TItem="OpenMatchDto"
-                                                      AdditionalClass="@CellClass(row)"
-                                                      Item="row">
-                                            <span class="nowrap">@row.StartTime</span>
-                                        </BdacGridCell>
-                                    </ChildContent>
-                                </TemplateColumn>
-
-                                <TemplateColumn Title="Ends" Sortable="false" Align="Align.Center">
-                                    <ChildContent Context="row">
-                                        <BdacGridCell TItem="OpenMatchDto"
-                                                      AdditionalClass="@CellClass(row)"
-                                                      Item="row">
-                                            <span class="nowrap">@row.EndTime</span>
+                                                @row.PegsRemaining
                                         </BdacGridCell>
                                     </ChildContent>
                                 </TemplateColumn>
@@ -110,30 +97,34 @@
                                         <BdacGridCell TItem="OpenMatchDto"
                                                       AdditionalClass="@CellClass(row)"
                                                       Item="row">
-                                            @if (row.PegsRemaining > 0 && !row.InThePast)
-                                            {
-                                                <span class="nowrap">
-                                                    @row.PegsRemaining pegs left<br />
-                                                    <SfButton CssClass="e-primary" OnClick="@(() => StartRegistration(row))">Register</SfButton>
-                                                </span>
-                                            }
                                             @if (row.PegsRemaining == 0 && !row.InThePast)
                                             {
                                                 <span class="nowrap">Fully booked</span>
+                                            }
+                                            @if (row.PegsRemaining > 0 && !row.InThePast)
+                                            {
+                                                <SfButton CssClass="e-primary" OnClick="@(() => StartRegistration(row))">Register</SfButton>
                                             }
                                             @if (row.InThePast)
                                             {
                                                 <span class="nowrap">Finished</span>
                                             }
-                                            @if (IsAdmin)
-                                            {
-                                                <br />
-                                                <br />
-                                                <SfButton CssClass="e-primary" OnClick="@(() => ViewRegistrations(row))">View</SfButton>
-                                            }
                                         </BdacGridCell>
                                     </ChildContent>
                                 </TemplateColumn>
+
+                                @if (IsAdmin)
+                                {
+                                    <TemplateColumn Title="" Sortable="false" Align="Align.Center">
+                                        <ChildContent Context="row">
+                                            <BdacGridCell TItem="OpenMatchDto"
+                                                          AdditionalClass="@CellClass(row)"
+                                                          Item="row">
+                                                <SfButton CssClass="e-primary" OnClick="@(() => ViewRegistrations(row))">View</SfButton>
+                                            </BdacGridCell>
+                                        </ChildContent>
+                                    </TemplateColumn>
+                                }
 
                             </QuickGrid>
 

@@ -33,7 +33,7 @@
         </div>
       </a>
       <a mat-list-item (click)="openBlazor('matches', drawer)">Matches</a>
-      <a mat-list-item routerLink="/register">Junior Open Matches</a>
+      <a mat-list-item (click)="openBlazor('JuniorOpenMatches', drawer)">Junior Open Matches</a>
       <mat-list-item (click)="showStandingsSubMenu = !showStandingsSubMenu" class="parent">
         <span class="full-width">Standings</span>
         <mat-icon class="menu-button" [ngClass]="{'rotated' : showStandingsSubMenu}">expand_more</mat-icon>
@@ -136,7 +136,7 @@
             Payments
           </div>
         </a>
-        <a mat-list-item routerLink="/juniorOpenRegistrations">
+        <a mat-list-item (click)="openBlazor('JuniorOpenMatches/1', drawer)">
           <div>
             Junior Open Registrations
           </div>

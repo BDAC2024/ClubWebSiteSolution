@@ -220,10 +220,11 @@ namespace AnglingClubWebsite
 
             menuItems.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
             menuItems.Add(new MenuItem { Id = "09.1", ParentId = "09", Name = "Members" });
-            menuItems.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "User Admins" });
-            menuItems.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Book Printing v2", NavigateUrl = menuUrl("/BookPrinting") });
-            menuItems.Add(new MenuItem { Id = "09.4", ParentId = "09", Name = "Payments" });
-            menuItems.Add(new MenuItem { Id = "09.5", ParentId = "09", Name = "Documentation", NavigateUrl = menuUrl("/Documentation") });
+            menuItems.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "Documentation", NavigateUrl = menuUrl("/Documentation") });
+            menuItems.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "User Admins" });
+            menuItems.Add(new MenuItem { Id = "09.4", ParentId = "09", Name = "Book Printing", NavigateUrl = menuUrl("/BookPrinting") });
+            menuItems.Add(new MenuItem { Id = "09.5", ParentId = "09", Name = "Payments" });
+            menuItems.Add(new MenuItem { Id = "09.6", ParentId = "09", Name = "Junior Open Registrations", NavigateUrl = menuUrl("/JuniorOpenMatches/1") });
 
             Menu.AddRange(menuItems);
             Menu = Menu.OrderBy(x => x.Id).ToList();
