@@ -1,12 +1,12 @@
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
-using AnglingClubShared.Models;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.AspNetCore.Components.QuickGrid;
 using Syncfusion.Blazor.Navigations;
+using MatchType = AnglingClubShared.Enums.MatchType;
 
 namespace AnglingClubWebsite.Pages
 {
@@ -44,7 +44,7 @@ namespace AnglingClubWebsite.Pages
         public bool DataLoaded { get; set; }
         public MatchType SelectedMatchType { get; set; } = MatchType.Spring;
         public int SelectedTab { get; set; }
-        public List<ClubEvent> Matches { get; set; } = new();
+        public List<ClubEvent> MatchesList { get; set; } = new();
         public IQueryable<ClubEvent>? MatchesQueryable { get; set; }
         public bool ShowingResults { get; set; }
         public ClubEvent SelectedMatch { get; set; } = new();
@@ -158,9 +158,9 @@ namespace AnglingClubWebsite.Pages
 
         private void LoadMatchesForSelectedType()
         {
-            Matches = _allMatches.Where(match => match.MatchType == SelectedMatchType).ToList();
-            MatchesQueryable = Matches.AsQueryable();
-            ShowCup = Matches.Any(match => !string.IsNullOrEmpty(match.Cup));
+            MatchesList = _allMatches.Where(match => match.MatchType == SelectedMatchType).ToList();
+            MatchesQueryable = MatchesList.AsQueryable();
+            ShowCup = MatchesList.Any(match => !string.IsNullOrEmpty(match.Cup));
             SetupTabs();
         }
 
