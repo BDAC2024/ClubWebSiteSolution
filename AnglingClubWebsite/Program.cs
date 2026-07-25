@@ -141,7 +141,6 @@ builder.Services.AddAuthorizationCore();
 
 // TODO Ang to Blazor Migration - services only needed during migration
 builder.Services.AddScoped<HostBridge>();
-builder.Services.AddScoped<EmbeddedLayoutViewModel>();
 
 var host = builder.Build();
 
