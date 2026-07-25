@@ -299,6 +299,8 @@ namespace AnglingClubWebsite
 
         #endregion Helper Methods
 
+        #region Events
+
         protected override void OnInitialized()
         {
             var pageRoute = _navigationManager.Uri.Replace(_navigationManager.BaseUri, "");
@@ -320,9 +322,20 @@ namespace AnglingClubWebsite
             {
                 setupLoggedInMenu();
 
-                if (_currentUserService.User.Admin) setupAdminMenu();
-                if (_currentUserService.User.CommitteeMember) setupCommitteeMenu();
-                if (_currentUserService.User.Developer) setupDeveloperMenu();
+                if (_currentUserService.User.Admin)
+                {
+                    setupAdminMenu();
+                }
+
+                if (_currentUserService.User.CommitteeMember)
+                {
+                    setupCommitteeMenu();
+                }
+
+                if (_currentUserService.User.Developer)
+                {
+                    setupDeveloperMenu();
+                }
             }
 
             await base.OnInitializedAsync();
@@ -336,7 +349,10 @@ namespace AnglingClubWebsite
 
         public void HideOnClick()
         {
-            if (!menuShowingOnMobile) return;
+            if (!menuShowingOnMobile)
+            {
+                return;
+            }
 
             ShowConsoleMessage("HideOnClick: Menu closing");
             menuIsOpen = false;
@@ -375,6 +391,7 @@ namespace AnglingClubWebsite
             }
         }
 
+        #endregion Events
     }
 
     #region Helper classes
