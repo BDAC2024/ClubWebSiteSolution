@@ -118,9 +118,6 @@ builder.Services.AddScoped<NewsViewModel>();
 builder.Services.AddScoped<WatersViewModel>();
 
 
-// Component ViewModels
-builder.Services.AddScoped<AppLinkViewModel>();
-
 // Services
 builder.Services.AddSingleton<BrowserService>();
 builder.Services.AddSingleton<IGlobalService, GlobalService>();
