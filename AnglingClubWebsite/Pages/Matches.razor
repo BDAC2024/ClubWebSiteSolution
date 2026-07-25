@@ -1,43 +1,38 @@
 @page "/Matches"
-@using AnglingClubShared.DTOs
 @using AnglingClubShared.Entities
 @using AnglingClubShared.Enums
-@using AnglingClubShared.Models
 @using AnglingClubWebsite.Models
 @using Microsoft.AspNetCore.Components.QuickGrid
-@using Syncfusion.Blazor
 @using Syncfusion.Blazor.Grids
-@using Microsoft.AspNetCore.Authorization
-@using static AnglingClubWebsite.Pages.MatchesViewModel
 @using AnglingClubShared.Extensions
-@inherits MvvmComponentBase<MatchesViewModel>
+@inherits RazorComponentBase
 
 <AuthorizationRequired>
     <div class="page-header">
         <h3 class="left-header">Matches</h3>
 
-        <SeasonSelector OnSeasonChanged="ViewModel.SeasonChanged" />
+        <SeasonSelector OnSeasonChanged="SeasonChanged" />
     </div>
 
-    <BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
+    <BusyIndicator IsReady="@DataLoaded"></BusyIndicator>
 
-    @if (ViewModel.DataLoaded)
+    @if (DataLoaded)
     {
         <p>You can see the results by selecting the match.</p>
 
         <MobileTabScroller ScrollAmount="180">
             <SfTab ID="Tab"
                    EnablePersistence="false"
-                   SelectedItem="ViewModel.SelectedTab"
+                   SelectedItem="SelectedTab"
                    OverflowMode="OverflowMode.Scrollable"
                    Width="100%">
                 <TabEvents Selected="OnTabSelected"></TabEvents>
                 <TabItems>
-                    @foreach (TabData Item in ViewModel.MatchTabItems)
+                    @foreach (TabData Item in MatchTabItems)
                     {
                         <TabItem>
                             <HeaderTemplate>
-                                @if (ViewModel.BrowserSize == DeviceSize.Small)
+                                @if (BrowserSize == DeviceSize.Small)
                                 {
                                     <div>@(Item.HeaderBrief)</div>
                                 }
@@ -53,14 +48,14 @@
             </SfTab>
         </MobileTabScroller>
 
-        <QuickGrid Items="ViewModel.MatchesQueryable" Class="bdac-table">
+        <QuickGrid Items="MatchesQueryable" Class="bdac-table">
 
-            <TemplateColumn Title="Date" IsDefaultSortColumn="true" Sortable="true" SortBy="@MatchesViewModel.SortByDate">
+            <TemplateColumn Title="Date" IsDefaultSortColumn="true" Sortable="true" SortBy="@SortByDate">
                 <ChildContent Context="row">
                     <BdacGridCell TItem="ClubEvent"
                                     Item="row"
-                                    AdditionalClass="@ViewModel.CellClass(row)"
-                                    OnSelect="ViewModel.MatchSelectedHandler">
+                                    AdditionalClass="@CellClass(row)"
+                                    OnSelect="MatchSelectedHandler">
                         <span class="nowrap">@row.Date.BdacDate()</span>
                     </BdacGridCell>
                 </ChildContent>
@@ -70,21 +65,21 @@
                 <ChildContent Context="row">
                     <BdacGridCell TItem="ClubEvent"
                                     Item="row"
-                                    AdditionalClass="@ViewModel.CellClass(row)"
-                                    OnSelect="ViewModel.MatchSelectedHandler">
+                                    AdditionalClass="@CellClass(row)"
+                                    OnSelect="MatchSelectedHandler">
                         @row.Description
                     </BdacGridCell>
                 </ChildContent>
             </TemplateColumn>
 
-            @if (ViewModel.IsCupVisible())
+            @if (IsCupVisible())
             {
                 <TemplateColumn Title="Cup">
                     <ChildContent Context="row">
                         <BdacGridCell TItem="ClubEvent"
                                         Item="row"
-                                        AdditionalClass="@ViewModel.CellClass(row)"
-                                        OnSelect="ViewModel.MatchSelectedHandler">
+                                        AdditionalClass="@CellClass(row)"
+                                        OnSelect="MatchSelectedHandler">
                             @row.Cup
                         </BdacGridCell>
                     </ChildContent>
@@ -95,8 +90,8 @@
                 <ChildContent Context="row">
                     <BdacGridCell TItem="ClubEvent"
                                     Item="row"
-                                    AdditionalClass="@ViewModel.CellClass(row)"
-                                    OnSelect="ViewModel.MatchSelectedHandler">
+                                    AdditionalClass="@CellClass(row)"
+                                    OnSelect="MatchSelectedHandler">
                         @(row.Number != null ? row.Number.Value.ToString("N0") : 0)
                     </BdacGridCell>
                 </ChildContent>
@@ -105,7 +100,7 @@
         </QuickGrid>
 
         @* Note the 2-way binding of the Visible property *@
-        <MatchResultsPopup @bind-Visible="ViewModel.ShowingResults" SelectedMatch="@ViewModel.SelectedMatch"></MatchResultsPopup>
+        <MatchResultsPopup @bind-Visible="ShowingResults" SelectedMatch="@SelectedMatch"></MatchResultsPopup>
 
     }
 </AuthorizationRequired>
@@ -114,14 +109,3 @@
 
 
 </style>
-
-    @code {
-    public void OnTabSelected(SelectEventArgs args)
-    {
-        var selected = ViewModel.MatchTabItems.ToArray()[args.SelectedIndex].MatchType;
-        Console.WriteLine($"Selected item: {args.SelectedIndex} - {selected}");
-        ViewModel.SelectedMatchType = selected;
-        ViewModel.LoadMatchesForSelectedType();
-    }
-
-}
