@@ -1,13 +1,13 @@
 using AnglingClubShared.Enums;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
-using AnglingClubWebsite.SharedComponents;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Navigations;
 
 namespace AnglingClubWebsite
 {
-    public partial class MainLayoutViewModel : ViewModelBase,
+    public partial class MainLayout : LayoutComponentBase,
         IRecipient<BrowserChange>,
         IRecipient<LoggedIn>,
         IRecipient<SelectMenuItem>
@@ -18,14 +18,16 @@ namespace AnglingClubWebsite
         private readonly BrowserService _browserService;
         private readonly IMessenger _messenger;
         private readonly IConfiguration _configuration;
+        private readonly NavigationManager _navigationManager;
 
-        public MainLayoutViewModel(
+        public MainLayout(
             IMessenger messenger,
             IAuthenticationService authenticationService,
             INavigationService navigationService,
             ICurrentUserService currentUserService,
             BrowserService browserService,
-            IConfiguration configuration) : base(messenger, currentUserService, authenticationService)
+            IConfiguration configuration,
+            NavigationManager navigationManager)
         {
             messenger.Register<LoggedIn>(this);
             messenger.Register<SelectMenuItem>(this);
@@ -38,38 +40,26 @@ namespace AnglingClubWebsite
             _currentUserService = currentUserService;
             _browserService = browserService;
             _messenger = messenger;
+            _navigationManager = navigationManager;
 
             defineStartupMenu();
             setBrowserDetails();
         }
 
-        [ObservableProperty]
-        private string _testMessage = "Hello from MainLayoutViewModel";
-
-        [ObservableProperty]
-        private List<MenuItem> _menu = new List<MenuItem>();
+        public List<MenuItem> Menu { get; set; } = new();
 
 
-        [ObservableProperty]
-        private string[] _selectedItems = new string[] { "01" };
+        public string[] SelectedItems { get; set; } = ["01"];
 
-        [ObservableProperty]
-        private string[] _expandedNodes = new string[0];
+        public string[] ExpandedNodes { get; set; } = [];
 
-        [ObservableProperty]
-        private string _browserDevice = "UNKNOWN";
+        public bool BrowserPortrait { get; set; }
 
-        [ObservableProperty]
-        private bool _browserPortrait = false;
+        public DeviceSize BrowserSize { get; set; } = DeviceSize.Unknown;
 
-        [ObservableProperty]
-        private DeviceSize _browserSize = DeviceSize.Unknown;
+        public int BrowserWidth { get; set; }
 
-        [ObservableProperty]
-        private int _browserWidth = 0;
-
-        [ObservableProperty]
-        private int _browserHeight = 0;
+        public int BrowserHeight { get; set; }
 
         #region Message Handlers
 
@@ -78,6 +68,7 @@ namespace AnglingClubWebsite
             SelectMenuItem(message.NavigateUrl);
             _messenger.Send<ShowConsoleMessage>(new ShowConsoleMessage($"SelectMenuItem: About to navigate to {message.NavigateUrl}"));
             _navigationService.NavigateTo(message.NavigateUrl, false);
+            _ = InvokeAsync(StateHasChanged);
         }
 
         public void Receive(LoggedIn message)
@@ -119,6 +110,8 @@ namespace AnglingClubWebsite
                     _navigationService.NavigateTo("/", false);
                 }
             }
+
+            _ = InvokeAsync(StateHasChanged);
         }
 
 
@@ -126,6 +119,7 @@ namespace AnglingClubWebsite
         public void Receive(BrowserChange message)
         {
             setBrowserDetails();
+            _ = InvokeAsync(StateHasChanged);
         }
 
         #endregion Message Handlers
@@ -305,39 +299,81 @@ namespace AnglingClubWebsite
 
         #endregion Helper Methods
 
-        #region Events
-
-        public override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
-            await base.OnInitializedAsync();
+            var pageRoute = _navigationManager.Uri.Replace(_navigationManager.BaseUri, "");
+
+            if (!string.IsNullOrEmpty(pageRoute))
+            {
+                ShowConsoleMessage($"pageRoute: {pageRoute}");
+                SelectMenuItem($"/{pageRoute}");
+            }
+
+            base.OnInitialized();
         }
 
-        public override async Task Loaded()
+        protected override async Task OnInitializedAsync()
         {
+            _currentUserService.User = await _authenticationService.GetCurrentUser();
+
             if (!string.IsNullOrEmpty(_currentUserService.User.Id))
             {
                 setupLoggedInMenu();
 
-                if (_currentUserService.User.Admin)
-                {
-                    setupAdminMenu();
-                }
-
-                if (_currentUserService.User.CommitteeMember)
-                {
-                    setupCommitteeMenu();
-                }
-
-                if (_currentUserService.User.Developer)
-                {
-                    setupDeveloperMenu();
-                }
+                if (_currentUserService.User.Admin) setupAdminMenu();
+                if (_currentUserService.User.CommitteeMember) setupCommitteeMenu();
+                if (_currentUserService.User.Developer) setupDeveloperMenu();
             }
 
-            await base.Loaded();
+            await base.OnInitializedAsync();
         }
 
-        #endregion
+        public bool debuggingDeviceType = false;
+        public string SidebarTarget = ".menu-and-main-wrapper";
+        public bool menuShowingOnMobile = false;
+        public bool menuIsOpen = false;
+        public bool oldMenuIsOpen = false;
+
+        public void HideOnClick()
+        {
+            if (!menuShowingOnMobile) return;
+
+            ShowConsoleMessage("HideOnClick: Menu closing");
+            menuIsOpen = false;
+            menuShowingOnMobile = false;
+        }
+
+        public void ShowMenu()
+        {
+            ShowConsoleMessage($"Toggle:oldMenuIsOpen - {oldMenuIsOpen}");
+            ShowConsoleMessage($"Toggle:mobile - {BrowserSize == DeviceSize.Small}");
+            menuIsOpen = !oldMenuIsOpen;
+            menuShowingOnMobile = BrowserSize == DeviceSize.Small && menuIsOpen;
+        }
+
+        public void OnMenuOpen(Syncfusion.Blazor.Navigations.EventArgs args)
+        {
+            oldMenuIsOpen = true;
+            ShowConsoleMessage("Menu opening");
+        }
+
+        public void OnMenuClose(Syncfusion.Blazor.Navigations.EventArgs args)
+        {
+            oldMenuIsOpen = false;
+            ShowConsoleMessage("Menu closing");
+        }
+
+        public void MenuSelected(NodeClickEventArgs args)
+        {
+            bool isLeafNode = !args.NodeData.HasChildren;
+            ShowConsoleMessage($"MenuSelected - leaf node {isLeafNode}");
+
+            if (BrowserSize == DeviceSize.Small && isLeafNode)
+            {
+                menuIsOpen = false;
+                menuShowingOnMobile = false;
+            }
+        }
 
     }
 
