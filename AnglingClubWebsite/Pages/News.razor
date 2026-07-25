@@ -1,27 +1,26 @@
-﻿@page "/News"
+@page "/News"
 
 @using AnglingClubShared.Extensions;
-@inherits MvvmComponentBase<NewsViewModel>
+@inherits RazorComponentBase
 
 <div class="page-header">
-    <h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Latest News</h3>
+    <h3 class="@(CurrentUser.Admin ? "left-header" : "")">Latest News</h3>
 
-    @if (
-        ViewModel.CurrentUser.Admin)
+    @if (CurrentUser.Admin)
     {
         <div class="edit-button-panel">
-            @if (ViewModel.IsUnlocked)
+            @if (IsUnlocked)
             {
-                <SfButton CssClass="e-primary edit-button" @onclick="ViewModel.AddNewsItem"><i class="fa-solid fa-add" /> Add news item</SfButton>
+                <SfButton CssClass="e-primary edit-button" @onclick="AddNewsItem"><i class="fa-solid fa-add" /> Add news item</SfButton>
             }
 
-            @if (!ViewModel.IsUnlocked)
+            @if (!IsUnlocked)
             {
-                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(true))"><i class="fa-solid fa-lock-open"/> Unlock</SfButton>
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => Unlock(true))"><i class="fa-solid fa-lock-open"/> Unlock</SfButton>
             }
             else
             {
-                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
             }
         </div>
         <br />
@@ -29,25 +28,25 @@
     }
 </div>
 
-<BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
+<BusyIndicator IsReady="@DataLoaded"></BusyIndicator>
 
-@if (ViewModel.IsAdding)
+@if (IsAdding)
 {
-    <EditableCard Submitting = "ViewModel.Submitting"
-    CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
-    SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
-        <EditableNewsCardContent Item="@ViewModel.NewsItem"></EditableNewsCardContent>
+    <EditableCard Submitting="Submitting"
+    CancelAction="@(() => _ = Cancel())"
+    SaveAction="@(() => _ = Save())">
+        <EditableNewsCardContent Item="@NewsItem"></EditableNewsCardContent>
     </EditableCard>
 }
 
-@foreach (var item in ViewModel.Items)
+@foreach (var item in Items)
 {
-    @if (ViewModel.NewsItem != null && ViewModel.NewsItem.DbKey == item.DbKey)
+    @if (NewsItem != null && NewsItem.DbKey == item.DbKey)
     {
-        <EditableCard Submitting = "ViewModel.Submitting"
-        CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
-        SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
-            <EditableNewsCardContent Item="@ViewModel.NewsItem"></EditableNewsCardContent>
+        <EditableCard Submitting="Submitting"
+        CancelAction="@(() => _ = Cancel())"
+        SaveAction="@(() => _ = Save())">
+            <EditableNewsCardContent Item="@NewsItem"></EditableNewsCardContent>
         </EditableCard>
     }
     else
@@ -55,13 +54,13 @@
         <NewsCard ItemId="@item.DbKey"
         Title="@item.Title"
         SubTitle="@item.Date.BdacDate()"
-        IsNew="ViewModel.IsNew(item.Date)"
-        Button1Text="@(ViewModel.IsUnlocked ? "Delete" : "")"
-        Button1Icon="@(ViewModel.IsUnlocked ? "fa-trash" : "")"
-        Button1Action="@(async (string itemId) => await ViewModel.OnNewsItemDeleted(item))"
-        Button2Text="@(ViewModel.IsUnlocked ? "Edit" : "")"
-        Button2Icon="@(ViewModel.IsUnlocked ? "fa-pencil" : "")"
-        Button2Action="@(async (string itemId) => await ViewModel.OnNewsItemEdited(itemId))">
+        IsNew="IsNew(item.Date)"
+        Button1Text="@(IsUnlocked ? "Delete" : "")"
+        Button1Icon="@(IsUnlocked ? "fa-trash" : "")"
+        Button1Action="@((string itemId) => OnNewsItemDeleted(item))"
+        Button2Text="@(IsUnlocked ? "Edit" : "")"
+        Button2Icon="@(IsUnlocked ? "fa-pencil" : "")"
+        Button2Action="@((string itemId) => OnNewsItemEdited(itemId))">
             @((MarkupString)item.Body)
         </NewsCard>
     }
