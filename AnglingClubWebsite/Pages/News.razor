@@ -16,7 +16,7 @@
 
             @if (!IsUnlocked)
             {
-                <SfButton CssClass="e-primary edit-button" @onclick="(() => Unlock(true))"><i class="fa-solid fa-lock-open"/> Unlock</SfButton>
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => Unlock(true))"><i class="fa-solid fa-lock-open" /> Unlock</SfButton>
             }
             else
             {
@@ -33,8 +33,8 @@
 @if (IsAdding)
 {
     <EditableCard Submitting="Submitting"
-    CancelAction="@(() => _ = Cancel())"
-    SaveAction="@(() => _ = Save())">
+                  CancelAction="@(() => _ = Cancel())"
+                  SaveAction="@(() => _ = Save())">
         <EditableNewsCardContent Item="@NewsItem"></EditableNewsCardContent>
     </EditableCard>
 }
@@ -44,23 +44,23 @@
     @if (NewsItem != null && NewsItem.DbKey == item.DbKey)
     {
         <EditableCard Submitting="Submitting"
-        CancelAction="@(() => _ = Cancel())"
-        SaveAction="@(() => _ = Save())">
+                      CancelAction="@(() => _ = Cancel())"
+                      SaveAction="@(() => _ = Save())">
             <EditableNewsCardContent Item="@NewsItem"></EditableNewsCardContent>
         </EditableCard>
     }
     else
     {
         <NewsCard ItemId="@item.DbKey"
-        Title="@item.Title"
-        SubTitle="@item.Date.BdacDate()"
-        IsNew="IsNew(item.Date)"
-        Button1Text="@(IsUnlocked ? "Delete" : "")"
-        Button1Icon="@(IsUnlocked ? "fa-trash" : "")"
-        Button1Action="@((string itemId) => OnNewsItemDeleted(item))"
-        Button2Text="@(IsUnlocked ? "Edit" : "")"
-        Button2Icon="@(IsUnlocked ? "fa-pencil" : "")"
-        Button2Action="@((string itemId) => OnNewsItemEdited(itemId))">
+                  Title="@item.Title"
+                  SubTitle="@item.Date.BdacDate()"
+                  IsNew="IsNew(item.Date)"
+                  Button1Text="@(IsUnlocked ? "Delete" : "")"
+                  Button1Icon="@(IsUnlocked ? "fa-trash" : "")"
+                  Button1Action="@((string itemId) => OnNewsItemDeleted(item))"
+                  Button2Text="@(IsUnlocked ? "Edit" : "")"
+                  Button2Icon="@(IsUnlocked ? "fa-pencil" : "")"
+                  Button2Action="@((string itemId) => OnNewsItemEdited(itemId))">
             @((MarkupString)item.Body)
         </NewsCard>
     }

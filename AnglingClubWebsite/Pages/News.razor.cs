@@ -1,6 +1,4 @@
-using AnglingClubShared;
 using AnglingClubShared.Entities;
-using AnglingClubShared.Enums;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
@@ -82,10 +80,11 @@ namespace AnglingClubWebsite.Pages
 
         public async Task Cancel()
         {
+            await GetNews(true);
+
             IsAdding = false;
             NewsItem = null;
 
-            await GetNews(true);
             StateHasChanged();
         }
 
@@ -169,6 +168,7 @@ namespace AnglingClubWebsite.Pages
         public void OnNewsItemEdited(string itemId)
         {
             NewsItem = Items.FirstOrDefault(item => item.DbKey == itemId);
+            StateHasChanged();
         }
     }
 }
