@@ -11,6 +11,7 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
         private readonly IAuthenticationService _authenticationService;
         private readonly ICurrentUserService _currentUserService;
         private readonly BrowserService _browserService;
+        private readonly IMessenger _messenger;
 
         public EmbeddedLayout(
             IMessenger messenger,
@@ -22,6 +23,7 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
             _authenticationService = authenticationService;
             _currentUserService = currentUserService;
             _browserService = browserService;
+            _messenger = messenger;
 
             messenger.Register<BrowserChange>(this);
 
@@ -54,6 +56,8 @@ namespace AnglingClubWebsite.SharedComponents.OnlyNeededWhilstMigrating
             BrowserSize = _browserService.DeviceSize;
             BrowserWidth = _browserService.Dimensions.Width;
             BrowserHeight = _browserService.Dimensions.Height;
+
+            //_messenger.Send(new ShowToast(MessageState.Success, $"Now {BrowserSize} - {(BrowserPortrait ? "Portrait" : "Landscape")} at {BrowserWidth} x {BrowserHeight}"));
         }
     }
 }
