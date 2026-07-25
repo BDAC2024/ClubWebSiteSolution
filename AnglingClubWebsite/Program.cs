@@ -110,7 +110,6 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<IMessenger, WeakReferenceMessenger>();
 
 // ViewModels
-builder.Services.AddScoped<IndexViewModel>();
 builder.Services.AddScoped<DiaryViewModel>();
 builder.Services.AddScoped<LoginViewModel>();
 builder.Services.AddScoped<LogoutViewModel>();
