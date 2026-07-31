@@ -113,9 +113,6 @@ builder.Services.AddSingleton<IMessenger, WeakReferenceMessenger>();
 builder.Services.AddScoped<DiaryViewModel>();
 builder.Services.AddScoped<LoginViewModel>();
 builder.Services.AddScoped<LogoutViewModel>();
-builder.Services.AddScoped<WatersViewModel>();
-
-
 // Services
 builder.Services.AddSingleton<BrowserService>();
 builder.Services.AddSingleton<IGlobalService, GlobalService>();

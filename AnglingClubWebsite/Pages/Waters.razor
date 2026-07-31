@@ -3,25 +3,21 @@
 @using AnglingClubShared.Models
 @using AnglingClubWebsite.Extensions
 @using AnglingClubWebsite.Models
-@inject NavigationManager navManager;
-@inject INavigationService navigationService;
-@inject IJSRuntime JSRuntime
-
-@inherits MvvmComponentBase<WatersViewModel>
+@inherits RazorComponentBase
 
 <div class="page-header">
-    <h3 class="@(ViewModel.CurrentUser.Admin ? "left-header" : "")">Club Waters</h3>
+    <h3 class="@(CurrentUser.Admin ? "left-header" : "")">Club Waters</h3>
 
-    @if (ViewModel.CurrentUser.Admin)
+    @if (CurrentUser.Admin)
     {
         <div class="edit-button-panel">
-            @if (!ViewModel.IsUnlocked)
+            @if (!IsUnlocked)
             {
-                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(true))"><i class="fa-solid fa-lock-open" /> Unlock</SfButton>
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => Unlock(true))"><i class="fa-solid fa-lock-open" /> Unlock</SfButton>
             }
             else
             {
-                <SfButton CssClass="e-primary edit-button" @onclick="(() => ViewModel.Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
+                <SfButton CssClass="e-primary edit-button" @onclick="(() => Unlock(false))"><i class="fa-solid fa-lock" /> Lock</SfButton>
             }
         </div>
         <br />
@@ -34,14 +30,14 @@
     Keep to all footpaths, do not wander from banks. All gates must be closed after being opened. Do not climb on walls. Do not cause a parking obstruction by blocking gateways etc.
 </p>
 
-<BusyIndicator IsReady="@ViewModel.DataLoaded"></BusyIndicator>
+<BusyIndicator IsReady="@DataLoaded"></BusyIndicator>
 
-@foreach (var item in ViewModel.Items)
+@foreach (var item in Items)
 {
-    <EditableCard Submitting="ViewModel.Submitting"
+    <EditableCard Submitting="Submitting"
                   EditMode=@ItemBeingEdited(item)
-                  CancelAction="@(() => ViewModel.CancelCommand.Execute(null))"
-                  SaveAction="@(() => ViewModel.SaveCommand.Execute(null))">
+                  CancelAction="@(async () => await Cancel())"
+                  SaveAction="@(async () => await Save())">
         <CardContent>
             <div class="card-title">
                 @item.Name
@@ -61,7 +57,7 @@
                     {
                         <SfRichTextEditor Placeholder='Description'
                                           @ref="rteObjDesc"
-                                          @bind-Value="ViewModel.Water!.Description"
+                                          @bind-Value="Water!.Description"
                                           AutoSaveOnIdle="true"
                                           EnableResize="true">
                             <RichTextEditorIFrameSettings Enable="true" />
@@ -92,7 +88,7 @@
                     {
                         <SfRichTextEditor Placeholder='Directions'
                                           @ref="rteObjDirections"
-                                          @bind-Value="ViewModel.Water!.Directions"
+                                          @bind-Value="Water!.Directions"
                                           AutoSaveOnIdle="true"
                                           EnableResize="true">
                             <RichTextEditorIFrameSettings Enable="true" />
@@ -107,10 +103,10 @@
                 </div>
                 <br />
                 <h6>Access Video</h6>
-                @if (!string.IsNullOrEmpty(item.VideoShortCode) && !onLocalhost())
+                @if (!string.IsNullOrEmpty(item.VideoShortCode) && !OnLocalhost())
                 {
                     <iframe src=@($"{Constants.VIDEO_BASE_URL}/{item.VideoShortCode}".SanitizeUrl())
-                            width="@ViewModel.VideoWidth" height="@ViewModel.VideoHeight"
+                            width="@VideoWidth" height="@VideoHeight"
                             title="YouTube video player"
                             frameborder="0"
                             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -125,7 +121,7 @@
                 }
                 <div>
                     <h6>Driving Directions</h6>
-                    <a target="_blank" href="@ViewModel.DirectionUrl(item).SanitizeUrl()">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.
+                    <a target="_blank" href="@DirectionUrl(item).SanitizeUrl()">Link to full driving directions</a> Please note: These directions take you as far as Google maps currently covers. You may need to continue along the following yellow marked route to reach the venue parking area.
                     <h6>Location</h6>
                     <table border="0">
                         <tr>
@@ -174,10 +170,10 @@
         </CardContent>
         <CardFooter>
             <CardFooterContent>
-                @if (ViewModel.IsUnlocked && ViewModel.Water == null)
+                @if (IsUnlocked && Water == null)
                 {
                     <div class="edit-button-panel">
-                        <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(async () => await ViewModel.OnWaterEdited(item.DbKey))"> <i class="@($"fa-solid fa-pencil card-icon")" /> Edit </SfButton>
+                        <SfButton CssClass="e-btn e-outline e-primary edit-button" @onclick="(async () => await OnWaterEdited(item.DbKey))"> <i class="@($"fa-solid fa-pencil card-icon")" /> Edit </SfButton>
                     </div>
                 }
             </CardFooterContent>
@@ -188,7 +184,7 @@
     */
 }
 
-@if (!ViewModel.IsLoggedIn && ViewModel.DataLoaded)
+@if (!IsLoggedIn && DataLoaded)
 {
     <SfMessage Severity="MessageSeverity.Warning">
         Currently hiding members only waters.
@@ -197,66 +193,4 @@
         <a @onclick="LoginThenRedirect" href="javascript:void(0)">Members can log in here</a>
 
     </SfMessage>
-}
-
-@code {
-    [Inject] IJSRuntime JS { get; set; } = default!;
-
-    private async Task LoginThenRedirect()
-    {
-        // navigationService.NavigateTo($"/login/{CallingRoute}"); // TODO Ang to Blazor Migration - re-instate once migration complete
-
-        // TODO Ang to Blazor Migration - not needed once migration complete
-        // Note: I cannot get the redirect to work so omitting that from the call to blazorHostBridge.requestLogin - will show homepage instead
-        await JS.InvokeVoidAsync("blazorHostBridge.requestLogin");
-        //var returnPath = navManager.ToBaseRelativePath(navManager.Uri);
-        //Console.WriteLine($"[AuthorizeView Login] redirect to ang login at ${returnPath}");
-        // await JS.InvokeVoidAsync("blazorHostBridge.requestLogin", returnPath);
-    }
-
-    private string CallingRoute
-    {
-        get
-        {
-            return navManager.Uri.Replace(navManager.BaseUri, "");
-        }
-    }
-
-    private bool onLocalhost()
-    {
-        return navManager.Uri.Contains("localhost");
-    }
-
-    private bool ItemBeingEdited(WaterOutputDto water)
-    {
-        return ViewModel.Water != null && ViewModel.Water.DbKey == water.DbKey;
-    }
-
-    public required SfRichTextEditor rteObjDesc;
-    public required SfRichTextEditor rteObjDirections;
-
-    private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
-    {
-        new ToolbarItemModel() { Command = ToolbarCommand.Bold },
-        new ToolbarItemModel() { Command = ToolbarCommand.Italic },
-        new ToolbarItemModel() { Command = ToolbarCommand.Formats },
-        new ToolbarItemModel() { Command = ToolbarCommand.FontName },
-        new ToolbarItemModel() { Command = ToolbarCommand.FontSize },
-        new ToolbarItemModel() { Command = ToolbarCommand.FontColor },
-        new ToolbarItemModel() { Command = ToolbarCommand.BackgroundColor },
-        new ToolbarItemModel() { Command = ToolbarCommand.Alignments },
-        new ToolbarItemModel() { Command = ToolbarCommand.NumberFormatList },
-        new ToolbarItemModel() { Command = ToolbarCommand.BulletFormatList },
-        new ToolbarItemModel() { Command = ToolbarCommand.Indent },
-        new ToolbarItemModel() { Command = ToolbarCommand.Outdent },
-        new ToolbarItemModel() { Command = ToolbarCommand.Undo },
-        new ToolbarItemModel() { Command = ToolbarCommand.Redo }
-    };
-
-    private void ToolbarClick(ToolbarClickEventArgs args)
-    {
-        rteObjDesc.PreventRender();
-        rteObjDirections.PreventRender();
-    }
-
 }
