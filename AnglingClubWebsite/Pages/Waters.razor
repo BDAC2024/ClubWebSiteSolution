@@ -56,7 +56,7 @@
                     @if (ItemBeingEdited(item))
                     {
                         <SfRichTextEditor Placeholder='Description'
-                                          @ref="rteObjDesc"
+                                          @ref="_rteObjDesc"
                                           @bind-Value="Water!.Description"
                                           AutoSaveOnIdle="true"
                                           EnableResize="true">
@@ -87,7 +87,7 @@
                     @if (ItemBeingEdited(item))
                     {
                         <SfRichTextEditor Placeholder='Directions'
-                                          @ref="rteObjDirections"
+                                          @ref="_rteObjDirections"
                                           @bind-Value="Water!.Directions"
                                           AutoSaveOnIdle="true"
                                           EnableResize="true">

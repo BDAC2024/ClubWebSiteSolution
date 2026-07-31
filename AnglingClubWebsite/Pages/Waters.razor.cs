@@ -1,6 +1,4 @@
-using AnglingClubShared;
 using AnglingClubShared.DTOs;
-using AnglingClubShared.Enums;
 using AnglingClubWebsite.Models;
 using AnglingClubWebsite.Services;
 using AnglingClubWebsite.SharedComponents;
@@ -22,8 +20,8 @@ namespace AnglingClubWebsite.Pages
         private readonly NavigationManager _navigationManager;
 
         private bool _mapsNeedInitialization;
-        private SfRichTextEditor rteObjDesc = default!;
-        private SfRichTextEditor rteObjDirections = default!;
+        private SfRichTextEditor _rteObjDesc = default!;
+        private SfRichTextEditor _rteObjDirections = default!;
 
         public Waters(
             IMessenger messenger,
@@ -206,8 +204,8 @@ namespace AnglingClubWebsite.Pages
 
         private void ToolbarClick(ToolbarClickEventArgs args)
         {
-            rteObjDesc.PreventRender();
-            rteObjDirections.PreventRender();
+            _rteObjDesc.PreventRender();
+            _rteObjDirections.PreventRender();
         }
     }
 }

@@ -21,7 +21,7 @@
           News
         </div>
       </a>
-      <a mat-list-item routerLink="/waters">Club Waters</a>
+      <a mat-list-item (click)="openBlazor('waters', drawer)">Club Waters</a>
       <a mat-list-item (click)="openBlazor('PegReservations', drawer)">
         <div class="custom-badge-opens-menu"
              matBadge="new"
