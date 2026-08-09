@@ -21,8 +21,8 @@
                         <table class="bdac-simple-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
                                     <th>Peg</th>
+                                    <th>Name</th>
                                     <th>Weight (lb)</th>
                                     <th>Weight (oz)</th>
                                 </tr>
@@ -31,6 +31,9 @@
                                 @foreach (var r in _matchResults.First().Pegs)
                                 {
                                     <tr>
+                                        <td class="right-align">
+                                            <SfTextBox Width="5" @bind-value=r.Peg ValueChange="@NewRowRequired"></SfTextBox>
+                                        </td>
                                         <td class="left-align">
                                             <SfComboBox TValue="int"
                                                         TItem="KeyValuePair<int, string>"
@@ -43,9 +46,6 @@
                                                         @bind-value="r.MembershipNumber">
                                                 <ComboBoxFieldSettings Value="Key" Text="Value"></ComboBoxFieldSettings>
                                             </SfComboBox>
-                                        </td>
-                                        <td class="right-align">
-                                            <SfTextBox Width="5" @bind-value=r.Peg ValueChange="@NewRowRequired"></SfTextBox>
                                         </td>
                                         <td class="right-align">
                                             <SfNumericTextBox Width="5" TValue="int" @bind-value=r.Lb ShowSpinButton="false"></SfNumericTextBox>
