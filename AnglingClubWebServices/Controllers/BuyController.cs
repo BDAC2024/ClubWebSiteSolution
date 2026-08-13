@@ -510,7 +510,9 @@ namespace AnglingClubWebServices.Controllers
                 return Unauthorized();
             }
 
-            _ticketService.IssueDayTicket(1, DateTime.Now, "holdersName", "emailAddress", "paymentId", "callerBaseUrl");
+            var validOn = DateTime.Now;
+
+            _ticketService.IssueDayTicket(1, validOn, "holdersName", "emailAddress", "paymentId", "callerBaseUrl");
 
             return Ok();
 

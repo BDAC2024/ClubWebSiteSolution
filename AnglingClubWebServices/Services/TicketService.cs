@@ -20,13 +20,14 @@ namespace AnglingClubWebServices.Services
     public class TicketService : ITicketService
     {
         private readonly IAppSettingRepository _appSettingRepository;
+        private readonly IReferenceDataRepository _referenceDataRepository;
         private readonly IEmailService _emailService;
         private readonly ILogger<TicketService> _logger;
 
         public TicketService(IAppSettingRepository appSettingRepository,
             IEmailService emailService,
-            ILoggerFactory loggerFactory
-            )
+            ILoggerFactory loggerFactory,
+            IReferenceDataRepository referenceDataRepository)
         {
             _appSettingRepository = appSettingRepository;
             _emailService = emailService;
@@ -48,6 +49,8 @@ namespace AnglingClubWebServices.Services
                     throw new Exception($"CANNOT GET FILESTREAM OF FONT {fontFilename}");
                 }
             }
+
+            _referenceDataRepository = referenceDataRepository;
         }
 
         public void IssueDayTicket(int ticketNumber, DateTime validOn, string holdersName, string emailAddress, string paymentId, string callerBaseUrl)
@@ -71,16 +74,12 @@ namespace AnglingClubWebServices.Services
 
                 //_logger.LogWarning("Sending PDF email...");
 
+                var body = generateDayTicketBody(validOn, callerBaseUrl, appSettings);
+
                 _emailService.SendEmail(
                         new List<string> { emailAddress },
                         $"Your Day Ticket for {validOn.PrettyDate()}",
-                        $"Please find attached, your day ticket valid for fishing on {validOn.PrettyDate()}.<br/>" +
-                            "Make sure you have your ticket with you when fishing. Either on your phone or printed.<br/><br/>" +
-                            $"Directions for the river and parking are shown here <a href='{callerBaseUrl}/waters#water3'>Club Website - Waters</a>.<br/><br/>" +
-                            generateClosureTimesAsHtml(appSettings) +
-                            $"<br/><br/>" +
-                            "Tight lines!,<br/>" +
-                            "Boroughbridge & District Angling Club",
+                        body,
                         null,
                         null,
                         new List<StreamAttachment>
@@ -486,11 +485,25 @@ namespace AnglingClubWebServices.Services
 
         }
 
+        private string generateDayTicketBody(DateTime validOn, string callerBaseUrl, AppSettings appSettings)
+        {
+            var body = $"Please find attached, your day ticket valid for fishing on {validOn.PrettyDate()}.<br/>" +
+                "Make sure you have your ticket with you when fishing. Either on your phone or printed.<br/><br/>" +
+                $"Directions for the river and parking are shown here <a href='{callerBaseUrl}/waters#water3'>Club Website - Waters</a>.<br/><br/>" +
+                generateMatchBookingAlertIfNeededAsHtml(validOn) +
+                generateClosureTimesAsHtml(appSettings) +
+                $"<br/><br/>" +
+                "Tight lines!,<br/>" +
+                "Boroughbridge & District Angling Club";
+
+            return body;
+        }
+
         private string generateClosureTimesAsHtml(AppSettings appSettings)
         {
             string html = "";
 
-            html = $"Please note the following closure times for the Day Ticket stretch: -<br/><br/>" +
+            html = $"Please note the following closure times for the Day Ticket stretch: -" +
                 $"<ul>" +
                     $"<li>These are <span style='background-color: yellow;'>absolutely non-negotiable</span> timings by which you must be packed up and <b>OFF</b> the bank.</li>" +
                     $"<li><span style='background-color: yellow;'>The club has a complete <b>NO NIGHT FISHING</b> policy!</span></li>" +
@@ -528,6 +541,65 @@ namespace AnglingClubWebServices.Services
             html += "</table>";
 
             return html;
+        }
+
+        private string generateMatchBookingAlertIfNeededAsHtml(DateTime validOn)
+        {
+            /***********************************
+             * PLEASE NOTE: If changing this
+             * method, also change the checkForMatches()
+             * method in buy-day-tickets.component.ts
+            ***********************************/
+
+            var refData = _referenceDataRepository.GetReferenceDataForDayTickets();
+
+            var matchesForSelectedDate = refData.DayTicketMatches.Where(m => m.Date.Date == validOn.Date).ToList();
+
+            if (matchesForSelectedDate.Count > 0)
+            {
+                var canStillFish = "";
+                var html = "";
+
+                foreach (var match in matchesForSelectedDate)
+                {
+                    if (match.Description.ToLower().IndexOf("cricket") >= 0 && match.Description.ToLower().IndexOf("ings") >= 0 && match.Description.ToLower().IndexOf("river masters") >= 0)
+                    {
+                        canStillFish = "You can still fish the Ings Lane stretch (pegs 30 to 80).";
+                    }
+                    else if (match.Description.ToLower().IndexOf("cricket") >= 0 && match.Description.ToLower().IndexOf("ings") >= 0)
+                    {
+                        canStillFish = "";
+                    }
+                    else if (match.Description.ToLower().IndexOf("cricket") >= 0)
+                    {
+                        canStillFish = "You can still fish the Ings Lane stretch (pegs 21 to 80).";
+                    }
+                    else if (match.Description.ToLower().IndexOf("ings") >= 0)
+                    {
+                        canStillFish = "You can still fish the Cricket Field stretch (pegs 1 to 16).";
+                    }
+
+                    html = $"<span style='color:red;'><b>ALERT - MATCH BOOKED:</b></span>" +
+                        "<ul>" +
+                        $"<li>Please be aware that a match is booked on that date for {match.Description}.</li>";
+
+                    if (canStillFish != "")
+                    {
+                        html += $"<li>{canStillFish}</li>";
+                    }
+
+                    html +=
+                        "<li><b>Note: </b>The club reserves the right to change match venues at short notice for safety reasons should river conditions dictate.</li>" +
+                        "</ul>";
+                }
+
+
+                return html;
+            }
+            else
+            {
+                return "";
+            }
         }
 
         private NameValueCollection getDayTicketClosureTimes(AppSettings appSettings)

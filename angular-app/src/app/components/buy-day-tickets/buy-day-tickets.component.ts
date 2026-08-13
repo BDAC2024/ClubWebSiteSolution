@@ -77,6 +77,13 @@ export class BuyDayTicketsComponent implements OnInit {
   }
 
   public checkForMatches() {
+
+    /***********************************
+     * PLEASE NOTE: If changing this
+     * method, also change the generateMatchBookingAlertIfNeededAsHtml()
+     * method in TicktService.cs
+    ***********************************/
+
     var matchDescription = "";
     var canStillFish = "";
 
