@@ -87,7 +87,9 @@ export class BuyDayTicketsComponent implements OnInit {
       {
         matchDescription = item.description;
 
-        if (item.description.toLowerCase().indexOf("cricket") >= 0 && item.description.toLowerCase().indexOf("ings") >= 0) {
+        if (item.description.toLowerCase().indexOf("cricket") >= 0 && item.description.toLowerCase().indexOf("ings") >= 0 && item.description.toLowerCase().indexOf("river masters") >= 0) {
+          canStillFish = "You can still fish the Ings Lane stretch (pegs 30 to 80).";
+        } else if (item.description.toLowerCase().indexOf("cricket") >= 0 && item.description.toLowerCase().indexOf("ings") >= 0) {
           canStillFish = "";
         } else if (item.description.toLowerCase().indexOf("cricket") >= 0) {
           canStillFish = "You can still fish the Ings Lane stretch (pegs 21 to 80).";
