@@ -27,8 +27,7 @@ namespace AnglingClubWebServices
             Configuration = configuration;
         }
 
-        public static IConfiguration Configuration
-        {
+        public static IConfiguration Configuration {
             get; private set;
         }
 
@@ -203,7 +202,11 @@ namespace AnglingClubWebServices
                 endpoints.MapControllers();
                 endpoints.MapGet("/", async context =>
                 {
-                    await context.Response.WriteAsync("Welcome to running ASP.NET Core on AWS Lambda");
+                    await context.Response.WriteAsync("Welcome to running ASP.NET Core on AWS Lambda\n\n");
+
+
+                    //await context.Response.WriteAsync($"Architecture: {RuntimeInformation.ProcessArchitecture}\n");
+                    //await context.Response.WriteAsync($"Runtime: {RuntimeInformation.RuntimeIdentifier}\n");
                 });
             });
         }

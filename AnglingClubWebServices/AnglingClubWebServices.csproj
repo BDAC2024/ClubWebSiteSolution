@@ -9,6 +9,11 @@
     <UserSecretsId>473aaa09-df40-4ecb-80ec-0adf15a83d55</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' AND '$(OS)' == 'Windows_NT'">
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Remove="Controllers\DayTicketController.cs" />
     <Compile Remove="Controllers\GuestTicketController.cs" />
