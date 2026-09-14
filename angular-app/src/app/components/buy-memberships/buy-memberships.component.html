@@ -62,10 +62,11 @@
             <div *ngIf="this.selectedSeason != null">
                 <mat-form-field>
                     <mat-label>Membership Type</mat-label>
-                    <mat-select [(ngModel)]="selectedMembership" >
-                        <mat-option *ngFor="let sel of this.membershipList" [value]="sel" (onSelectionChange)="resetNewMembership(sel)">
-                            {{sel.description}} - {{sel.term}}
-                        </mat-option>
+                    <mat-select [(ngModel)]="selectedMembership"
+                                (selectionChange)="resetNewMembership($event.value)">
+                      <mat-option *ngFor="let sel of membershipList" [value]="sel">
+                        {{sel.description}} - {{sel.term}}
+                      </mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>

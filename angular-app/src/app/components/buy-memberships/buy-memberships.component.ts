@@ -280,7 +280,8 @@ export class BuyMembershipsComponent implements OnInit {
 
   }
 
-  checkout (): void {
+  checkout(): void {
+    this.newMembership.dbKey = this.selectedMembership.dbKey;
     // console.log("About to buyGuestTicket...");
     this.paymentsService.buyMembership(this.newMembership)
     .then(() => {
