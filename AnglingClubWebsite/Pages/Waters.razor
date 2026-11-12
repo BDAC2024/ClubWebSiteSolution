@@ -39,7 +39,7 @@
                   CancelAction="@(async () => await Cancel())"
                   SaveAction="@(async () => await Save())">
         <CardContent>
-            <div class="card-title">
+            <div class="card-title" id="@($"water{item.Id}")">
                 @item.Name
             </div>
             <div class="card-subtitle">
