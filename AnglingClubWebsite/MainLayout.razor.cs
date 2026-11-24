@@ -214,11 +214,11 @@ namespace AnglingClubWebsite
 
             menuItems.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
             menuItems.Add(new MenuItem { Id = "09.1", ParentId = "09", Name = "Members" });
-            menuItems.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "Documentation", NavigateUrl = menuUrl("/Documentation") });
-            menuItems.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "User Admins" });
-            menuItems.Add(new MenuItem { Id = "09.4", ParentId = "09", Name = "Book Printing", NavigateUrl = menuUrl("/BookPrinting") });
-            menuItems.Add(new MenuItem { Id = "09.5", ParentId = "09", Name = "Payments" });
-            menuItems.Add(new MenuItem { Id = "09.6", ParentId = "09", Name = "Junior Open Registrations", NavigateUrl = menuUrl("/JuniorOpenMatches/1") });
+            menuItems.Add(new MenuItem { Id = "09.3", ParentId = "09", Name = "Documentation", NavigateUrl = menuUrl("/Documentation") });
+            menuItems.Add(new MenuItem { Id = "09.4", ParentId = "09", Name = "User Admins" });
+            menuItems.Add(new MenuItem { Id = "09.5", ParentId = "09", Name = "Book Printing", NavigateUrl = menuUrl("/BookPrinting") });
+            menuItems.Add(new MenuItem { Id = "09.6", ParentId = "09", Name = "Payments" });
+            menuItems.Add(new MenuItem { Id = "09.7", ParentId = "09", Name = "Junior Open Registrations", NavigateUrl = menuUrl("/JuniorOpenMatches/1") });
 
             Menu.AddRange(menuItems);
             Menu = Menu.OrderBy(x => x.Id).ToList();
@@ -230,6 +230,14 @@ namespace AnglingClubWebsite
 
             List<MenuItem> menuItems = new List<MenuItem>();
 
+            if (!_currentUserService.User.Admin)
+            {
+                menuItems.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
+            }
+
+            menuItems.Add(new MenuItem { Id = "09.2", ParentId = "09", Name = "Membership Trends", NavigateUrl = menuUrl("/MembershipTrends") });
+            menuItems.Add(new MenuItem { Id = "09.8", ParentId = "09", Name = "Member Register CSV", NavigateUrl = menuUrl("/MemberRegisterExport") });
+            menuItems.Add(new MenuItem { Id = "09.9", ParentId = "09", Name = "Merge Member Records", NavigateUrl = menuUrl("/MemberMerge") });
             menuItems.Add(new MenuItem { Id = "105", Name = "About", NavigateUrl = menuUrl("/About") });
 
             Menu.AddRange(menuItems);

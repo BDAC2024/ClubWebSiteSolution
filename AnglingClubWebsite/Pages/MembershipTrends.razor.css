@@ -1,0 +1,12 @@
+.membership-trends-table {
+    overflow-x: auto;
+}
+
+.membership-trends-table th,
+.membership-trends-table td {
+    padding: 0.5rem;
+}
+
+.membership-trends-table th small {
+    display: block;
+}
