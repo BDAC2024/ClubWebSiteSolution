@@ -1,0 +1,344 @@
+@page "/MemberMerge"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using AnglingClubShared.DTOs
+@using AnglingClubShared.Enums
+@using AnglingClubWebsite.Helpers
+@using AnglingClubWebsite.Models
+@inject IAuthenticationService AuthenticationService
+@inject IHttpClientFactory HttpClientFactory
+
+<div class="page-header">
+    <h3>Merge Member Records</h3>
+</div>
+
+@if (_isDeveloper)
+{
+    @if (_pendingMerges.Count > 0)
+    {
+        <section class="mb-3" aria-labelledby="pending-merges-heading">
+            <h4 id="pending-merges-heading">Pending source corrections</h4>
+            @foreach (var pending in _pendingMerges)
+            {
+                <div class="mb-3">
+                    <h5>Membership number @pending.MembershipNumber</h5>
+                    @foreach (var keep in pending.Keep)
+                    {
+                        <div>Keep @keep.Name · Seasons @FormatSeasons(keep.SeasonsActive) · <code>@keep.DbKey</code></div>
+                    }
+                    @foreach (var retireKey in pending.RetireDbKeys)
+                    {
+                        <div>Permanently delete from SimpleDB <code>@retireKey</code></div>
+                    }
+                    <button type="button" class="btn btn-danger mt-2" disabled="@(_busy || pending.Keep.Length == 0)"
+                            @onclick="() => FinalizeAsync(pending)">Finish source correction</button>
+                </div>
+            }
+        </section>
+    }
+
+    <div class="mb-3">
+        <label for="merge-membership-number">Potential split member</label>
+        <select id="merge-membership-number" class="form-select" @bind="_membershipNumber"
+                @bind:after="LoadRecordsAsync" disabled="@(_busy || _candidates.Count == 0)">
+            <option value="">Select a member</option>
+            @foreach (var candidate in _candidates)
+            {
+                <option value="@candidate.MembershipNumber">@string.Join(" / ", candidate.Names) · #@candidate.MembershipNumber</option>
+            }
+        </select>
+        <button type="button" class="btn btn-secondary mt-2" @onclick="RefreshCandidatesAsync" disabled="@_busy">Refresh candidates</button>
+    </div>
+
+    @if (_records.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr><th>Name</th><th>Record key</th><th>Season values</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var record in _records)
+                    {
+                        <tr><td>@record.Name</td><td><code>@record.DbKey</code></td><td>@FormatSeasons(record.SeasonsActive)</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (_eligiblePairs.Count > 0)
+    {
+        <div class="mb-3">
+            <label for="merge-keep-key">Record to keep</label>
+            <select id="merge-keep-key" class="form-select" @bind="_keepKey" @bind:after="ClearPreview" disabled="@_busy">
+                <option value="">Select a record</option>
+                @foreach (var record in GetMergeOptions(_retireKey))
+                {
+                    <option value="@record.DbKey">@record.Name · Seasons @FormatSeasons(record.SeasonsActive) · @record.DbKey</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="merge-retire-key">Record to retire</label>
+            <select id="merge-retire-key" class="form-select" @bind="_retireKey" @bind:after="ClearPreview" disabled="@_busy">
+                <option value="">Select a record</option>
+                @foreach (var record in GetMergeOptions(_keepKey))
+                {
+                    <option value="@record.DbKey">@record.Name · Seasons @FormatSeasons(record.SeasonsActive) · @record.DbKey</option>
+                }
+            </select>
+        </div>
+        <button type="button" class="btn btn-secondary" @onclick="PreviewAsync" disabled="@(_busy || !HasSelection)">Preview merge</button>
+    }
+
+    @if (_preview is { } preview)
+    {
+        <section class="mt-3" aria-labelledby="merge-preview-heading">
+            <h4 id="merge-preview-heading">Merge preview</h4>
+            <dl>
+                <dt>Keep @preview.Keep.Name</dt>
+                <dd><code>@preview.Keep.DbKey</code></dd>
+                <dt>Retire @preview.Retire.Name</dt>
+                <dd><code>@preview.Retire.DbKey</code></dd>
+                <dt>Combined season values</dt>
+                <dd>@FormatSeasons(preview.CombinedSeasonsActive)</dd>
+            </dl>
+            <p>Confirm both records belong to the same person. Applying the merge updates the surviving row and permanently deletes the retired row from SimpleDB.</p>
+            <button type="button" class="btn btn-danger" @onclick="ApplyAsync" disabled="@_busy">Apply merge</button>
+        </section>
+    }
+
+    <p class="mt-3" role="status">@_status</p>
+}
+else
+{
+    <p>Only the developer can merge member records.</p>
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    private List<MemberMergeCandidate> _candidates = new();
+    private List<PendingMemberMerge> _pendingMerges = new();
+    private List<MemberMergeRecord> _records = new();
+    private List<MemberMergePair> _eligiblePairs = new();
+    private MemberMergePreview? _preview;
+    private int? _membershipNumber;
+    private string _keepKey = "";
+    private string _retireKey = "";
+    private string _status = "";
+    private bool _isDeveloper;
+    private bool _busy;
+    private bool _candidatesLoaded;
+
+    private bool HasSelection => !string.IsNullOrEmpty(_keepKey) && !string.IsNullOrEmpty(_retireKey) &&
+        GetMergeOptions(_keepKey).Any(record => record.DbKey == _retireKey);
+
+    private IEnumerable<MemberMergeRecord> GetMergeOptions(string otherKey)
+    {
+        return _records.Where(record => _eligiblePairs.Any(pair =>
+            (pair.FirstDbKey == record.DbKey && (otherKey.Length == 0 || pair.SecondDbKey == otherKey)) ||
+            (pair.SecondDbKey == record.DbKey && (otherKey.Length == 0 || pair.FirstDbKey == otherKey))));
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _isDeveloper = AuthenticationStateTask is not null &&
+            (await AuthenticationStateTask).User.Identity?.IsAuthenticated == true &&
+            (await AuthenticationService.GetCurrentUser()).Developer;
+
+        if (!_isDeveloper)
+        {
+            _candidates.Clear();
+            _pendingMerges.Clear();
+            _candidatesLoaded = false;
+            _membershipNumber = null;
+            ClearRecords();
+        }
+        else if (!_candidatesLoaded)
+        {
+            await LoadCandidatesAsync();
+        }
+    }
+
+    private void ClearRecords()
+    {
+        _records.Clear();
+        _eligiblePairs.Clear();
+        _keepKey = "";
+        _retireKey = "";
+        ClearPreview();
+    }
+
+    private void ClearPreview()
+    {
+        _preview = null;
+        _status = "";
+    }
+
+    private async Task RefreshCandidatesAsync()
+    {
+        _membershipNumber = null;
+        ClearRecords();
+        await LoadCandidatesAsync();
+    }
+
+    private async Task<bool> LoadCandidatesAsync()
+    {
+        if (_busy || !_isDeveloper)
+        {
+            return false;
+        }
+
+        var loaded = false;
+        await RunAsync("Loading potential split members…", async client =>
+        {
+            _pendingMerges = await client.GetFromJsonAsync<List<PendingMemberMerge>>("api/Members/Merge/Pending") ?? new();
+            _candidates = await client.GetFromJsonAsync<List<MemberMergeCandidate>>("api/Members/Merge/Candidates") ?? new();
+            _candidatesLoaded = true;
+            loaded = true;
+            if (_membershipNumber.HasValue && !_candidates.Any(candidate => candidate.MembershipNumber == _membershipNumber.Value))
+            {
+                _membershipNumber = null;
+            }
+
+            _status = _candidates.Count == 0 && _pendingMerges.Count == 0 ? "No potential split members found." : "";
+        });
+        return loaded;
+    }
+
+    private async Task LoadRecordsAsync()
+    {
+        if (_busy || !_isDeveloper)
+        {
+            return;
+        }
+
+        ClearRecords();
+        if (_membershipNumber is not > 0)
+        {
+            return;
+        }
+
+        await RunAsync("Loading member records…", async client =>
+        {
+            var records = await client.GetFromJsonAsync<MemberMergeRecords>($"api/Members/Merge/{_membershipNumber.Value}");
+            _records = records?.Records.ToList() ?? new();
+            _eligiblePairs = records?.EligiblePairs.ToList() ?? new();
+            _status = _eligiblePairs.Count == 0 ? "No matching records are available to merge for this number." : "";
+        });
+    }
+
+    private async Task PreviewAsync()
+    {
+        if (_busy || !_isDeveloper || _membershipNumber is not > 0 || !HasSelection)
+        {
+            return;
+        }
+
+        ClearPreview();
+        await RunAsync("Checking the selected records…", async client =>
+        {
+            var request = new MemberMergeRequest(_membershipNumber.Value, _keepKey, _retireKey);
+            using var response = await client.PostAsJsonAsync("api/Members/Merge/Preview", request);
+            response.EnsureSuccessStatusCode();
+            _preview = await response.Content.ReadFromJsonAsync<MemberMergePreview>();
+            _status = "";
+        });
+    }
+
+    private async Task ApplyAsync()
+    {
+        if (_busy || !_isDeveloper || _membershipNumber is not > 0 || _preview is not { } preview)
+        {
+            return;
+        }
+
+        var applied = false;
+        await RunAsync("Applying the merge…", async client =>
+        {
+            var request = new MemberMergeRequest(_membershipNumber.Value, preview.Keep.DbKey, preview.Retire.DbKey, preview.PreviewToken);
+            using var response = await client.PostAsJsonAsync("api/Members/Merge/Apply", request);
+            response.EnsureSuccessStatusCode();
+            _records.RemoveAll(record => record.DbKey == preview.Retire.DbKey);
+            _eligiblePairs.RemoveAll(pair => pair.FirstDbKey == preview.Retire.DbKey || pair.SecondDbKey == preview.Retire.DbKey);
+            var keepIndex = _records.FindIndex(record => record.DbKey == preview.Keep.DbKey);
+            if (keepIndex >= 0)
+            {
+                _records[keepIndex] = preview.Keep with { SeasonsActive = preview.CombinedSeasonsActive };
+            }
+            _keepKey = "";
+            _retireKey = "";
+            _preview = null;
+            applied = true;
+        });
+
+        if (applied)
+        {
+            _status = await LoadCandidatesAsync()
+                ? "Merge applied to the source records."
+                : "Merge applied to the source records. Refresh the candidate list to see the latest results.";
+        }
+    }
+
+    private async Task FinalizeAsync(PendingMemberMerge pending)
+    {
+        if (_busy || !_isDeveloper)
+        {
+            return;
+        }
+
+        ClearRecords();
+        _membershipNumber = null;
+        var finished = false;
+        await RunAsync("Finishing the source correction…", async client =>
+        {
+            var request = new FinalizeMemberMergeRequest(pending.MembershipNumber, pending.Revision);
+            using var response = await client.PostAsJsonAsync("api/Members/Merge/Finalize", request);
+            response.EnsureSuccessStatusCode();
+            _pendingMerges.Remove(pending);
+            finished = true;
+        });
+
+        if (finished)
+        {
+            _status = await LoadCandidatesAsync()
+                ? $"Source correction finished for #{pending.MembershipNumber}."
+                : $"Source correction finished for #{pending.MembershipNumber}. Refresh the list to see the latest results.";
+        }
+    }
+
+    private async Task RunAsync(string status, Func<HttpClient, Task> action)
+    {
+        _busy = true;
+        _status = status;
+        try
+        {
+            using var client = HttpClientFactory.CreateClient(Constants.HTTP_CLIENT_KEY);
+            await action(client);
+        }
+        catch (ApiConflictException ex)
+        {
+            _preview = null;
+            _status = ex.Message;
+        }
+        catch (ApiException ex)
+        {
+            _status = ex.Message;
+        }
+        catch (Exception)
+        {
+            _status = "The request could not be confirmed. Reload the records to check the register.";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string FormatSeasons(Season[] seasons) => seasons.Length == 0
+        ? "None"
+        : string.Join(", ", seasons.Select(season => (int)season));
+}

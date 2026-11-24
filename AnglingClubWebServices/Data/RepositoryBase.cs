@@ -264,7 +264,7 @@ namespace AnglingClubWebServices.Data
             return DateTime.SpecifyKind(parsed, DateTimeKind.Utc);
         }
 
-        protected async Task<List<Item>> GetData(string idPrefix, string additionalWhereClause = "", string orderByClause = "")
+        protected async Task<List<Item>> GetData(string idPrefix, string additionalWhereClause = "", string orderByClause = "", bool consistentRead = false)
         {
             List<Item> items = new List<Item>();
 
@@ -276,6 +276,7 @@ namespace AnglingClubWebServices.Data
                 SelectRequest request = new SelectRequest();
                 request.SelectExpression = $"SELECT * FROM {Domain} WHERE ItemName() LIKE '{(idPrefix == "" ? "" : $"{idPrefix}:")}%' {additionalWhereClause} {orderByClause} LIMIT {QUERY_BATCH_SIZE}";
                 request.NextToken = nextToken;
+                request.ConsistentRead = consistentRead;
 
                 SelectResponse response = await client.SelectAsync(request);
                 nextToken = response.NextToken;
@@ -312,6 +313,11 @@ namespace AnglingClubWebServices.Data
                 request.Items.RemoveRange(0, request.Items.Count() < UPDATE_BATCH_SIZE ? request.Items.Count() : UPDATE_BATCH_SIZE);
             }
 
+            await BackupAfterWrite(client);
+        }
+
+        protected async Task BackupAfterWrite(AmazonSimpleDBClient client)
+        {
             if (_options.Stage.ToLower() != "prod")
             {
                 _logger.LogWarning($"Backup disabled as running in {_options.Stage}");

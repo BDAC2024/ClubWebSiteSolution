@@ -1,0 +1,78 @@
+@page "/MemberRegisterExport"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using AnglingClubWebsite.Models
+@inject IAuthenticationService AuthenticationService
+@inject IHttpClientFactory HttpClientFactory
+@inject IJSRuntime JS
+
+<div class="page-header">
+    <h3>Member Register CSV</h3>
+</div>
+
+@if (_isDeveloper)
+{
+    <button type="button" class="btn btn-primary" disabled="@_downloading" @onclick="DownloadAsync">Download CSV</button>
+    <p role="status">@_status</p>
+}
+else
+{
+    <p>Only the developer can export the member register.</p>
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    private bool _isDeveloper;
+    private bool _downloadStarted;
+    private bool _downloading;
+    private string _status = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _isDeveloper = AuthenticationStateTask is not null &&
+            (await AuthenticationStateTask).User.Identity?.IsAuthenticated == true &&
+            (await AuthenticationService.GetCurrentUser()).Developer;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_isDeveloper && !_downloadStarted)
+        {
+            var download = DownloadAsync();
+            StateHasChanged();
+            await download;
+            StateHasChanged();
+        }
+    }
+
+    private async Task DownloadAsync()
+    {
+        if (_downloading || !(await AuthenticationService.GetCurrentUser()).Developer)
+        {
+            return;
+        }
+
+        _downloadStarted = true;
+        _downloading = true;
+        _status = "Preparing the member register CSV…";
+
+        try
+        {
+            using var client = HttpClientFactory.CreateClient(Constants.HTTP_CLIENT_KEY);
+            var csv = await client.GetByteArrayAsync("api/Members/ExportRegisterCsv");
+            await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./Pages/MemberRegisterExport.razor.js");
+            await module.InvokeVoidAsync("downloadCsv", csv);
+            _status = "Download started.";
+        }
+        catch (Exception)
+        {
+            _status = "The member register CSV could not be downloaded. Please try again.";
+        }
+        finally
+        {
+            _downloading = false;
+        }
+    }
+}

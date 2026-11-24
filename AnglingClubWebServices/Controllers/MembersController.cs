@@ -3,6 +3,7 @@ using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Models.Auth;
 using AnglingClubWebServices.DTOs;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using AutoMapper;
@@ -12,7 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using static AnglingClubWebServices.Services.UtilityService;
 
@@ -94,6 +97,138 @@ namespace AnglingClubWebServices.Controllers
             ReportTimer("Getting members");
 
             return Ok(members);
+        }
+
+        [HttpGet("ExportRegisterCsv")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> ExportRegisterCsv()
+        {
+            if (CurrentUser == null)
+            {
+                return Unauthorized();
+            }
+
+            var developerName = _authService.GetDeveloperName();
+            if (string.IsNullOrWhiteSpace(developerName) || CurrentUser.Name != developerName)
+            {
+                throw new AppForbiddenException("Only the developer can export the member register.");
+            }
+
+            var members = (await _memberRepository.GetMembers())
+                .OrderBy(member => member.MembershipNumber)
+                .ThenBy(member => member.DbKey, StringComparer.Ordinal)
+                .ToList();
+
+            // Only export a per-file label when two or more records share a contact value.
+            var contactGroups = members
+                .Where(member => !string.IsNullOrWhiteSpace(member.Email))
+                .GroupBy(member => member.Email.Trim(), StringComparer.OrdinalIgnoreCase)
+                .Where(group => group.Skip(1).Any())
+                .Select((group, index) => new { group.Key, Label = $"Contact-{index + 1}" })
+                .ToDictionary(group => group.Key, group => group.Label, StringComparer.OrdinalIgnoreCase);
+
+            var csv = new StringBuilder("\uFEFFRecordKey,MembershipNumber,Name,SeasonValues,SharedContactGroup\r\n");
+            foreach (var member in members)
+            {
+                var seasonValues = member.SeasonsActive
+                    .Select(season => (int)season)
+                    .Distinct()
+                    .OrderBy(season => season)
+                    .Select(season => season.ToString(CultureInfo.InvariantCulture));
+                contactGroups.TryGetValue(member.Email.Trim(), out var contactGroup);
+
+                csv.Append(EscapeRegisterCsvField(member.DbKey)).Append(',')
+                    .Append(member.MembershipNumber.ToString(CultureInfo.InvariantCulture)).Append(',')
+                    .Append(EscapeRegisterCsvField(member.Name)).Append(',')
+                    .Append(EscapeRegisterCsvField(string.Join(", ", seasonValues))).Append(',')
+                    .Append(contactGroup).Append("\r\n");
+            }
+
+            return File(Encoding.UTF8.GetBytes(csv.ToString()), "text/csv; charset=utf-8", "member-register.csv");
+        }
+
+        private static string EscapeRegisterCsvField(string value)
+        {
+            var trimmed = value.AsSpan().TrimStart();
+            if (value.StartsWith('\t') || value.StartsWith('\r') || value.StartsWith('\n') ||
+                (!trimmed.IsEmpty && trimmed[0] is '=' or '+' or '-' or '@'))
+            {
+                value = "'" + value;
+            }
+
+            return "\"" + value.Replace("\"", "\"\"") + "\"";
+        }
+
+        [HttpGet("Merge/Candidates")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> GetMergeCandidates()
+        {
+            RequireMergeDeveloper();
+            return Ok(MemberMergeCandidates.Find(await _memberRepository.GetMembers()));
+        }
+
+        [HttpGet("Merge/{membershipNumber:int}")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> GetMergeRecords(int membershipNumber)
+        {
+            RequireMergeDeveloper();
+            if (membershipNumber <= 0)
+            {
+                throw new AppValidationException("Enter a positive membership number.");
+            }
+
+            var members = (await _memberRepository.GetMembers()).Where(member => member.MembershipNumber == membershipNumber)
+                .OrderBy(member => member.Name)
+                .ThenBy(member => member.DbKey, StringComparer.Ordinal)
+                .ToArray();
+            var records = members.Select(member => new MemberMergeRecord(member.DbKey, member.Name,
+                member.SeasonsActive.Distinct().OrderBy(season => season).ToArray())).ToArray();
+            var pairs = MemberMergeCandidates.FindPairs(members)
+                .Select(pair => new MemberMergePair(pair.First.DbKey, pair.Second.DbKey)).ToArray();
+            return Ok(new MemberMergeRecords(records, pairs));
+        }
+
+        [HttpPost("Merge/Preview")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> PreviewMerge([FromBody] MemberMergeRequest request)
+        {
+            RequireMergeDeveloper();
+            return Ok(await _memberRepository.PreviewMerge(request));
+        }
+
+        [HttpPost("Merge/Apply")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> ApplyMerge([FromBody] MemberMergeRequest request)
+        {
+            RequireMergeDeveloper();
+            await _memberRepository.ApplyMerge(request);
+            return NoContent();
+        }
+
+        [HttpGet("Merge/Pending")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> GetPendingMerges()
+        {
+            RequireMergeDeveloper();
+            return Ok(await _memberRepository.GetPendingMerges());
+        }
+
+        [HttpPost("Merge/Finalize")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> FinalizeMerge([FromBody] FinalizeMemberMergeRequest request)
+        {
+            RequireMergeDeveloper();
+            await _memberRepository.FinalizeMerge(request);
+            return NoContent();
+        }
+
+        private void RequireMergeDeveloper()
+        {
+            var developerName = _authService.GetDeveloperName();
+            if (CurrentUser == null || string.IsNullOrWhiteSpace(developerName) || CurrentUser.Name != developerName)
+            {
+                throw new AppForbiddenException("Only the developer can merge member records.");
+            }
         }
 
         // GET api/values

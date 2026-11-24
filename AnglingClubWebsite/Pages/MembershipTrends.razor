@@ -1,0 +1,177 @@
+@page "/MembershipTrends"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using AnglingClubShared.DTOs
+@using AnglingClubShared.Enums
+@using AnglingClubShared.Extensions
+@using AnglingClubWebsite.Helpers
+@using System.Globalization
+@inject MembershipTrendsService TrendsService
+@inject IJSRuntime JS
+
+<PageTitle>Membership Trends</PageTitle>
+
+<div class="page-header">
+    <h3>Membership Trends</h3>
+</div>
+
+@if (_loadError is not null)
+{
+    <p role="alert">@_loadError</p>
+}
+else if (_report is null)
+{
+    <BusyIndicator IsReady="false" />
+}
+else if (_report.Comparisons.Count == 0)
+{
+    <p>There are no seasons to compare.</p>
+}
+else
+{
+    <p>Churn is the share of the previous season’s members with no recorded renewal in the following season.</p>
+
+    <div class="membership-trends-table">
+        <table class="table">
+            <caption>Season comparisons from the member register as of @_report.AsOfDate.ToString("dd MMM yyyy", CultureInfo.GetCultureInfo("en-GB"))</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Season comparison</th>
+                    <th scope="col">Previous members</th>
+                    <th scope="col">Members</th>
+                    <th scope="col">Renewed</th>
+                    <th scope="col">Did not renew</th>
+                    <th scope="col">New</th>
+                    <th scope="col">Churn rate</th>
+                    <th scope="col">Returned after a gap</th>
+                    <th scope="col">Net change</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var comparison in _report.Comparisons)
+                {
+                    <tr>
+                        <th scope="row">
+                            @ComparisonName(comparison)
+                            @if (comparison.IsProvisional)
+                            {
+                                <small>(provisional)</small>
+                            }
+                        </th>
+                        <td>@comparison.PreviousMembers</td>
+                        <td>@comparison.Members</td>
+                        <td>@comparison.Renewed</td>
+                        <td>@comparison.DidNotRenew</td>
+                        <td>@comparison.FirstRecordedMembers</td>
+                        <td>@(comparison.ChurnRate?.ToString("P1") ?? "—")</td>
+                        <td>@comparison.ReturnedAfterGap</td>
+                        <td>@comparison.NetChange.ToString("+0;-0;0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (_report.Comparisons.Any(comparison => comparison.IsProvisional))
+    {
+        <p>Current-season figures are provisional. Churn can change as more renewals are recorded.</p>
+    }
+
+    <h4>Non-renewal exports</h4>
+    <label for="membership-comparison">Season comparison</label>
+    <select id="membership-comparison" @bind="_selectedSeason" disabled="@_exporting">
+        @foreach (var comparison in _report.Comparisons)
+        {
+            <option value="@comparison.Season">@ComparisonName(comparison)@(comparison.IsProvisional ? " (provisional)" : "")</option>
+        }
+    </select>
+
+    @if (SelectedComparison is { } selected)
+    {
+        <p>Filter the Comments column for <strong>Email OK</strong> to review members with a correctly formatted address.</p>
+
+        @if (selected.IsProvisional)
+        {
+            <p>Check with the Membership Secretary that the member register is up to date before contacting anyone on this list.</p>
+        }
+
+        <SfButton CssClass="e-primary" Disabled="@(_exporting || selected.DidNotRenew == 0)" @onclick="DownloadCsv">
+            Download all non-renewals CSV
+        </SfButton>
+
+        @if (_exporting)
+        {
+            <p role="status">Preparing CSV…</p>
+        }
+    }
+
+    @if (_exportError is not null)
+    {
+        <p role="alert">@_exportError</p>
+    }
+}
+
+@code {
+    private MembershipTrendsDto? _report;
+    private Season _selectedSeason;
+    private bool _exporting;
+    private string? _loadError;
+    private string? _exportError;
+
+    private MembershipSeasonComparisonDto? SelectedComparison =>
+        _report?.Comparisons.FirstOrDefault(comparison => comparison.Season == _selectedSeason);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _report = await TrendsService.GetReport();
+            _selectedSeason = _report?.Comparisons.LastOrDefault()?.Season ?? Season.Unknown;
+
+            if (_report is null)
+            {
+                _loadError = "The membership trends report was empty.";
+            }
+        }
+        catch (ApiException ex)
+        {
+            _loadError = ex.Message;
+        }
+    }
+
+    private async Task DownloadCsv()
+    {
+        if (_exporting || SelectedComparison is not { DidNotRenew: > 0 } selected)
+        {
+            return;
+        }
+
+        _exporting = true;
+        _exportError = null;
+
+        try
+        {
+            var csv = await TrendsService.GetNonRenewalsCsv(selected.Season);
+            var fileName = $"membership-all-non-renewals-{selected.PreviousSeason.SeasonName().Replace('/', '-')}-to-{selected.Season.SeasonName().Replace('/', '-')}.csv";
+            using var stream = new DotNetStreamReference(new MemoryStream(csv));
+            await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./Pages/MembershipTrends.razor.js");
+            await module.InvokeVoidAsync("downloadCsv", fileName, stream);
+        }
+        catch (ApiException ex)
+        {
+            _exportError = ex.Message;
+        }
+        catch (JSException)
+        {
+            _exportError = "The browser could not download the CSV. Please try again.";
+        }
+        finally
+        {
+            _exporting = false;
+        }
+    }
+
+    private static string ComparisonName(MembershipSeasonComparisonDto comparison)
+    {
+        return $"{comparison.PreviousSeason.SeasonName()} → {comparison.Season.SeasonName()}";
+    }
+}

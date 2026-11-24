@@ -3,6 +3,7 @@ using Amazon.SimpleDB.Model;
 using AnglingClubShared.Entities;
 using AnglingClubShared.Enums;
 using AnglingClubShared.Extensions;
+using AnglingClubWebServices.Helpers;
 using AnglingClubWebServices.Interfaces;
 using AnglingClubWebServices.Models;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace AnglingClubWebServices.Data
 {
-    public class MemberRepository : RepositoryBase, IMemberRepository
+    public partial class MemberRepository : RepositoryBase, IMemberRepository
     {
         private const string IDPREFIX = "Member";
         private readonly ILogger<MemberRepository> _logger;
@@ -32,17 +33,38 @@ namespace AnglingClubWebServices.Data
 
         public async Task AddOrUpdateMember(Member member)
         {
-            var client = GetClient();
+            using var client = GetClient();
 
-            if (member.IsNewItem)
+            var isNew = member.IsNewItem;
+            if (isNew)
             {
                 member.DbKey = member.GenerateDbKey(IDPREFIX);
+            }
+
+            var register = await ReadRegister();
+            if (register.RetiredKeys.Contains(member.DbKey))
+            {
+                throw new AppConflictException("This member record has been retired by a merge.");
+            }
+            if (register.MergedSurvivorKeys.Contains(member.DbKey))
+            {
+                throw new AppConflictException("Finish the pending source correction before editing this member.");
+            }
+            var existing = register.Members.SingleOrDefault(row => row.DbKey == member.DbKey);
+            if (!isNew && existing == null)
+            {
+                throw new AppConflictException("This member record no longer exists. Reload the member register.");
+            }
+            var seasonsChanged = member is not StoredMember stored || !stored.LoadedSeasons.ToHashSet().SetEquals(member.SeasonsActive);
+            if (seasonsChanged && member is StoredMember loaded && !loaded.LoadedSeasons.ToHashSet().SetEquals(existing.SeasonsActive))
+            {
+                throw new AppConflictException("The member's seasons have changed. Reload the member register.");
             }
 
             // Check that there aren't already members of this membership number in each active season
             foreach (var season in member.SeasonsActive)
             {
-                if (GetMembers().Result.Any(x => x.MembershipNumber == member.MembershipNumber && x.SeasonsActive.Contains(season) && x.DbKey != member.DbKey))
+                if (register.Members.Any(x => x.MembershipNumber == member.MembershipNumber && x.SeasonsActive.Contains(season) && x.DbKey != member.DbKey))
                 {
                     throw new Exception($"Membership number {member.MembershipNumber} is already active for {season.SeasonName()}");
                 }
@@ -75,19 +97,36 @@ namespace AnglingClubWebServices.Data
                 new ReplaceableAttribute { Name = "ReLoginRequired", Value = member.ReLoginRequired ? "1" : "0", Replace = true },
             };
 
-            foreach (var season in member.SeasonsActive)
+            foreach (var season in seasonsChanged ? member.SeasonsActive : Enumerable.Empty<Season>())
             {
                 attributes.Add(new ReplaceableAttribute { Name = "SeasonsActive", Value = ((int)season).ToString(), Replace = true });
             }
 
-            base.SetupTableAttribues(request, member.DbKey, attributes);
-
             try
             {
-                //BatchPutAttributesResponse response = await client.BatchPutAttributesAsync(request);
-                await WriteInBatches(request, client);
+                if (isNew)
+                {
+                    SetupTableAttribues(request, member.DbKey, attributes);
+                    await WriteInBatches(request, client);
+                }
+                else
+                {
+                    var storedNumber = register.Items[member.DbKey].Attributes.Single(attribute => attribute.Name == "MembershipNumber").Value;
+                    await client.PutAttributesAsync(new PutAttributesRequest
+                    {
+                        DomainName = Domain,
+                        ItemName = member.DbKey,
+                        Attributes = attributes,
+                        Expected = new UpdateCondition { Name = "MembershipNumber", Value = storedNumber }
+                    });
+                    await BackupAfterWrite(client);
+                }
                 _logger.LogDebug($"Member added: {member.DbKey} - {member.Name}");
 
+            }
+            catch (AmazonSimpleDBException ex) when (IsConditionFailure(ex))
+            {
+                throw new AppConflictException("The member record changed or was retired. Reload the member register.", ex);
             }
             catch (AmazonSimpleDBException ex)
             {
@@ -99,15 +138,39 @@ namespace AnglingClubWebServices.Data
 
         public async Task<List<Member>> GetMembers(Season? activeSeason = null, bool forMatchResults = false)
         {
-            var members = new List<Member>();
+            var members = (await ReadRegister()).Members;
 
-            var items = await GetData(IDPREFIX, "AND Name > ''", "ORDER BY Name");
+            if (forMatchResults)
+            {
+                foreach (var member in members.Where(member => !member.AllowNameToBeUsed))
+                {
+                    member.Name = "Anonymous";
+                }
+            }
+
+            return activeSeason.HasValue
+                ? members.Where(member => member.SeasonsActive.Contains(activeSeason.Value)).ToList()
+                : members;
+        }
+
+        private async Task<MemberRegister> ReadRegister()
+        {
+            var items = await GetData(IDPREFIX, "AND Name > ''", "ORDER BY Name", consistentRead: true);
+            var ledgers = ReadMergeLedgers(items);
+            var merges = ledgers.Values.SelectMany(ledger => ledger.Entries).ToList();
+            var retiredKeys = merges.Select(merge => merge.RetireDbKey).ToHashSet(StringComparer.Ordinal);
+            var pendingSeasonsBySurvivor = ledgers.Values.Where(ledger => !ledger.SeasonsWritten)
+                .SelectMany(ledger => ledger.Entries).ToLookup(merge => merge.KeepDbKey, StringComparer.Ordinal);
+            var members = new List<Member>();
 
             foreach (var item in items)
             {
-                var member = new Member();
+                if (item.Name.StartsWith(MergeItemPrefix, StringComparison.Ordinal) || retiredKeys.Contains(item.Name))
+                {
+                    continue;
+                }
 
-                member.DbKey = item.Name;
+                var member = new StoredMember { DbKey = item.Name };
 
                 foreach (var attribute in item.Attributes)
                 {
@@ -157,6 +220,13 @@ namespace AnglingClubWebServices.Data
                             member.SeasonsActive.Add((Season)Convert.ToInt32(attribute.Value));
                             break;
 
+                        case AppliedMergeAttribute:
+                            if (!string.IsNullOrEmpty(attribute.Value))
+                            {
+                                member.AppliedMerges.Add(attribute.Value);
+                            }
+                            break;
+
                         case "Pin":
                             member.Pin = attribute.Value;
                             break;
@@ -198,25 +268,21 @@ namespace AnglingClubWebServices.Data
                     }
                 }
 
-                if (forMatchResults)
+                foreach (var merge in pendingSeasonsBySurvivor[member.DbKey])
                 {
-                    foreach (var anonMember in members.Where(x => !x.AllowNameToBeUsed))
+                    if (member.AppliedMerges.Add(merge.RetireDbKey))
                     {
-                        anonMember.Name = "Anonymous";
+                        member.SeasonsActive = member.SeasonsActive.Union(merge.ImportedSeasons).OrderBy(season => season).ToList();
                     }
                 }
 
+                member.LoadedSeasons = member.SeasonsActive.ToArray();
                 members.Add(member);
             }
 
-            if (activeSeason.HasValue)
-            {
-                return members.Where(x => x.SeasonsActive.Contains(activeSeason.Value)).ToList();
-            }
-            else
-            {
-                return members;
-            }
+            return new MemberRegister(members, ledgers, retiredKeys,
+                merges.Select(merge => merge.KeepDbKey).ToHashSet(StringComparer.Ordinal),
+                items.ToDictionary(item => item.Name, StringComparer.Ordinal));
 
         }
 

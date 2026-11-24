@@ -230,6 +230,13 @@ namespace AnglingClubWebsite
 
             List<MenuItem> menuItems = new List<MenuItem>();
 
+            if (!_currentUserService.User.Admin)
+            {
+                menuItems.Add(new MenuItem { Id = "09", Name = "Admin", HasSubMenu = true });
+            }
+
+            menuItems.Add(new MenuItem { Id = "09.8", ParentId = "09", Name = "Member Register CSV", NavigateUrl = menuUrl("/MemberRegisterExport") });
+            menuItems.Add(new MenuItem { Id = "09.9", ParentId = "09", Name = "Merge Member Records", NavigateUrl = menuUrl("/MemberMerge") });
             menuItems.Add(new MenuItem { Id = "105", Name = "About", NavigateUrl = menuUrl("/About") });
 
             Menu.AddRange(menuItems);
