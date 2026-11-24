@@ -5,6 +5,7 @@
 @using AnglingClubShared.Extensions
 @using AnglingClubWebsite.Helpers
 @using System.Globalization
+@inject IAuthenticationService AuthenticationService
 @inject MembershipTrendsService TrendsService
 @inject IJSRuntime JS
 
@@ -124,6 +125,12 @@ else
     {
         try
         {
+            if (!(await AuthenticationService.GetCurrentUser()).Developer)
+            {
+                _loadError = "Only the developer can access Membership Trends.";
+                return;
+            }
+
             _report = await TrendsService.GetReport();
             _selectedSeason = _report?.Comparisons.LastOrDefault()?.Season ?? Season.Unknown;
 

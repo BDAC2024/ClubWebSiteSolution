@@ -20,16 +20,18 @@ namespace AnglingClubWebServices.Controllers
     {
         private static readonly TimeZoneInfo ClubTimeZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
         private readonly IMemberRepository _memberRepository;
+        private readonly IAuthService _authService;
 
-        public MembershipTrendsController(IMemberRepository memberRepository)
+        public MembershipTrendsController(IMemberRepository memberRepository, IAuthService authService)
         {
             _memberRepository = memberRepository;
+            _authService = authService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            if (!CurrentUser.Admin)
+            if (!IsDeveloper())
             {
                 return StatusCode(StatusCodes.Status403Forbidden);
             }
@@ -46,7 +48,7 @@ namespace AnglingClubWebServices.Controllers
         [HttpGet("{season:int}/non-renewals")]
         public async Task<IActionResult> ExportNonRenewals(Season season)
         {
-            if (!CurrentUser.Admin)
+            if (!IsDeveloper())
             {
                 return StatusCode(StatusCodes.Status403Forbidden);
             }
@@ -82,6 +84,12 @@ namespace AnglingClubWebServices.Controllers
 
             var fileName = $"membership-all-non-renewals-{pair.Previous.SeasonName().Replace('/', '-')}-to-{season.SeasonName().Replace('/', '-')}.csv";
             return File(Encoding.UTF8.GetBytes(csv.ToString()), "text/csv; charset=utf-8", fileName);
+        }
+
+        private bool IsDeveloper()
+        {
+            var developerName = _authService.GetDeveloperName();
+            return !string.IsNullOrWhiteSpace(developerName) && CurrentUser?.Name == developerName;
         }
 
         private static string GetExportComment(string email, bool rejoinedLater)
